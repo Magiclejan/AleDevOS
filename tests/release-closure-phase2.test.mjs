@@ -33,7 +33,7 @@ test('phase2 runner requires a clean worktree and runs measured regression befor
 });
 
 test('phase2 runner accepts canonical verifier shapes without weakening failure semantics',()=>{
-  assert.match(s,/vo\.valid===true\|\|String\(vo\.status\|\|' '\)\.endsWith\('_VALID'\)/);
+  assert.match(s,/vo\.valid===true\|\|String\(vo\.status\|\|''\)\.endsWith\('_VALID'\)/);
   assert.match(s,/RELEASE_CERTIFICATION_VERIFY_FAILED/);
   assert.match(s,/RELEASE_CERTIFICATION_NOT_CERTIFIED/);
 });
