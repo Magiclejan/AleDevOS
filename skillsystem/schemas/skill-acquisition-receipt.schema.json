@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://skillsystem/skill-acquisition-receipt.schema.json",
+  "title": "Skill Acquisition Receipt",
+  "type": "object",
+  "required": ["schema_version", "skill_id", "adapter", "status", "instruction_path", "instruction_sha256", "registry_usable", "integrity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "skill_id": {"type": "string"},
+    "adapter": {"type": "string"},
+    "status": {"const": "ACQUISITION_VERIFIED"},
+    "source": {"type": ["object", "string", "null"]},
+    "approved": {"type": "boolean"},
+    "instruction_path": {"type": "string"},
+    "instruction_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "registry_status": {"type": "string"},
+    "registry_usable": {"const": true},
+    "installed_at": {"type": "string"},
+    "integrity": {
+      "type": "object",
+      "required": ["algorithm", "payload_sha256"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "payload_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,2042 @@
+{
+  "schema_version": "1.0",
+  "adapter": "antigravity",
+  "adapter_contract_version": "2.0",
+  "certification_phase": "portability-p5",
+  "dialect": "google-antigravity-cli-1.2+",
+  "layout": "source",
+  "status": "ANTIGRAVITY_ADAPTER_CERTIFIED",
+  "summary": {
+    "total": 249,
+    "passed": 249,
+    "failed": 0
+  },
+  "runtime_smoke": {
+    "required_for_target_release": true,
+    "executed": false,
+    "reason": "Package certification cannot prove target agy version/auth/effective permissions/hooks/browser/image runtime. Target preflight must also probe known workspace-hook and Windows permission behavior."
+  },
+  "inputs": [
+    {
+      "id": "hooks",
+      "path": "adapters/antigravity/.agents/hooks.json",
+      "sha256": "5204ab0a9255ef649fef53f2234bb829e6d5d14cb9da2b7145457ca9b7153368"
+    },
+    {
+      "id": "guard",
+      "path": "adapters/antigravity/hooks/pretool-guard.mjs",
+      "sha256": "1a95a948f7d2b3654dfb87e58d228f5c1542a1bfdbf71f1723da9d0d3502b55f"
+    },
+    {
+      "id": "permissions",
+      "path": "adapters/antigravity/settings/aledevos-permissions.overlay.json",
+      "sha256": "08b171ba2b570723d4b2670240d5383c5ef914a5dfb6877d1c0acd000685919a"
+    },
+    {
+      "id": "manifest",
+      "path": "adapters/antigravity/adapter-capabilities.json",
+      "sha256": "8230c0f0e0ebd201bd37ef54610c50c3c65e6083c5793c58c501c42e02e9d38f"
+    },
+    {
+      "id": "project",
+      "path": "adapters/antigravity/project-template.json",
+      "sha256": "b8b0e50ab65eaa3b905464ab9fb9df557336b3674797c4fd9e169e5355528d44"
+    },
+    {
+      "id": "provider",
+      "path": "adapters/antigravity/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "id": "binding",
+      "path": "skillsystem/bindings/antigravity.json",
+      "sha256": "2965a44f1d74867083e7b5123b18fd826c93f08d61442716b73d95ee47b45da6"
+    },
+    {
+      "id": "discovery",
+      "path": "skillsystem/discovery/antigravity.json",
+      "sha256": "d732293d71b056bb3474fe7994a460ff2cf5539344aa47bd7c0080d2af1c796d"
+    },
+    {
+      "id": "acquisition",
+      "path": "skillsystem/acquisition/antigravity.json",
+      "sha256": "cd56546fa1422bc67cb87a1ec00fe94a7c8e6e9fcbafaa6b43ab22e61c40e9cb"
+    },
+    {
+      "id": "engine",
+      "path": "core/engine/aledevos.mjs",
+      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+    },
+    {
+      "id": "context",
+      "path": "contextos/engine/contextos.mjs",
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
+    },
+    {
+      "id": "skillsys",
+      "path": "skillsystem/engine/skillsystem.mjs",
+      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+    },
+    {
+      "id": "vqa",
+      "path": "visualqa/engine/visual-judge.mjs",
+      "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
+    },
+    {
+      "id": "release",
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "id": "agentsTemplate",
+      "path": "adapters/antigravity/AGENTS.md.template",
+      "sha256": "3996844668573a45892e17c2fbdc8c5c1e0bf74b6070596d2f5409d53221520b"
+    },
+    {
+      "id": "acquire",
+      "path": "adapters/antigravity/scripts/acquire-skill.ps1",
+      "sha256": "7f434262d5f9fdb49fe6384019c5cc35296be642107e17a07ea4742527a505f6"
+    },
+    {
+      "id": "certifier",
+      "path": "adapters/antigravity/certification/antigravity-certifier.mjs",
+      "sha256": "8b27a0897253134d6f0928dfb2407ebdcd0f712777bdbd4f89238e35aac6b950"
+    },
+    {
+      "id": "role:architect",
+      "path": "adapters/antigravity/.agents/agents/architect.md",
+      "sha256": "64a525e9922b0ccd7723aa07ec8fecb1888eadef05523864ffda6203a0eedc47"
+    },
+    {
+      "id": "role:auditor",
+      "path": "adapters/antigravity/.agents/agents/auditor.md",
+      "sha256": "04be9bd6e626261777fee86ab99bd1b0cd4197f584f5adf0cf7f79be76289f51"
+    },
+    {
+      "id": "role:builder",
+      "path": "adapters/antigravity/.agents/agents/builder.md",
+      "sha256": "978847fd97a05ccd2a18063ad9b34b02195bbe35c64eda97721d1426de018e63"
+    },
+    {
+      "id": "role:design-system-guardian",
+      "path": "adapters/antigravity/.agents/agents/design-system-guardian.md",
+      "sha256": "44103efa439cced936a8c11eb4b78b821fe46e3ed2848beb7bf5df126fb42255"
+    },
+    {
+      "id": "role:editor-backend",
+      "path": "adapters/antigravity/.agents/agents/editor-backend.md",
+      "sha256": "1881baac09d49947d3dcb53a0269bd85f20c0b540bcd3a718bd895f80ab55c04"
+    },
+    {
+      "id": "role:editor-config",
+      "path": "adapters/antigravity/.agents/agents/editor-config.md",
+      "sha256": "3770a8ad8dd2eb729873b78cccbfa1ebbac54df80ce1658a56868c7ec7594fac"
+    },
+    {
+      "id": "role:editor-database",
+      "path": "adapters/antigravity/.agents/agents/editor-database.md",
+      "sha256": "93f894841430f0a867528417addf7a914ff01b9919b60accf2ac7254cb9248ab"
+    },
+    {
+      "id": "role:editor-frontend",
+      "path": "adapters/antigravity/.agents/agents/editor-frontend.md",
+      "sha256": "52935e9453a3aeae8eba767ac17fe334475f637db0b6d57364f131183279d88f"
+    },
+    {
+      "id": "role:editor-tests",
+      "path": "adapters/antigravity/.agents/agents/editor-tests.md",
+      "sha256": "1dbee2c28d76173fb0375fbefd3a42de310052ae44f979745df1225ea497082b"
+    },
+    {
+      "id": "role:judge-quality",
+      "path": "adapters/antigravity/.agents/agents/judge-quality.md",
+      "sha256": "eec976c9cd7dd676c780dfa32723af1d1424049fb326de36039a8eeea8567f51"
+    },
+    {
+      "id": "role:judge-regression",
+      "path": "adapters/antigravity/.agents/agents/judge-regression.md",
+      "sha256": "263211b1bd9ea92039fdf63b9324c34e634ab4edbb607ebee0568918acf1dd71"
+    },
+    {
+      "id": "role:judge-requirements",
+      "path": "adapters/antigravity/.agents/agents/judge-requirements.md",
+      "sha256": "832d67b4f14f633547c7a9dcc1e565a5b8bbe85e740625dd194452558e104762"
+    },
+    {
+      "id": "role:judge-uxui",
+      "path": "adapters/antigravity/.agents/agents/judge-uxui.md",
+      "sha256": "6013364f4624ba8c00871b5d8766ad17e314cedbccab86fa40f9f9fc0a74f3e2"
+    },
+    {
+      "id": "role:motion-director",
+      "path": "adapters/antigravity/.agents/agents/motion-director.md",
+      "sha256": "4760841dc4292eb0ef02e727fde4f5def28cb675ae934f919f8a8c83e6d46c5f"
+    },
+    {
+      "id": "role:orchestrator",
+      "path": "adapters/antigravity/.agents/agents/orchestrator.md",
+      "sha256": "87dc1db4ba7bb70280c8bb55137f681e0bb67042504311e28a687e6645662266"
+    },
+    {
+      "id": "role:repairer",
+      "path": "adapters/antigravity/.agents/agents/repairer.md",
+      "sha256": "652c4394712bc7ffbe2edc15be36d6c4a52a08de35decbff6f5d218377e41e99"
+    },
+    {
+      "id": "role:researcher",
+      "path": "adapters/antigravity/.agents/agents/researcher.md",
+      "sha256": "514867e94478042afacefd05dfa643a79ec43671fdbb4bc89fb289c0827314c5"
+    },
+    {
+      "id": "role:security-reviewer",
+      "path": "adapters/antigravity/.agents/agents/security-reviewer.md",
+      "sha256": "8a56a5bfc9af047e5a7114d9bcba12d095d37881f1edcdbc160343217983f5a5"
+    },
+    {
+      "id": "role:v1-release-validator",
+      "path": "adapters/antigravity/.agents/agents/v1-release-validator.md",
+      "sha256": "234a24ab4d9da25ff353a50edd071489985a99e2092b04ab5848487f7dc60497"
+    },
+    {
+      "id": "role:verifier",
+      "path": "adapters/antigravity/.agents/agents/verifier.md",
+      "sha256": "74dbbfd7b24052ef49009a0ea2162a8f9562d5bb9d47765afce2c41e36cdb0ae"
+    },
+    {
+      "id": "role:visual-capture-runner",
+      "path": "adapters/antigravity/.agents/agents/visual-capture-runner.md",
+      "sha256": "43f40de3e989230abc612fed1963479daf338d3331ebc7b980914cf4cdfd7fc3"
+    },
+    {
+      "id": "role:visual-judge",
+      "path": "adapters/antigravity/.agents/agents/visual-judge.md",
+      "sha256": "add570721136b70186930dfe5ac60228ef6cb573eca2aec55716ff5ce715a460"
+    },
+    {
+      "id": "role:visual-regression-runner",
+      "path": "adapters/antigravity/.agents/agents/visual-regression-runner.md",
+      "sha256": "8db305764a2ae75ec8e0e2f8fd741db351689d50bea0d0f7f4270280451f97ba"
+    },
+    {
+      "id": "role:visual-repair-controller",
+      "path": "adapters/antigravity/.agents/agents/visual-repair-controller.md",
+      "sha256": "a5b754dbf859421d9ed409b6b9f8f111598ab157863f5d92b4135d26adc6720f"
+    },
+    {
+      "id": "role:visual-runtime-audit-runner",
+      "path": "adapters/antigravity/.agents/agents/visual-runtime-audit-runner.md",
+      "sha256": "6d9f9faf3f48c22dc32a7da6a6b44429d04a6048b3ade226d2b538b1c31633ab"
+    },
+    {
+      "id": "skill:backend-change",
+      "path": "adapters/antigravity/.agents/skills/backend-change/SKILL.md",
+      "sha256": "dc741701782d5dae67633a01b25ff6da5446beb44f18881d992aa589878880be"
+    },
+    {
+      "id": "skill:database-change",
+      "path": "adapters/antigravity/.agents/skills/database-change/SKILL.md",
+      "sha256": "1189479b5880f9e98869b077a7370244109e40260d7e1cb083abb2493f29823b"
+    },
+    {
+      "id": "skill:diff-review",
+      "path": "adapters/antigravity/.agents/skills/diff-review/SKILL.md",
+      "sha256": "76b6b648fd793a9eeb9e8c1a8f4863fd59dc8082218af5b8569ca150f13030d1"
+    },
+    {
+      "id": "skill:frontend-change",
+      "path": "adapters/antigravity/.agents/skills/frontend-change/SKILL.md",
+      "sha256": "4a5a3f5b9ed04671aa09b12af9c3a8fd93243c63b7376cfbc655a2c258b196aa"
+    },
+    {
+      "id": "skill:implementation-plan",
+      "path": "adapters/antigravity/.agents/skills/implementation-plan/SKILL.md",
+      "sha256": "d5a4700f7f70e449529238fce45f6d6632b3b44a9725157a2838803ef8a8420b"
+    },
+    {
+      "id": "skill:regression-analysis",
+      "path": "adapters/antigravity/.agents/skills/regression-analysis/SKILL.md",
+      "sha256": "3658af4934271edb2b634082566290d3fc40e8e993df16bf699f215856aa25ff"
+    },
+    {
+      "id": "skill:repair-loop",
+      "path": "adapters/antigravity/.agents/skills/repair-loop/SKILL.md",
+      "sha256": "a47302848833ff6a6a0539edb8b763ab9fa780882297874ecae747f04042801b"
+    },
+    {
+      "id": "skill:repo-map",
+      "path": "adapters/antigravity/.agents/skills/repo-map/SKILL.md",
+      "sha256": "ecb1ae63678d77aadd1a9099cab6baaa72f9947fd48cbe565838636ce5fe9979"
+    },
+    {
+      "id": "skill:requirements-check",
+      "path": "adapters/antigravity/.agents/skills/requirements-check/SKILL.md",
+      "sha256": "db668f9559029123dba0d01752a9058fefca3a9a238377cacdfef95d1cb61035"
+    },
+    {
+      "id": "skill:safe-edit",
+      "path": "adapters/antigravity/.agents/skills/safe-edit/SKILL.md",
+      "sha256": "3a83e225a8d27034eb9bf194ca661cc00410ef45122c70f80a748bf85a24ccf8"
+    },
+    {
+      "id": "skill:security-check",
+      "path": "adapters/antigravity/.agents/skills/security-check/SKILL.md",
+      "sha256": "c2623fbdd15a00ed1b6a6fddfc2a0b8ba05a6b324f4c501e6be167c1bea44cd5"
+    },
+    {
+      "id": "skill:task-contract",
+      "path": "adapters/antigravity/.agents/skills/task-contract/SKILL.md",
+      "sha256": "47409ce6b2f11873efd3c076356600706dd02a20e8c05468bb6f135fb38c1167"
+    },
+    {
+      "id": "skill:test-strategy",
+      "path": "adapters/antigravity/.agents/skills/test-strategy/SKILL.md",
+      "sha256": "8776fb7dcfe86be85a729ae3d2b7ae00b8df6a72bce5fd9f45678f1668308034"
+    }
+  ],
+  "checks": [
+    {
+      "id": "file.hooks",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/hooks.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.guard",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/hooks/pretool-guard.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.permissions",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/settings/aledevos-permissions.overlay.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.manifest",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/adapter-capabilities.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.project",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/project-template.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.provider",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/visualqa/playwright-driver.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.binding",
+      "status": "PASS",
+      "evidence": "skillsystem/bindings/antigravity.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.discovery",
+      "status": "PASS",
+      "evidence": "skillsystem/discovery/antigravity.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.acquisition",
+      "status": "PASS",
+      "evidence": "skillsystem/acquisition/antigravity.json",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.engine",
+      "status": "PASS",
+      "evidence": "core/engine/aledevos.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.context",
+      "status": "PASS",
+      "evidence": "contextos/engine/contextos.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.skillsys",
+      "status": "PASS",
+      "evidence": "skillsystem/engine/skillsystem.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.vqa",
+      "status": "PASS",
+      "evidence": "visualqa/engine/visual-judge.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.release",
+      "status": "PASS",
+      "evidence": "release/engine/v1-release.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.agentsTemplate",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/AGENTS.md.template",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.acquire",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/scripts/acquire-skill.ps1",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "file.certifier",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/certification/antigravity-certifier.mjs",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.pretool.enabled",
+      "status": "PASS",
+      "evidence": "workspace PreToolUse safety gate",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.run_command",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.view_file",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.write_to_file",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.replace_file_content",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.grep_search",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.search_web",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "hooks.matcher.define_subagent",
+      "status": "PASS",
+      "evidence": "run_command|view_file|write_to_file|replace_file_content|multi_replace_file_content|list_dir|find_by_name|grep_search|search_web|read_url_content|browser_.*|define_subagent",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "guard.external_workspace_boundary",
+      "status": "PASS",
+      "evidence": "guard rejects external reads and writes",
+      "capability": "external_directory",
+      "kind": "semantic"
+    },
+    {
+      "id": "guard.dynamic_subagent_denied",
+      "status": "PASS",
+      "evidence": "dynamic code/agent expansion blocked",
+      "capability": "code_mode",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.read_url(*)",
+      "status": "PASS",
+      "evidence": "read_url(*)",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.execute_url(*)",
+      "status": "PASS",
+      "evidence": "execute_url(*)",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.mcp(*)",
+      "status": "PASS",
+      "evidence": "mcp(*)",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.unsandboxed(*)",
+      "status": "PASS",
+      "evidence": "unsandboxed(*)",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.write_file(.aledevos/)",
+      "status": "PASS",
+      "evidence": "write_file(.aledevos/)",
+      "capability": "control_plane_write_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.write_file(.agents/)",
+      "status": "PASS",
+      "evidence": "write_file(.agents/)",
+      "capability": "control_plane_write_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.deny.write_file(.git/)",
+      "status": "PASS",
+      "evidence": "write_file(.git/)",
+      "capability": "control_plane_write_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.unsandboxed_denied",
+      "status": "PASS",
+      "evidence": "unsandboxed execution denied",
+      "capability": "code_mode",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.command_review",
+      "status": "PASS",
+      "evidence": "all unconfigured commands require review",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "permissions.no_wildcard_allow",
+      "status": "PASS",
+      "evidence": "no wildcard auto-allow",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/orchestrator.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.identity",
+      "status": "PASS",
+      "evidence": "orchestrator",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.orchestrator.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/architect.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.identity",
+      "status": "PASS",
+      "evidence": "architect",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.architect.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/researcher.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.identity",
+      "status": "PASS",
+      "evidence": "researcher",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.researcher.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/builder.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.identity",
+      "status": "PASS",
+      "evidence": "builder",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.builder.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/auditor.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.identity",
+      "status": "PASS",
+      "evidence": "auditor",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.auditor.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/security-reviewer.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.identity",
+      "status": "PASS",
+      "evidence": "security-reviewer",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.security-reviewer.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/editor-frontend.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.identity",
+      "status": "PASS",
+      "evidence": "editor-frontend",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-frontend.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/editor-backend.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.identity",
+      "status": "PASS",
+      "evidence": "editor-backend",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-backend.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/editor-database.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.identity",
+      "status": "PASS",
+      "evidence": "editor-database",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-database.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/editor-tests.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.identity",
+      "status": "PASS",
+      "evidence": "editor-tests",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-tests.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/editor-config.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.identity",
+      "status": "PASS",
+      "evidence": "editor-config",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.editor-config.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/verifier.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.identity",
+      "status": "PASS",
+      "evidence": "verifier",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.verifier.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/repairer.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.identity",
+      "status": "PASS",
+      "evidence": "repairer",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.tool_boundary",
+      "status": "PASS",
+      "evidence": "product writer boundary",
+      "capability": "product_write",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.repairer.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/judge-requirements.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.identity",
+      "status": "PASS",
+      "evidence": "judge-requirements",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-requirements.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/judge-regression.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.identity",
+      "status": "PASS",
+      "evidence": "judge-regression",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-regression.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/judge-quality.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.identity",
+      "status": "PASS",
+      "evidence": "judge-quality",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-quality.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/judge-uxui.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.identity",
+      "status": "PASS",
+      "evidence": "judge-uxui",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.judge-uxui.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/design-system-guardian.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.identity",
+      "status": "PASS",
+      "evidence": "design-system-guardian",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.design-system-guardian.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/motion-director.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.identity",
+      "status": "PASS",
+      "evidence": "motion-director",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.motion-director.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/visual-capture-runner.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.identity",
+      "status": "PASS",
+      "evidence": "visual-capture-runner",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-capture-runner.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/visual-regression-runner.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.identity",
+      "status": "PASS",
+      "evidence": "visual-regression-runner",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-regression-runner.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/visual-runtime-audit-runner.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.identity",
+      "status": "PASS",
+      "evidence": "visual-runtime-audit-runner",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/visual-judge.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.identity",
+      "status": "PASS",
+      "evidence": "visual-judge",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.tool_boundary",
+      "status": "PASS",
+      "evidence": "read-only specialist",
+      "capability": "repository_read",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.policy",
+      "status": "PASS",
+      "evidence": "off",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-judge.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/visual-repair-controller.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.identity",
+      "status": "PASS",
+      "evidence": "visual-repair-controller",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.visual-repair-controller.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.file",
+      "status": "PASS",
+      "evidence": "adapters/antigravity/.agents/agents/v1-release-validator.md",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.identity",
+      "status": "PASS",
+      "evidence": "v1-release-validator",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.no_network",
+      "status": "PASS",
+      "evidence": "native network tools absent",
+      "capability": "network",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.no_dynamic_agent",
+      "status": "PASS",
+      "evidence": "dynamic agent definition absent",
+      "capability": "structured_handoff",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.tool_boundary",
+      "status": "PASS",
+      "evidence": "governed state role boundary",
+      "capability": "canonical_gate",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.policy",
+      "status": "PASS",
+      "evidence": "sandbox",
+      "capability": "arbitrary_shell_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "role.v1-release-validator.instructions",
+      "status": "PASS",
+      "evidence": "portable AleDevOS instructions",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "roles.native_wording",
+      "status": "PASS",
+      "evidence": "Antigravity-native role wording",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "skills.native_count",
+      "status": "PASS",
+      "evidence": "13 skills",
+      "capability": "skill_registry",
+      "kind": "semantic"
+    },
+    {
+      "id": "skills.discovery_root",
+      "status": "PASS",
+      "evidence": "native .agents/skills discovery",
+      "capability": "skill_registry",
+      "kind": "semantic"
+    },
+    {
+      "id": "skills.acquisition_root",
+      "status": "PASS",
+      "evidence": "native acquisition target",
+      "capability": "skill_registry",
+      "kind": "semantic"
+    },
+    {
+      "id": "skills.binding_paths",
+      "status": "PASS",
+      "evidence": "13 native skill bindings",
+      "capability": "skill_registry",
+      "kind": "semantic"
+    },
+    {
+      "id": "project.protected_paths",
+      "status": "PASS",
+      "evidence": "control plane protected",
+      "capability": "control_plane_write_deny",
+      "kind": "semantic"
+    },
+    {
+      "id": "binding.visual_provider",
+      "status": "PASS",
+      "evidence": "adapter Playwright provider",
+      "capability": "visual_qa_browser_capture",
+      "kind": "semantic"
+    },
+    {
+      "id": "behavior.repair_cap",
+      "status": "PASS",
+      "evidence": "global repair cap=2",
+      "capability": "repair_cap",
+      "kind": "semantic"
+    },
+    {
+      "id": "manifest.identity",
+      "status": "PASS",
+      "evidence": "canonical Antigravity ABI manifest",
+      "capability": null,
+      "kind": "semantic"
+    },
+    {
+      "id": "capability.repository_read.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "repository_read",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.product_write.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "product_write",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.control_plane_write_deny.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "control_plane_write_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.arbitrary_shell_deny.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "arbitrary_shell_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.canonical_gate.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "canonical_gate",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.repair_cap.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "repair_cap",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prewrite.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "scope_prewrite",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prepass.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "scope_prepass",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.external_directory.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "external_directory",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.network.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "network",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.code_mode.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "code_mode",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.compaction.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "compaction",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.structured_handoff.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "structured_handoff",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_budget.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "context_budget",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.checkpoint_resume.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "checkpoint_resume",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.preventive_transition.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "preventive_transition",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.diff_first.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "diff_first",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_dedup.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "context_dedup",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.skill_registry.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "skill_registry",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.motion_governance.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "motion_governance",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_capture_contract.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "visual_qa_capture_contract",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_browser_capture.proof",
+      "status": "PASS",
+      "evidence": "direct Antigravity proof",
+      "capability": "visual_qa_browser_capture",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_regression.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "visual_qa_regression",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_runtime_checks.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "visual_qa_runtime_checks",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_judge.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "visual_qa_judge",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_bounded_repair.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "visual_qa_bounded_repair",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.target_runtime_preflight.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "target_runtime_preflight",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.v1_release_validation.proof",
+      "status": "PASS",
+      "evidence": "portable frozen subsystem + target-runtime preflight",
+      "capability": "v1_release_validation",
+      "kind": "capability-proof"
+    }
+  ],
+  "evidence_sha256": "bbf8d7a7926c63dedde4739ab70de98f4de877b9177ffcbfd46dc7230202d1ab"
+}

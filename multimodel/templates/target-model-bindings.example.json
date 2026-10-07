@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "binding_id": "target-model-bindings",
+  "target_runtime": "EXAMPLE_ONLY",
+  "slots": {
+    "primary": {
+      "provider_id": "local-runtime",
+      "model_id": "PRIMARY_MODEL_ID",
+      "provider_family": "local",
+      "modalities": ["text"],
+      "context_window_tokens": 0,
+      "cost_class": "local",
+      "runtime_ready": false,
+      "runtime_evidence": null
+    },
+    "secondary": {
+      "provider_id": "SECOND_PROVIDER_ID",
+      "model_id": "SECOND_MODEL_ID",
+      "provider_family": "target-bound",
+      "modalities": ["text"],
+      "context_window_tokens": 0,
+      "cost_class": "unknown",
+      "runtime_ready": false,
+      "runtime_evidence": null
+    }
+  }
+}

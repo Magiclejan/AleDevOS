@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P3_SAFE_CONCURRENCY",
+  "status": "ADVANCED_EXECUTION_P3_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "multi_worker_local_concurrency": true,
+    "scope_conflict_admission": true,
+    "stable_fifo_admission": true,
+    "max_parallelism_enforced": true,
+    "independent_worker_recovery": true,
+    "p1_p2_frozen_dependencies": true,
+    "dispatcher_disabled": true,
+    "queue_disabled": true,
+    "multi_machine_disabled": true,
+    "network_disabled": true,
+    "target_agent_runtime_binding": false
+  },
+  "dependencies": {
+    "p1_certificate_valid": true,
+    "p2_certificate_valid": true
+  },
+  "inputs": [
+    {
+      "path": "advanced-execution/concurrency/concurrency-manager.mjs",
+      "sha256": "0071f87708fd7a34d2ec2b1d6340fd3ce143c1b57855de9bfff2f4731b2e48c6"
+    },
+    {
+      "path": "advanced-execution/policies/concurrency-policy.json",
+      "sha256": "c7e2a0c738785d3ba42d071f745b7a7513b93bd2185e0785da273e185d9c5251"
+    },
+    {
+      "path": "advanced-execution/contracts/SAFE_CONCURRENCY.md",
+      "sha256": "5e23150307b6b88ac6305b97d9cbb80ceec9e10b675daad5aeb98921a961478f"
+    },
+    {
+      "path": "advanced-execution/schemas/concurrency-plan.schema.json",
+      "sha256": "dcd1f080c1f8d9df32377e8387fc6d2ac417141fc08bf240413b41c9a0a0e1d6"
+    },
+    {
+      "path": "advanced-execution/schemas/concurrency-group.schema.json",
+      "sha256": "639a8c9fae31b938f990f71c8ab5665eac6e849df08585b5d22a343e022b27b5"
+    },
+    {
+      "path": "advanced-execution/schemas/concurrency-lease-registry.schema.json",
+      "sha256": "224884863157eb007686837daf0a64ece327344c4ed3e4e52cc2f8c2374ff2be"
+    },
+    {
+      "path": "advanced-execution/templates/concurrency-request.example.json",
+      "sha256": "bfbe5c87d1a065cc094a6cf779af4e9ffaf7212b4f0ad9d11027592f165ff033"
+    },
+    {
+      "path": "advanced-execution/workers/worker-runtime.mjs",
+      "sha256": "237f6357b11fc39131cc0f4de0cb8717cd8e13fb29a1c3910b1b7f200253d982"
+    },
+    {
+      "path": "advanced-execution/workers/worker-manager.mjs",
+      "sha256": "af4ef04891616f3d11773452c39117142e0fbb7196927a96f336a2a7cc316cf1"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p1.json",
+      "sha256": "d9fab0d24e805ba99f38ce6a14a09dda41d7fcc81013d1a96a273468c1826aac"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p2.json",
+      "sha256": "85352eb7c3ea9f39b278d6ffc314d8e14de5b19776f5f2f17afebcf74364372f"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    }
+  ],
+  "created_at": "2026-10-06T16:27:26.367Z",
+  "evidence_sha256": "a3f73cfc26bf58a2f82a520c92bcd9e2232bbd3c6e204447abf7f19e87bb9041"
+}

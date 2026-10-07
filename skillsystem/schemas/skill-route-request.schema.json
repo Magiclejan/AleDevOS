@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-route-request.schema.json",
+  "title": "AleDevOS Skill Route Request 1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "required_capabilities",
+    "preferred_capabilities",
+    "intents",
+    "domains"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "required_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      }
+    },
+    "preferred_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      }
+    },
+    "intents": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      }
+    },
+    "domains": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "max_skills": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32
+    },
+    "allow_unresolved_suggestions": {
+      "type": "boolean"
+    },
+    "adapter": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

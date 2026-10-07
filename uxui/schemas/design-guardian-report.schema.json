@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/design-guardian-report.schema.json",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","task_id","status","blockers","warnings","checks","evidence_sha256","design_context_sha256","component_registry_sha256","report_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "task_id":{"type":"string"},
+    "status":{"enum":["GUARDIAN_PASS","GUARDIAN_BLOCKED"]},
+    "blockers":{"type":"array","items":{"type":"object"}},
+    "warnings":{"type":"array","items":{"type":"object"}},
+    "checks":{"type":"object"},
+    "evidence_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "design_context_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "component_registry_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "report_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

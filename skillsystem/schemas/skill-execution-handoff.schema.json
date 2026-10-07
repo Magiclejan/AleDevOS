@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-execution-handoff.schema.json",
+  "title": "AleDevOS Skill Execution Handoff",
+  "type": "object",
+  "required": ["schema_version", "task_id", "status", "target_agent", "load_packet_ref", "skill_ids", "input_contract", "output_contract", "execution_performed", "integrity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"const": "EXECUTION_HANDOFF_READY"},
+    "execution_performed": {"const": false},
+    "input_contract": {"type": "object"},
+    "output_contract": {"type": "object"},
+    "integrity": {"type": "object"}
+  },
+  "additionalProperties": true
+}

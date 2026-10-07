@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "reuse_before_create": true,
+  "local_fork_default": "DENY",
+  "canonical_component_change": "PREFER",
+  "require_justification_for_new_reusable_component": true,
+  "decision_actions": [
+    "REUSE_CANONICAL",
+    "EXTEND_CANONICAL",
+    "CREATE_NEW_JUSTIFIED",
+    "BLOCK_LOCAL_FORK",
+    "CREATE_BLOCKED_NONCANONICAL_PATH",
+    "CREATE_BLOCKED_JUSTIFICATION_REQUIRED",
+    "REVIEW_REQUIRED_AMBIGUOUS",
+    "REVIEW_REQUIRED_PARTIAL_MATCH"
+  ],
+  "discovery_auto_register": false,
+  "require_source_hash": true,
+  "require_sealed_decision": true,
+  "global_reusable_components_require_canonical_path": true
+}

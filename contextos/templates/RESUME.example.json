@@ -1,0 +1,79 @@
+{
+  "version": "0.2.0",
+  "resume_id": "example-resume",
+  "created_at": "2026-10-05T12:00:01.000Z",
+  "source_checkpoint_id": "example-checkpoint",
+  "source_checkpoint_sha256": "84a9d01866adc8d26a42b64c506a97df19d8d2a2f3c8c3efcf615db6fb0e0ed1",
+  "task_id": "task-example",
+  "state": {
+    "task": {
+      "objective": "Example only; real checkpoints are captured by the engine.",
+      "constraints": [
+        "Do not include transcript history"
+      ]
+    },
+    "run_state": {
+      "version": 1,
+      "task_id": "task-example",
+      "approved_scope": [
+        "src/example.ts"
+      ],
+      "scope_version": 1,
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "status": "UNVERIFIED"
+        }
+      ],
+      "gates": {},
+      "judges": {},
+      "blockers": [],
+      "repair_count": 0,
+      "max_repairs": 2,
+      "blocked_reason": null,
+      "final_state": null,
+      "history": []
+    },
+    "working_set": {
+      "is_git_repo": true,
+      "head": "example",
+      "changed_paths": [
+        "src/example.ts"
+      ],
+      "diff_stat": "src/example.ts | 2 ++"
+    },
+    "summary": "Example state before compaction.",
+    "decisions": [
+      "Use the approved scope only"
+    ],
+    "evidence": [
+      "Verifier evidence is still pending"
+    ],
+    "relevant_tests": [
+      "canonical gate"
+    ],
+    "risks": [],
+    "open_questions": [],
+    "next": {
+      "agent": "verifier",
+      "action": "Run deterministic verification",
+      "required_reads": [
+        "git diff HEAD"
+      ],
+      "forbidden_actions": [
+        "Do not modify product code"
+      ]
+    }
+  },
+  "critical_state_sha256": "c3cdb58a5a9de15d8a62f43437165bf37dc39edf82be6e14d911004e147e69fc",
+  "context_metrics": {
+    "source_profile": "opencode-qwen64k",
+    "source_used_tokens": 33000,
+    "source_pressure_band": "COMPACT_REQUIRED",
+    "transcript_included": false
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "payload_sha256": "031315e69ce6418263129176569a52d6d176737556d2ff24444cb10774703152"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "example-quality-fallbacks",
+  "task_id": "TASK_EXAMPLE",
+  "judge_role": "quality",
+  "target_slot": "secondary",
+  "max_hops": 2,
+  "candidates": [
+    {
+      "priority": 1,
+      "provider_id": "THIRD_PROVIDER_ID",
+      "provider_family": "THIRD_PROVIDER_FAMILY",
+      "model_id": "THIRD_MODEL_ID",
+      "modalities": ["text"],
+      "context_window_tokens": 0,
+      "cost_class": "unknown",
+      "runtime_ready": false,
+      "runtime_evidence": null
+    }
+  ]
+}

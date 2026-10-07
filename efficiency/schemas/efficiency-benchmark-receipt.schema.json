@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Efficiency Benchmark Receipt P7",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","phase","status","profile","metrics","quality","project_manager_independence","artifacts","integrity"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"phase":{"const":"GLOBAL_EFFICIENCY_P7_BENCHMARK"},
+    "status":{"enum":["EFFICIENCY_PASS","EFFICIENCY_BLOCKED","EFFICIENCY_FAIL"]},"profile":{"enum":["MICRO","STANDARD","DEEP","CRITICAL"]},
+    "metrics":{"type":"object"},"quality":{"type":"object"},"project_manager_independence":{"type":"object"},"artifacts":{"type":"array"},
+    "integrity":{"type":"object","required":["algorithm","payload_sha256"],"properties":{"algorithm":{"const":"sha256"},"payload_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}
+  }
+}

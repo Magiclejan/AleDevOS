@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020/schema",
+  "title": "AleDevOS Advanced Execution P4 Dispatch Receipt",
+  "type": "object",
+  "required": ["schema_version","phase","dispatch_id","event","queue_epoch","receipt_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"ADVANCED_EXECUTION_P4_DISPATCHER_QUEUE"},
+    "dispatch_id": {"type":"string"},
+    "event": {"type":"string"},
+    "queue_epoch": {"type":"integer"},
+    "receipt_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

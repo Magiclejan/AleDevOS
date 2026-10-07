@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://contextos/dependency-map.schema.json",
+  "title": "ContextOS Dependency Map v0.5",
+  "type": "object",
+  "required": [
+    "version",
+    "source",
+    "parser_coverage",
+    "nodes",
+    "edges",
+    "external_packages",
+    "unresolved",
+    "integrity"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.5.0"
+    },
+    "edges": {
+      "type": "array"
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "payload_sha256"
+      ]
+    }
+  }
+}

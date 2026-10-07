@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P2",
+  "status": "MASTER_VALIDATION_P2_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "adapter_runtime_validator": true,
+    "four_canonical_adapters": true,
+    "cross_adapter_same_target": true,
+    "active_security_probes": true,
+    "no_dangerous_bypass": true,
+    "physical_network_isolation_claimed": false,
+    "final_freeze_authority": "MASTER_GATE_ONLY"
+  },
+  "p1_certificate_present": true,
+  "deterministic_tests": 78,
+  "inputs": [
+    {
+      "path": "release/templates/master-validator-adapter-runtime.mjs",
+      "sha256": "fa8f6da797a883e575b16162b8c175eef816bc0011546a7af0e086953bf33bd2"
+    },
+    {
+      "path": "release/templates/master-validation-p2-certifier.mjs",
+      "sha256": "3fa3fe5a27259fbdbaff76eb9157870bb10e04729bd84e3dc9bc3be259b512f0"
+    },
+    {
+      "path": "release/schemas/master-adapter-runtime-receipt.schema.json",
+      "sha256": "7f7d1b12e4179aaa7e6e092911f22946eb57c8f2efd218e375ac54ce63748baa"
+    },
+    {
+      "path": "release/templates/MASTER_ADAPTER_RUNTIME_RECEIPT.example.json",
+      "sha256": "f6191c3fd37b7a3dfd1dc10de22c80559ae9e8c6fa70d3fefcb0b231636e2bb3"
+    },
+    {
+      "path": "tests/master-validation-phase2.test.mjs",
+      "sha256": "fcc62d0f6ca3a7bc5a4c8f1bbc5bee962cca71d22711e7d70f0203f70b6488cf"
+    },
+    {
+      "path": "scripts/52-self-test-master-validation-phase2.ps1",
+      "sha256": "1bc98c1f848b9e66f8ea34757cd6cd2fb7c2902e100d68c6d874f9c6ab955670"
+    },
+    {
+      "path": "scripts/53-master-validation-p2-target-adapters.ps1",
+      "sha256": "63ad2371af201978cf577dffe823672ab970f8a0cd7532fcfcb3d3bdb377a7c4"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p1.json",
+      "sha256": "32c0e62c1e5dbe35344b2eda2b0781b10a24a82e1a3330da2eae9781527a1234"
+    }
+  ],
+  "master_p2_certificate_sha256": "4d195bca8c27b5931bd96bde19007708aeae274b889fd2334f812ab46a5069b4"
+}

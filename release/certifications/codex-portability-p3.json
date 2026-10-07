@@ -1,0 +1,2038 @@
+{
+  "schema_version": "1.0",
+  "adapter": "codex",
+  "adapter_contract_version": "2.0",
+  "certification_phase": "portability-p3",
+  "dialect": "codex-project-config-2026",
+  "layout": "source",
+  "status": "CODEX_ADAPTER_CERTIFIED",
+  "summary": {
+    "total": 252,
+    "passed": 252,
+    "failed": 0
+  },
+  "runtime_smoke": {
+    "required_for_target_release": true,
+    "executed": false,
+    "reason": "Codex CLI/target authentication/model readiness are target-machine evidence, not package certification."
+  },
+  "inputs": [
+    {
+      "id": "config",
+      "path": "adapters/codex/.codex/config.toml",
+      "sha256": "443bdbd9ddc9dc6005bc0651f06626674d11efef03c825d446eec7c36daae6f5"
+    },
+    {
+      "id": "manifest",
+      "path": "adapters/codex/adapter-capabilities.json",
+      "sha256": "318c6f2dda7b8f2c2b8994edafe8fef6e9d32ce080007ca619663cf252a4d3c4"
+    },
+    {
+      "id": "provider",
+      "path": "adapters/codex/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "id": "projectTemplate",
+      "path": "adapters/codex/project-template.json",
+      "sha256": "69854d30d6f158a18e083bfb7ea721ba49cfdc0da0626185bc586352510c4d69"
+    },
+    {
+      "id": "binding",
+      "path": "skillsystem/bindings/codex.json",
+      "sha256": "855f787aa83ba137aa17cdb63b33ebe6e43e6223bf479331456a9c5cd44aca2e"
+    },
+    {
+      "id": "discovery",
+      "path": "skillsystem/discovery/codex.json",
+      "sha256": "aee2ba59480c4cfa05ee757f330f53338ce859a1a22cfc65def03bb39bf2d01e"
+    },
+    {
+      "id": "acquisition",
+      "path": "skillsystem/acquisition/codex.json",
+      "sha256": "575eb50e6954163f9d649795ffdbbe0f0db5530397c046d76127e17bb11c914d"
+    },
+    {
+      "id": "engine",
+      "path": "core/engine/aledevos.mjs",
+      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+    },
+    {
+      "id": "ctx",
+      "path": "contextos/engine/contextos.mjs",
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
+    },
+    {
+      "id": "skillsRuntime",
+      "path": "skillsystem/engine/skillsystem.mjs",
+      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+    },
+    {
+      "id": "vqa",
+      "path": "visualqa/engine/visual-judge.mjs",
+      "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
+    },
+    {
+      "id": "release",
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "id": "role:architect",
+      "path": "adapters/codex/.codex/agents/architect.toml",
+      "sha256": "494e9755f0f72318579388e1c61e15fe560c705ec361d140e28d21f6f46df857"
+    },
+    {
+      "id": "role:auditor",
+      "path": "adapters/codex/.codex/agents/auditor.toml",
+      "sha256": "ca7410bebd2d2a5e604d57ffaba4d0e9b1cdc328b6692f7c2fe8387ece4260f5"
+    },
+    {
+      "id": "role:builder",
+      "path": "adapters/codex/.codex/agents/builder.toml",
+      "sha256": "1ff20132f2397567e9ebf18016aa98cf55aa1d352597ea38cdd05e8a83adf234"
+    },
+    {
+      "id": "role:design-system-guardian",
+      "path": "adapters/codex/.codex/agents/design-system-guardian.toml",
+      "sha256": "8b73ab17ce9393aaa7a56bc62aa7ec2cb8ab5861e0ed994894845a56c78e8adc"
+    },
+    {
+      "id": "role:editor-backend",
+      "path": "adapters/codex/.codex/agents/editor-backend.toml",
+      "sha256": "81873c637815ce8a27d169234483f42b5645e413df4a9bbb08779bfd53f5bee5"
+    },
+    {
+      "id": "role:editor-config",
+      "path": "adapters/codex/.codex/agents/editor-config.toml",
+      "sha256": "207f68d988e5b7cd9d0236a67395dabb153e99989e1f545af15df284c9a3d824"
+    },
+    {
+      "id": "role:editor-database",
+      "path": "adapters/codex/.codex/agents/editor-database.toml",
+      "sha256": "1c545aaa432c7aa9b051ea3c126b07d67cbcb0d2ad05feeac6b75f200a89fcf0"
+    },
+    {
+      "id": "role:editor-frontend",
+      "path": "adapters/codex/.codex/agents/editor-frontend.toml",
+      "sha256": "af7958ec224a3e0290d52f759e79dd6aea18e454c7c80fd4571194b9c8f74a86"
+    },
+    {
+      "id": "role:editor-tests",
+      "path": "adapters/codex/.codex/agents/editor-tests.toml",
+      "sha256": "7566c845e42353ec66e38c32208b4f01e0d8423a4b00f2a7124addb9c044f792"
+    },
+    {
+      "id": "role:judge-quality",
+      "path": "adapters/codex/.codex/agents/judge-quality.toml",
+      "sha256": "19082b904538fbb0033f96c5572eae8c3c18b325448a21c8a2e9cfe8dac8f8bf"
+    },
+    {
+      "id": "role:judge-regression",
+      "path": "adapters/codex/.codex/agents/judge-regression.toml",
+      "sha256": "55223aa417c9a366849db14df3b6a74203d427942ab9f50327335570df7b447e"
+    },
+    {
+      "id": "role:judge-requirements",
+      "path": "adapters/codex/.codex/agents/judge-requirements.toml",
+      "sha256": "7c026f120a53b3c1afc29a5bca6fb84b00fca820600c1416dd601df2bb70ba56"
+    },
+    {
+      "id": "role:judge-uxui",
+      "path": "adapters/codex/.codex/agents/judge-uxui.toml",
+      "sha256": "5f63d49066fe9f297217908f9aba4e3ce36b84d9e75751f1572e0bf6786fb48a"
+    },
+    {
+      "id": "role:motion-director",
+      "path": "adapters/codex/.codex/agents/motion-director.toml",
+      "sha256": "d6f37ff570284e9486366cdd120e472ba25f55cd3d44fa9f16624a57b2a767de"
+    },
+    {
+      "id": "role:orchestrator",
+      "path": "adapters/codex/.codex/agents/orchestrator.toml",
+      "sha256": "cf63beca6bb84951fc4f2dfb5a1c8fff83f4a9861542840ed4c68a49fdc0d454"
+    },
+    {
+      "id": "role:repairer",
+      "path": "adapters/codex/.codex/agents/repairer.toml",
+      "sha256": "30a615d51d155529ee5b0be37bb6f3e21ee02e388b571d5f144722e3aeb5934c"
+    },
+    {
+      "id": "role:researcher",
+      "path": "adapters/codex/.codex/agents/researcher.toml",
+      "sha256": "6ea28f51f60c55b4f17d4ec0a90231764b5dccfbd8218cc6b6e738e74dee1775"
+    },
+    {
+      "id": "role:security-reviewer",
+      "path": "adapters/codex/.codex/agents/security-reviewer.toml",
+      "sha256": "e83335a1a978881f343580d991e724d24fda8e05de9057bc3ab771296e39a268"
+    },
+    {
+      "id": "role:v1-release-validator",
+      "path": "adapters/codex/.codex/agents/v1-release-validator.toml",
+      "sha256": "6d2259f0ac617f33f88b7b02d4d54cd08716889f0f10b4b04112ca5eb72fe725"
+    },
+    {
+      "id": "role:verifier",
+      "path": "adapters/codex/.codex/agents/verifier.toml",
+      "sha256": "d82b0d11adcc5ffdc1895af1633105dc93d3fd76602a1557739fddfd49e1baaf"
+    },
+    {
+      "id": "role:visual-capture-runner",
+      "path": "adapters/codex/.codex/agents/visual-capture-runner.toml",
+      "sha256": "d99bc889c303ef8de9dbe110a3f223556dea16c1f570b21d985ba7f1bb1bddfd"
+    },
+    {
+      "id": "role:visual-judge",
+      "path": "adapters/codex/.codex/agents/visual-judge.toml",
+      "sha256": "9e87c06f59c4f8eca166fe1971111c2f9715f02e9fa1f799275cdc357f13b0ec"
+    },
+    {
+      "id": "role:visual-regression-runner",
+      "path": "adapters/codex/.codex/agents/visual-regression-runner.toml",
+      "sha256": "bd0f8d42bb4b7d6c3256b796350b585fc0787e91b2f4693d947780db6e89408f"
+    },
+    {
+      "id": "role:visual-repair-controller",
+      "path": "adapters/codex/.codex/agents/visual-repair-controller.toml",
+      "sha256": "10b913c3bf30b406adf6995023772fc5780f70ba69ecee9de253f47d86ea3520"
+    },
+    {
+      "id": "role:visual-runtime-audit-runner",
+      "path": "adapters/codex/.codex/agents/visual-runtime-audit-runner.toml",
+      "sha256": "34a35edce59eb998b5ac3263536c0a870fb82c5ecf9d2c7426d3fd01c9133304"
+    },
+    {
+      "id": "skill:backend-change",
+      "path": "adapters/codex/.agents/skills/backend-change/SKILL.md",
+      "sha256": "7dbee20cfd8879c8c84c1d2f4341f43a231ec1ca66d5c9618adf3fd64639fb25"
+    },
+    {
+      "id": "skill:database-change",
+      "path": "adapters/codex/.agents/skills/database-change/SKILL.md",
+      "sha256": "790d22152c6ed4f3d7c7a9ecb95f32b1bd5ff64ff9258114082e77304142a4bc"
+    },
+    {
+      "id": "skill:diff-review",
+      "path": "adapters/codex/.agents/skills/diff-review/SKILL.md",
+      "sha256": "05b6a6c8b48f400630d3cedf2aad50ed92fd1a995ccb42e47c62ec0f120a083a"
+    },
+    {
+      "id": "skill:frontend-change",
+      "path": "adapters/codex/.agents/skills/frontend-change/SKILL.md",
+      "sha256": "ee6a1b3c018ac3e2f4c7e2452e41a507c4cfd797ef591bae997bb71eab1568f3"
+    },
+    {
+      "id": "skill:implementation-plan",
+      "path": "adapters/codex/.agents/skills/implementation-plan/SKILL.md",
+      "sha256": "fa599943b670697d6eca5d676e92b2826f44778f711657e7869f39cab76fa796"
+    },
+    {
+      "id": "skill:regression-analysis",
+      "path": "adapters/codex/.agents/skills/regression-analysis/SKILL.md",
+      "sha256": "77c8d5561abc03253c1d1ebf86d34df1194cebc2fba1d3ce4cab7ea0e035f799"
+    },
+    {
+      "id": "skill:repair-loop",
+      "path": "adapters/codex/.agents/skills/repair-loop/SKILL.md",
+      "sha256": "acbb346ca87716e32136615ccfd06faa9f8806ea13ef7ccb897432e9076d369e"
+    },
+    {
+      "id": "skill:repo-map",
+      "path": "adapters/codex/.agents/skills/repo-map/SKILL.md",
+      "sha256": "bc0e74ce21a2ceeb906661df9edcaa9af43409c50249122e43ef814ce66237c5"
+    },
+    {
+      "id": "skill:requirements-check",
+      "path": "adapters/codex/.agents/skills/requirements-check/SKILL.md",
+      "sha256": "9e10d841b7b8da83aa497c10d5935b7cd99e12aa3f4df12fa3f1f6399e6f8992"
+    },
+    {
+      "id": "skill:safe-edit",
+      "path": "adapters/codex/.agents/skills/safe-edit/SKILL.md",
+      "sha256": "83ef5d4ccc221e5fbc550286b8777500033a340b6c2b7724dec8f0eceb4219ed"
+    },
+    {
+      "id": "skill:security-check",
+      "path": "adapters/codex/.agents/skills/security-check/SKILL.md",
+      "sha256": "6b6974bb28597f4ce985be15120e83c369beea91fd992547b256e156c8999052"
+    },
+    {
+      "id": "skill:task-contract",
+      "path": "adapters/codex/.agents/skills/task-contract/SKILL.md",
+      "sha256": "c2338ddd337d3a301167c0ceb5d34f37080c2e0afd490d1b9e10c8b884cefaa5"
+    },
+    {
+      "id": "skill:test-strategy",
+      "path": "adapters/codex/.agents/skills/test-strategy/SKILL.md",
+      "sha256": "af6952c58d205be47e04a2a29d2c16b681b3f9c8b1963ab1ea77bb3a00685ee7"
+    }
+  ],
+  "checks": [
+    {
+      "id": "artifact.config",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/config.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.agents",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.skillsDir",
+      "status": "PASS",
+      "detail": "adapters/codex/.agents/skills",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.manifest",
+      "status": "PASS",
+      "detail": "adapters/codex/adapter-capabilities.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.provider",
+      "status": "PASS",
+      "detail": "adapters/codex/visualqa/playwright-driver.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.projectTemplate",
+      "status": "PASS",
+      "detail": "adapters/codex/project-template.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.binding",
+      "status": "PASS",
+      "detail": "skillsystem/bindings/codex.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.discovery",
+      "status": "PASS",
+      "detail": "skillsystem/discovery/codex.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.acquisition",
+      "status": "PASS",
+      "detail": "skillsystem/acquisition/codex.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.engine",
+      "status": "PASS",
+      "detail": "core/engine/aledevos.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.ctx",
+      "status": "PASS",
+      "detail": "contextos/engine/contextos.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.skillsRuntime",
+      "status": "PASS",
+      "detail": "skillsystem/engine/skillsystem.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.vqa",
+      "status": "PASS",
+      "detail": "visualqa/engine/visual-judge.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.release",
+      "status": "PASS",
+      "detail": "release/engine/v1-release.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.approval_never",
+      "status": "PASS",
+      "detail": "AleDevOS roles cannot self-approve sandbox escape",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.default_permissions",
+      "status": "PASS",
+      "detail": "safe default permission profile",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.web_search_disabled",
+      "status": "PASS",
+      "detail": "native web search disabled",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.login_shell_disabled",
+      "status": "PASS",
+      "detail": "login shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.current_workspace_token",
+      "status": "PASS",
+      "detail": "current Codex workspace token only",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.multi_agent",
+      "status": "PASS",
+      "detail": "Codex multi-agent enabled",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.request_permissions_disabled",
+      "status": "PASS",
+      "detail": "no model-driven permission expansion",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "config.code_mode_disabled",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.aledevos_readonly.exists",
+      "status": "PASS",
+      "detail": "aledevos_readonly declared",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.aledevos_writer.exists",
+      "status": "PASS",
+      "detail": "aledevos_writer declared",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.aledevos_state_runner.exists",
+      "status": "PASS",
+      "detail": "aledevos_state_runner declared",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.readonly.external_deny",
+      "status": "PASS",
+      "detail": "external filesystem denied; workspace reopened read-only",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.external_deny",
+      "status": "PASS",
+      "detail": "writer external filesystem denied",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect..aledevos",
+      "status": "PASS",
+      "detail": ".aledevos is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect..codex",
+      "status": "PASS",
+      "detail": ".codex is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect..agents",
+      "status": "PASS",
+      "detail": ".agents is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect.AGENTS.md",
+      "status": "PASS",
+      "detail": "AGENTS.md is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect.AGENTS.override.md",
+      "status": "PASS",
+      "detail": "AGENTS.override.md is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.protect..git",
+      "status": "PASS",
+      "detail": ".git is read-only in writer profile",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.writer.product_write",
+      "status": "PASS",
+      "detail": "workspace writable before specific protected overrides",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.state.external_deny",
+      "status": "PASS",
+      "detail": "state runner external filesystem denied",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.state.only_state_write",
+      "status": "PASS",
+      "detail": "state runner only writes .aledevos/state",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.state.network_restricted",
+      "status": "PASS",
+      "detail": "external network denied; loopback allowed",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "roles.count",
+      "status": "PASS",
+      "detail": "25 declared roles",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/architect.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/auditor.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/builder.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/design-system-guardian.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/editor-backend.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/editor-config.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/editor-database.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/editor-frontend.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/editor-tests.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/judge-quality.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/judge-regression.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/judge-requirements.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/judge-uxui.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/motion-director.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/orchestrator.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/repairer.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.permissions",
+      "status": "PASS",
+      "detail": "aledevos_writer",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/researcher.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/security-reviewer.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.permissions",
+      "status": "PASS",
+      "detail": "aledevos_readonly",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.shell_boundary",
+      "status": "PASS",
+      "detail": "shell disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/v1-release-validator.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/verifier.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/visual-capture-runner.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/visual-judge.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/visual-regression-runner.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/visual-repair-controller.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.file",
+      "status": "PASS",
+      "detail": "adapters/codex/.codex/agents/visual-runtime-audit-runner.toml",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.permissions",
+      "status": "PASS",
+      "detail": "aledevos_state_runner",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.approval",
+      "status": "PASS",
+      "detail": "approval_policy=never",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.permission_request_off",
+      "status": "PASS",
+      "detail": "permission request tool disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.code_mode_off",
+      "status": "PASS",
+      "detail": "Code Mode disabled",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.shell_boundary",
+      "status": "PASS",
+      "detail": "shell confined by state profile",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.instructions",
+      "status": "PASS",
+      "detail": "role instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.discovery_root",
+      "status": "PASS",
+      "detail": "Codex repo skill discovery root",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.acquisition_root",
+      "status": "PASS",
+      "detail": "Codex safe acquisition target",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.native_repository_skills",
+      "status": "PASS",
+      "detail": "13 bundled repository skills",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.binding_paths",
+      "status": "PASS",
+      "detail": "13 Codex bindings use .agents/skills",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "project.adapter",
+      "status": "PASS",
+      "detail": "project template identifies Codex",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "project.protected_paths",
+      "status": "PASS",
+      "detail": "Codex control-plane protected",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.visual_provider",
+      "status": "PASS",
+      "detail": "adapter-owned Playwright provider",
+      "capability": "visual_qa_browser_capture",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.visual_judge",
+      "status": "PASS",
+      "detail": "portable Visual Judge runtime",
+      "capability": "visual_qa_judge",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.release",
+      "status": "PASS",
+      "detail": "portable release runtime",
+      "capability": "v1_release_validation",
+      "kind": "deterministic"
+    },
+    {
+      "id": "behavior.repair_cap",
+      "status": "PASS",
+      "detail": "global repair cap = 2",
+      "capability": "repair_cap",
+      "kind": "deterministic"
+    },
+    {
+      "id": "manifest.identity",
+      "status": "PASS",
+      "detail": "Codex ABI manifest implemented/installable",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "capability.repository_read.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "repository_read",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.product_write.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "product_write",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.control_plane_write_deny.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "control_plane_write_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.arbitrary_shell_deny.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "arbitrary_shell_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.canonical_gate.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "canonical_gate",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.repair_cap.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "repair_cap",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prewrite.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "scope_prewrite",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prepass.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "scope_prepass",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.external_directory.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "external_directory",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.network.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "network",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.code_mode.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "code_mode",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.compaction.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "compaction",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.structured_handoff.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "structured_handoff",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_budget.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "context_budget",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.checkpoint_resume.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "checkpoint_resume",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.preventive_transition.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "preventive_transition",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.diff_first.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "diff_first",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_dedup.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "context_dedup",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.skill_registry.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "skill_registry",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.motion_governance.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "motion_governance",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_capture_contract.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_capture_contract",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_browser_capture.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "visual_qa_browser_capture",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_regression.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_regression",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_runtime_checks.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_runtime_checks",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_judge.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "visual_qa_judge",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_bounded_repair.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_bounded_repair",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.target_runtime_preflight.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "target_runtime_preflight",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.v1_release_validation.proof",
+      "status": "PASS",
+      "detail": "direct Codex adapter proof",
+      "capability": "v1_release_validation",
+      "kind": "capability-proof"
+    }
+  ],
+  "evidence_sha256": "4920cba5b23342bf9a1e41023a3975c2d20c116a85604ab35a645689cf4475ce"
+}

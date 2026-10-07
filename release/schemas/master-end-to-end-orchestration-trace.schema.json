@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Master Validation P6 Orchestration Trace",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","phase","task_id","project_path","stages","trace_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"MASTER_VALIDATION_P6_ORCHESTRATION_TRACE"},
+    "task_id":{"type":"string","minLength":1},
+    "project_path":{"type":"string","minLength":1},
+    "stages":{"type":"array","minItems":16,"maxItems":16,"items":{"type":"object","required":["sequence","stage","agent","invocation_kind","runtime_invoked","runtime","provider_id","model_id","started_at","finished_at","evidence_path","evidence_sha256"],"properties":{"sequence":{"type":"integer","minimum":1},"stage":{"type":"string"},"agent":{"type":"string"},"invocation_kind":{"enum":["MODEL","DETERMINISTIC","TOOL"]},"runtime_invoked":{"const":true},"runtime":{"type":"string","minLength":1},"provider_id":{"type":["string","null"]},"model_id":{"type":["string","null"]},"started_at":{"type":"string"},"finished_at":{"type":"string"},"evidence_path":{"type":"string","minLength":1},"evidence_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+    "trace_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

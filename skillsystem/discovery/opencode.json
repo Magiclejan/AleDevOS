@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "adapter": "opencode",
+  "allow_external_roots": false,
+  "instruction_names": ["SKILL.md"],
+  "sidecar_names": ["aledevos-skill.json"],
+  "roots": [
+    {
+      "path": ".opencode/skills",
+      "recursive": false,
+      "required": false
+    }
+  ]
+}

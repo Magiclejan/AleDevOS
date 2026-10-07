@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/worker-session.schema.json",
+  "title": "AleDevOS Advanced Execution P2 Worker Session",
+  "type": "object",
+  "required": ["schema_version", "phase", "worker_id", "task_id", "worker_role", "state", "assignment_sha256", "worktree", "ownership", "lifecycle", "boundaries", "session_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "ADVANCED_EXECUTION_P2_ISOLATED_WORKERS"},
+    "worker_id": {"type": "string"},
+    "task_id": {"type": "string"},
+    "worker_role": {"type": "string"},
+    "state": {"enum": ["PROVISIONED", "RUNNING", "STOPPED", "COMPLETED", "FAILED", "BLOCKED"]},
+    "assignment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "worktree": {"type": "object"},
+    "ownership": {"type": "object"},
+    "lifecycle": {"type": "object"},
+    "boundaries": {"type": "object"},
+    "session_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

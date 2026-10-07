@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "registry_id": "aledevos-model-registry",
+  "registry_version": "1.0.0",
+  "adapter_independent": true,
+  "judge_slots": [
+    {
+      "slot": "primary",
+      "binding_required": true,
+      "required_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+      "required_capabilities": ["text"],
+      "visual_role_requires": ["image"],
+      "metadata_required": ["provider_id", "model_id", "context_window_tokens", "cost_class", "modalities"]
+    },
+    {
+      "slot": "secondary",
+      "binding_required": true,
+      "required_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+      "required_capabilities": ["text"],
+      "visual_role_requires": ["image"],
+      "metadata_required": ["provider_id", "model_id", "context_window_tokens", "cost_class", "modalities"]
+    }
+  ],
+  "rules": {
+    "distinct_model_identity_required": true,
+    "same_input_hash_required": true,
+    "same_rubric_hash_required": true,
+    "missing_model_never_implies_consensus": true,
+    "comparison_is_advisory": true,
+    "final_decision_authority": "ALEDEVOS_DETERMINISTIC_GATE",
+    "provider_diversity_required": false,
+    "provider_diversity_deferred_to": "MULTIMODEL_P3_JUDGE_DIVERSITY",
+    "routing_deferred_to": "MULTIMODEL_P2_MODEL_ROUTER",
+    "fallback_deferred_to": "MULTIMODEL_P4_MODEL_FALLBACK"
+  }
+}

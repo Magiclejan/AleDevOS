@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object",
+  "required":["schema_version","phase","repository_root","active_groups","lease_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"ADVANCED_EXECUTION_P3_SAFE_CONCURRENCY"},
+    "repository_root":{"type":"string"},
+    "active_groups":{"type":"object"},
+    "lease_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

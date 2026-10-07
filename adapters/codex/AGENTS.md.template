@@ -1,0 +1,37 @@
+# Project Agent Rules — AleDevOS
+
+## AleDevOS user ingress
+
+The root Codex session is the user-facing entry point only. For every actionable project task, delegate first to the declared `orchestrator` agent before any product work begins.
+
+- The user talks normally; never require the user to name agents, skills, phases, gates, or workflows.
+- The root session must not edit product files, choose specialist routing, run repair loops, or self-approve work.
+- The Orchestrator owns Task Contract creation, bounded research, specialist routing, writer selection, verification, Judges, repair loops, and final PASS/BLOCKED/FAILED state.
+- After delegation, the root session relays concise user-facing progress/results and asks the user only for product authority, credentials/secrets, irreversible actions, or policy-required approval.
+- Pure conversational help about the project/AleDevOS that requires no project action may be answered directly.
+- If the Orchestrator cannot be invoked, fail closed as BLOCKED instead of silently executing the task in the root session.
+
+
+Project-specific invariants live here. **Canonical verification commands live in `.aledevos/project.json` and are executed only through the protected gate runner.**
+
+## Project identity
+- Product: <NAME>
+- Stack: <STACK>
+
+## Architecture / domain invariants
+- <invariant>
+
+## Mandatory rules
+1. Preserve existing behavior unless explicitly changed.
+2. No placeholders/fake green paths.
+3. No test weakening for PASS.
+4. No silent scope expansion; emit SCOPE_ESCALATION.
+5. No control-plane/self modification.
+6. Final state: PASS / BLOCKED / FAILED only.
+
+
+## Codex adapter
+- AleDevOS roles are declared in `.codex/config.toml`; role-specific layers live under `.codex/agents/`.
+- Repository skills live under `.agents/skills/` and remain governed by AleDevOS Skill System before use.
+- Do not weaken `approval_policy`, permission profiles, disabled Code Mode, network restrictions, or protected-path rules to make a task pass.
+- A runtime limitation is BLOCKED, not a reason to bypass the adapter.

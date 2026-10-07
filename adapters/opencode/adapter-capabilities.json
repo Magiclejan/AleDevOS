@@ -1,0 +1,148 @@
+{
+  "contract_version": "2.0",
+  "adapter": "opencode",
+  "adapter_version": "2.1",
+  "status": "implemented",
+  "runtime": {
+    "family": "opencode",
+    "agent_mode": "multi_agent",
+    "reference": true,
+    "config_dialect": "opencode-v2",
+    "certification": "portability-p2"
+  },
+  "installation": {
+    "supported": true,
+    "notes": "Reference adapter; installed by scripts/05-install-into-project.ps1."
+  },
+  "capabilities": {
+    "repository_read": {
+      "status": "enforced",
+      "implementation": "OpenCode read/glob/grep tools"
+    },
+    "product_write": {
+      "status": "enforced",
+      "implementation": "edit permission by agent role"
+    },
+    "control_plane_write_deny": {
+      "status": "enforced",
+      "implementation": "agent edit denies + experimental hard policies"
+    },
+    "arbitrary_shell_deny": {
+      "status": "enforced",
+      "implementation": "shell:* deny in write/read-only agents; narrow exceptions"
+    },
+    "canonical_gate": {
+      "status": "enforced",
+      "implementation": "Verifier -> protected .aledevos/runtime/aledevos.mjs gate run"
+    },
+    "repair_cap": {
+      "status": "enforced",
+      "implementation": "portable run-state engine max_repairs=2"
+    },
+    "scope_prewrite": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "vanilla OpenCode permissions are static per session/task"
+    },
+    "scope_prepass": {
+      "status": "enforced",
+      "implementation": "deterministic scope check blocks PASS and emits SCOPE_ESCALATION"
+    },
+    "external_directory": {
+      "status": "enforced",
+      "implementation": "permission + hard policy deny"
+    },
+    "network": {
+      "status": "enforced",
+      "implementation": "webfetch/websearch denied by default"
+    },
+    "code_mode": {
+      "status": "enforced",
+      "implementation": "execute:* deny"
+    },
+    "compaction": {
+      "status": "enforced",
+      "implementation": "OpenCode V2 auto compaction keep=8000 buffer=20000"
+    },
+    "structured_handoff": {
+      "status": "implemented",
+      "implementation": "portable handoff schema/validator + agent contract",
+      "notes": "Transport is inline in OpenCode v1.5; persistent handoff artifact transport is a later phase."
+    },
+    "context_budget": {
+      "status": "implemented",
+      "implementation": "portable ContextOS budget engine + OpenCode/Qwen runtime profile",
+      "notes": "Automatic exact-token telemetry feed is a later ContextOS phase."
+    },
+    "checkpoint_resume": {
+      "status": "implemented",
+      "implementation": "portable ContextOS checkpoint/resume engine with SHA-256 sealed state under .aledevos/state/contextos",
+      "notes": "Exact automatic token telemetry feed is deferred to ContextOS telemetry phase; OpenCode native compaction remains a safety net."
+    },
+    "preventive_transition": {
+      "status": "implemented",
+      "implementation": "ContextOS pressure bands require verified checkpoint + resume before COMPACT_REQUIRED/HARD_GUARD transitions",
+      "notes": "Adapter-specific automatic invocation is completed when telemetry wiring is added."
+    },
+    "diff_first": {
+      "status": "implemented",
+      "implementation": "portable ContextOS bounded git diff snapshot + untracked-file hash/preview without staging",
+      "notes": "Review agents are instructed to escalate from diff to targeted excerpt/full file only when necessary."
+    },
+    "context_dedup": {
+      "status": "implemented",
+      "implementation": "portable SHA-256 context-item ledger + budgeted context packet planner",
+      "notes": "De-duplicates task payloads; runtime/provider system prompts may still be resent by the runtime."
+    },
+    "skill_registry": {
+      "status": "implemented",
+      "implementation": "portable Skill System metadata registry + OpenCode logical-ID bindings with SHA-256 drift detection",
+      "notes": "Skill System 1.1 includes routing, composition, on-demand loading, governance, telemetry and Safe Acquisition; runtime-specific execution remains adapter-owned."
+    },
+    "motion_governance": {
+      "status": "implemented",
+      "implementation": "UX/UI Phase 5 Motion Director + canonical Motion Language + sealed Motion Contracts/Reviews",
+      "notes": "Specialist motion Skills route on demand through Skill System and Safe Acquisition; rendered visual quality remains Visual QA."
+    },
+    "visual_qa_capture_contract": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 1 deterministic capture matrix + sealed PNG/source evidence verification",
+      "notes": "Browser execution is intentionally deferred to Phase 2; Phase 1 makes no visual-quality or regression claim."
+    },
+    "visual_qa_browser_capture": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 2 adapter-owned deterministic Chromium/Playwright capture runner + sealed execution receipt",
+      "notes": "Requires an available Playwright/Chromium runtime. Phase 2 attests browser execution and screenshot provenance only; Phase 3 consumes the receipt for regression."
+    },
+    "visual_qa_regression": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 3 immutable approved baseline store + portable deterministic PNG pixel regression + hashed diff/report verification",
+      "notes": "Only named baseline-pinned tolerance profiles are allowed. Baseline promotion requires explicit approval and is never automatic after FAIL."
+    },
+    "visual_qa_runtime_checks": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 4 sealed rendered DOM/layout/accessibility audit through adapter-owned Chromium/Playwright provider",
+      "notes": "Requires ACTIVE canonical accessibility/responsive policies. Current deterministic scope covers overflow, focusable clipping/containment, keyboard focus, accessible names, image alt, WCAG 2.2 AA target size and measurable rendered text contrast; it does not claim full WCAG or aesthetics."
+    },
+    "visual_qa_judge": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 5 sealed native-image semantic judge with Core-recomputed rubric scores and fail-closed UNVERIFIED handling",
+      "notes": "Requires a target runtime/model capable of native image observation. If image evidence cannot be observed, Phase 5 must BLOCK rather than infer visual quality."
+    },
+    "visual_qa_bounded_repair": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 5 sealed repair authorization/cycle controller integrated with the global max_repairs=2 run state",
+      "notes": "Repairs are restricted to approved product scope, may not promote baselines or edit canonical policies, and require fresh revisioned P2\u2192P5 evidence before acceptance."
+    },
+    "target_runtime_preflight": {
+      "status": "implemented",
+      "implementation": "V1 release runtime derives target readiness from real adapter/browser availability, native-image model declaration and security policy",
+      "notes": "Preflight is fail-closed. AleDevOS does not bundle a provider or model; native-image Visual Judge readiness remains BLOCKED until compatible target-runtime evidence is configured and verified."
+    },
+    "v1_release_validation": {
+      "status": "implemented",
+      "implementation": "sealed eight-check V1 release gate over real target evidence, deterministic regression, security and bounded-repair outcomes",
+      "notes": "V1 may be frozen only after V1_RELEASE_READY. Controlled test providers cannot satisfy target browser evidence, missing/BLOCKED evidence cannot be waived, and all evidence/report artifacts are SHA-256 sealed."
+    }
+  }
+}

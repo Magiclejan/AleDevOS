@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-telemetry-summary.schema.json",
+  "title": "AleDevOS Skill Telemetry Summary",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "attribution",
+    "skills",
+    "event_count",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "attribution": {
+      "const": "composition-correlated-not-causal"
+    },
+    "skills": {
+      "type": "object"
+    },
+    "integrity": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

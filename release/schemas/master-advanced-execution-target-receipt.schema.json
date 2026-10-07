@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "phase",
+    "status",
+    "target",
+    "metadata",
+    "artifacts",
+    "claims",
+    "observed_at",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "phase": {
+      "const": "MASTER_VALIDATION_P5_ADVANCED_EXECUTION_TARGET"
+    },
+    "status": {
+      "const": "ADVANCED_EXECUTION_TARGET_RECEIPT_COLLECTED"
+    },
+    "receipt_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

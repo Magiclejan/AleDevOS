@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "check_id": "real_playwright_capture",
+  "status": "PASS",
+  "target": {
+    "adapter": "opencode",
+    "runtime": "target-pc",
+    "model_ref": null
+  },
+  "artifacts": [
+    {
+      "role": "phase2_receipt",
+      "path": ".aledevos/state/visualqa/phase2/receipts/<task>.json"
+    }
+  ],
+  "claims": {},
+  "notes": []
+}

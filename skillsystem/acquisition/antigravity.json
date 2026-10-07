@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "adapter": "antigravity",
+  "target_skill_root": ".agents/skills",
+  "staging": {
+    "required": true,
+    "candidate_roots": [
+      ".agents/skills"
+    ]
+  },
+  "skills_cli": {
+    "command": "adapter-script",
+    "package": "aledevos-safe-acquisition",
+    "agent": "antigravity",
+    "copy_mode": true,
+    "yes": false,
+    "global": false,
+    "disable_telemetry_env": "DISABLE_TELEMETRY"
+  },
+  "post_install": [
+    "discovery.scan",
+    "registry.build",
+    "registry.verify",
+    "acquisition.record",
+    "acquisition.verify"
+  ]
+}

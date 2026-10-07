@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "source_kind": "human_approved_design_context",
+  "source_ref": "UI-ADR-MOTION-001",
+  "durations": {
+    "micro": {
+      "min_ms": 100,
+      "max_ms": 160
+    },
+    "standard": {
+      "min_ms": 160,
+      "max_ms": 240
+    },
+    "large": {
+      "min_ms": 240,
+      "max_ms": 360
+    }
+  },
+  "easings": {
+    "enter": "ease-out",
+    "exit": "ease-in",
+    "emphasis": "spring"
+  },
+  "semantic_roles": {
+    "feedback": {
+      "duration_token": "micro",
+      "easing_token": "enter"
+    },
+    "navigation": {
+      "duration_token": "standard",
+      "easing_token": "enter"
+    },
+    "overlay": {
+      "duration_token": "standard",
+      "easing_token": "enter"
+    }
+  },
+  "reduced_motion": {
+    "required": true,
+    "default_behavior": "SIMPLIFY"
+  },
+  "rules": {
+    "exit_faster_than_enter": true,
+    "decorative_infinite_motion": "DENY",
+    "raw_motion_literals": "DENY_UNLESS_APPROVED_EXCEPTION"
+  },
+  "platform_overrides": {}
+}

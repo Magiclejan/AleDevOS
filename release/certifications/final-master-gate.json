@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "phase": "ALEDEVOS_V1_FINAL_MASTER_GATE_PACKAGE",
+  "status": "FINAL_MASTER_GATE_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "REQUIRED_FOR_FREEZE",
+  "claims": {
+    "master_check_count_fixed": 33,
+    "master_gate_is_only_freeze_authority": true,
+    "freeze_requires_33_of_33_pass": true,
+    "blocked_or_failed_never_freezes": true,
+    "master_report_reverified_before_freeze": true,
+    "evidence_root_bound_into_freeze_certificate": true,
+    "p8_certificate_required": true,
+    "legacy_gate_non_authoritative": true,
+    "no_new_feature_subsystem": true
+  },
+  "p8_certificate_valid": true,
+  "deterministic_tests": 33,
+  "inputs": [
+    {
+      "path": "VERSION.txt",
+      "sha256": "a395149bd38209d4aea41a7362c97e62a00d83145ce10b0f730cece8a92a4c2b"
+    },
+    {
+      "path": "release/templates/final-master-gate.mjs",
+      "sha256": "53381927db06a23dff21ad1a1be5bb52be667f5be82b80725d9a1ff6b658034b"
+    },
+    {
+      "path": "release/templates/final-master-gate-certifier.mjs",
+      "sha256": "f9c6f271c1cdf5b8d1b93765cbb8a71bbed7f963a1196ec784819169fb30df71"
+    },
+    {
+      "path": "release/schemas/final-master-campaign.schema.json",
+      "sha256": "3825ba7b8ed082c4d6131f45817aa898f93faeadc6bd4f8093c75ca1be95410f"
+    },
+    {
+      "path": "release/schemas/v1-freeze-certificate.schema.json",
+      "sha256": "5416b5e4f3aa1a6560976bdc09e6d2392b7b2229a50e6e062fd1527720a03fdb"
+    },
+    {
+      "path": "release/templates/FINAL_MASTER_CAMPAIGN.example.json",
+      "sha256": "78706be0e1c5ec273df84fbc5b8dae8f8608b9de22e1b880dc7cfb8c4a281810"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/templates/master-validation-package-baseline.json",
+      "sha256": "20be6bb3bd17784d45de9b7ddefa66c9b3c106ace2758b717439ffc7a29d2422"
+    },
+    {
+      "path": "release/templates/package-tree-manifest.mjs",
+      "sha256": "9ae52d4fb041fbe7cb4a4e284238efc0fb3b55779b7519c455e8df4fee6ec40e"
+    },
+    {
+      "path": "release/templates/package-tree-manifest.json",
+      "sha256": "974c26bb29d0a61d0880a70ba267f7bb69f5681ff1af5972b7800317ab9622b1"
+    },
+    {
+      "path": "release/certifications/master-validation-p8.json",
+      "sha256": "b2e6390a5b383373028b76302aec2b00c2daaaf9063bc98338bab5ae74fc506f"
+    },
+    {
+      "path": "scripts/66-self-test-final-master-gate.ps1",
+      "sha256": "026bfe294c88f68ff8a997a8b044068f288c5ddff873f7bd9b12011aba3fc806"
+    },
+    {
+      "path": "scripts/67-final-master-gate.ps1",
+      "sha256": "8f54d199238869f99fded93f59d6edbe0313026bfd3b644031a4420938a1b699"
+    },
+    {
+      "path": "tests/final-master-gate.test.mjs",
+      "sha256": "3a46d01e55f3cb08de53b1188290af608705e0200727a73730f7dcec6b6770e8"
+    }
+  ],
+  "final_master_gate_certificate_sha256": "cd536c55fae5c9dd080db3901705c3580fd6c21c354c6e9184a5df5f240b46a7"
+}

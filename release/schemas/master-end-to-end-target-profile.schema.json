@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Master Validation P6 Target Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","phase","target_runtime","project_path","task_id","run_id","adapter","artifacts"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "MASTER_VALIDATION_P6_TARGET_PROFILE"},
+    "target_runtime": {"type":"string","minLength":1},
+    "project_path": {"type":"string","minLength":1},
+    "task_id": {"type":"string","minLength":1},
+    "run_id": {"type":"string","minLength":1},
+    "adapter": {"enum":["opencode","codex","claude-code","antigravity"]},
+    "artifacts": {
+      "type":"object",
+      "additionalProperties": false,
+      "required": [
+        "user_request","task_contract","context_handoff","orchestration_trace",
+        "skill_route","skill_composition","skill_load","skill_execution_handoff","skill_governance","skill_execution_receipt",
+        "model_binding","model_route","worktree_receipt","worker_assignment","worker_session","worker_handoff",
+        "dispatcher_queue","dispatcher_started_receipt","phase2_receipt","phase4_report","visual_acceptance",
+        "primary_judge_evidence","secondary_judge_evidence","judge_comparison","diversity_decision","global_state","telemetry_summary"
+      ],
+      "properties": {
+        "user_request":{"type":["string","null"]},"task_contract":{"type":["string","null"]},"context_handoff":{"type":["string","null"]},"orchestration_trace":{"type":["string","null"]},
+        "skill_route":{"type":["string","null"]},"skill_composition":{"type":["string","null"]},"skill_load":{"type":["string","null"]},"skill_execution_handoff":{"type":["string","null"]},"skill_governance":{"type":["string","null"]},"skill_execution_receipt":{"type":["string","null"]},
+        "model_binding":{"type":["string","null"]},"model_route":{"type":["string","null"]},"worktree_receipt":{"type":["string","null"]},"worker_assignment":{"type":["string","null"]},"worker_session":{"type":["string","null"]},"worker_handoff":{"type":["string","null"]},
+        "dispatcher_queue":{"type":["string","null"]},"dispatcher_started_receipt":{"type":["string","null"]},"phase2_receipt":{"type":["string","null"]},"phase4_report":{"type":["string","null"]},"visual_acceptance":{"type":["string","null"]},
+        "primary_judge_evidence":{"type":["string","null"]},"secondary_judge_evidence":{"type":["string","null"]},"judge_comparison":{"type":["string","null"]},"diversity_decision":{"type":["string","null"]},"global_state":{"type":["string","null"]},"telemetry_summary":{"type":["string","null"]}
+      }
+    }
+  }
+}

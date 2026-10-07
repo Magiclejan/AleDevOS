@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Context Packet v0.3.0",
+  "type": "object",
+  "required": ["version","packet_id","task_id","target_agent","runtime_profile","ledger_id","created_at","policy","estimated_inline_tokens","dedup_saved_tokens","items"],
+  "properties": {
+    "version":{"const":"0.3.0"},
+    "packet_id":{"type":"string"},
+    "task_id":{"type":"string"},
+    "target_agent":{"type":"string"},
+    "runtime_profile":{"type":"string"},
+    "ledger_id":{"type":"string"},
+    "created_at":{"type":"string","format":"date-time"},
+    "estimated_inline_tokens":{"type":"integer","minimum":0},
+    "dedup_saved_tokens":{"type":"integer","minimum":0},
+    "items":{"type":"array"}
+  }
+}

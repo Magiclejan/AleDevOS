@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P5",
+  "status": "MASTER_VALIDATION_P5_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "advanced_execution_target_validator": true,
+    "frozen_p1_p5_engines_reverified": true,
+    "real_worker_supervisor_required": true,
+    "real_parallel_workers_required": true,
+    "dispatcher_must_delegate_to_p3": true,
+    "real_network_transport_required": true,
+    "distinct_machine_fingerprint_required": true,
+    "controlled_transport_provider_forbidden": true,
+    "worker_crash_fault_injection_required": true,
+    "stale_fence_result_rejected": true,
+    "physical_exactly_once_compute_under_partition_not_claimed": true,
+    "final_freeze_authority": "MASTER_GATE_ONLY"
+  },
+  "p4_certificate_present": true,
+  "frozen_advanced_execution_certificates_valid": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "deterministic_tests": 33,
+  "inputs": [
+    {
+      "path": "release/templates/master-validator-advanced-execution.mjs",
+      "sha256": "1c5c56cbf06a70dc420acab2189d14edc9cef607a6e86bbde7cc5b6e43ae4733"
+    },
+    {
+      "path": "release/templates/master-advanced-remote-probe.mjs",
+      "sha256": "80e9d3c21d9405470d356d6b8b85fe29d6e129d964354338459404526fcca592"
+    },
+    {
+      "path": "release/templates/master-validation-p5-certifier.mjs",
+      "sha256": "ebf5f9d7947dd2a79d9c894426d2bae7032cf4dadf972c504ae51235864ad1e2"
+    },
+    {
+      "path": "release/schemas/master-advanced-execution-target-profile.schema.json",
+      "sha256": "1053533ef42b62b77537c687ed5c544a5b3ab82fbbe0dc530b0d9c2e45fb349e"
+    },
+    {
+      "path": "release/schemas/master-advanced-execution-target-receipt.schema.json",
+      "sha256": "57fd46e4ffcb886e4116b95d67011cf2ed61be4d5eceb9143ad6760061299ad7"
+    },
+    {
+      "path": "release/schemas/master-advanced-transport-probe.schema.json",
+      "sha256": "8bc8d084168d2e2a98039e36b032587bb7907e230135df112cfe3152406d4a12"
+    },
+    {
+      "path": "release/templates/MASTER_ADVANCED_EXECUTION_TARGET_PROFILE.example.json",
+      "sha256": "32b9b598e5e5f06ef91fb38a4b164b56ffc80d691bb881bd72d50221b212fbd7"
+    },
+    {
+      "path": "release/templates/MASTER_ADVANCED_TRANSPORT_PROBE.example.json",
+      "sha256": "82f98039bcc07738b4207b9156fa6b22e2cb78c84fc9fc1bdad0e717fdfa9a9c"
+    },
+    {
+      "path": "tests/master-validation-phase5.test.mjs",
+      "sha256": "ea667e91eb20ade7806c39c599e233d62dbf93c48e6bf58fbfee51ff1e2aa574"
+    },
+    {
+      "path": "scripts/58-self-test-master-validation-phase5.ps1",
+      "sha256": "6aa8d21ade62c8b3a7d68a1959236a860e028f3580c4e30e32f79ae534b8f053"
+    },
+    {
+      "path": "scripts/59-master-validation-p5-target-advanced-execution.ps1",
+      "sha256": "5fa9207dc2c0734adfbb8c455ea1ec1c069c5df87a9d3a243d992d6c6448c6b6"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p4.json",
+      "sha256": "d649f98df2631f67773358095d5eae735e5c58bad6fad9248fa87f48ae7f092c"
+    },
+    {
+      "path": "advanced-execution/worktrees/worktree-manager.mjs",
+      "sha256": "c67b730a06b599866172c186b6d86d17e7c255bd8468f5c46ad35b0fa1bc645a"
+    },
+    {
+      "path": "advanced-execution/workers/worker-manager.mjs",
+      "sha256": "af4ef04891616f3d11773452c39117142e0fbb7196927a96f336a2a7cc316cf1"
+    },
+    {
+      "path": "advanced-execution/workers/worker-runtime.mjs",
+      "sha256": "237f6357b11fc39131cc0f4de0cb8717cd8e13fb29a1c3910b1b7f200253d982"
+    },
+    {
+      "path": "advanced-execution/concurrency/concurrency-manager.mjs",
+      "sha256": "0071f87708fd7a34d2ec2b1d6340fd3ce143c1b57855de9bfff2f4731b2e48c6"
+    },
+    {
+      "path": "advanced-execution/dispatcher/dispatcher-manager.mjs",
+      "sha256": "54ca821ee02439f3b7a770933a0831295e442fe55a4c0c28afca490ce7922876"
+    },
+    {
+      "path": "advanced-execution/multimachine/multimachine-manager.mjs",
+      "sha256": "e5be6bda4f04374d6058ec1fc9e07f96002023e10f077cecdfe0c103451e2dde"
+    },
+    {
+      "path": "advanced-execution/policies/worktree-policy.json",
+      "sha256": "878d5f86b12c1f6e838064a58a5d0cff441b68798db18e81cc7718c3cf0874ba"
+    },
+    {
+      "path": "advanced-execution/policies/worker-policy.json",
+      "sha256": "2adeec20ccd43bd14836cae22df53a4cdcad1994f27683a23d1931ae91b39f02"
+    },
+    {
+      "path": "advanced-execution/policies/concurrency-policy.json",
+      "sha256": "c7e2a0c738785d3ba42d071f745b7a7513b93bd2185e0785da273e185d9c5251"
+    },
+    {
+      "path": "advanced-execution/policies/dispatcher-policy.json",
+      "sha256": "283aa271a57c2f838567a6bfcb7c1897c744ff5cf45f78d44ce27727b6d2b128"
+    },
+    {
+      "path": "advanced-execution/policies/multimachine-policy.json",
+      "sha256": "8895b8a32332ad333ad767ced53d9fc4bade3ab1ccf7e526f6e7d2cb2590cfcc"
+    }
+  ],
+  "master_p5_certificate_sha256": "dae8e4a5e61edf72e93a4890f6985d7f7066e57af6484efb52f53731e5db0164"
+}

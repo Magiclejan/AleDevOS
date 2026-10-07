@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P3_JUDGE_DIVERSITY",
+  "allowed_judge_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+  "tiers": {
+    "DISTINCT_MODEL_SAME_PROVIDER": 1,
+    "CROSS_PROVIDER_SAME_FAMILY": 2,
+    "CROSS_FAMILY": 3
+  },
+  "minimum_tier_by_role": {
+    "requirements": "CROSS_FAMILY",
+    "regression": "CROSS_FAMILY",
+    "quality": "CROSS_FAMILY",
+    "uxui": "CROSS_FAMILY",
+    "visual": "CROSS_FAMILY"
+  },
+  "rules": {
+    "model_identity_must_be_distinct": true,
+    "declared_provenance_only": true,
+    "semantic_independence_claimed": false,
+    "provider_family_is_diversity_boundary": true,
+    "insufficient_diversity_blocks_pair": true,
+    "automatic_model_replacement_enabled": false,
+    "automatic_fallback_enabled": false,
+    "fallback_deferred_to": "MULTIMODEL_P4_MODEL_FALLBACK",
+    "router_override_allowed": false,
+    "final_judge_decision_authority": "ALEDEVOS_DETERMINISTIC_GATE"
+  }
+}

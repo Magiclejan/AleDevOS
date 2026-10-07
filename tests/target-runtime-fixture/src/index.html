@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AleDevOS V1 Target Runtime Fixture</title>
+  <style>
+    :root{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:#fff;color:#111}
+    main{width:min(92vw,900px);margin:0 auto;padding:48px 0}
+    .card{border:2px solid #111;border-radius:16px;padding:24px;display:grid;gap:18px}
+    h1,p{margin:0;line-height:1.45}
+    button{min-width:160px;min-height:44px;border:2px solid #111;background:#fff;color:#111;border-radius:8px;font-size:16px;font-weight:700;padding:10px 16px}
+    button:focus-visible{outline:3px solid #111;outline-offset:3px}
+    .state{display:inline-flex;align-items:center;min-height:32px;width:max-content;padding:4px 10px;border:2px solid #111;border-radius:999px;font-weight:700}
+    @media(max-width:520px){main{padding:24px 0}.card{padding:18px}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">AleDevOS V1 target-runtime smoke</h1>
+      <p>This page is intentionally deterministic and accessible enough for the Phase 4 runtime audit.</p>
+      <!--STATE-->
+      <button type="button" aria-label="Run harmless smoke action">Smoke action</button>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P3_TARGET_PROFILE",
+  "target_runtime": "CHANGE_ME_TARGET_RUNTIME",
+  "task_id": "MASTER_P3_REAL_JUDGE",
+  "judge_role": "quality",
+  "estimated_context_tokens": 512,
+  "max_cost_class": "premium",
+  "selection_priority": "CONTEXT_THEN_COST",
+  "models": {
+    "primary": {
+      "adapter": "codex",
+      "provider_id": "CHANGE_ME_PRIMARY_PROVIDER",
+      "provider_family": "CHANGE_ME_PRIMARY_FAMILY",
+      "model_id": "CHANGE_ME_PRIMARY_MODEL",
+      "invocation_model_id": "CHANGE_ME_PRIMARY_CLI_MODEL_SELECTOR",
+      "modalities": ["text"],
+      "context_window_tokens": 16384,
+      "cost_class": "premium",
+      "metadata_source": "TARGET_PROFILE_DECLARATION"
+    },
+    "secondary": {
+      "adapter": "claude-code",
+      "provider_id": "CHANGE_ME_SECONDARY_PROVIDER",
+      "provider_family": "CHANGE_ME_SECONDARY_FAMILY",
+      "model_id": "CHANGE_ME_SECONDARY_MODEL",
+      "invocation_model_id": "CHANGE_ME_SECONDARY_CLI_MODEL_SELECTOR",
+      "modalities": ["text"],
+      "context_window_tokens": 16384,
+      "cost_class": "premium",
+      "metadata_source": "TARGET_PROFILE_DECLARATION"
+    },
+    "fallback_candidates": [
+      {
+        "adapter": "antigravity",
+        "provider_id": "CHANGE_ME_FALLBACK_PROVIDER",
+        "provider_family": "CHANGE_ME_FALLBACK_FAMILY",
+        "model_id": "CHANGE_ME_FALLBACK_MODEL",
+        "invocation_model_id": "CHANGE_ME_FALLBACK_CLI_MODEL_SELECTOR",
+        "modalities": ["text"],
+        "context_window_tokens": 16384,
+        "cost_class": "standard",
+        "metadata_source": "TARGET_PROFILE_DECLARATION"
+      }
+    ]
+  }
+}

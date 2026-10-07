@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "certification_phase": "portability-p6",
+  "status": "CROSS_ADAPTER_CONFORMANCE_CERTIFIED",
+  "normalized_state": "PASS",
+  "canonical_adapters": [
+    "opencode",
+    "codex",
+    "claude-code",
+    "antigravity"
+  ],
+  "aliases": {
+    "gemini": "antigravity"
+  },
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "matrix_summary": {
+    "total": 75,
+    "passed": 75,
+    "failed": 0
+  },
+  "skill_pack_summary": {
+    "total": 245,
+    "passed": 245,
+    "failed": 0
+  },
+  "projection_summary": {
+    "total": 160,
+    "passed": 160,
+    "failed": 0
+  },
+  "inputs": [
+    {
+      "path": "adapters/antigravity/adapter-capabilities.json",
+      "sha256": "8230c0f0e0ebd201bd37ef54610c50c3c65e6083c5793c58c501c42e02e9d38f"
+    },
+    {
+      "path": "adapters/antigravity/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "path": "adapters/claude-code/adapter-capabilities.json",
+      "sha256": "62ced688a9ff10cca86449a2e9439306fba90a7df001e208407c6ee7b8ea3f5a"
+    },
+    {
+      "path": "adapters/claude-code/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "path": "adapters/codex/adapter-capabilities.json",
+      "sha256": "318c6f2dda7b8f2c2b8994edafe8fef6e9d32ce080007ca619663cf252a4d3c4"
+    },
+    {
+      "path": "adapters/codex/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "path": "adapters/gemini/adapter-capabilities.json",
+      "sha256": "bcab3f7e1c3f05682f22689391a096c6f1a229b7e48e4cbf211e41a3e72a0181"
+    },
+    {
+      "path": "adapters/opencode/adapter-capabilities.json",
+      "sha256": "90bde892a4d18cc6dcbe782b2eafea627520c8e747978a939db27cd63201d1a5"
+    },
+    {
+      "path": "adapters/opencode/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "path": "core/policies/security-policy.json",
+      "sha256": "48112ca009b50627f7237efa7c5a9ee50edfa7f74adb1189dda2815040aad20d"
+    },
+    {
+      "path": "portability/conformance/conformance-policy.json",
+      "sha256": "fbc28e710a32a45ddfdb2a6722b1823330ee565632d3632269afee2bf86e3cc8"
+    },
+    {
+      "path": "portability/conformance/conformance-scenarios.json",
+      "sha256": "a304b401fdf357d4d1771e5729956dad74e461f65a69bbfd5ed443b4c1bdf572"
+    },
+    {
+      "path": "portability/conformance/conformance.mjs",
+      "sha256": "581e77c76ac4b466a5710d43623dbd259d2406dfd0a50b946c8bd02196d51110"
+    },
+    {
+      "path": "release/certifications/antigravity-portability-p5.json",
+      "sha256": "fa0d9b43d7ffbd80c810dd7a39062103cb88b2573cfbee5a66524ff0ef49f5b8"
+    },
+    {
+      "path": "release/certifications/claude-code-portability-p4.json",
+      "sha256": "3180297062b96194441fb36e9101fdd63b411b921c247bdd06f925c5e8031045"
+    },
+    {
+      "path": "release/certifications/codex-portability-p3.json",
+      "sha256": "1491ce83bccdafca95e29ad06be739cd9a0ae0a07af288eab7c7279f5b1ced15"
+    },
+    {
+      "path": "release/certifications/opencode-portability-p2.json",
+      "sha256": "ad9884ae151f175bed10d869e35e18a9dc2b05dfffda68e89662eb1ac399b4f4"
+    },
+    {
+      "path": "skillsystem/bindings/antigravity.json",
+      "sha256": "2965a44f1d74867083e7b5123b18fd826c93f08d61442716b73d95ee47b45da6"
+    },
+    {
+      "path": "skillsystem/bindings/claude-code.json",
+      "sha256": "4ae09b1262f0eadc1fd622ebade608b288f2472d5dcfb6a7c6b7bbb9e733a981"
+    },
+    {
+      "path": "skillsystem/bindings/codex.json",
+      "sha256": "855f787aa83ba137aa17cdb63b33ebe6e43e6223bf479331456a9c5cd44aca2e"
+    },
+    {
+      "path": "skillsystem/bindings/opencode.json",
+      "sha256": "dbc8f38524bed2b7351045049b2368e9066c850b83e91cf61370937849200720"
+    },
+    {
+      "path": "skillsystem/portable/portable-skill-pack.json",
+      "sha256": "57fe05364102b04343ccc539977d11cc96eb4197df2e076e2bc0749c7f65df77"
+    }
+  ],
+  "evidence_sha256": "ed338b10e5cb98bb64f930ee4c38fdfa137f251b1e87b5ec660119eb405c770e"
+}

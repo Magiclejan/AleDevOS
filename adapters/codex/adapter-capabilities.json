@@ -1,0 +1,141 @@
+{
+  "contract_version": "2.0",
+  "adapter": "codex",
+  "adapter_version": "1.0",
+  "status": "implemented",
+  "runtime": {
+    "family": "codex",
+    "agent_mode": "multi_agent",
+    "reference": false,
+    "config_dialect": "codex-project-config-2026",
+    "certification": "portability-p3"
+  },
+  "installation": {
+    "supported": true,
+    "notes": "Codex project adapter; installed by scripts/05-install-into-project.ps1."
+  },
+  "capabilities": {
+    "repository_read": {
+      "status": "enforced",
+      "implementation": "Codex permission profiles deny external filesystem access and reopen the workspace read-only where appropriate"
+    },
+    "product_write": {
+      "status": "enforced",
+      "implementation": "aledevos_writer grants workspace writes while protected control-plane paths remain read-only"
+    },
+    "control_plane_write_deny": {
+      "status": "enforced",
+      "implementation": "more-specific :workspace_roots permissions keep .aledevos/.codex/.agents/AGENTS/.git read-only for writers"
+    },
+    "arbitrary_shell_deny": {
+      "status": "enforced",
+      "implementation": "shell disabled for writer/read-only roles; state roles are confined to state-only writes with network disabled"
+    },
+    "canonical_gate": {
+      "status": "enforced",
+      "implementation": "verifier role runs protected .aledevos runtime under state-runner profile"
+    },
+    "repair_cap": {
+      "status": "enforced",
+      "implementation": "portable run-state engine max_repairs=2"
+    },
+    "scope_prewrite": {
+      "status": "best_effort",
+      "implementation": "Codex role permission profiles enforce control-plane boundaries; task-specific dynamic product-scope narrowing remains deterministic prepass"
+    },
+    "scope_prepass": {
+      "status": "enforced",
+      "implementation": "portable deterministic scope check blocks PASS and emits SCOPE_ESCALATION"
+    },
+    "external_directory": {
+      "status": "enforced",
+      "implementation": "Codex permission profiles set :root=deny and reopen only :minimal plus :workspace_roots with role-specific access"
+    },
+    "network": {
+      "status": "enforced",
+      "implementation": "Codex permission profiles set network.enabled=false; only state runner permits local binding"
+    },
+    "code_mode": {
+      "status": "enforced",
+      "implementation": "Code Mode and Code Mode host disabled in project and role layers"
+    },
+    "compaction": {
+      "status": "implemented",
+      "implementation": "Codex native context compaction plus portable ContextOS checkpoint/resume discipline",
+      "notes": "Exact target model context window remains runtime/model dependent; generic-64k portable budget is used until target telemetry overrides it."
+    },
+    "structured_handoff": {
+      "status": "implemented",
+      "implementation": "portable handoff contract + Codex native multi-agent roles"
+    },
+    "context_budget": {
+      "status": "implemented",
+      "implementation": "portable ContextOS engine using generic runtime profile; Codex exact telemetry remains runtime evidence"
+    },
+    "checkpoint_resume": {
+      "status": "implemented",
+      "implementation": "portable ContextOS checkpoint/resume engine with SHA-256 sealed state under .aledevos/state/contextos",
+      "notes": "Exact automatic token telemetry feed is deferred to ContextOS telemetry phase; OpenCode native compaction remains a safety net."
+    },
+    "preventive_transition": {
+      "status": "implemented",
+      "implementation": "ContextOS pressure bands require verified checkpoint + resume before COMPACT_REQUIRED/HARD_GUARD transitions",
+      "notes": "Adapter-specific automatic invocation is completed when telemetry wiring is added."
+    },
+    "diff_first": {
+      "status": "implemented",
+      "implementation": "portable ContextOS bounded git diff snapshot + untracked-file hash/preview without staging",
+      "notes": "Review agents are instructed to escalate from diff to targeted excerpt/full file only when necessary."
+    },
+    "context_dedup": {
+      "status": "implemented",
+      "implementation": "portable SHA-256 context-item ledger + budgeted context packet planner",
+      "notes": "De-duplicates task payloads; runtime/provider system prompts may still be resent by the runtime."
+    },
+    "skill_registry": {
+      "status": "implemented",
+      "implementation": "portable Skill System + Codex repository skills under .agents/skills"
+    },
+    "motion_governance": {
+      "status": "implemented",
+      "implementation": "UX/UI Phase 5 Motion Director + canonical Motion Language + sealed Motion Contracts/Reviews",
+      "notes": "Specialist motion Skills route on demand through Skill System and Safe Acquisition; rendered visual quality remains Visual QA."
+    },
+    "visual_qa_capture_contract": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 1 deterministic capture matrix + sealed PNG/source evidence verification",
+      "notes": "Browser execution is intentionally deferred to Phase 2; Phase 1 makes no visual-quality or regression claim."
+    },
+    "visual_qa_browser_capture": {
+      "status": "implemented",
+      "implementation": "adapter-owned Playwright provider installed for Codex project runtime"
+    },
+    "visual_qa_regression": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 3 immutable approved baseline store + portable deterministic PNG pixel regression + hashed diff/report verification",
+      "notes": "Only named baseline-pinned tolerance profiles are allowed. Baseline promotion requires explicit approval and is never automatic after FAIL."
+    },
+    "visual_qa_runtime_checks": {
+      "status": "implemented",
+      "implementation": "portable Phase 4 runtime audit over adapter-owned Playwright provider"
+    },
+    "visual_qa_judge": {
+      "status": "implemented",
+      "implementation": "Codex visual-judge role + portable Phase 5 semantic judge",
+      "notes": "Target selected model must demonstrate native image observation; otherwise target preflight BLOCKS."
+    },
+    "visual_qa_bounded_repair": {
+      "status": "implemented",
+      "implementation": "Visual QA Phase 5 sealed repair authorization/cycle controller integrated with the global max_repairs=2 run state",
+      "notes": "Repairs are restricted to approved product scope, may not promote baselines or edit canonical policies, and require fresh revisioned P2\u2192P5 evidence before acceptance."
+    },
+    "target_runtime_preflight": {
+      "status": "implemented",
+      "implementation": "portable V1 preflight evaluates Codex/Playwright/model readiness separately from adapter installation"
+    },
+    "v1_release_validation": {
+      "status": "implemented",
+      "implementation": "portable sealed V1 release gate is installed unchanged under Codex adapter"
+    }
+  }
+}

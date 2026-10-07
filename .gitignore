@@ -1,0 +1,31 @@
+# AleDevOS generated/runtime state
+.aledevos/state/
+**/.aledevos/state/
+logs/
+tmp/
+temp/
+*.log
+
+# Local credentials / environment
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+credentials.json
+auth.json
+
+# Runtime/build caches
+node_modules/
+__pycache__/
+.pytest_cache/
+.cache/
+coverage/
+dist/
+build/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

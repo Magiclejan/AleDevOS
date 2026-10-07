@@ -1,0 +1,336 @@
+{
+  "schema_version": "1.0",
+  "phase": "GLOBAL_EFFICIENCY_P7",
+  "principles": [
+    "user_is_goal_owner_not_project_manager",
+    "minimum_necessary_intelligence",
+    "quality_before_token_savings",
+    "required_evidence_is_never_truncated",
+    "closed_decisions_before_freeform_prose",
+    "context_relevance_before_context_size",
+    "delta_handoffs_before_repeated_context",
+    "read_on_demand_before_full_file",
+    "specialist_only_when_signal_requires_it",
+    "reasoning_effort_matches_risk",
+    "unknown_measurements_remain_unknown",
+    "optimization_requires_comparable_baseline",
+    "no_gate_or_security_bypass_for_efficiency"
+  ],
+  "profiles": {
+    "MICRO": {
+      "max_complexity_score": 3,
+      "reasoning_default": "LOW",
+      "input_token_reduction_target": 0.35,
+      "max_context_growth_ratio": 0,
+      "max_tool_call_growth_ratio": 0,
+      "max_repair_growth": 0,
+      "max_user_operational_interventions": 0,
+      "total_token_reduction_target": 0.3,
+      "max_output_token_growth_ratio": 0.1,
+      "max_model_call_growth_ratio": 0,
+      "max_file_read_growth_ratio": 0,
+      "max_handoff_growth_ratio": 0,
+      "max_active_agent_growth_ratio": 0
+    },
+    "STANDARD": {
+      "max_complexity_score": 6,
+      "reasoning_default": "MEDIUM",
+      "input_token_reduction_target": 0.2,
+      "max_context_growth_ratio": 0,
+      "max_tool_call_growth_ratio": 0.1,
+      "max_repair_growth": 0,
+      "max_user_operational_interventions": 0,
+      "total_token_reduction_target": 0.15,
+      "max_output_token_growth_ratio": 0.15,
+      "max_model_call_growth_ratio": 0.05,
+      "max_file_read_growth_ratio": 0,
+      "max_handoff_growth_ratio": 0,
+      "max_active_agent_growth_ratio": 0
+    },
+    "DEEP": {
+      "max_complexity_score": 9,
+      "reasoning_default": "HIGH",
+      "input_token_reduction_target": 0.12,
+      "max_context_growth_ratio": 0.05,
+      "max_tool_call_growth_ratio": 0.15,
+      "max_repair_growth": 0,
+      "max_user_operational_interventions": 0,
+      "total_token_reduction_target": 0.08,
+      "max_output_token_growth_ratio": 0.2,
+      "max_model_call_growth_ratio": 0.15,
+      "max_file_read_growth_ratio": 0.1,
+      "max_handoff_growth_ratio": 0.1,
+      "max_active_agent_growth_ratio": 0.1
+    },
+    "CRITICAL": {
+      "max_complexity_score": 999,
+      "reasoning_default": "HIGH",
+      "input_token_reduction_target": 0.05,
+      "max_context_growth_ratio": 0.1,
+      "max_tool_call_growth_ratio": 0.25,
+      "max_repair_growth": 0,
+      "max_user_operational_interventions": 0,
+      "total_token_reduction_target": 0.03,
+      "max_output_token_growth_ratio": 0.25,
+      "max_model_call_growth_ratio": 0.25,
+      "max_file_read_growth_ratio": 0.2,
+      "max_handoff_growth_ratio": 0.2,
+      "max_active_agent_growth_ratio": 0.2
+    }
+  },
+  "scoring": {
+    "risk": {
+      "LOW": 0,
+      "MEDIUM": 2,
+      "HIGH": 4
+    },
+    "type": {
+      "QUESTION": 0,
+      "AUDIT": 1,
+      "BUGFIX": 1,
+      "FEATURE": 2,
+      "REFACTOR": 2,
+      "MAINTENANCE": 1,
+      "SYSTEM_TEST": 3
+    },
+    "scope_per_three_paths": 1,
+    "scope_max": 3,
+    "acceptance_per_four": 1,
+    "acceptance_max": 2,
+    "signals": {
+      "cross_domain": 2,
+      "security_sensitive": 4,
+      "database_affecting": 2,
+      "external_integration": 2,
+      "ui_affecting": 1,
+      "unknown_requirements": 2,
+      "migration_or_destructive": 5,
+      "multi_machine": 3,
+      "requires_research": 1,
+      "knowledge_stale": 1
+    },
+    "minimum_profile_by_risk": {
+      "LOW": "MICRO",
+      "MEDIUM": "STANDARD",
+      "HIGH": "DEEP"
+    },
+    "force_critical_signals": [
+      "security_sensitive",
+      "migration_or_destructive"
+    ]
+  },
+  "agent_activation": {
+    "always_for_code_change": [
+      "orchestrator",
+      "verifier",
+      "judge-requirements",
+      "judge-regression",
+      "judge-quality"
+    ],
+    "MICRO": [],
+    "STANDARD": [
+      "researcher",
+      "architect"
+    ],
+    "DEEP": [
+      "researcher",
+      "architect",
+      "auditor"
+    ],
+    "CRITICAL": [
+      "researcher",
+      "architect",
+      "auditor"
+    ],
+    "question_default": [
+      "orchestrator"
+    ],
+    "audit_default": [
+      "orchestrator",
+      "researcher"
+    ],
+    "domain_editors": {
+      "frontend": "editor-frontend",
+      "backend": "editor-backend",
+      "database": "editor-database",
+      "tests": "editor-tests",
+      "config": "editor-config"
+    },
+    "cross_cutting_writer": "builder",
+    "ui_specialists": [
+      "design-system-guardian",
+      "judge-uxui"
+    ],
+    "visual_specialists": [
+      "visual-capture-runner",
+      "visual-regression-runner",
+      "visual-runtime-audit-runner",
+      "visual-judge"
+    ],
+    "security_specialists": [
+      "security-reviewer"
+    ],
+    "audit_escalation": {
+      "auditor_profiles": [
+        "DEEP",
+        "CRITICAL"
+      ],
+      "auditor_signals": [
+        "cross_domain",
+        "unknown_requirements"
+      ],
+      "verifier_default": false
+    }
+  },
+  "skill_activation": {
+    "always": [
+      "task-contract"
+    ],
+    "write_task": [
+      "safe-edit",
+      "test-strategy",
+      "requirements-check",
+      "regression-analysis",
+      "diff-review"
+    ],
+    "STANDARD_plus": [
+      "repo-map",
+      "implementation-plan"
+    ],
+    "security_sensitive": [
+      "security-check"
+    ],
+    "frontend": [
+      "frontend-change"
+    ],
+    "backend": [
+      "backend-change"
+    ],
+    "database": [
+      "database-change"
+    ],
+    "repair": [
+      "repair-loop"
+    ]
+  },
+  "reasoning": {
+    "LOW": {
+      "relative_budget": 0.25
+    },
+    "MEDIUM": {
+      "relative_budget": 0.55
+    },
+    "HIGH": {
+      "relative_budget": 1
+    },
+    "role_overrides": {
+      "architect": "HIGH",
+      "auditor": "HIGH",
+      "judge-requirements": "MEDIUM",
+      "judge-regression": "MEDIUM",
+      "judge-quality": "MEDIUM",
+      "verifier": "LOW",
+      "visual-capture-runner": "LOW",
+      "visual-regression-runner": "LOW",
+      "visual-runtime-audit-runner": "LOW"
+    }
+  },
+  "response_budgets": {
+    "closed_decision_max_tokens": 120,
+    "handoff_max_tokens": 600,
+    "research_summary_max_tokens": 1400,
+    "architecture_summary_max_tokens": 1800,
+    "implementation_handoff_max_tokens": 1200,
+    "judge_max_tokens": 700,
+    "user_progress_update_max_tokens": 180,
+    "user_final_default_max_tokens": 1200,
+    "hard_rule": "REQUIRED_EVIDENCE_MAY_EXCEED_BUDGET"
+  },
+  "compact_technical_language": {
+    "name": "ACTL_1_0",
+    "inspired_by": [
+      "controlled_technical_language",
+      "structured_decision_contracts"
+    ],
+    "rules": [
+      "one_semantic_action_per_sentence",
+      "use_one_canonical_term_per_concept",
+      "prefer_direct_active_instructions",
+      "remove_repeated_background",
+      "reference_unchanged_evidence_by_id_or_hash",
+      "prefer_tables_or_structured_fields_for_repeated_dimensions",
+      "do_not_repeat_tool_output_verbatim_when_a_status_and_reference_are_sufficient",
+      "do_not_hide_uncertainty",
+      "do_not_compress_required_evidence"
+    ]
+  },
+  "closed_decision_contracts": {
+    "TASK_PROFILE": [
+      "MICRO",
+      "STANDARD",
+      "DEEP",
+      "CRITICAL"
+    ],
+    "BOOLEAN_NEED": [
+      "YES",
+      "NO"
+    ],
+    "ROUTING_ACTION": [
+      "USE",
+      "SKIP",
+      "DEFER",
+      "BLOCK"
+    ],
+    "EFFICIENCY_RESULT": [
+      "PASS",
+      "BLOCKED",
+      "FAIL"
+    ]
+  },
+  "user_intervention": {
+    "allowed_reasons": [
+      "AMBIGUOUS_PRODUCT_DECISION",
+      "MISSING_AUTHORITY",
+      "EXTERNAL_SECRET_OR_CREDENTIAL",
+      "IRREVERSIBLE_ACTION_APPROVAL",
+      "POLICY_EXCEPTION_APPROVAL"
+    ],
+    "forbidden_operational_requests": [
+      "CHOOSE_AGENT",
+      "CHOOSE_NEXT_STEP",
+      "MANUALLY_COORDINATE_WORKERS",
+      "MANUALLY_SELECT_SKILLS",
+      "MANUALLY_SELECT_TEST_ORDER",
+      "REPEAT_KNOWN_CONTEXT"
+    ]
+  },
+  "quality_preservation": {
+    "candidate_final_state_required": "PASS",
+    "required_gates": [
+      "scope",
+      "integrity",
+      "canonical"
+    ],
+    "required_judges": [
+      "requirements",
+      "regression",
+      "quality"
+    ],
+    "minimum_judge_score": 90,
+    "maximum_judge_score_drop": 2,
+    "maximum_new_blockers": 0,
+    "maximum_new_unverified": 0,
+    "acceptance_all_verified": true,
+    "repairs_may_not_increase": true
+  },
+  "required_benchmark_measurements": [
+    "input_tokens",
+    "output_tokens",
+    "context_peak",
+    "tool_calls",
+    "files_read",
+    "handoff_tokens",
+    "model_calls",
+    "active_agents"
+  ]
+}

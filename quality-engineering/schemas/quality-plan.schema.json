@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Quality Engineering Plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "change_class",
+    "risk",
+    "requirements",
+    "evidence",
+    "reuse",
+    "status"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "task_id": { "type": "string", "minLength": 1 },
+    "change_class": {
+      "enum": ["analysis","docs","bugfix","feature","refactor","ui","config","schema","migration","test-only"]
+    },
+    "risk": { "enum": ["low","medium","high","critical"] },
+    "requirements": {
+      "type": "object",
+      "required": [
+        "tests_required",
+        "regression_test_required",
+        "reuse_decision_required",
+        "regression_analysis_required",
+        "diff_review_required",
+        "visual_qa_required"
+      ],
+      "additionalProperties": { "type": "boolean" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type","ref","at"],
+        "properties": {
+          "type": {
+            "enum": ["test","regression-analysis","diff-review","visual-qa","canonical-gate","other"]
+          },
+          "ref": { "type": "string", "minLength": 1 },
+          "source": { "type": ["string","null"] },
+          "layer": { "type": ["string","null"] },
+          "coverage": {
+            "enum": ["happy","edge","error","regression","compatibility","none"]
+          },
+          "regression": { "type": "boolean" },
+          "at": { "type": "string" }
+        }
+      }
+    },
+    "reuse": {
+      "type": "object",
+      "required": ["decision","target","evidence","reason"],
+      "properties": {
+        "decision": {
+          "enum": ["UNSET","REUSE","EXTEND","GENERALIZE","CREATE_NEW","NOT_APPLICABLE"]
+        },
+        "target": { "type": ["string","null"] },
+        "evidence": { "type": ["string","null"] },
+        "reason": { "type": ["string","null"] }
+      }
+    },
+    "status": { "enum": ["OPEN","PASS","BLOCKED","FAIL"] }
+  }
+}

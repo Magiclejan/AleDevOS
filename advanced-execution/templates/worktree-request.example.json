@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P1_WORKTREES",
+  "request_id": "GENERATED_BY_REQUEST_PREPARE",
+  "task_id": "feature-example",
+  "base_ref": "HEAD",
+  "base_commit": "GENERATED_BY_REQUEST_PREPARE",
+  "repository_identity_sha256": "GENERATED_BY_REQUEST_PREPARE",
+  "primary_head_at_prepare": "GENERATED_BY_REQUEST_PREPARE",
+  "primary_branch_at_prepare": "GENERATED_BY_REQUEST_PREPARE",
+  "prepared_at": "GENERATED_BY_REQUEST_PREPARE"
+}

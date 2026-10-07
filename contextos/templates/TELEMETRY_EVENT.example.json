@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "event_id": "evt-researcher-001",
+  "run_id": "run-example-001",
+  "task_id": "TASK-001",
+  "timestamp": "2026-10-05T15:00:00.000Z",
+  "kind": "AGENT_CALL",
+  "source": {
+    "runtime": "opencode",
+    "adapter": "opencode",
+    "agent": "researcher",
+    "model": "qwen3.8-flash-next-coder-iq1_m",
+    "provenance": "MEASURED"
+  },
+  "metrics": {
+    "input_tokens": 12400,
+    "output_tokens": 980,
+    "context_tokens": 18700,
+    "generation_ms": 27100,
+    "duration_ms": 92000,
+    "decode_tokens_per_sec": 36.2,
+    "tool_calls": 4,
+    "files_read": 7,
+    "bytes_read": 38120
+  },
+  "refs": {
+    "handoff_id": "handoff-research-001"
+  }
+}

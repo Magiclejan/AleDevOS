@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "capabilities": [
+    {
+      "id": "repository_read",
+      "kind": "operation",
+      "description": "Read repository content without mutation."
+    },
+    {
+      "id": "product_write",
+      "kind": "guard",
+      "description": "Write only approved product scope under Core policy."
+    },
+    {
+      "id": "control_plane_write_deny",
+      "kind": "guard",
+      "description": "Prevent agents from mutating AleDevOS control-plane files."
+    },
+    {
+      "id": "arbitrary_shell_deny",
+      "kind": "guard",
+      "description": "Deny unrestricted shell execution; expose only governed execution."
+    },
+    {
+      "id": "canonical_gate",
+      "kind": "operation",
+      "description": "Invoke the canonical deterministic project gate."
+    },
+    {
+      "id": "repair_cap",
+      "kind": "guard",
+      "description": "Enforce the global bounded repair limit."
+    },
+    {
+      "id": "scope_prewrite",
+      "kind": "guard",
+      "description": "Prevent out-of-scope writes before mutation when runtime permits."
+    },
+    {
+      "id": "scope_prepass",
+      "kind": "guard",
+      "description": "Deterministically block PASS when changed paths exceed approved scope."
+    },
+    {
+      "id": "external_directory",
+      "kind": "guard",
+      "description": "Control access outside the project root."
+    },
+    {
+      "id": "network",
+      "kind": "guard",
+      "description": "Control external network access."
+    },
+    {
+      "id": "code_mode",
+      "kind": "guard",
+      "description": "Control unrestricted code/execute modes."
+    },
+    {
+      "id": "compaction",
+      "kind": "runtime",
+      "description": "Expose runtime context compaction or equivalent safe transition."
+    },
+    {
+      "id": "structured_handoff",
+      "kind": "transport",
+      "description": "Carry portable structured handoffs between roles/sessions."
+    },
+    {
+      "id": "context_budget",
+      "kind": "runtime",
+      "description": "Expose ContextOS budget planning with truthful runtime profile data."
+    },
+    {
+      "id": "checkpoint_resume",
+      "kind": "runtime",
+      "description": "Persist and restore sealed ContextOS checkpoints."
+    },
+    {
+      "id": "preventive_transition",
+      "kind": "runtime",
+      "description": "Trigger checkpoint/resume before context pressure becomes unsafe."
+    },
+    {
+      "id": "diff_first",
+      "kind": "operation",
+      "description": "Expose bounded diff-first review evidence."
+    },
+    {
+      "id": "context_dedup",
+      "kind": "runtime",
+      "description": "Use ContextOS de-duplication/context packet planning."
+    },
+    {
+      "id": "skill_registry",
+      "kind": "runtime",
+      "description": "Expose portable Skill System discovery, routing and bindings."
+    },
+    {
+      "id": "motion_governance",
+      "kind": "runtime",
+      "description": "Expose UX/UI Motion governance contracts and specialist routing."
+    },
+    {
+      "id": "visual_qa_capture_contract",
+      "kind": "runtime",
+      "description": "Support Visual QA Phase 1 portable evidence contract."
+    },
+    {
+      "id": "visual_qa_browser_capture",
+      "kind": "operation",
+      "description": "Provide a real browser capture provider for Visual QA Phase 2."
+    },
+    {
+      "id": "visual_qa_regression",
+      "kind": "runtime",
+      "description": "Support Visual QA Phase 3 deterministic regression."
+    },
+    {
+      "id": "visual_qa_runtime_checks",
+      "kind": "operation",
+      "description": "Provide rendered DOM/layout/a11y measurement for Visual QA Phase 4."
+    },
+    {
+      "id": "visual_qa_judge",
+      "kind": "runtime",
+      "description": "Expose native-image semantic visual judgment when target model supports it."
+    },
+    {
+      "id": "visual_qa_bounded_repair",
+      "kind": "guard",
+      "description": "Enforce bounded visual repair state and fresh evidence requirements."
+    },
+    {
+      "id": "target_runtime_preflight",
+      "kind": "runtime",
+      "description": "Expose truthful runtime readiness/preflight evidence."
+    },
+    {
+      "id": "v1_release_validation",
+      "kind": "runtime",
+      "description": "Expose sealed final release-validation evidence and gate evaluation."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "version": "0.3.0",
+  "task_id": "task-example",
+  "target_agent": "judge-regression",
+  "items": [
+    {
+      "id": "task-contract",
+      "kind": "task_contract",
+      "source": ".aledevos/state/current.json",
+      "required": true,
+      "content": {"objective":"Add feature X","acceptance_criteria":["AC1","AC2"]}
+    },
+    {
+      "id": "scope",
+      "kind": "approved_scope",
+      "source": ".aledevos/state/current.json",
+      "required": true,
+      "content": ["src/x.ts","tests/x.test.ts"]
+    },
+    {
+      "id": "diff-summary",
+      "kind": "diff_summary",
+      "source": ".aledevos/state/contextos/diffs/latest.json",
+      "required": true,
+      "content": {"changed_paths":["src/x.ts","tests/x.test.ts"],"insertions":12,"deletions":1}
+    },
+    {
+      "id": "verification",
+      "kind": "verification_evidence",
+      "source": ".aledevos/state/current.json",
+      "required": true,
+      "content": {"typecheck":"PASS","tests":"PASS"}
+    },
+    {
+      "id": "full-src-x",
+      "kind": "full_file",
+      "source": "src/x.ts",
+      "required": false,
+      "fallback_reason": "Only include if the diff is insufficient to understand an unchanged dependency in the same file.",
+      "content": "export const x = 1;"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P1",
+  "status": "MULTIMODEL_P1_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "two_judge_slots": true,
+    "adapter_independent": true,
+    "explicit_model_provenance": true,
+    "immutable_input_and_rubric": true,
+    "missing_secondary_never_consensus": true,
+    "router_not_implemented": true,
+    "diversity_not_enforced": true,
+    "fallback_not_implemented": true
+  },
+  "registry_status": "MODEL_REGISTRY_VALID",
+  "inputs": [
+    {
+      "path": "engine/multimodel.mjs",
+      "sha256": "ae469ac45b6e50d3d368a0220e9a15ac15844397bfb2a32bb1f6f01077eec694"
+    },
+    {
+      "path": "registry/model-registry.json",
+      "sha256": "9c81f5a2b63a5ae39da46b05b31f5f30c9b09119f89a0a3e0c0d500db4abf459"
+    },
+    {
+      "path": "policies/judge-pair-policy.json",
+      "sha256": "e35c6516c13982447cfccd723de683a642b26a68985965457aca8ff1326ae7b8"
+    },
+    {
+      "path": "schemas/model-binding.schema.json",
+      "sha256": "33983fe5c4e7237b548c7527aef20356734a38fabb8afa7713966e3cf30ad1fb"
+    },
+    {
+      "path": "schemas/judge-model-evidence.schema.json",
+      "sha256": "12c2ac2bbf1bebd4033199048ea3ec2323958a0d75d2f08ce0334f525971b3f5"
+    },
+    {
+      "path": "schemas/judge-pair-comparison.schema.json",
+      "sha256": "64a37f131a136199352f667ab553340387c0b6e0386dd34a8abef0adf1f446ef"
+    },
+    {
+      "path": "templates/target-model-bindings.example.json",
+      "sha256": "cda0b4f407ba100c94206833ade993f8a51fbbfd15ed39ccc758fcff1371c5d4"
+    }
+  ],
+  "created_at": "2026-10-06T00:38:18.489Z",
+  "evidence_sha256": "5e3c86af19b2fac24cad054e8ee540540ad8d783fc651c86451f26ae8b089d1c"
+}

@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://uxui/ui-change-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "visual_task",
+    "changed_files",
+    "reuse_decisions",
+    "responsive",
+    "accessibility",
+    "states",
+    "exceptions"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_task": {
+      "type": "boolean"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "reuse_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "decision_path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "decision_path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responsive": {
+      "type": "object",
+      "required": [
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "required": [
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "required": [
+        "status",
+        "covered"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "covered": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "UNVERIFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "reason",
+          "approval_ref"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "approval_ref": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "phase6_review_path": {
+      "type": "string"
+    }
+  }
+}

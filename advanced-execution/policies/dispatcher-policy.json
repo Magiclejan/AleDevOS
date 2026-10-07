@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P4_DISPATCHER_QUEUE",
+  "queue": {
+    "max_items": 256,
+    "default_priority": 5,
+    "min_priority": 0,
+    "max_priority": 9,
+    "max_dispatch_starts_per_tick": 4,
+    "max_dispatch_attempts": 2,
+    "deduplicate_active_plan": true
+  },
+  "fairness": {
+    "policy": "PRIORITY_FIFO_WITH_EPOCH_AGING",
+    "aging_every_epochs": 5,
+    "aging_priority_boost": 1,
+    "max_effective_priority": 9
+  },
+  "locking": {
+    "stale_lock_recovery": true,
+    "stale_lock_after_ms": 30000
+  },
+  "dispatch": {
+    "work_conserving": true,
+    "temporary_block_reasons": [
+      "GLOBAL_MAX_PARALLEL_WORKERS_EXCEEDED",
+      "ACTIVE_SCOPE_CONFLICTS_PRESENT"
+    ],
+    "never_bypass_p3": true,
+    "never_spawn_worker_directly": true,
+    "blocked_items_recheck": true
+  },
+  "boundaries": {
+    "dispatcher_used": true,
+    "queue_used": true,
+    "safe_concurrency_authority": "ADVANCED_EXECUTION_P3",
+    "worker_runtime_authority": "ADVANCED_EXECUTION_P2",
+    "worktree_authority": "ADVANCED_EXECUTION_P1",
+    "multi_machine_used": false,
+    "network_used": false,
+    "target_agent_runtime_binding": "DEFERRED_MASTER_VALIDATION"
+  }
+}

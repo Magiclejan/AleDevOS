@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Closed Efficiency Decision P7",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","contract_id","choice","reason_codes","evidence_refs"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"contract_id":{"enum":["TASK_PROFILE","BOOLEAN_NEED","ROUTING_ACTION","EFFICIENCY_RESULT"]},
+    "choice":{"type":"string"},"reason_codes":{"type":"array","maxItems":12,"uniqueItems":true,"items":{"type":"string","maxLength":80}},
+    "evidence_refs":{"type":"array","maxItems":16,"uniqueItems":true,"items":{"type":"string","maxLength":300}}
+  }
+}

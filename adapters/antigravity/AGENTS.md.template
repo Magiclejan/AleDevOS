@@ -1,0 +1,25 @@
+# Project Agent Rules — AleDevOS
+
+Project-specific invariants live here. **Canonical verification commands live in `.aledevos/project.json` and are executed only through the protected gate runner.**
+
+## Project identity
+- Product: <NAME>
+- Stack: <STACK>
+
+## Architecture / domain invariants
+- <invariant>
+
+## Mandatory rules
+1. Preserve existing behavior unless explicitly changed.
+2. No placeholders/fake green paths.
+3. No test weakening for PASS.
+4. No silent scope expansion; emit SCOPE_ESCALATION.
+5. No control-plane/self modification.
+6. Final state: PASS / BLOCKED / FAILED only.
+
+## Google Antigravity adapter
+- Antigravity is the canonical Google adapter; `gemini` is only a compatibility/migration alias.
+- Project agents live under `.agents/agents/`; portable repository skills live under `.agents/skills/`.
+- Workspace hooks are declared in `.agents/hooks.json` and the AleDevOS guard is installed under `.aledevos/adapters/antigravity/`.
+- Do not weaken Antigravity permissions, hook policy, review mode, protected paths, or the deterministic AleDevOS gate to make a task pass.
+- A runtime/platform limitation is BLOCKED, not a reason to bypass the adapter.

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/v1-freeze-certificate.schema.json",
+  "title": "AleDevOS V1 Freeze Certificate",
+  "type": "object",
+  "required": ["schema_version","phase","status","release_state","package_version","master_report_path","master_report_sha256","master_policy_sha256","package_baseline_sha256","summary","required_check_count","evidence_root_sha256","final_package_certificate_sha256","p8_package_certificate_sha256","claims","frozen_at","freeze_certificate_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"ALEDEVOS_V1_FINAL_MASTER_GATE"},
+    "status": {"const":"ALEDEVOS_V1_FROZEN"},
+    "release_state": {"const":"V1_RELEASE_READY"},
+    "package_version": {"type":"string","minLength":1},
+    "master_report_path": {"type":"string","minLength":1},
+    "master_report_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "master_policy_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "package_baseline_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "required_check_count": {"const":33},
+    "evidence_root_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "final_package_certificate_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "p8_package_certificate_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "frozen_at": {"type":"string","minLength":1},
+    "freeze_certificate_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

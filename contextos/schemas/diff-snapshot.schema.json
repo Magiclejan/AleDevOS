@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Diff Snapshot v0.3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version","diff_id","created_at","base","base_sha","status","changed_paths","tracked_patch","untracked_files","index_state","integrity"],
+  "properties": {
+    "version": {"const":"0.3.0"},
+    "diff_id": {"type":"string","pattern":"^[A-Za-z0-9._-]{1,160}$"},
+    "created_at": {"type":"string","format":"date-time"},
+    "base": {"type":"string","minLength":1},
+    "base_sha": {"type":"string","minLength":7},
+    "status": {"type":"string"},
+    "changed_paths": {"type":"array","items":{"type":"string"}},
+    "tracked_patch": {
+      "type":"object","additionalProperties":false,
+      "required":["text","truncated","original_chars","estimated_tokens"],
+      "properties": {
+        "text":{"type":"string"},"truncated":{"type":"boolean"},"original_chars":{"type":"integer","minimum":0},"estimated_tokens":{"type":"integer","minimum":0}
+      }
+    },
+    "untracked_files": {
+      "type":"array",
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":["path","bytes","sha256","binary","preview","preview_truncated"],
+        "properties": {
+          "path":{"type":"string"},"bytes":{"type":"integer","minimum":0},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"binary":{"type":"boolean"},"preview":{"type":["string","null"]},"preview_truncated":{"type":"boolean"}
+        }
+      }
+    },
+    "index_state": {
+      "type":"object","additionalProperties":false,
+      "required":["sha256_before","sha256_after","mutated"],
+      "properties": {"sha256_before":{"type":"string","pattern":"^[a-f0-9]{64}$"},"sha256_after":{"type":"string","pattern":"^[a-f0-9]{64}$"},"mutated":{"const":false}}
+    },
+    "integrity": {
+      "type":"object","additionalProperties":false,
+      "required":["algorithm","payload_sha256"],
+      "properties":{"algorithm":{"const":"sha256"},"payload_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}
+    }
+  }
+}

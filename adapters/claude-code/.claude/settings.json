@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "dontAsk",
+    "disableBypassPermissionsMode": "disable",
+    "disableAutoMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true,
+    "allow": [
+      "Agent(architect)",
+      "Agent(auditor)",
+      "Agent(builder)",
+      "Agent(design-system-guardian)",
+      "Agent(editor-backend)",
+      "Agent(editor-config)",
+      "Agent(editor-database)",
+      "Agent(editor-frontend)",
+      "Agent(editor-tests)",
+      "Agent(judge-quality)",
+      "Agent(judge-regression)",
+      "Agent(judge-requirements)",
+      "Agent(judge-uxui)",
+      "Agent(motion-director)",
+      "Agent(orchestrator)",
+      "Agent(repairer)",
+      "Agent(researcher)",
+      "Agent(security-reviewer)",
+      "Agent(v1-release-validator)",
+      "Agent(verifier)",
+      "Agent(visual-capture-runner)",
+      "Agent(visual-judge)",
+      "Agent(visual-regression-runner)",
+      "Agent(visual-repair-controller)",
+      "Agent(visual-runtime-audit-runner)",
+      "Bash(node .aledevos/runtime/aledevos.mjs *)",
+      "PowerShell(node .aledevos/runtime/aledevos.mjs *)",
+      "Bash(node .aledevos/contextos/runtime/contextos.mjs *)",
+      "PowerShell(node .aledevos/contextos/runtime/contextos.mjs *)",
+      "Bash(node .aledevos/skillsystem/runtime/skillsystem.mjs *)",
+      "PowerShell(node .aledevos/skillsystem/runtime/skillsystem.mjs *)",
+      "Bash(node .aledevos/uxui/runtime/uxui.mjs *)",
+      "PowerShell(node .aledevos/uxui/runtime/uxui.mjs *)",
+      "Bash(node .aledevos/visualqa/runtime/browser-runner.mjs *)",
+      "PowerShell(node .aledevos/visualqa/runtime/browser-runner.mjs *)",
+      "Bash(node .aledevos/visualqa/runtime/regression.mjs *)",
+      "PowerShell(node .aledevos/visualqa/runtime/regression.mjs *)",
+      "Bash(node .aledevos/visualqa/runtime/runtime-audit.mjs *)",
+      "PowerShell(node .aledevos/visualqa/runtime/runtime-audit.mjs *)",
+      "Bash(node .aledevos/visualqa/runtime/visual-judge.mjs *)",
+      "PowerShell(node .aledevos/visualqa/runtime/visual-judge.mjs *)",
+      "Bash(node .aledevos/release/runtime/v1-release.mjs *)",
+      "PowerShell(node .aledevos/release/runtime/v1-release.mjs *)"
+    ],
+    "deny": [
+      "WebFetch",
+      "WebSearch",
+      "mcp__*",
+      "Agent(Explore)",
+      "Agent(Plan)",
+      "Edit(/.aledevos/**)",
+      "Edit(/.claude/**)",
+      "Edit(/CLAUDE.md)",
+      "Edit(/CLAUDE.*)",
+      "Edit(/.git/**)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "failIfUnavailable": false,
+    "excludedCommands": [],
+    "filesystem": {
+      "disabled": false,
+      "denyWrite": [
+        ".aledevos",
+        ".claude",
+        "CLAUDE.md",
+        ".git"
+      ],
+      "denyRead": [
+        "~/.ssh",
+        "~/.aws",
+        "~/.config/gcloud"
+      ]
+    },
+    "network": {
+      "allowedDomains": [],
+      "deniedDomains": [
+        "*"
+      ]
+    }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .aledevos/adapters/claude-code/hooks/pretool-guard.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "DISABLE_TELEMETRY": "1"
+  }
+}

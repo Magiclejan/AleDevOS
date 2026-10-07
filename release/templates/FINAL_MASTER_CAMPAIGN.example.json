@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "phase": "ALEDEVOS_V1_FINAL_MASTER_CAMPAIGN",
+  "regression_summary": ".aledevos/state/release/master/inputs/final-regression-summary.json",
+  "p2": {"adapters": ["opencode","codex","claude-code","antigravity"]},
+  "p3": {"profile": ".aledevos/state/release/master/profiles/p3-multimodel.json"},
+  "p4": {"profile": ".aledevos/state/release/master/profiles/p4-visual.json"},
+  "p5": {"profile": ".aledevos/state/release/master/profiles/p5-advanced-execution.json", "transport_probe_profile": ".aledevos/state/release/master/profiles/p5-transport.json", "crash_group": ".aledevos/state/release/master/profiles/p5-crash-group.json", "crash_worker_id": "worker-a"},
+  "p6": {"profile": ".aledevos/state/release/master/profiles/p6-full-stack.json"},
+  "p7": {"task_contract": ".aledevos/state/release/master/profiles/p7-task.json", "signals": ".aledevos/state/release/master/profiles/p7-signals.json", "benchmark_profile": ".aledevos/state/release/master/profiles/p7-benchmark.json"},
+  "p8": {"profile": ".aledevos/state/release/master/profiles/p8-security-reliability.json"}
+}

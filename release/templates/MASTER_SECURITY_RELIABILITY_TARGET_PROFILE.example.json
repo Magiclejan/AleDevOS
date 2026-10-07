@@ -1,0 +1,1 @@
+{"schema_version":"1.0","phase":"MASTER_VALIDATION_P8_TARGET_PROFILE","reviewer":{"adapter":"opencode","provider_id":"REQUIRED","model_id":"REQUIRED","invocation_model_id":"REQUIRED"},"security_review_submission":"REQUIRED","external_security_profile":"REQUIRED","test_health_input":"REQUIRED","registry_records":[]}

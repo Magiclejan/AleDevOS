@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "adapter": "gemini",
+  "binding_version": "1.0.0",
+  "bindings": [
+    {
+      "skill_id": "backend-change",
+      "path": ".agents/skills/backend-change/SKILL.md",
+      "expected_sha256": "dc741701782d5dae67633a01b25ff6da5446beb44f18881d992aa589878880be"
+    },
+    {
+      "skill_id": "database-change",
+      "path": ".agents/skills/database-change/SKILL.md",
+      "expected_sha256": "1189479b5880f9e98869b077a7370244109e40260d7e1cb083abb2493f29823b"
+    },
+    {
+      "skill_id": "diff-review",
+      "path": ".agents/skills/diff-review/SKILL.md",
+      "expected_sha256": "76b6b648fd793a9eeb9e8c1a8f4863fd59dc8082218af5b8569ca150f13030d1"
+    },
+    {
+      "skill_id": "frontend-change",
+      "path": ".agents/skills/frontend-change/SKILL.md",
+      "expected_sha256": "4a5a3f5b9ed04671aa09b12af9c3a8fd93243c63b7376cfbc655a2c258b196aa"
+    },
+    {
+      "skill_id": "implementation-plan",
+      "path": ".agents/skills/implementation-plan/SKILL.md",
+      "expected_sha256": "d5a4700f7f70e449529238fce45f6d6632b3b44a9725157a2838803ef8a8420b"
+    },
+    {
+      "skill_id": "regression-analysis",
+      "path": ".agents/skills/regression-analysis/SKILL.md",
+      "expected_sha256": "3658af4934271edb2b634082566290d3fc40e8e993df16bf699f215856aa25ff"
+    },
+    {
+      "skill_id": "repair-loop",
+      "path": ".agents/skills/repair-loop/SKILL.md",
+      "expected_sha256": "a47302848833ff6a6a0539edb8b763ab9fa780882297874ecae747f04042801b"
+    },
+    {
+      "skill_id": "repo-map",
+      "path": ".agents/skills/repo-map/SKILL.md",
+      "expected_sha256": "ecb1ae63678d77aadd1a9099cab6baaa72f9947fd48cbe565838636ce5fe9979"
+    },
+    {
+      "skill_id": "requirements-check",
+      "path": ".agents/skills/requirements-check/SKILL.md",
+      "expected_sha256": "db668f9559029123dba0d01752a9058fefca3a9a238377cacdfef95d1cb61035"
+    },
+    {
+      "skill_id": "safe-edit",
+      "path": ".agents/skills/safe-edit/SKILL.md",
+      "expected_sha256": "3a83e225a8d27034eb9bf194ca661cc00410ef45122c70f80a748bf85a24ccf8"
+    },
+    {
+      "skill_id": "security-check",
+      "path": ".agents/skills/security-check/SKILL.md",
+      "expected_sha256": "c2623fbdd15a00ed1b6a6fddfc2a0b8ba05a6b324f4c501e6be167c1bea44cd5"
+    },
+    {
+      "skill_id": "task-contract",
+      "path": ".agents/skills/task-contract/SKILL.md",
+      "expected_sha256": "47409ce6b2f11873efd3c076356600706dd02a20e8c05468bb6f135fb38c1167"
+    },
+    {
+      "skill_id": "test-strategy",
+      "path": ".agents/skills/test-strategy/SKILL.md",
+      "expected_sha256": "8776fb7dcfe86be85a729ae3d2b7ae00b8df6a72bce5fd9f45678f1668308034"
+    }
+  ]
+}

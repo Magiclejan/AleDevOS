@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Design Context manifest",
+  "type": "object",
+  "required": ["schema_version", "context_version", "project_mode", "bootstrap_workflow", "canonical_root", "source_precedence", "sections", "skill_policy", "integrity_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "context_version": {"type": "integer", "minimum": 1},
+    "project_mode": {"enum": ["GREENFIELD", "BROWNFIELD", "HYBRID"]},
+    "bootstrap_workflow": {"enum": ["DESIGN_GENESIS", "DESIGN_SYSTEM_DISCOVERY", "DESIGN_AUDIT_AND_CONSOLIDATE"]},
+    "canonical_root": {"const": ".aledevos/design"},
+    "source_precedence": {"type": "array", "minItems": 5, "items": {"type": "string"}},
+    "sections": {"type": "object"},
+    "skill_policy": {"type": "object"},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

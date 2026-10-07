@@ -1,0 +1,5 @@
+{
+  "outcome": "READY_FOR_VERIFICATION",
+  "summary": "Implemented the assigned change and committed the worktree cleanly.",
+  "evidence_refs": ["tests/worker-result.txt"]
+}

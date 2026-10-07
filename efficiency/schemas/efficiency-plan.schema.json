@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Global Efficiency Plan P7",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","phase","task_id","profile","complexity_score","reason_codes","agents","skills","reasoning","budgets","user_intervention_policy","inputs","integrity"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"phase":{"const":"GLOBAL_EFFICIENCY_P7"},"task_id":{"type":"string","minLength":1},
+    "profile":{"enum":["MICRO","STANDARD","DEEP","CRITICAL"]},"complexity_score":{"type":"integer","minimum":0},
+    "reason_codes":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "agents":{"type":"array","uniqueItems":true,"items":{"type":"object","required":["id","reasoning_effort","required"],"additionalProperties":false,"properties":{"id":{"type":"string"},"reasoning_effort":{"enum":["LOW","MEDIUM","HIGH"]},"required":{"type":"boolean"}}}},
+    "skills":{"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "reasoning":{"type":"object"},"budgets":{"type":"object"},"user_intervention_policy":{"type":"object"},
+    "inputs":{"type":"object","required":["task_sha256","signals_sha256","policy_sha256"]},
+    "integrity":{"type":"object","required":["algorithm","payload_sha256"],"properties":{"algorithm":{"const":"sha256"},"payload_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P4_DISPATCHER_QUEUE",
+  "status": "ADVANCED_EXECUTION_P4_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "durable_local_queue": true,
+    "deterministic_priority_fifo_aging": true,
+    "p3_authoritative_dispatch": true,
+    "bounded_dispatch_retry": true,
+    "pause_resume_cancel_drain": true,
+    "stale_lock_recovery": true,
+    "work_conserving_dispatch": true,
+    "p1_p2_p3_frozen_dependencies": true,
+    "multi_machine_disabled": true,
+    "network_disabled": true,
+    "target_agent_runtime_binding": false
+  },
+  "dependencies": {
+    "p1_certificate_valid": true,
+    "p2_certificate_valid": true,
+    "p3_certificate_valid": true
+  },
+  "inputs": [
+    {
+      "path": "advanced-execution/dispatcher/dispatcher-manager.mjs",
+      "sha256": "54ca821ee02439f3b7a770933a0831295e442fe55a4c0c28afca490ce7922876"
+    },
+    {
+      "path": "advanced-execution/policies/dispatcher-policy.json",
+      "sha256": "283aa271a57c2f838567a6bfcb7c1897c744ff5cf45f78d44ce27727b6d2b128"
+    },
+    {
+      "path": "advanced-execution/contracts/DISPATCHER_QUEUE.md",
+      "sha256": "cfe43c6bdba16e74f534ed5afead030cc1e49427331eaaff869117ea6e406d96"
+    },
+    {
+      "path": "advanced-execution/schemas/dispatcher-queue.schema.json",
+      "sha256": "20159ce440cbd2a5fd4e27a489f27fe6b7e3ce9d259b6f700644b697b1317114"
+    },
+    {
+      "path": "advanced-execution/schemas/dispatch-item.schema.json",
+      "sha256": "cbb907aa8d4e71a03cd059790819275dcfab7537d47ce9a3684a650b6000b492"
+    },
+    {
+      "path": "advanced-execution/schemas/dispatch-receipt.schema.json",
+      "sha256": "fd7cdf2b00183e39ac128b95bce34a6868f4a3b74e9111e54f6d3743e2f7fc4a"
+    },
+    {
+      "path": "advanced-execution/templates/dispatch-submit.example.json",
+      "sha256": "f318854e49d9dae0bc63ebfe685259005aa1a8f2535f413ed5a12597f3d1200b"
+    },
+    {
+      "path": "advanced-execution/concurrency/concurrency-manager.mjs",
+      "sha256": "0071f87708fd7a34d2ec2b1d6340fd3ce143c1b57855de9bfff2f4731b2e48c6"
+    },
+    {
+      "path": "advanced-execution/policies/concurrency-policy.json",
+      "sha256": "c7e2a0c738785d3ba42d071f745b7a7513b93bd2185e0785da273e185d9c5251"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p1.json",
+      "sha256": "d9fab0d24e805ba99f38ce6a14a09dda41d7fcc81013d1a96a273468c1826aac"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p2.json",
+      "sha256": "85352eb7c3ea9f39b278d6ffc314d8e14de5b19776f5f2f17afebcf74364372f"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p3.json",
+      "sha256": "0dfdabc41928c41b0cc494c4ba8be7897e7ccc3e2813d74c404c01d39ffc10e9"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    }
+  ],
+  "created_at": "2026-10-06T16:27:26.555Z",
+  "evidence_sha256": "e2c3393a0c6c5bb5deb98f834e669a478972bf71cf947eecdb0cccd635f884ad"
+}

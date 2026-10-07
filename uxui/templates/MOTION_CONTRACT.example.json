@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "task_id": "feature-motion-example",
+  "motion_required": true,
+  "rationale": "The overlay has an intentional enter/exit transition.",
+  "changed_files": [
+    "src/components/Example.tsx"
+  ],
+  "interactions": [
+    {
+      "id": "example.enter",
+      "intent": "enter",
+      "duration_token": "standard",
+      "easing_token": "enter",
+      "reduced_motion_behavior": "SIMPLIFY",
+      "loop": false,
+      "essential": false
+    }
+  ],
+  "skill_evidence": [],
+  "exceptions": []
+}

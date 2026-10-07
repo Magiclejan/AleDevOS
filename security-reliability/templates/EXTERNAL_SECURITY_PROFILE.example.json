@@ -1,0 +1,1 @@
+{"schema_version":"1.0","phase":"SECURITY_RELIABILITY_P8_EXTERNAL_SCANNERS","scanners":[{"id":"dependency-audit","kind":"DEPENDENCY","binary":"npm","args":["audit","--json","--audit-level=high"],"required":true,"acceptable_exit_codes":[0]}]}

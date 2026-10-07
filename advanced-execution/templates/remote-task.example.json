@@ -1,0 +1,10 @@
+{
+  "task_id": "task-example",
+  "requirements": {
+    "adapters": ["codex"],
+    "modalities": ["text"],
+    "features": ["git"],
+    "min_workers": 1
+  },
+  "note": "The actual payload is supplied as a file and snapshotted by the coordinator."
+}

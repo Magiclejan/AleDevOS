@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.capture-run.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "status",
+    "plan_path",
+    "plan_sha256",
+    "captures",
+    "run_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "CAPTURE_EVIDENCE_COMPLETE",
+        "CAPTURE_EVIDENCE_BLOCKED"
+      ]
+    },
+    "plan_path": {
+      "type": "string"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "captures": {
+      "type": "array"
+    },
+    "run_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "evidence_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version":"1.0",
+  "domains":["backend"],
+  "signals":{
+    "cross_domain":false,"security_sensitive":false,"database_affecting":false,"external_integration":false,
+    "ui_affecting":false,"visual_validation_required":false,"unknown_requirements":false,"migration_or_destructive":false,
+    "multi_machine":false,"requires_research":false,"knowledge_stale":false,"repair_required":false
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/worker-assignment.schema.json",
+  "title": "AleDevOS Advanced Execution P2 Worker Assignment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "phase", "status", "assignment_id", "worker_id", "task_id", "worker_role", "worktree", "task_contract", "permissions", "boundaries", "assignment_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "ADVANCED_EXECUTION_P2_ISOLATED_WORKERS"},
+    "status": {"const": "WORKER_ASSIGNMENT_PREPARED"},
+    "assignment_id": {"type": "string", "minLength": 1},
+    "worker_id": {"type": "string", "pattern": "^worker-[0-9a-f]{16}$"},
+    "task_id": {"type": "string", "minLength": 1},
+    "worker_role": {"type": "string", "minLength": 1},
+    "worktree": {"type": "object"},
+    "task_contract": {"type": "object"},
+    "permissions": {"type": "object"},
+    "boundaries": {"type": "object"},
+    "assignment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

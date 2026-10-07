@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0",
+  "phase": "GLOBAL_EFFICIENCY_P7",
+  "status": "GLOBAL_EFFICIENCY_P7_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "transversal_efficiency_governor": true,
+    "minimum_necessary_intelligence": true,
+    "adaptive_agent_activation": true,
+    "adaptive_reasoning": true,
+    "minimal_skill_activation": true,
+    "compact_technical_language_actl": true,
+    "closed_decision_contracts": true,
+    "baseline_candidate_measurement_required": true,
+    "quality_preservation_required": true,
+    "user_is_goal_owner_not_project_manager": true,
+    "operational_user_interventions_zero": true,
+    "p8_security_reliability_not_claimed": true,
+    "final_freeze_authority": "MASTER_GATE_AFTER_P8"
+  },
+  "p6_certificate_valid": true,
+  "deterministic_tests": 79,
+  "inputs": [
+    {
+      "path": "efficiency/engine/efficiency-governor.mjs",
+      "sha256": "4a661bb79aaed52ba46f72d3157778e39fb62dede29b0afa515d64289c589777"
+    },
+    {
+      "path": "efficiency/policies/efficiency-policy.json",
+      "sha256": "d58cdef45f2084b940b679805e3c7a38d959184c346ec47a0f65cb715c4e42c8"
+    },
+    {
+      "path": "efficiency/contracts/GLOBAL_EFFICIENCY.md",
+      "sha256": "d646afb5d177b02b4c60651d417c9f967b12feb1abeb063bae31ffd90a50ce9c"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-signals.schema.json",
+      "sha256": "26d33969f76eaa6e67e5dcba93d0bbead042a597ba56582a2892e25e0573f46d"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-plan.schema.json",
+      "sha256": "825df52253f79cf6f7ab0ed6552e7ed37da3600d9831f5bf051ae9ef8027c1ba"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-decision.schema.json",
+      "sha256": "e9aeccc19f54f371ad8bad6510a7dacda9c354c0b53beb7c6b733f21e9d2dcbe"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-interventions.schema.json",
+      "sha256": "1d6edf9f0043428bb4ddda8bba2476a2f10f6062b91d0d60297e5100a6541dd3"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-benchmark-profile.schema.json",
+      "sha256": "c5ffee8be923d92ec242e32e87722ef4a1031edb217333fd8eb1c31c28870b1b"
+    },
+    {
+      "path": "efficiency/schemas/efficiency-benchmark-receipt.schema.json",
+      "sha256": "4ad2b0a2174ddf7f4aba91b718351fbd4bf857b106a4111d12e618df1749f928"
+    },
+    {
+      "path": "efficiency/templates/EFFICIENCY_SIGNALS.example.json",
+      "sha256": "8ada448379b58a455632a75e729de7909c2bae3a2bf91c6b4cd264ada2dd936c"
+    },
+    {
+      "path": "efficiency/templates/EFFICIENCY_DECISION.example.json",
+      "sha256": "b8bbc6f80b219d9587b39d7a70fa29b86f29161d21c6ef6b103384f79666d963"
+    },
+    {
+      "path": "efficiency/templates/EFFICIENCY_INTERVENTIONS.example.json",
+      "sha256": "3db72853db0a4ea3dded173622583b26f12cd4fb5e2f651fc80020e677c2562c"
+    },
+    {
+      "path": "release/templates/master-validator-efficiency.mjs",
+      "sha256": "0dd2d544c0f119fba1ee313fe314016cdd9b3918bb140dd68947542102001e41"
+    },
+    {
+      "path": "release/templates/master-validation-p7-certifier.mjs",
+      "sha256": "c006772acb434fe15daff8c38feafcc8edbd9d71412485c4b9a4794faaae7dd7"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p6.json",
+      "sha256": "9dc9a378179e4764053a2e7d713dc191b2e4d511a4d9b858d332e0d1082d07cf"
+    },
+    {
+      "path": "tests/global-efficiency-phase7.test.mjs",
+      "sha256": "86b0ab22f7c7c38b665aa1b2b2e08685bf5efab0805538cf5058c380c13d672b"
+    },
+    {
+      "path": "scripts/62-self-test-global-efficiency-phase7.ps1",
+      "sha256": "f2a9367b871bedf77f3c0da4961c45b9978cecdc4a138b855164823561a3d306"
+    },
+    {
+      "path": "scripts/63-master-validation-p7-target-efficiency.ps1",
+      "sha256": "66cb11f34fedbbfed5f9caf335d048090a7affde635d9e1801ade9352fe1c492"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    },
+    {
+      "path": "core/agents/orchestrator.md",
+      "sha256": "338322ac44648b44ad204cc2b7a8c2c9fcf257d91fe5870446e9d2878ab0b417"
+    },
+    {
+      "path": "adapters/opencode/.opencode/agents/orchestrator.md",
+      "sha256": "79ff3fb59a3dc628537b07e6b918b28d38f7152dd0a7f8c9c67447f62352ca40"
+    },
+    {
+      "path": "adapters/codex/.codex/agents/orchestrator.toml",
+      "sha256": "cf63beca6bb84951fc4f2dfb5a1c8fff83f4a9861542840ed4c68a49fdc0d454"
+    },
+    {
+      "path": "adapters/claude-code/.claude/agents/orchestrator.md",
+      "sha256": "0c5c72d4667acfb9309147267bcafe613b19307a2995c5ff137da162d842b08a"
+    },
+    {
+      "path": "adapters/antigravity/.agents/agents/orchestrator.md",
+      "sha256": "87dc1db4ba7bb70280c8bb55137f681e0bb67042504311e28a687e6645662266"
+    },
+    {
+      "path": "adapters/claude-code/hooks/pretool-guard.mjs",
+      "sha256": "2324f94a25f8a9d6f12b52cc388fd710ea846fb7f92f6a7388a91c823c32e0bf"
+    },
+    {
+      "path": "adapters/antigravity/hooks/pretool-guard.mjs",
+      "sha256": "1a95a948f7d2b3654dfb87e58d228f5c1542a1bfdbf71f1723da9d0d3502b55f"
+    },
+    {
+      "path": "contextos/engine/contextos.mjs",
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
+    },
+    {
+      "path": "contextos/engine/telemetry.mjs",
+      "sha256": "a900ef647cb4c0e43b7f670d13e4d49a9217d6133c3b486841d99452bcc7c7b1"
+    },
+    {
+      "path": "skillsystem/engine/skillsystem.mjs",
+      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+    },
+    {
+      "path": "multimodel/router/model-router.mjs",
+      "sha256": "4f9b04d4dc3f0e342adcc947f2a83afc5dae610c222d2626802ea73510fb9119"
+    },
+    {
+      "path": "advanced-execution/dispatcher/dispatcher-manager.mjs",
+      "sha256": "54ca821ee02439f3b7a770933a0831295e442fe55a4c0c28afca490ce7922876"
+    },
+    {
+      "path": "core/engine/aledevos.mjs",
+      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+    }
+  ],
+  "master_p7_certificate_sha256": "02f8e2c94c43d7bfe6ca361430e9d41c91150844365b979c43748ea21a1a69e2"
+}

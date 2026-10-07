@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "adapter": "codex",
+  "allow_external_roots": false,
+  "instruction_names": [
+    "SKILL.md"
+  ],
+  "sidecar_names": [
+    "aledevos-skill.json"
+  ],
+  "roots": [
+    {
+      "path": ".agents/skills",
+      "recursive": false,
+      "required": false
+    }
+  ]
+}

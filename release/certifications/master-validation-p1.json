@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P1",
+  "status": "MASTER_VALIDATION_P1_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED_P2_P8",
+  "claims": {
+    "current_stack_matrix": true,
+    "legacy_gate_retained_non_authoritative": true,
+    "required_checks": 33,
+    "builtin_validators": [
+      "PACKAGE_CERTIFICATES",
+      "DETERMINISTIC_REGRESSION"
+    ],
+    "future_validators_fail_closed": true,
+    "final_freeze_authority": "MASTER_GATE_ONLY"
+  },
+  "policy_status": "MASTER_VALIDATION_POLICY_VALID",
+  "package_baseline_status": "MASTER_PACKAGE_BASELINE_VALID",
+  "deterministic_tests": 47,
+  "inputs": [
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/schemas/master-validation-evidence.schema.json",
+      "sha256": "fc160bfd5a83c5b9183132a2f7016ba8a9eeb89bf03d1919fce4a976288ea340"
+    },
+    {
+      "path": "release/schemas/master-validation-report.schema.json",
+      "sha256": "cd0a647d25bb416b4d0d059e3e2364f4073301a4ad0cf150c0b034115084d4be"
+    },
+    {
+      "path": "release/templates/MASTER_VALIDATION_EVIDENCE.example.json",
+      "sha256": "f25d972d1440d639ca324a010f815e89d3a1a6f95839192a8636011818e6994e"
+    },
+    {
+      "path": "release/templates/master-validation-package-baseline.json",
+      "sha256": "20be6bb3bd17784d45de9b7ddefa66c9b3c106ace2758b717439ffc7a29d2422"
+    },
+    {
+      "path": "tests/master-validation-phase1.test.mjs",
+      "sha256": "78c6a91461819ff7e6f7453294b4cc06a68a8ffa13ca43b1893285ffe59c9da0"
+    },
+    {
+      "path": "scripts/51-self-test-master-validation-phase1.ps1",
+      "sha256": "a14e40e6b44df9be87683779d25c4154830c8e3cd0a5288e97e36a3725faefe8"
+    },
+    {
+      "path": "adapters/opencode/.opencode/agents/v1-release-validator.md",
+      "sha256": "a048a61513aa665cf0b1e16c0bdb6fff23857fcf505735823ed19969c4f7394a"
+    },
+    {
+      "path": "adapters/codex/.codex/agents/v1-release-validator.toml",
+      "sha256": "6d2259f0ac617f33f88b7b02d4d54cd08716889f0f10b4b04112ca5eb72fe725"
+    },
+    {
+      "path": "adapters/claude-code/.claude/agents/v1-release-validator.md",
+      "sha256": "e9dc51557e35ff495460db56f2d91b1e863347be1e027d509df2cf5a26d81eab"
+    },
+    {
+      "path": "adapters/antigravity/.agents/agents/v1-release-validator.md",
+      "sha256": "234a24ab4d9da25ff353a50edd071489985a99e2092b04ab5848487f7dc60497"
+    }
+  ],
+  "master_certificate_sha256": "992f17fb58437890c390578b12adccb7696cb19b65fc090412d9db8d74d0b2b4"
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P4_MODEL_FALLBACK",
+  "allowed_judge_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+  "max_fallback_hops": 2,
+  "allowed_failure_codes": [
+    "RUNTIME_UNAVAILABLE",
+    "INVOCATION_ERROR",
+    "RATE_LIMITED",
+    "TRANSIENT_PROVIDER_ERROR",
+    "MODALITY_UNAVAILABLE_AT_RUNTIME",
+    "CONTEXT_REJECTED_AT_RUNTIME",
+    "DIVERSITY_BLOCKED"
+  ],
+  "non_fallbackable_failure_codes": [
+    "JUDGE_RESULT_FAIL",
+    "JUDGE_DISAGREEMENT",
+    "JUDGE_LOW_SCORE",
+    "CONTENT_POLICY_REJECTION",
+    "USER_REJECTED_RESULT"
+  ],
+  "rules": {
+    "explicit_plan_only": true,
+    "runtime_ready_required": true,
+    "required_modalities_are_hard_constraints": true,
+    "context_fit_is_hard_constraint": true,
+    "cost_ceiling_is_hard_constraint": true,
+    "diversity_gate_is_hard_constraint": true,
+    "failed_model_cannot_be_reselected": true,
+    "previously_attempted_models_cannot_repeat": true,
+    "fallback_hops_are_bounded": true,
+    "automatic_provider_discovery": false,
+    "automatic_model_discovery": false,
+    "adapter_identity_is_not_a_fallback_input": true,
+    "fallback_on_judge_outcome": false,
+    "replacement_requires_fresh_p2_route": true,
+    "replacement_requires_fresh_p3_diversity": true,
+    "final_judge_decision_authority": "ALEDEVOS_DETERMINISTIC_GATE"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "task_id": "EXAMPLE_TASK",
+  "judge_role": "requirements",
+  "required_modalities": ["text"],
+  "estimated_context_tokens": 32000,
+  "max_cost_class": "standard",
+  "selection_priority": "COST_THEN_CONTEXT"
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/worker-handoff-input.schema.json",
+  "title": "AleDevOS Advanced Execution P2 Worker Handoff Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["outcome", "summary", "evidence_refs"],
+  "properties": {
+    "outcome": {"enum": ["READY_FOR_VERIFICATION", "BLOCKED", "FAILED"]},
+    "summary": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}}
+  }
+}

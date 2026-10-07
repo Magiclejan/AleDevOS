@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-governance-request.schema.json",
+  "title": "AleDevOS Skill Governance Request",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "risk_level",
+    "requested_by_agent",
+    "adapter"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "risk_level": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "requested_by_agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapter": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allowed_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_trust": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "runtime_permissions_attested": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

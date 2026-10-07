@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-governance-decision.schema.json",
+  "title": "AleDevOS Skill Governance Decision",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "status",
+    "risk_level",
+    "skill_ids",
+    "skills",
+    "retry_budget",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "status": {
+      "enum": [
+        "GOVERNANCE_APPROVED",
+        "GOVERNANCE_BLOCKED"
+      ]
+    },
+    "integrity": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

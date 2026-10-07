@@ -1,0 +1,157 @@
+{
+  "contract_version": "2.0",
+  "adapter": "generic",
+  "adapter_version": "0.1-scaffold",
+  "status": "scaffold",
+  "runtime": {
+    "family": "generic",
+    "agent_mode": "unverified",
+    "reference": false
+  },
+  "installation": {
+    "supported": false,
+    "notes": "Contract/reference adapter with no runtime implementation."
+  },
+  "capabilities": {
+    "repository_read": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "product_write": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "control_plane_write_deny": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "arbitrary_shell_deny": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "canonical_gate": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "repair_cap": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "scope_prewrite": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "scope_prepass": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "external_directory": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "network": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "code_mode": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "compaction": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "structured_handoff": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "context_budget": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "checkpoint_resume": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "preventive_transition": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "diff_first": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "context_dedup": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "skill_registry": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "motion_governance": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_capture_contract": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_browser_capture": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_regression": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_runtime_checks": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_judge": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "visual_qa_bounded_repair": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "target_runtime_preflight": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    },
+    "v1_release_validation": {
+      "status": "unsupported",
+      "implementation": "none",
+      "notes": "Not certified in Portability Phase 1."
+    }
+  }
+}

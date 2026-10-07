@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.0",
+  "registry_version": "1.4",
+  "default_context_loading": "on-demand",
+  "fail_closed_on_duplicate_ids": true,
+  "fail_closed_on_binding_drift": true,
+  "allow_unresolved_external_declarations": true,
+  "unresolved_external_skills_are_usable": false,
+  "embed_instruction_bodies_in_registry": false,
+  "require_source_hash_for_bundled_skills": true,
+  "require_binding_hash_for_runtime_bound_skills": true,
+  "max_capabilities_per_skill": 32,
+  "max_intents_per_skill": 32,
+  "allowed_source_kinds": [
+    "bundled-core",
+    "external-declared",
+    "runtime-discovered"
+  ],
+  "allowed_trust": [
+    "bundled",
+    "declared-unverified",
+    "runtime-verified"
+  ],
+  "allowed_declared_status": [
+    "BUNDLED",
+    "DECLARED_UNRESOLVED",
+    "DISCOVERED"
+  ],
+  "allowed_runtime_status": [
+    "AVAILABLE",
+    "DECLARED_UNRESOLVED",
+    "MISSING_BINDING",
+    "BINDING_DRIFT",
+    "MISSING_SOURCE",
+    "DISCOVERY_DRIFT"
+  ],
+  "phase_boundary": {
+    "discovery_enabled": true,
+    "routing_enabled": true,
+    "composition_enabled": true,
+    "instruction_loading_enabled": true,
+    "execution_handoff_enabled": true,
+    "governance_enabled": true,
+    "execution_enabled": true,
+    "skill_telemetry_enabled": true,
+    "note": "Phase 5 adds automatic acquisition planning for missing skills. Trusted/allowlisted sources may be auto-installed by adapters; unknown/untrusted sources require explicit approval. Direct runtime-specific downloading remains adapter responsibility.",
+    "acquisition_enabled": true
+  },
+  "fail_closed_on_discovery_drift": true,
+  "require_discovered_source_hash": true,
+  "allow_runtime_discovered_with_sidecar_only": true,
+  "max_route_skills": 8,
+  "routing_require_usable": true,
+  "routing_fail_on_missing_required_capability": true,
+  "routing_allow_unresolved_suggestions": true,
+  "routing_tie_break": "lexicographic-id",
+  "composition": {
+    "expand_dependencies": true,
+    "fail_on_missing_dependency": true,
+    "fail_on_conflict": true,
+    "fail_on_cycle": true,
+    "max_composed_skills": 12
+  },
+  "instruction_loading": {
+    "whole_skill_only": true,
+    "max_ratio_of_agent_target": 0.35,
+    "max_instruction_tokens": 8000,
+    "max_single_skill_tokens": 5000,
+    "fail_closed_on_budget_exceeded": true,
+    "persist_loaded_packet": true
+  },
+  "execution_handoff": {
+    "reference_only_inputs": true,
+    "transcript_allowed": false,
+    "max_input_refs": 32,
+    "max_required_outputs": 16,
+    "default_max_output_tokens": 4000,
+    "runtime_execution_enabled": false
+  },
+  "governance": {
+    "enabled": true,
+    "fail_closed": true,
+    "risk_levels": [
+      "LOW",
+      "MEDIUM",
+      "HIGH",
+      "CRITICAL"
+    ],
+    "trust_rank": {
+      "declared-unverified": 0,
+      "runtime-verified": 2,
+      "bundled": 3
+    },
+    "min_trust_by_risk": {
+      "LOW": "runtime-verified",
+      "MEDIUM": "runtime-verified",
+      "HIGH": "runtime-verified",
+      "CRITICAL": "bundled"
+    },
+    "require_runtime_permission_attestation_for": [
+      "HIGH",
+      "CRITICAL"
+    ],
+    "forbidden_capabilities": [
+      "security.bypass",
+      "secrets.read",
+      "publish.execute",
+      "external.write.unbounded"
+    ],
+    "max_retries": 1
+  },
+  "execution_lifecycle": {
+    "enabled": true,
+    "engine_direct_execution": false,
+    "adapter_executes": true,
+    "require_governance_approval": true,
+    "output_refs_only": true,
+    "transcript_allowed": false,
+    "max_output_refs": 32,
+    "allowed_status": [
+      "SUCCEEDED",
+      "FAILED",
+      "BLOCKED"
+    ]
+  },
+  "skill_telemetry": {
+    "enabled": true,
+    "version": "1.0",
+    "output_dir": ".aledevos/telemetry/skills",
+    "max_events": 10000,
+    "raw_instruction_storage": false,
+    "raw_prompt_storage": false,
+    "transcript_storage": false,
+    "secret_storage": false,
+    "attribution": "composition-correlated-not-causal"
+  },
+  "acquisition": {
+    "enabled": true,
+    "auto_trigger_on_missing_required_skill": true,
+    "mode": "auto-if-trusted-else-approval",
+    "trusted_source_classes": [
+      "official",
+      "allowlisted"
+    ],
+    "unknown_source_action": "REQUIRE_APPROVAL",
+    "install_scope": "project",
+    "global_install": false,
+    "telemetry_opt_out": true,
+    "staging_required": true,
+    "atomic_install_required": true,
+    "rediscover_after_install": true,
+    "rebuild_registry_after_install": true,
+    "verify_registry_after_install": true,
+    "execute_before_verification": false,
+    "max_files": 256,
+    "max_total_bytes": 2097152,
+    "max_single_file_bytes": 524288,
+    "reject_symlinks": true,
+    "allowed_resolver_kinds": [
+      "catalog",
+      "skills-sh",
+      "manual-approved"
+    ],
+    "allowed_installer_kinds": [
+      "skills-cli-staged-copy",
+      "git-staged-copy",
+      "local-staged-copy"
+    ]
+  }
+}

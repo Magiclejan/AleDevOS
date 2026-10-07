@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "phase": "SECURITY_RELIABILITY_P8",
+  "status": "SECURITY_RELIABILITY_P8_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "dedicated_read_only_security_reviewer": true,
+    "deterministic_native_scan": true,
+    "external_dependency_scanner_contract": true,
+    "durable_bug_registry": true,
+    "durable_vulnerability_registry": true,
+    "durable_incident_registry": true,
+    "bug_fix_requires_regression_evidence": true,
+    "test_health_gate": true,
+    "severe_findings_fail_closed": true,
+    "accepted_risk_requires_explicit_approval": true,
+    "perfect_security_not_claimed": true,
+    "final_freeze_authority": "MASTER_GATE_ONLY"
+  },
+  "p7_certificate_valid": true,
+  "reviewer_roles_present": true,
+  "deterministic_tests": 45,
+  "inputs": [
+    {
+      "path": "security-reliability/engine/security-assurance.mjs",
+      "sha256": "449c28cb52c68413e6ad8551a662a9b249a3bcd2fa2ac0b71f8581d2b70312b2"
+    },
+    {
+      "path": "security-reliability/engine/reliability-registry.mjs",
+      "sha256": "89be4d55f4cd114126e472d6247f5c70f8ec2d3276d6d2fd44c10fc4a5fd5a65"
+    },
+    {
+      "path": "security-reliability/policies/security-reliability-policy.json",
+      "sha256": "6a014d73b1abac6eead168538c9497c7d8c15d9230ac6b161ef31cef2709d92b"
+    },
+    {
+      "path": "security-reliability/contracts/SECURITY_RELIABILITY_ASSURANCE.md",
+      "sha256": "0db09a2b50c30cf085782b03376e83701e97dba20ccfbb6275c4913b5211d523"
+    },
+    {
+      "path": "security-reliability/schemas/security-review-submission.schema.json",
+      "sha256": "fade6eea84db351c680f87e22b4f6022e3ef3de00655ce7410acc33519ae6aef"
+    },
+    {
+      "path": "security-reliability/schemas/external-security-profile.schema.json",
+      "sha256": "0ba42993f5fe91e9fde28dd71afd28107d7b9eeb3f664e12a54c3310c459a5c6"
+    },
+    {
+      "path": "security-reliability/schemas/reliability-record.schema.json",
+      "sha256": "da50db55d8f5870a7214ebc1f0d8160fcb1d5bbefd4ca2e7077065512d9e6018"
+    },
+    {
+      "path": "security-reliability/schemas/test-health-summary.schema.json",
+      "sha256": "c6b4d4a55f8f3c26b72e5211760a815f9ebe8004042a0474cf0a9a1627f22320"
+    },
+    {
+      "path": "security-reliability/schemas/security-assurance-profile.schema.json",
+      "sha256": "708050fed1b3e9a2d503759daf4f4885b8e4c90862c39319466970b36577b746"
+    },
+    {
+      "path": "release/templates/master-validator-security-reliability.mjs",
+      "sha256": "3dee0f329e22e77aa17a599d6f482a2f0ca28e70085f208a7afa911856fb5c0b"
+    },
+    {
+      "path": "release/templates/master-validation-p8-certifier.mjs",
+      "sha256": "6d9bb041c5d0215c8c8a14653ef873fb3e5c7f2d4c9ae4965b3754f3078ffe27"
+    },
+    {
+      "path": "release/schemas/master-security-reliability-target-profile.schema.json",
+      "sha256": "c33a1fcb2dd2720ec7463faa51e16b645714dfd6bb0ff8b2507f27ef3861be48"
+    },
+    {
+      "path": "release/templates/MASTER_SECURITY_RELIABILITY_TARGET_PROFILE.example.json",
+      "sha256": "ca1ef7e1eac1f546bcaa289e95cc6ec9446c5705ab2ea07d0dd032417138dd66"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p7.json",
+      "sha256": "da71dcf8d15616246f64a52072d2f62c1bc93e65c1ce9077ff9097f1b6f6a845"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    },
+    {
+      "path": "scripts/64-self-test-security-reliability-phase8.ps1",
+      "sha256": "ab189cfc4e561bd6c2934fae7d066e5761b2050d5a5b6e23aab0e511928ec900"
+    },
+    {
+      "path": "scripts/65-master-validation-p8-target-security-reliability.ps1",
+      "sha256": "6284f54cf85c20dbc54fc4431368edd1c0b1f777be53af00bd57410d34032af1"
+    },
+    {
+      "path": "tests/security-reliability-phase8.test.mjs",
+      "sha256": "35db8079e0f61c9fd1af6611ab45c3b1841f1d4585d6023f6fd754ad53d4a2bc"
+    },
+    {
+      "path": "core/agents/security-reviewer.md",
+      "sha256": "35aee561b3aaa4333133326dcfc68b0985b4e8bd9035940565ad588ba6f80a71"
+    },
+    {
+      "path": "core/agents/orchestrator.md",
+      "sha256": "338322ac44648b44ad204cc2b7a8c2c9fcf257d91fe5870446e9d2878ab0b417"
+    },
+    {
+      "path": "core/policies/security-policy.json",
+      "sha256": "48112ca009b50627f7237efa7c5a9ee50edfa7f74adb1189dda2815040aad20d"
+    },
+    {
+      "path": "efficiency/engine/efficiency-governor.mjs",
+      "sha256": "4a661bb79aaed52ba46f72d3157778e39fb62dede29b0afa515d64289c589777"
+    },
+    {
+      "path": "efficiency/policies/efficiency-policy.json",
+      "sha256": "d58cdef45f2084b940b679805e3c7a38d959184c346ec47a0f65cb715c4e42c8"
+    },
+    {
+      "path": "adapters/opencode/.opencode/agents/security-reviewer.md",
+      "sha256": "b45570ce796dc888e1e179372ead7c213dcaf78dadb7720529b207f5423e7131"
+    },
+    {
+      "path": "adapters/codex/.codex/agents/security-reviewer.toml",
+      "sha256": "e83335a1a978881f343580d991e724d24fda8e05de9057bc3ab771296e39a268"
+    },
+    {
+      "path": "adapters/claude-code/.claude/agents/security-reviewer.md",
+      "sha256": "b25b53b42777605b3b5ebac18a90e3a54226b3831b359bea8c49d25eed217b2e"
+    },
+    {
+      "path": "adapters/antigravity/.agents/agents/security-reviewer.md",
+      "sha256": "8a56a5bfc9af047e5a7114d9bcba12d095d37881f1edcdbc160343217983f5a5"
+    },
+    {
+      "path": "portability/conformance/conformance-policy.json",
+      "sha256": "fbc28e710a32a45ddfdb2a6722b1823330ee565632d3632269afee2bf86e3cc8"
+    }
+  ],
+  "master_p8_certificate_sha256": "208054934aeecf6355b79da1cf8a7c8ea8e7c649c0e1cf970a8e06cfb94b5164"
+}

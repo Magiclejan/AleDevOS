@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/worktree-receipt.schema.json",
+  "title": "AleDevOS Advanced Execution P1 Worktree Receipt",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "task_id", "request_sha256", "repository", "worktree", "boundaries", "receipt_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "ADVANCED_EXECUTION_P1_WORKTREES"},
+    "status": {"enum": ["WORKTREE_CREATED", "WORKTREE_CLEANUP_COMPLETED"]},
+    "task_id": {"type": "string"},
+    "request_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repository": {"type": "object"},
+    "worktree": {"type": "object"},
+    "boundaries": {"type": "object"},
+    "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

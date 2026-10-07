@@ -1,0 +1,16 @@
+{
+  "task_id": "feature-example",
+  "surfaces": [
+    {
+      "id": "orders-list",
+      "kind": "DATA_SURFACE",
+      "required_states": [],
+      "evidence": [
+        {"state":"LOADING","evidence_ref":"evidence/orders-loading"},
+        {"state":"EMPTY","evidence_ref":"evidence/orders-empty"},
+        {"state":"ERROR","evidence_ref":"evidence/orders-error"},
+        {"state":"CONTENT","evidence_ref":"evidence/orders-content"}
+      ]
+    }
+  ]
+}

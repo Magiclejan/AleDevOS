@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-composition.schema.json",
+  "title": "AleDevOS Skill Composition",
+  "type": "object",
+  "required": ["schema_version", "task_id", "status", "skills", "errors", "instruction_bodies_loaded", "execution_performed", "integrity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["COMPOSITION_READY", "COMPOSITION_BLOCKED"]},
+    "skills": {"type": "array"},
+    "missing_dependencies": {"type": "array"},
+    "conflicts": {"type": "array"},
+    "cycle": {"type": ["string", "null"]},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "instruction_bodies_loaded": {"const": false},
+    "execution_performed": {"const": false},
+    "integrity": {"type": "object"}
+  },
+  "additionalProperties": true
+}

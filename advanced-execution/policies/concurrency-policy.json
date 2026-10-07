@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P3_SAFE_CONCURRENCY",
+  "max_parallel_workers": 4,
+  "max_group_workers": 8,
+  "heartbeat_timeout_ms": 2500,
+  "start_timeout_ms": 5000,
+  "stop_timeout_ms": 5000,
+  "max_recovery_count_per_worker": 1,
+  "admission": {
+    "write_write_overlap": "BLOCK",
+    "write_read_overlap": "BLOCK",
+    "read_read_overlap": "ALLOW",
+    "unknown_scope": "BLOCK",
+    "global_write_scope": "BLOCK",
+    "require_distinct_worktrees": true,
+    "require_distinct_worker_ids": true,
+    "require_p2_assignment_valid": true,
+    "require_live_p1_worktree": true
+  },
+  "fairness": {
+    "policy": "FIFO_STABLE",
+    "starvation_prevention": "ORDER_PRESERVED_NO_BYPASS_WITHIN_PLAN"
+  },
+  "boundaries": {
+    "dispatcher_used": false,
+    "queue_used": false,
+    "multi_machine_used": false,
+    "network_used": false,
+    "target_agent_runtime_binding": "DEFERRED_MASTER_VALIDATION"
+  }
+}

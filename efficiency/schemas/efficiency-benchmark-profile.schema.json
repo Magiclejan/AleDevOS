@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Efficiency Benchmark Profile P7",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","phase","plan","baseline","candidate","interventions"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"phase":{"const":"GLOBAL_EFFICIENCY_P7_BENCHMARK"},
+    "plan":{"type":"string"},
+    "baseline":{"type":"object","required":["telemetry_summary","global_state"],"additionalProperties":false,"properties":{"telemetry_summary":{"type":"string"},"global_state":{"type":"string"}}},
+    "candidate":{"type":"object","required":["telemetry_summary","global_state"],"additionalProperties":false,"properties":{"telemetry_summary":{"type":"string"},"global_state":{"type":"string"}}},
+    "interventions":{"type":"string"}
+  }
+}

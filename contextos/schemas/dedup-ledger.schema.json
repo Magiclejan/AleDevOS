@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS De-dup Ledger v0.3.0",
+  "type":"object",
+  "required":["version","ledger_id","updated_at","hashes","ids"],
+  "properties": {
+    "version":{"const":"0.3.0"},"ledger_id":{"type":"string"},"updated_at":{"type":["string","null"]},"hashes":{"type":"object"},"ids":{"type":"object"}
+  }
+}

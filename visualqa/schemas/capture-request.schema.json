@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.capture-request.v1",
+  "type": "object",
+  "required": [
+    "task_id",
+    "base_url",
+    "surfaces"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "route",
+          "viewport_ids",
+          "states"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "viewport_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "states": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "state_contract_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$"
+    }
+  },
+  "additionalProperties": false
+}

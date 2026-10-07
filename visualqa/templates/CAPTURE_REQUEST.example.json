@@ -1,0 +1,14 @@
+{
+  "task_id": "task-ui-001",
+  "base_url": "http://127.0.0.1:3000",
+  "changed_files": ["src/pages/Home.tsx"],
+  "surfaces": [
+    {
+      "id": "home",
+      "route": "/",
+      "viewport_ids": ["narrow", "wide"],
+      "states": ["DEFAULT"],
+      "state_contract_path": null
+    }
+  ]
+}

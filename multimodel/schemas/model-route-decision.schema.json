@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.model-route-decision.v1",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "task_id", "judge_role", "request", "request_source", "binding", "candidates", "selected", "router_used", "fallback_used", "diversity_policy_used", "route_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "MULTIMODEL_P2_MODEL_ROUTER"},
+    "status": {"enum": ["MODEL_ROUTE_SELECTED", "MODEL_ROUTE_BLOCKED"]},
+    "router_used": {"const": true},
+    "fallback_used": {"const": false},
+    "diversity_policy_used": {"const": false},
+    "route_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Motion Review",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "status",
+    "blockers",
+    "motion_required",
+    "contract_sha256",
+    "report_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "status": {
+      "enum": [
+        "MOTION_PASS",
+        "MOTION_BLOCKED"
+      ]
+    },
+    "blockers": {
+      "type": "array"
+    },
+    "report_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

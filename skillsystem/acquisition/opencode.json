@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "adapter": "opencode",
+  "target_skill_root": ".opencode/skills",
+  "staging": {
+    "required": true,
+    "candidate_roots": [".opencode/skills", ".agents/skills"]
+  },
+  "skills_cli": {
+    "command": "npx",
+    "package": "skills",
+    "agent": "opencode",
+    "copy_mode": true,
+    "yes": true,
+    "global": false,
+    "disable_telemetry_env": "DISABLE_TELEMETRY"
+  },
+  "post_install": [
+    "discovery.scan",
+    "registry.build",
+    "registry.verify",
+    "acquisition.record",
+    "acquisition.verify"
+  ]
+}

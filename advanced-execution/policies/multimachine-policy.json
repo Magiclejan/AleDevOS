@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P5_MULTI_MACHINE",
+  "identity": {
+    "algorithm": "ed25519",
+    "explicit_node_approval_required": true,
+    "coordinator_trust_anchor_required": true,
+    "private_key_mode_unix": "0600"
+  },
+  "registry": {
+    "max_nodes": 64,
+    "allowed_states": ["PENDING", "ACTIVE", "STALE", "REVOKED"],
+    "heartbeat_stale_after_ms": 30000,
+    "heartbeat_replay_rejected": true
+  },
+  "tasks": {
+    "max_payload_bytes": 5242880,
+    "max_reassignments": 2,
+    "duplicate_authoritative_result_rejected": true,
+    "late_fence_result_rejected": true
+  },
+  "leases": {
+    "default_lease_ms": 30000,
+    "min_lease_ms": 100,
+    "max_lease_ms": 600000,
+    "fencing_tokens_required": true,
+    "reassignment_requires_expired_lease": true,
+    "reassignment_requires_stale_or_revoked_owner": true
+  },
+  "transport": {
+    "package_transport": "SIGNED_BUNDLE",
+    "network_transport_implemented": false,
+    "network_used_in_package_validation": false,
+    "payload_encoding": "base64"
+  },
+  "locking": {
+    "stale_lock_recovery": true,
+    "stale_lock_after_ms": 30000
+  },
+  "boundaries": {
+    "multi_machine_used": true,
+    "local_p1_p2_p3_p4_authority_preserved": true,
+    "remote_agent_runtime_binding": "DEFERRED_MASTER_VALIDATION",
+    "network_transport_binding": "DEFERRED_MASTER_VALIDATION",
+    "physical_duplicate_compute_under_partition_claimed_prevented": false,
+    "authoritative_duplicate_acceptance_prevented": true
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Resume Packet v0.2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version","resume_id","created_at","source_checkpoint_id","source_checkpoint_sha256",
+    "task_id","state","critical_state_sha256","context_metrics","integrity"
+  ],
+  "properties": {
+    "version": { "const": "0.2.0" },
+    "resume_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,160}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "source_checkpoint_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,160}$" },
+    "source_checkpoint_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "task_id": { "type": "string", "minLength": 1 },
+    "state": { "type": "object" },
+    "critical_state_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "context_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_profile","source_used_tokens","source_pressure_band","transcript_included"],
+      "properties": {
+        "source_profile": { "type": "string" },
+        "source_used_tokens": { "type": ["integer","null"], "minimum": 0 },
+        "source_pressure_band": { "type": ["string","null"] },
+        "transcript_included": { "const": false }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm","payload_sha256"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "payload_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

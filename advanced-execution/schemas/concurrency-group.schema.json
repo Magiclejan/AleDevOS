@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object",
+  "required":["schema_version","phase","group_id","state","workers","group_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"ADVANCED_EXECUTION_P3_SAFE_CONCURRENCY"},
+    "group_id":{"type":"string"},
+    "state":{"enum":["STARTING","RUNNING","DEGRADED","STOPPED","FAILED"]},
+    "workers":{"type":"object"},
+    "group_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

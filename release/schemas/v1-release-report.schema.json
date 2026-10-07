@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/v1-release-report.schema.json",
+  "title": "AleDevOS V1 Release Gate Report",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "required_checks", "summary", "created_at", "report_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "ALEDEVOS_V1_RELEASE_GATE"},
+    "status": {"enum": ["V1_RELEASE_READY", "V1_RELEASE_BLOCKED", "V1_RELEASE_FAILED"]},
+    "required_checks": {"type": "array"},
+    "summary": {"type": "object"},
+    "created_at": {"type": "string", "minLength": 1},
+    "report_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

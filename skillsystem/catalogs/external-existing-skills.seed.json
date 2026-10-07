@@ -1,0 +1,440 @@
+{
+  "schema_version": "1.0",
+  "catalog_id": "external-existing-skills-seed",
+  "catalog_version": "1.0.0",
+  "notice": "Names/domains are declarations only. AleDevOS must discover actual instructions/capabilities before the skill becomes usable.",
+  "skills": [
+    {
+      "schema_version": "1.0",
+      "id": "animate",
+      "display_name": "animate",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "animate-expo",
+      "display_name": "animate-expo",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "animation-vocabulary",
+      "display_name": "animation-vocabulary",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "find-animation-opportunities",
+      "display_name": "find-animation-opportunities",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "improve-animations",
+      "display_name": "improve-animations",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "emil-design-eng",
+      "display_name": "emil-design-eng",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "apple-design",
+      "display_name": "apple-design",
+      "domain": "motion",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.motion",
+        "animation.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "design",
+      "display_name": "design",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "design-system",
+      "display_name": "design-system",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "brand",
+      "display_name": "brand",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "banner-design",
+      "display_name": "banner-design",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "slides",
+      "display_name": "slides",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "frontend-design",
+      "display_name": "frontend-design",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ui-ux-pro-max",
+      "display_name": "ui-ux-pro-max",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ui-styling",
+      "display_name": "ui-styling",
+      "domain": "design",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "ux.design",
+        "visual.design"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "mobile-native",
+      "display_name": "mobile-native",
+      "domain": "mobile",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "mobile.implementation",
+        "mobile.ux"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ask-sonner",
+      "display_name": "ask-sonner",
+      "domain": "mobile",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "mobile.implementation",
+        "mobile.ux"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "write-swift",
+      "display_name": "write-swift",
+      "domain": "mobile",
+      "role": "external-specialist",
+      "description": "Externally declared skill; instructions and exact capabilities must be discovered from its real source before use.",
+      "source_kind": "external-declared",
+      "provenance": "user-declared-existing-skill",
+      "instruction_ref": null,
+      "instruction_sha256": null,
+      "capabilities": [
+        "mobile.implementation",
+        "mobile.ux"
+      ],
+      "intents": [
+        "specialist-task"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "declared-unverified",
+      "declared_status": "DECLARED_UNRESOLVED"
+    }
+  ]
+}

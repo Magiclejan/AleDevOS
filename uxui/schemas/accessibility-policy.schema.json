@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/accessibility-policy.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","status","standard","requirements","source_ref","approval_ref","human_artifact_sha256","integrity_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "status":{"enum":["UNSET","ACTIVE"]},
+    "standard":{"type":["string","null"]},
+    "requirements":{"type":"object","required":["semantics","keyboard","focus","labels","contrast","reduced_motion"],"properties":{"semantics":{"type":["string","null"]},"keyboard":{"type":["string","null"]},"focus":{"type":["string","null"]},"labels":{"type":["string","null"]},"contrast":{"type":["string","null"]},"reduced_motion":{"type":["string","null"]}}},
+    "source_ref":{"type":["string","null"]},"approval_ref":{"type":["string","null"]},
+    "human_artifact_sha256":{"type":["string","null"],"pattern":"^[a-f0-9]{64}$"},
+    "integrity_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

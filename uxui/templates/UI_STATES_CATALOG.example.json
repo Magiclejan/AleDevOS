@@ -1,0 +1,9 @@
+{
+  "conventions": {
+    "LOADING": "Show progress without replacing the user's task context unnecessarily.",
+    "EMPTY": "Explain the empty condition and provide the next useful action when applicable.",
+    "ERROR": "Explain the failure and offer a safe recovery path.",
+    "SUCCESS": "Confirm successful completion when feedback is required."
+  },
+  "source_ref": "UI-ADR-1002"
+}

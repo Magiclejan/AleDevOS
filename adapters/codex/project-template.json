@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "configured": false,
+  "project_name": "<PROJECT>",
+  "adapter": "codex",
+  "adapter_contract_version": "2.0",
+  "gates": [],
+  "protected_paths": [
+    ".codex/**",
+    ".agents/**",
+    ".aledevos/**",
+    "AGENTS.md",
+    "AGENTS.*",
+    ".git/**"
+  ],
+  "test_patterns": [
+    "tests/**",
+    "test/**",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "__tests__/**"
+  ],
+  "gate_integrity": {
+    "package_scripts": {},
+    "files": {}
+  },
+  "contextos": {
+    "enabled": true,
+    "profile": "generic-64k",
+    "phase": "budgets-handoffs",
+    "handoff_max_estimated_tokens": 4000
+  },
+  "adapters": [
+    "codex"
+  ]
+}

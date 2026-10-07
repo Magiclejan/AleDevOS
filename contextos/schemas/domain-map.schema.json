@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://contextos/domain-map.schema.json",
+  "title": "ContextOS Domain Map v0.5",
+  "type": "object",
+  "required": [
+    "version",
+    "id",
+    "root",
+    "source",
+    "files",
+    "source_files",
+    "test_files",
+    "symbol_count",
+    "external_dependencies",
+    "depends_on_domains",
+    "depended_by_domains",
+    "integrity"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.5.0"
+    },
+    "id": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "payload_sha256"
+      ]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P2_MODEL_ROUTER",
+  "allowed_judge_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+  "required_base_modalities": ["text"],
+  "role_required_modalities": {
+    "visual": ["image"]
+  },
+  "context_safety_reserve_tokens": 8192,
+  "cost_classes": {
+    "local": 0,
+    "free": 0,
+    "low": 1,
+    "standard": 2,
+    "premium": 3,
+    "unknown": 99
+  },
+  "selection_priorities": ["COST_THEN_CONTEXT", "CONTEXT_THEN_COST"],
+  "default_selection_priority": "COST_THEN_CONTEXT",
+  "tie_break_slot_order": ["primary", "secondary"],
+  "rules": {
+    "route_only_explicit_bound_models": true,
+    "runtime_ready_required": true,
+    "unbound_placeholder_is_ineligible": true,
+    "required_modalities_are_hard_constraints": true,
+    "context_fit_is_hard_constraint": true,
+    "cost_ceiling_is_hard_constraint": true,
+    "adapter_identity_is_not_a_routing_input": true,
+    "provider_diversity_enforced": false,
+    "provider_diversity_deferred_to": "MULTIMODEL_P3_JUDGE_DIVERSITY",
+    "automatic_fallback_enabled": false,
+    "fallback_deferred_to": "MULTIMODEL_P4_MODEL_FALLBACK",
+    "final_judge_decision_authority": "ALEDEVOS_DETERMINISTIC_GATE"
+  }
+}

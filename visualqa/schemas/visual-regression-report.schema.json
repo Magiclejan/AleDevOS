@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.visual-regression-report.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","status","claims","phase2_receipt_path","baseline_manifest_path","cases","summary","report_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"VISUAL_QA_P3"},
+    "status": {"enum":["VISUAL_REGRESSION_PASS","VISUAL_REGRESSION_FAIL","VISUAL_REGRESSION_BLOCKED"]},
+    "report_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

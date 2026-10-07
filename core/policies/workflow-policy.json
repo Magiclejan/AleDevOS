@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "final_states": [
+    "PASS",
+    "BLOCKED",
+    "FAILED"
+  ],
+  "judge_threshold": 90,
+  "required_judges": [
+    "requirements",
+    "regression",
+    "quality"
+  ],
+  "max_repairs": 2,
+  "pass_requires": {
+    "canonical_gate": "PASS",
+    "all_required_judges_at_least": 90,
+    "blockers": 0,
+    "unverified_acceptance_criteria": 0,
+    "repair_count_lte": 2
+  },
+  "scope": {
+    "out_of_scope_action": "SCOPE_ESCALATION",
+    "silent_scope_expansion": "DENY",
+    "architect_replan_required": true,
+    "auditor_approval_required": true
+  },
+  "execution": {
+    "subagents": "SEQUENTIAL"
+  }
+}

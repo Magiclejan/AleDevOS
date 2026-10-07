@@ -1,0 +1,10 @@
+{
+  "id": "UI-ADR-1000",
+  "title": "Advanced filters use the canonical side drawer",
+  "context": "Advanced filtering needs more space than the compact toolbar while preserving the current results context.",
+  "decision": "Use the canonical FilterDrawer pattern instead of introducing a page-local modal or one-off panel.",
+  "consequences": "Filter interactions stay consistent across data-heavy screens and future extensions target one canonical component.",
+  "scope": ["src/components/FilterDrawer.tsx", "src/pages/Orders.tsx"],
+  "source_refs": ["design-context", "component-registry"],
+  "approval_ref": "human:approved"
+}

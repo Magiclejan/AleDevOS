@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P2_ISOLATED_WORKERS",
+  "status": "ADVANCED_EXECUTION_P2_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "p1_worktree_binding": true,
+    "derived_worker_identity": true,
+    "one_worker_one_worktree": true,
+    "real_worker_supervisor_process": true,
+    "target_agent_runtime_binding": false,
+    "path_scope_guard": true,
+    "cross_worktree_access_blocked": true,
+    "worker_owned_handoff_evidence": true,
+    "evidence_snapshotted_before_cleanup": true,
+    "project_protected_paths_enforced": true,
+    "control_plane_mutations_serialized": true,
+    "bounded_recovery": true,
+    "concurrency_disabled": true,
+    "dispatcher_queue_disabled": true,
+    "multi_machine_disabled": true,
+    "network_disabled": true,
+    "p1_cleanup_ownership_preserved": true
+  },
+  "dependencies": {
+    "advanced_execution_p1_certificate_valid": true
+  },
+  "inputs": [
+    {
+      "path": "advanced-execution/workers/worker-manager.mjs",
+      "sha256": "af4ef04891616f3d11773452c39117142e0fbb7196927a96f336a2a7cc316cf1"
+    },
+    {
+      "path": "advanced-execution/workers/worker-runtime.mjs",
+      "sha256": "237f6357b11fc39131cc0f4de0cb8717cd8e13fb29a1c3910b1b7f200253d982"
+    },
+    {
+      "path": "advanced-execution/policies/worker-policy.json",
+      "sha256": "2adeec20ccd43bd14836cae22df53a4cdcad1994f27683a23d1931ae91b39f02"
+    },
+    {
+      "path": "advanced-execution/schemas/worker-assignment.schema.json",
+      "sha256": "ec5a2bf772a9d2067a58c82cb5b0c31c91446d88e84299522cc93ccee955ce28"
+    },
+    {
+      "path": "advanced-execution/schemas/worker-session.schema.json",
+      "sha256": "dcb574b732a80c385a766d1b7f8baa9d870e364dd00015dbe13a5350a7d93aba"
+    },
+    {
+      "path": "advanced-execution/schemas/worker-handoff.schema.json",
+      "sha256": "0466d7146480e49393fdef79ef4198c1da37c92e4905168fae771a8e26937d88"
+    },
+    {
+      "path": "advanced-execution/schemas/worker-handoff-input.schema.json",
+      "sha256": "2f7ac4b38478b9858d2e621c6634e366422a90e501c3c8809090b868024fc5d9"
+    },
+    {
+      "path": "advanced-execution/templates/worker-assignment.example.json",
+      "sha256": "62e3eac374f75cc91fcc6035ba01a1b4d2ccf14f94a70776d4ba6d077b9e27f4"
+    },
+    {
+      "path": "advanced-execution/templates/worker-handoff-input.example.json",
+      "sha256": "3a421f17cdccdbb9866e299e755384a757903611c4b4381c7a466cf3779b50f5"
+    },
+    {
+      "path": "advanced-execution/contracts/ISOLATED_WORKER.md",
+      "sha256": "59196d683f1767a5ec5323e47b5291621fd4bb37be9e31c49c2b115c3aa5839f"
+    },
+    {
+      "path": "advanced-execution/worktrees/worktree-manager.mjs",
+      "sha256": "c67b730a06b599866172c186b6d86d17e7c255bd8468f5c46ad35b0fa1bc645a"
+    },
+    {
+      "path": "advanced-execution/policies/worktree-policy.json",
+      "sha256": "878d5f86b12c1f6e838064a58a5d0cff441b68798db18e81cc7718c3cf0874ba"
+    },
+    {
+      "path": "release/certifications/advanced-execution-p1.json",
+      "sha256": "d9fab0d24e805ba99f38ce6a14a09dda41d7fcc81013d1a96a273468c1826aac"
+    },
+    {
+      "path": "core/schemas/task-contract.schema.json",
+      "sha256": "1b82c7f569183e537a6af8e8e734b9c605f27e2ba29cf502ab78c77acd30fbae"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    }
+  ],
+  "created_at": "2026-10-06T16:27:26.220Z",
+  "evidence_sha256": "0ffb87a74ca76df525111a4acd4b4062f299c97e2a40b4095442b45091047d23"
+}

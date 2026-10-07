@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/master-adapter-runtime-receipt.schema.json",
+  "title": "AleDevOS Master Validation P2 Adapter Runtime Receipt",
+  "type": "object",
+  "required": ["schema_version","phase","adapter","status","target","cli","package_certification","runtime_smoke","security_probes","artifacts","claims","observed_at","receipt_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"MASTER_VALIDATION_P2_ADAPTER_RUNTIME"},
+    "adapter": {"enum":["opencode","codex","claude-code","antigravity"]},
+    "status": {"enum":["ADAPTER_RUNTIME_TARGET_PASS","ADAPTER_RUNTIME_TARGET_BLOCKED","ADAPTER_RUNTIME_TARGET_FAIL"]},
+    "target": {
+      "type":"object",
+      "required":["platform","arch","node_version","target_fingerprint_sha256"],
+      "properties": {
+        "platform":{"type":"string","minLength":1},
+        "arch":{"type":"string","minLength":1},
+        "node_version":{"type":"string","minLength":1},
+        "target_fingerprint_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+      },
+      "additionalProperties":true
+    },
+    "cli": {
+      "type":"object",
+      "required":["binary","present","version","active_smoke","commands"],
+      "properties": {
+        "binary":{"type":"string","minLength":1},
+        "present":{"type":"boolean"},
+        "version":{"type":["string","null"]},
+        "active_smoke":{"type":"boolean"},
+        "commands":{"type":"array","items":{"type":"object"}}
+      },
+      "additionalProperties":true
+    },
+    "package_certification":{"type":"object"},
+    "runtime_smoke":{"type":"object"},
+    "security_probes":{"type":"object"},
+    "artifacts":{"type":"array","items":{"type":"object"}},
+    "claims":{"type":"object"},
+    "observed_at":{"type":"string","minLength":1},
+    "receipt_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties":false
+}

@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "adapter": "claude-code",
+  "binding_version": "1.0.0",
+  "bindings": [
+    {
+      "skill_id": "backend-change",
+      "path": ".claude/skills/backend-change/SKILL.md",
+      "expected_sha256": "b861227ef177acc1af4b9e90036c315ec874b6740558160cf6096afe813ea7a0"
+    },
+    {
+      "skill_id": "database-change",
+      "path": ".claude/skills/database-change/SKILL.md",
+      "expected_sha256": "432023250b7bb7a2824e288ce65390b297600378f84eb399c18ab98c8a97497c"
+    },
+    {
+      "skill_id": "diff-review",
+      "path": ".claude/skills/diff-review/SKILL.md",
+      "expected_sha256": "0110b1d0db466ad52be61b4d45075a5452a3576b57f946915039727fd7f463a7"
+    },
+    {
+      "skill_id": "frontend-change",
+      "path": ".claude/skills/frontend-change/SKILL.md",
+      "expected_sha256": "6c1b6f98bb4ebe27097a079347061958492e14c2998d203c851ac3db9d685033"
+    },
+    {
+      "skill_id": "implementation-plan",
+      "path": ".claude/skills/implementation-plan/SKILL.md",
+      "expected_sha256": "6e362f3df2050057144d68b25113df7767616fa7972bfe100b7c25457cfb15c7"
+    },
+    {
+      "skill_id": "regression-analysis",
+      "path": ".claude/skills/regression-analysis/SKILL.md",
+      "expected_sha256": "02f2da917cac3000ddc9f69c2d116332a62be3c5ea2912974b8ef553cc77a037"
+    },
+    {
+      "skill_id": "repair-loop",
+      "path": ".claude/skills/repair-loop/SKILL.md",
+      "expected_sha256": "dec23a3b75c04e53cbce6c940f5c1d1653305138e41ae6bb2b7ad884d95ecf35"
+    },
+    {
+      "skill_id": "repo-map",
+      "path": ".claude/skills/repo-map/SKILL.md",
+      "expected_sha256": "bac1e36c09b21af978e7084141679623d278f8dfd83a2604bca29d4a54a76072"
+    },
+    {
+      "skill_id": "requirements-check",
+      "path": ".claude/skills/requirements-check/SKILL.md",
+      "expected_sha256": "73677608e297b6fac9a85c3e56d11ac93d31552fad7bc818006e10f79ad3a46e"
+    },
+    {
+      "skill_id": "safe-edit",
+      "path": ".claude/skills/safe-edit/SKILL.md",
+      "expected_sha256": "e68623a012fe1fcfa49d2a57c38cbe21202404b9b7b2868a4d428a78cffb06e4"
+    },
+    {
+      "skill_id": "security-check",
+      "path": ".claude/skills/security-check/SKILL.md",
+      "expected_sha256": "676dc571fcfcb72aa81a953ee4ab4718ec6d866e776b5300dcf4632bf62617ed"
+    },
+    {
+      "skill_id": "task-contract",
+      "path": ".claude/skills/task-contract/SKILL.md",
+      "expected_sha256": "20bcb5148a81a6f5c7879ed64738c2f9544f75652758def15b4ac81f86a9dcb4"
+    },
+    {
+      "skill_id": "test-strategy",
+      "path": ".claude/skills/test-strategy/SKILL.md",
+      "expected_sha256": "0b501636bb852da8c2aad2ee77342cb5b7c685921f3692e559bac0b2c980e6e0"
+    }
+  ]
+}

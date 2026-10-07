@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/worker-handoff.schema.json",
+  "title": "AleDevOS Advanced Execution P2 Worker Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "phase",
+    "status",
+    "worker_id",
+    "task_id",
+    "worker_role",
+    "outcome",
+    "summary",
+    "assignment_sha256",
+    "source_session_sha256",
+    "changed_paths",
+    "git",
+    "evidence",
+    "ownership",
+    "boundaries",
+    "sealed_at",
+    "handoff_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "phase": {
+      "const": "ADVANCED_EXECUTION_P2_ISOLATED_WORKERS"
+    },
+    "status": {
+      "const": "WORKER_HANDOFF_SEALED"
+    },
+    "worker_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "worker_role": {
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "READY_FOR_VERIFICATION",
+        "BLOCKED",
+        "FAILED"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assignment_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_session_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "changed_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "git": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "source_sha256",
+          "snapshot_path",
+          "snapshot_sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "source_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "snapshot_path": {
+            "type": "string"
+          },
+          "snapshot_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "ownership": {
+      "type": "object"
+    },
+    "boundaries": {
+      "type": "object"
+    },
+    "sealed_at": {
+      "type": "string"
+    },
+    "handoff_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

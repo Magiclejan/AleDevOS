@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS UX/UI project mode decision",
+  "type": "object",
+  "required": ["schema_version", "project_root", "mode", "workflow", "evidence", "decision_source", "integrity_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "project_root": {"type": "string"},
+    "mode": {"enum": ["GREENFIELD", "BROWNFIELD", "HYBRID"]},
+    "workflow": {"enum": ["DESIGN_GENESIS", "DESIGN_SYSTEM_DISCOVERY", "DESIGN_AUDIT_AND_CONSOLIDATE"]},
+    "decision_source": {"enum": ["DETERMINISTIC_REPO_SCAN", "EXPLICIT_INTENT", "HUMAN_OVERRIDE"]},
+    "evidence": {
+      "type": "object",
+      "required": ["ui_file_count", "ui_paths", "design_system_markers", "explicit_signals", "ignored_paths_count"],
+      "properties": {
+        "ui_file_count": {"type": "integer", "minimum": 0},
+        "ui_paths": {"type": "array", "items": {"type": "string"}},
+        "design_system_markers": {"type": "array", "items": {"type": "string"}},
+        "explicit_signals": {"type": "array", "items": {"type": "string"}},
+        "ignored_paths_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

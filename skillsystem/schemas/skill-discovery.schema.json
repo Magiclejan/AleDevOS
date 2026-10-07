@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://aledevos.local/schemas/skill-discovery.schema.json",
+  "title":"AleDevOS Skill Discovery Snapshot 1.0",
+  "type":"object",
+  "required":["schema_version","created_at","adapter","sources","skills","summary","integrity"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "created_at":{"type":"string"},
+    "adapter":{"type":"string"},
+    "sources":{"type":"array"},
+    "skills":{"type":"array"},
+    "summary":{"type":"object"},
+    "integrity":{"type":"object","required":["algorithm","payload_sha256"],"properties":{"algorithm":{"const":"sha256"},"payload_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}},"additionalProperties":false}
+  },
+  "additionalProperties":false
+}

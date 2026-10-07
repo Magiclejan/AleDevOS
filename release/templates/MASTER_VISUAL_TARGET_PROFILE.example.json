@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P4_TARGET_PROFILE",
+  "target_runtime": "windows-target",
+  "artifacts": {
+    "phase2_receipt": "REPLACE/phase2_receipt.json",
+    "phase4_report": "REPLACE/phase4_report.json",
+    "visual_judgment": "REPLACE/visual_judgment.json",
+    "native_image_invocation": "REPLACE/native_image_invocation.json",
+    "repair_success_cycle": "REPLACE/repair_success_cycle.json",
+    "repair_success_before_invocation": "REPLACE/repair_success_before_invocation.json",
+    "repair_success_after_invocation": "REPLACE/repair_success_after_invocation.json",
+    "repair_exhaustion_cycle1": "REPLACE/repair_exhaustion_cycle1.json",
+    "repair_exhaustion_cycle2": "REPLACE/repair_exhaustion_cycle2.json",
+    "repair_exhaustion_initial_invocation": "REPLACE/repair_exhaustion_initial_invocation.json",
+    "repair_exhaustion_after1_invocation": "REPLACE/repair_exhaustion_after1_invocation.json",
+    "repair_exhaustion_after2_invocation": "REPLACE/repair_exhaustion_after2_invocation.json",
+    "third_repair_probe": "REPLACE/third_repair_probe.json"
+  }
+}

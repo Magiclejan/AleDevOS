@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "read_url(*)",
+      "execute_url(*)",
+      "mcp(*)",
+      "unsandboxed(*)",
+      "write_file(.aledevos/)",
+      "write_file(.agents/)",
+      "write_file(.git/)",
+      "write_file(AGENTS.md)"
+    ],
+    "ask": [
+      "command(*)"
+    ],
+    "allow": []
+  },
+  "aledevos": {
+    "canonicalAdapter": "antigravity",
+    "note": "Merge the permissions object into Antigravity CLI settings or equivalent project permissions; target preflight verifies effective runtime behavior."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.visual-judgment-report.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","status","claims","packet_path","packet_file_sha256","packet_sha256","submission_path","submission_file_sha256","judge","rubric","cases","summary","created_at","judgment_sha256"],
+  "properties": {
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"VISUAL_QA_P5"},
+    "task_id":{"type":"string"},
+    "status":{"enum":["VISUAL_JUDGMENT_PASS","VISUAL_JUDGMENT_FAIL","VISUAL_JUDGMENT_BLOCKED"]},
+    "claims":{"type":"object"},
+    "packet_path":{"type":"string"},
+    "packet_file_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "packet_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "submission_path":{"type":"string"},
+    "submission_file_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "judge":{"type":"object"},
+    "rubric":{"type":"object"},
+    "cases":{"type":"array","minItems":1},
+    "summary":{"type":"object"},
+    "created_at":{"type":"string"},
+    "judgment_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://uxui/component-registry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "policy",
+    "components",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "const": "PRESENT"
+    },
+    "policy": {
+      "const": "REUSE_BEFORE_CREATE"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "component_id",
+          "name",
+          "canonical_path",
+          "category",
+          "capabilities",
+          "variants",
+          "aliases",
+          "ownership",
+          "domain",
+          "reusable",
+          "source",
+          "source_sha256",
+          "notes"
+        ],
+        "properties": {
+          "component_id": {
+            "type": "string",
+            "minLength": 3
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonical_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "ownership": {
+            "enum": [
+              "GLOBAL",
+              "DOMAIN"
+            ]
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reusable": {
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "human_approved_design_context",
+              "existing_canonical_design_system",
+              "verified_runtime_discovery",
+              "verified_skill_output"
+            ]
+          },
+          "source_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "integrity_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

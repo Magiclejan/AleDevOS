@@ -1,0 +1,487 @@
+{
+  "schema_version": "1.0",
+  "system_version": "1.0.0-p6",
+  "phase": "ACCESSIBILITY_RESPONSIVE_STATES_UI_DECISIONS",
+  "modes": [
+    "GREENFIELD",
+    "BROWNFIELD",
+    "HYBRID"
+  ],
+  "detection": {
+    "ignored_directories": [
+      ".git",
+      "node_modules",
+      ".aledevos",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      ".nuxt",
+      ".vite",
+      "vendor"
+    ],
+    "ui_extensions": [
+      ".tsx",
+      ".jsx",
+      ".vue",
+      ".svelte",
+      ".html",
+      ".css",
+      ".scss",
+      ".sass",
+      ".less",
+      ".swift",
+      ".dart"
+    ],
+    "ui_path_markers": [
+      "components",
+      "pages",
+      "screens",
+      "views",
+      "styles",
+      "theme",
+      "design-system",
+      "design_system",
+      "ui"
+    ],
+    "design_system_markers": [
+      "tokens.json",
+      "design-tokens.json",
+      "tailwind.config.js",
+      "tailwind.config.ts",
+      "theme.ts",
+      "theme.js",
+      "design-system",
+      "design_system"
+    ],
+    "brownfield_min_ui_files": 2,
+    "hybrid_requires_explicit_intent": true,
+    "explicit_hybrid_signals": [
+      "redesign",
+      "design_system_migration",
+      "brand_reset",
+      "new_visual_system",
+      "major_visual_overhaul",
+      "consolidate_existing_ui"
+    ]
+  },
+  "context": {
+    "root": ".aledevos/design",
+    "manifest": ".aledevos/design/design-context.json",
+    "mode_decision": ".aledevos/design/project-mode.json",
+    "source_precedence": [
+      "human_approved_design_context",
+      "existing_canonical_design_system",
+      "verified_runtime_discovery",
+      "verified_skill_output",
+      "model_inference"
+    ],
+    "model_inference_must_be_labeled": true,
+    "unset_is_preferred_to_invention": true,
+    "preserve_existing_context_by_default": true
+  },
+  "required_sections": [
+    "product_personality",
+    "brand",
+    "ux_principles",
+    "design_system",
+    "tokens",
+    "typography",
+    "color_system",
+    "spacing",
+    "radii",
+    "shadows",
+    "layouts",
+    "responsive",
+    "motion_language",
+    "interaction_patterns",
+    "accessibility",
+    "iconography",
+    "component_registry",
+    "decisions"
+  ],
+  "skill_system": {
+    "use_registry": true,
+    "load_on_demand": true,
+    "acquire_missing_skills": true,
+    "trusted_sources_auto_acquire": true,
+    "untrusted_sources_require_approval": true,
+    "phase1_never_loads_skill_instruction_bodies": true
+  },
+  "mode_workflows": {
+    "GREENFIELD": "DESIGN_GENESIS",
+    "BROWNFIELD": "DESIGN_SYSTEM_DISCOVERY",
+    "HYBRID": "DESIGN_AUDIT_AND_CONSOLIDATE"
+  },
+  "component_registry": {
+    "canonical_root": ".aledevos/design/component-registry.json",
+    "discovery_extensions": [
+      ".tsx",
+      ".jsx",
+      ".vue",
+      ".svelte",
+      ".swift",
+      ".dart"
+    ],
+    "discovery_path_markers": [
+      "components",
+      "component",
+      "ui",
+      "design-system",
+      "design_system"
+    ],
+    "ignore_file_suffixes": [
+      ".test",
+      ".spec",
+      ".stories",
+      ".story"
+    ],
+    "canonical_component_roots": [
+      "src/components",
+      "src/ui",
+      "src/design-system",
+      "src/design_system",
+      "components",
+      "ui"
+    ],
+    "page_local_markers": [
+      "pages",
+      "screens",
+      "views",
+      "routes"
+    ],
+    "allowed_registration_sources": [
+      "human_approved_design_context",
+      "existing_canonical_design_system",
+      "verified_runtime_discovery",
+      "verified_skill_output"
+    ],
+    "new_component_justification_min_chars": 20,
+    "auto_register_discovery": false,
+    "local_fork_default": "DENY",
+    "canonical_change_policy": "MODIFY_CANONICAL_SOURCE",
+    "duplicate_component_policy": "BLOCK",
+    "reuse_before_create": true,
+    "component_source_hash_required": true,
+    "decision_sealed": true
+  },
+  "phase3": {
+    "max_skills_per_stage": 4,
+    "allowed_evidence_sources": [
+      "human_approved_design_context",
+      "existing_canonical_design_system",
+      "verified_runtime_discovery",
+      "verified_skill_output"
+    ],
+    "canonicalizable_sections": [
+      "product_personality",
+      "brand",
+      "ux_principles",
+      "design_system",
+      "tokens",
+      "typography",
+      "color_system",
+      "spacing",
+      "radii",
+      "shadows",
+      "layouts",
+      "responsive",
+      "motion_language",
+      "interaction_patterns",
+      "accessibility",
+      "iconography"
+    ],
+    "discovery": {
+      "max_files": 2500,
+      "max_total_bytes": 33554432,
+      "max_single_file_bytes": 262144,
+      "extensions": [
+        ".css",
+        ".scss",
+        ".sass",
+        ".less",
+        ".tsx",
+        ".jsx",
+        ".vue",
+        ".svelte",
+        ".ts",
+        ".js",
+        ".swift",
+        ".dart",
+        ".json"
+      ]
+    },
+    "canonicalization_requires_approval": true,
+    "skill_outputs_are_proposals": true,
+    "preferred_skills": {
+      "GREENFIELD": [
+        "design",
+        "brand",
+        "design-system",
+        "frontend-design",
+        "ui-ux-pro-max",
+        "ui-styling"
+      ],
+      "BROWNFIELD": [
+        "design-system",
+        "frontend-design",
+        "ui-ux-pro-max",
+        "ui-styling"
+      ],
+      "HYBRID": [
+        "design",
+        "brand",
+        "design-system",
+        "frontend-design",
+        "ui-ux-pro-max",
+        "ui-styling"
+      ]
+    },
+    "missing_skill_policy": "ACQUIRE_IF_TRUSTED_ELSE_APPROVAL"
+  },
+  "phase4": {
+    "guardian": {
+      "require_design_context_integrity": true,
+      "require_component_registry_integrity": true,
+      "require_reuse_decision_for_reusable_component_changes": true,
+      "canonical_component_drift_is_blocker": true,
+      "local_fork_is_blocker": true,
+      "hardcoded_color_policy": "BLOCK_WHEN_CANONICAL_COLOR_OR_TOKENS_PRESENT",
+      "full_file_scan_max_bytes": 262144,
+      "max_changed_files": 250
+    },
+    "judge": {
+      "threshold": 90,
+      "blockers_must_be_zero": true,
+      "critical_unverified_must_be_zero": true,
+      "weights": {
+        "design_system_compliance": 30,
+        "component_reuse": 25,
+        "responsive_readiness": 15,
+        "accessibility_readiness": 15,
+        "states_and_interaction": 15
+      },
+      "required_evidence_for_visual_task": [
+        "responsive",
+        "accessibility",
+        "states"
+      ]
+    },
+    "skill_role": {
+      "specialist_outputs_are_evidence_only": true,
+      "skills_cannot_override_guardian_blockers": true,
+      "preferred_review_skills": [
+        "design-system",
+        "frontend-design",
+        "ui-ux-pro-max",
+        "ui-styling"
+      ]
+    }
+  },
+  "phase5": {
+    "motion_director": {
+      "skill_capability": "ux.motion",
+      "max_skills_per_stage": 3,
+      "missing_skill_policy": "ACQUIRE_IF_TRUSTED_ELSE_APPROVAL",
+      "preferred_skills": {
+        "generic": [
+          "animation-vocabulary",
+          "find-animation-opportunities",
+          "animate",
+          "improve-animations"
+        ],
+        "web": [
+          "animation-vocabulary",
+          "find-animation-opportunities",
+          "animate",
+          "improve-animations",
+          "emil-design-eng"
+        ],
+        "expo": [
+          "animation-vocabulary",
+          "find-animation-opportunities",
+          "animate-expo",
+          "improve-animations"
+        ],
+        "apple": [
+          "animation-vocabulary",
+          "apple-design",
+          "find-animation-opportunities",
+          "improve-animations"
+        ]
+      },
+      "skill_outputs_are_evidence_only": true,
+      "instruction_loading": "on-demand"
+    },
+    "motion_language": {
+      "machine_path": ".aledevos/design/motion-language.json",
+      "human_path": ".aledevos/design/motion-language.md",
+      "required_duration_tokens": [
+        "micro",
+        "standard",
+        "large"
+      ],
+      "required_easing_tokens": [
+        "enter",
+        "exit",
+        "emphasis"
+      ],
+      "duration_ms_min": 1,
+      "duration_ms_max": 5000,
+      "reduced_motion_required": true,
+      "allowed_reduced_motion_behaviors": [
+        "DISABLE",
+        "SIMPLIFY",
+        "INSTANT",
+        "PRESERVE_ESSENTIAL"
+      ],
+      "decorative_infinite_motion": "DENY",
+      "raw_motion_literals": "DENY_UNLESS_APPROVED_EXCEPTION",
+      "canonicalization_requires_approval": true
+    },
+    "contract": {
+      "max_interactions": 100,
+      "allowed_intents": [
+        "feedback",
+        "state_change",
+        "enter",
+        "exit",
+        "navigation",
+        "overlay",
+        "gesture",
+        "loading",
+        "attention"
+      ],
+      "changed_files_must_exist": true,
+      "changed_files_must_be_inside_project": true,
+      "skill_evidence_reference_only": true,
+      "sealed": true
+    },
+    "review": {
+      "language_drift_is_blocker": true,
+      "design_context_drift_is_blocker": true,
+      "reduced_motion_gap_is_blocker": true,
+      "invalid_token_reference_is_blocker": true,
+      "decorative_infinite_loop_is_blocker": true,
+      "unapproved_raw_literal_is_blocker": true
+    }
+  },
+  "phase6": {
+    "accessibility": {
+      "machine_path": ".aledevos/design/accessibility-policy.json",
+      "human_path": ".aledevos/design/accessibility.md",
+      "canonicalization_requires_approval": true,
+      "required_requirement_keys": [
+        "semantics",
+        "keyboard",
+        "focus",
+        "labels",
+        "contrast",
+        "reduced_motion"
+      ],
+      "skill_capabilities": [
+        "ux.design",
+        "mobile.ux"
+      ],
+      "preferred_skills": [
+        "ui-ux-pro-max",
+        "frontend-design",
+        "mobile-native",
+        "apple-design"
+      ],
+      "missing_skill_policy": "ACQUIRE_IF_TRUSTED_ELSE_APPROVAL",
+      "full_compliance_claim_requires_runtime_evidence": true
+    },
+    "responsive": {
+      "machine_path": ".aledevos/design/responsive-policy.json",
+      "human_path": ".aledevos/design/responsive.md",
+      "canonicalization_requires_approval": true,
+      "allowed_strategies": [
+        "MOBILE_FIRST",
+        "DESKTOP_FIRST",
+        "FLUID",
+        "ADAPTIVE",
+        "CUSTOM"
+      ],
+      "min_viewports": 2,
+      "max_viewports": 12,
+      "width_min": 240,
+      "width_max": 7680,
+      "skill_capabilities": [
+        "ux.design",
+        "mobile.ux"
+      ],
+      "preferred_skills": [
+        "frontend-design",
+        "ui-ux-pro-max",
+        "mobile-native",
+        "design-system"
+      ],
+      "missing_skill_policy": "ACQUIRE_IF_TRUSTED_ELSE_APPROVAL"
+    },
+    "states": {
+      "catalog_path": ".aledevos/design/ui-states.json",
+      "canonicalization_requires_approval": true,
+      "allowed_state_types": [
+        "DEFAULT",
+        "CONTENT",
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "SUCCESS",
+        "DISABLED",
+        "OFFLINE",
+        "PARTIAL"
+      ],
+      "surface_kinds": [
+        "DATA_SURFACE",
+        "ACTION_SURFACE",
+        "STATIC_SURFACE"
+      ],
+      "baselines": {
+        "DATA_SURFACE": [
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "CONTENT"
+        ],
+        "ACTION_SURFACE": [
+          "DEFAULT",
+          "DISABLED",
+          "ERROR",
+          "SUCCESS"
+        ],
+        "STATIC_SURFACE": [
+          "DEFAULT"
+        ]
+      },
+      "max_surfaces": 100,
+      "evidence_reference_only": true
+    },
+    "ui_decisions": {
+      "root": ".aledevos/design/decisions",
+      "index_path": ".aledevos/design/ui-decisions.index.json",
+      "id_pattern": "^UI-ADR-[0-9]{4,}$",
+      "min_text_chars": 12,
+      "records_immutable": true,
+      "supersede_instead_of_rewrite": true,
+      "approval_required": true
+    },
+    "review": {
+      "max_changed_files": 250,
+      "max_scan_bytes": 262144,
+      "phase6_review_required_for_evidence_schema": "1.1",
+      "skill_evidence_reference_only": true,
+      "rendered_visual_quality_deferred_to_visual_qa": true,
+      "static_accessibility_checks": [
+        "img_alt",
+        "interactive_semantics",
+        "focus_visible"
+      ],
+      "static_responsive_checks": [
+        "min_width_vs_narrowest_viewport",
+        "overflow_mask_warning"
+      ]
+    }
+  }
+}

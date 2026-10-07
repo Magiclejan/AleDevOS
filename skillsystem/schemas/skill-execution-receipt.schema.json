@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-execution-receipt.schema.json",
+  "title": "AleDevOS Skill Execution Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "attempt",
+    "status",
+    "skill_ids",
+    "validation",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "integrity": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

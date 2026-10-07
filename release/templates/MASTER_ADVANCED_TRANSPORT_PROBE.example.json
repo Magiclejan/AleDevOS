@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P5_TRANSPORT_PROBE_PROFILE",
+  "id": "p5-ssh-node-b",
+  "transport_kind": "SSH",
+  "transport_provenance": "TARGET_NETWORK_TRANSPORT",
+  "executable": "ssh",
+  "args": [
+    "node-b",
+    "node",
+    "{remote_helper}",
+    "--nonce",
+    "{nonce}",
+    "--payload-base64",
+    "{payload_base64}",
+    "--payload-sha256",
+    "{payload_sha256}",
+    "--machine-id",
+    "{remote_machine_id}"
+  ],
+  "remote_helper_path": "C:/AleDevOS/release/templates/master-advanced-remote-probe.mjs",
+  "remote_machine_id": "node-b",
+  "timeout_ms": 180000
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P4_FALLBACK_TRIGGER",
+  "task_id": "TASK_EXAMPLE",
+  "judge_role": "quality",
+  "failed_slot": "secondary",
+  "failure_code": "RUNTIME_UNAVAILABLE",
+  "failed_model": {
+    "provider_id": "SECOND_PROVIDER_ID",
+    "provider_family": "SECOND_PROVIDER_FAMILY",
+    "model_id": "SECOND_MODEL_ID"
+  },
+  "previous_attempts": []
+}

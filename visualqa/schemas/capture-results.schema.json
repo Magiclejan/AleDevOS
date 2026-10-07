@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.capture-results.v1",
+  "type": "object",
+  "required": ["task_id", "results"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case_id", "screenshot_path"],
+        "properties": {
+          "case_id": {"type": "string"},
+          "screenshot_path": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

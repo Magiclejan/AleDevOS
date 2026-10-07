@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Project Config",
+  "type": "object",
+  "required": [
+    "version",
+    "configured",
+    "gates",
+    "protected_paths"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "configured": {
+      "type": "boolean"
+    },
+    "project_name": {
+      "type": "string"
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "command",
+          "required"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "protected_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate_integrity": {
+      "type": "object",
+      "properties": {
+        "package_scripts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "adapter": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Legacy single-adapter compatibility field. New code must use adapters[]."
+    },
+    "adapter_contract_version": {
+      "type": "string"
+    },
+    "adapters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$"
+      }
+    }
+  }
+}

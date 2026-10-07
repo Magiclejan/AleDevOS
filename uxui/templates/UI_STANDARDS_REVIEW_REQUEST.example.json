@@ -1,0 +1,25 @@
+{
+  "task_id": "feature-example",
+  "changed_files": ["src/pages/Orders.tsx"],
+  "accessibility": {
+    "required": true,
+    "evidence": [
+      {"criterion":"semantics","evidence_ref":"evidence/a11y-semantics"},
+      {"criterion":"keyboard","evidence_ref":"evidence/a11y-keyboard"},
+      {"criterion":"focus","evidence_ref":"evidence/a11y-focus"},
+      {"criterion":"labels","evidence_ref":"evidence/a11y-labels"},
+      {"criterion":"contrast","evidence_ref":"evidence/a11y-contrast"},
+      {"criterion":"reduced_motion","evidence_ref":"evidence/a11y-reduced-motion"}
+    ]
+  },
+  "responsive": {
+    "required": true,
+    "evidence": [
+      {"viewport_id":"narrow","evidence_ref":"evidence/narrow"},
+      {"viewport_id":"wide","evidence_ref":"evidence/wide"}
+    ]
+  },
+  "states": {"required": true, "contract_path": ".aledevos/state/uxui/phase6/state-contracts/feature-example.json"},
+  "adr_refs": ["UI-ADR-1000"],
+  "exceptions": []
+}

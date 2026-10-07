@@ -1,0 +1,16 @@
+{
+  "query": "How is billing total calculated?",
+  "namespace": "repo",
+  "result_summary": "Billing total delegates to the total helper.",
+  "source_paths": [
+    "src/features/billing/math.ts"
+  ],
+  "evidence": [
+    {
+      "claim": "The total helper adds two numeric inputs.",
+      "source_path": "src/features/billing/math.ts"
+    }
+  ],
+  "tags": ["billing"],
+  "max_age_seconds": 604800
+}

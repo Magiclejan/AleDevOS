@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS Efficiency Signals P7",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","domains","signals"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "domains":{"type":"array","uniqueItems":true,"items":{"enum":["frontend","backend","database","tests","config","cross-cutting"]}},
+    "signals":{"type":"object","additionalProperties":false,"properties":{
+      "cross_domain":{"type":"boolean"},"security_sensitive":{"type":"boolean"},"database_affecting":{"type":"boolean"},"external_integration":{"type":"boolean"},"ui_affecting":{"type":"boolean"},"visual_validation_required":{"type":"boolean"},"unknown_requirements":{"type":"boolean"},"migration_or_destructive":{"type":"boolean"},"multi_machine":{"type":"boolean"},"requires_research":{"type":"boolean"},"knowledge_stale":{"type":"boolean"},"repair_required":{"type":"boolean"}
+    }}
+  }
+}

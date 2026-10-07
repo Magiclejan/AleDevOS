@@ -1,0 +1,32 @@
+{
+  "version": "0.1.0",
+  "handoff_id": "TASK-001-research-architecture",
+  "task_id": "TASK-001",
+  "from_agent": "researcher",
+  "to_agent": "architect",
+  "phase": "research_to_architecture",
+  "objective": "Describe the smallest evidence set needed to plan the requested change.",
+  "approved_scope": ["src/example.ts", "tests/example.test.ts"],
+  "summary": "The feature is isolated to the example module. Existing behavior is covered by one test file and no configuration change is required.",
+  "affected_files": [
+    { "path": "src/example.ts", "reason": "Primary implementation module." },
+    { "path": "tests/example.test.ts", "reason": "Existing behavior and new acceptance coverage." }
+  ],
+  "decisions": [
+    { "id": "D1", "decision": "Keep the change additive.", "rationale": "No existing contract requires modification." }
+  ],
+  "evidence": [
+    { "kind": "file", "ref": "src/example.ts", "claim": "Exports the current public function." },
+    { "kind": "test", "ref": "tests/example.test.ts", "claim": "Contains the existing regression coverage." }
+  ],
+  "relevant_tests": ["tests/example.test.ts"],
+  "risks": ["No known cross-module dependency."],
+  "open_questions": [],
+  "next_action": "Architect should produce a minimal plan using only the approved scope unless new evidence requires SCOPE_ESCALATION.",
+  "context_metrics": {
+    "source_context_tokens": 12000,
+    "handoff_estimated_tokens": 650,
+    "budget_status": "NORMAL",
+    "transcript_included": false
+  }
+}

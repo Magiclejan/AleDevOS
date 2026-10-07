@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object",
+  "required":["schema_version","phase","status","group_id","workers","plan_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"ADVANCED_EXECUTION_P3_SAFE_CONCURRENCY"},
+    "status":{"enum":["CONCURRENCY_PLAN_READY","CONCURRENCY_PLAN_BLOCKED"]},
+    "group_id":{"type":"string"},
+    "workers":{"type":"array"},
+    "plan_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

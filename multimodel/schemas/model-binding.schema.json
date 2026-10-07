@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.model-binding.v1",
+  "type": "object",
+  "required": ["schema_version", "binding_id", "target_runtime", "slots"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "binding_id": {"type": "string", "minLength": 1},
+    "target_runtime": {"type": "string", "minLength": 1},
+    "slots": {
+      "type": "object",
+      "required": ["primary", "secondary"]
+    }
+  }
+}

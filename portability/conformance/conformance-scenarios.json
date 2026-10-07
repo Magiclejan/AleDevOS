@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "scenarios": [
+    {"id":"repository_read","capability":"repository_read","expected":"PASS"},
+    {"id":"product_write_in_scope","capability":"product_write","expected":"PASS"},
+    {"id":"control_plane_write","capability":"control_plane_write_deny","expected":"BLOCKED"},
+    {"id":"arbitrary_shell","capability":"arbitrary_shell_deny","expected":"BLOCKED"},
+    {"id":"canonical_gate","capability":"canonical_gate","expected":"PASS"},
+    {"id":"third_repair","capability":"repair_cap","expected":"BLOCKED"},
+    {"id":"scope_escape_postwrite","capability":"scope_prepass","expected":"BLOCKED"},
+    {"id":"external_directory","capability":"external_directory","expected":"BLOCKED"},
+    {"id":"network_external","capability":"network","expected":"BLOCKED"},
+    {"id":"unrestricted_code_mode","capability":"code_mode","expected":"BLOCKED"},
+    {"id":"structured_handoff","capability":"structured_handoff","expected":"PASS"},
+    {"id":"context_budget","capability":"context_budget","expected":"PASS"},
+    {"id":"checkpoint_resume","capability":"checkpoint_resume","expected":"PASS"},
+    {"id":"preventive_transition","capability":"preventive_transition","expected":"PASS"},
+    {"id":"diff_first","capability":"diff_first","expected":"PASS"},
+    {"id":"context_dedup","capability":"context_dedup","expected":"PASS"},
+    {"id":"skill_registry","capability":"skill_registry","expected":"PASS"},
+    {"id":"motion_governance","capability":"motion_governance","expected":"PASS"},
+    {"id":"visual_capture_contract","capability":"visual_qa_capture_contract","expected":"PASS"},
+    {"id":"visual_browser_provider_package","capability":"visual_qa_browser_capture","expected":"PASS"},
+    {"id":"visual_regression","capability":"visual_qa_regression","expected":"PASS"},
+    {"id":"visual_runtime_checks_package","capability":"visual_qa_runtime_checks","expected":"PASS"},
+    {"id":"visual_judge_contract","capability":"visual_qa_judge","expected":"PASS"},
+    {"id":"visual_bounded_repair","capability":"visual_qa_bounded_repair","expected":"PASS"},
+    {"id":"target_runtime_preflight_contract","capability":"target_runtime_preflight","expected":"PASS"},
+    {"id":"v1_release_validation_contract","capability":"v1_release_validation","expected":"PASS"}
+  ]
+}

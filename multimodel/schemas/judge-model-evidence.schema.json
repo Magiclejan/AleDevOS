@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.judge-model-evidence.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","judge_role","slot","model","input","rubric","result","runtime","created_at","evidence_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"MULTIMODEL_P1_JUDGE_EVIDENCE"},
+    "task_id": {"type":"string","minLength":1},
+    "judge_role": {"type":"string"},
+    "slot": {"enum":["primary","secondary"]},
+    "evidence_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

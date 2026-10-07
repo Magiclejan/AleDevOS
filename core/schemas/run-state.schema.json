@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Run State",
+  "type": "object",
+  "required": [
+    "version",
+    "task_id",
+    "approved_scope",
+    "scope_version",
+    "acceptance_criteria",
+    "gates",
+    "judges",
+    "blockers",
+    "repair_count",
+    "max_repairs",
+    "final_state"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "approved_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scope_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "UNVERIFIED",
+              "VERIFIED",
+              "FAILED"
+            ]
+          }
+        }
+      }
+    },
+    "gates": {
+      "type": "object"
+    },
+    "judges": {
+      "type": "object"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "max_repairs": {
+      "const": 2
+    },
+    "blocked_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "final_state": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "PASS",
+        "BLOCKED",
+        "FAILED",
+        null
+      ]
+    }
+  }
+}

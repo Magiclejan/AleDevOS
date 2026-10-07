@@ -1,0 +1,188 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "compaction": {
+    "auto": true,
+    "keep": {
+      "tokens": 8000
+    },
+    "buffer": 20000
+  },
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "*.env",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "*.env.*",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "*.env.example",
+      "effect": "allow"
+    },
+    {
+      "action": "webfetch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "websearch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "execute",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "skill",
+      "resource": "*",
+      "effect": "allow"
+    }
+  ],
+  "experimental": {
+    "portable_shell_scanner": true,
+    "policies": [
+      {
+        "action": "permission",
+        "resource": "external_directory:*",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "edit:opencode.json",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "edit:.opencode/*",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "edit:.aledevos/*",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "edit:AGENTS.md",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "edit:AGENTS.*",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git push *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git reset --hard *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git clean *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git commit *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git rebase *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git checkout *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git switch *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git branch -d *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git branch -D *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git restore *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:git add *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:npm publish *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:pnpm publish *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:yarn publish *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:npm install -g *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:npm i -g *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:pnpm add -g *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:yarn global add *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:sudo *",
+        "effect": "deny"
+      },
+      {
+        "action": "permission",
+        "resource": "shell:runas *",
+        "effect": "deny"
+      }
+    ]
+  }
+}

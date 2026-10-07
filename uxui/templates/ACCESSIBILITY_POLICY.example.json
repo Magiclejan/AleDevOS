@@ -1,0 +1,12 @@
+{
+  "standard": "WCAG_2_2_AA",
+  "requirements": {
+    "semantics": "Use semantic elements and roles that match behavior.",
+    "keyboard": "All interactive controls must be operable by keyboard.",
+    "focus": "Focus order and visible focus must remain usable.",
+    "labels": "Interactive and form controls require accessible names.",
+    "contrast": "Rendered contrast must meet the approved project target.",
+    "reduced_motion": "Respect the canonical reduced-motion behavior."
+  },
+  "source_ref": "UI-ADR-1000"
+}

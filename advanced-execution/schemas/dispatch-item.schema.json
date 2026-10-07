@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020/schema",
+  "title": "AleDevOS Advanced Execution P4 Dispatch Item",
+  "type": "object",
+  "required": ["dispatch_id","state","priority","enqueue_sequence","plan_snapshot_path","plan_sha256","dispatch_attempts","item_sha256"],
+  "properties": {
+    "dispatch_id": {"type":"string","pattern":"^dispatch-[a-f0-9]{24}$"},
+    "state": {"enum":["QUEUED","BLOCKED","PAUSED","RUNNING","COMPLETED","CANCELLED","FAILED"]},
+    "priority": {"type":"integer","minimum":0,"maximum":9},
+    "enqueue_sequence": {"type":"integer","minimum":1},
+    "dispatch_attempts": {"type":"integer","minimum":0},
+    "item_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

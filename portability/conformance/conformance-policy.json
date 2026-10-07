@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "1.0.0",
+  "canonical_adapters": [
+    "opencode",
+    "codex",
+    "claude-code",
+    "antigravity"
+  ],
+  "aliases": {
+    "gemini": "antigravity"
+  },
+  "required_profile": "full_current",
+  "required_roles": [
+    "orchestrator",
+    "architect",
+    "researcher",
+    "builder",
+    "auditor",
+    "editor-frontend",
+    "editor-backend",
+    "editor-database",
+    "editor-tests",
+    "editor-config",
+    "verifier",
+    "repairer",
+    "judge-requirements",
+    "judge-regression",
+    "judge-quality",
+    "judge-uxui",
+    "design-system-guardian",
+    "motion-director",
+    "visual-capture-runner",
+    "visual-regression-runner",
+    "visual-runtime-audit-runner",
+    "visual-judge",
+    "visual-repair-controller",
+    "security-reviewer",
+    "v1-release-validator"
+  ],
+  "capability_variance": {
+    "scope_prewrite": {
+      "allowed": [
+        "unsupported",
+        "best_effort"
+      ],
+      "semantic_outcome": "NO_FALSE_ENFORCEMENT_CLAIM"
+    },
+    "compaction": {
+      "allowed": [
+        "enforced",
+        "implemented"
+      ],
+      "semantic_outcome": "SAFE_CONTEXT_TRANSITION_AVAILABLE"
+    }
+  },
+  "normalized_failure_states": [
+    "PASS",
+    "BLOCKED",
+    "FAILED"
+  ],
+  "package_certificates": {
+    "opencode": {
+      "certifier": "adapters/opencode/certification/opencode-certifier.mjs",
+      "certificate": "release/certifications/opencode-portability-p2.json",
+      "valid_status": "OPENCODE_CERTIFICATE_VALID"
+    },
+    "codex": {
+      "certifier": "adapters/codex/certification/codex-certifier.mjs",
+      "certificate": "release/certifications/codex-portability-p3.json",
+      "valid_status": "CODEX_CERTIFICATE_VALID"
+    },
+    "claude-code": {
+      "certifier": "adapters/claude-code/certification/claude-code-certifier.mjs",
+      "certificate": "release/certifications/claude-code-portability-p4.json",
+      "valid_status": "CLAUDE_CODE_CERTIFICATE_VALID"
+    },
+    "antigravity": {
+      "certifier": "adapters/antigravity/certification/antigravity-certifier.mjs",
+      "certificate": "release/certifications/antigravity-portability-p5.json",
+      "valid_status": "ANTIGRAVITY_CERTIFICATE_VALID"
+    }
+  },
+  "provider_path": "visualqa/playwright-driver.mjs",
+  "portable_skill_pack": "skillsystem/portable/portable-skill-pack.json",
+  "core_leakage_scan": {
+    "roots": [
+      "core"
+    ],
+    "extensions": [
+      ".mjs",
+      ".json"
+    ],
+    "forbidden_tokens": [
+      "opencode",
+      "codex",
+      "claude",
+      "antigravity",
+      "gemini"
+    ]
+  }
+}

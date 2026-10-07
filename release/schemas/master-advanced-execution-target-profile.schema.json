@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "phase",
+    "target_runtime",
+    "artifacts",
+    "multi_machine",
+    "recovery"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "phase": {
+      "const": "MASTER_VALIDATION_P5_TARGET_PROFILE"
+    },
+    "target_runtime": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "worktree_receipt",
+        "worker_assignment",
+        "worker_session",
+        "concurrency_plan",
+        "concurrency_group",
+        "concurrency_conflict_plan",
+        "dispatcher_queue",
+        "dispatcher_started_receipt",
+        "transport_probe",
+        "remote_result_envelope",
+        "crash_recovery_probe",
+        "stale_result_envelope",
+        "current_result_envelope"
+      ],
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "multi_machine": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "remote_machine_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "remote_machine_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "recovery": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "current_machine_id",
+        "stale_machine_id"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_machine_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stale_machine_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

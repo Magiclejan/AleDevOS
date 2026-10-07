@@ -1,0 +1,135 @@
+{
+  "contract_version": "2.0",
+  "adapter": "antigravity",
+  "adapter_version": "1.0",
+  "status": "implemented",
+  "runtime": {
+    "family": "google-antigravity",
+    "agent_mode": "custom-subagents",
+    "reference": false,
+    "config_dialect": "antigravity-2-cli-1.2+",
+    "certification": "portability-p5",
+    "surfaces": [
+      "antigravity-cli",
+      "antigravity-2.0"
+    ]
+  },
+  "installation": {
+    "supported": true,
+    "notes": "Canonical Google adapter. Gemini CLI consumer workflows migrated to Antigravity; legacy gemini adapter is an explicit alias."
+  },
+  "capabilities": {
+    "repository_read": {
+      "status": "enforced",
+      "implementation": "Antigravity custom-agent tool allowlists + PreToolUse workspace boundary guard"
+    },
+    "product_write": {
+      "status": "enforced",
+      "implementation": "writer roles receive native file edit tools; PreToolUse blocks control-plane/external writes"
+    },
+    "control_plane_write_deny": {
+      "status": "enforced",
+      "implementation": "PreToolUse denies writes to .aledevos/.agents/.git/AGENTS plus permission overlay defense-in-depth"
+    },
+    "arbitrary_shell_deny": {
+      "status": "enforced",
+      "implementation": "only certified state roles receive run_command; PreToolUse allows only enumerated .aledevos node commands"
+    },
+    "canonical_gate": {
+      "status": "enforced",
+      "implementation": "state roles invoke portable AleDevOS runtime through governed run_command"
+    },
+    "repair_cap": {
+      "status": "enforced",
+      "implementation": "portable run-state engine max_repairs=2"
+    },
+    "scope_prewrite": {
+      "status": "best_effort",
+      "implementation": "writer tool boundary + deterministic scope prepass; exact prewrite scope remains portable policy"
+    },
+    "scope_prepass": {
+      "status": "enforced",
+      "implementation": "portable deterministic scope check"
+    },
+    "external_directory": {
+      "status": "enforced",
+      "implementation": "workspace-bound PreToolUse path guard; target preflight must prove hooks active on installed Antigravity version"
+    },
+    "network": {
+      "status": "enforced",
+      "implementation": "network tools omitted/denied; permissions overlay blocks read_url/execute_url/mcp/unsandboxed; target preflight required"
+    },
+    "code_mode": {
+      "status": "enforced",
+      "implementation": "no dangerously-skip-permissions projection; dynamic subagent definition denied; shell restricted to governed runtime commands"
+    },
+    "compaction": {
+      "status": "implemented",
+      "implementation": "Antigravity persistent history plus portable ContextOS checkpoint/resume"
+    },
+    "structured_handoff": {
+      "status": "implemented",
+      "implementation": "portable handoff contract + native custom subagents/invoke_subagent"
+    },
+    "context_budget": {
+      "status": "implemented",
+      "implementation": "portable ContextOS generic profile until target telemetry is exact"
+    },
+    "checkpoint_resume": {
+      "status": "implemented",
+      "implementation": "portable sealed ContextOS state"
+    },
+    "preventive_transition": {
+      "status": "implemented",
+      "implementation": "ContextOS pressure bands and verified checkpoint/resume"
+    },
+    "diff_first": {
+      "status": "implemented",
+      "implementation": "portable bounded diff snapshot"
+    },
+    "context_dedup": {
+      "status": "implemented",
+      "implementation": "portable SHA-256 context ledger"
+    },
+    "skill_registry": {
+      "status": "implemented",
+      "implementation": "portable Skill System + native .agents/skills open-standard skills"
+    },
+    "motion_governance": {
+      "status": "implemented",
+      "implementation": "frozen UX/UI motion contracts"
+    },
+    "visual_qa_capture_contract": {
+      "status": "implemented",
+      "implementation": "frozen Visual QA P1"
+    },
+    "visual_qa_browser_capture": {
+      "status": "implemented",
+      "implementation": "adapter-owned Playwright provider"
+    },
+    "visual_qa_regression": {
+      "status": "implemented",
+      "implementation": "frozen Visual QA P3"
+    },
+    "visual_qa_runtime_checks": {
+      "status": "implemented",
+      "implementation": "portable Visual QA P4 runtime audit"
+    },
+    "visual_qa_judge": {
+      "status": "implemented",
+      "implementation": "custom visual-judge role + portable P5 semantic judge; target model must prove image observation"
+    },
+    "visual_qa_bounded_repair": {
+      "status": "implemented",
+      "implementation": "frozen P5 bounded repair controller, max repairs=2"
+    },
+    "target_runtime_preflight": {
+      "status": "implemented",
+      "implementation": "Antigravity certifier verifies CLI presence/version and flags known platform/hook prerequisites"
+    },
+    "v1_release_validation": {
+      "status": "implemented",
+      "implementation": "portable sealed V1 release gate"
+    }
+  }
+}

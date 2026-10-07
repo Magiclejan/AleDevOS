@@ -1,0 +1,274 @@
+{
+  "version": "0.3.0",
+  "principles": [
+    "context_relevance_before_context_size",
+    "structured_handoff_before_transcript",
+    "checkpoint_before_compaction",
+    "resume_from_verified_state_only",
+    "preventive_context_control",
+    "runtime_profiles_not_global_magic_numbers",
+    "diff_first_before_full_file",
+    "deduplicate_context_by_content_identity",
+    "changed_content_invalidates_old_reference",
+    "knowledge_must_be_fresh_before_use",
+    "incremental_refresh_before_full_rebuild",
+    "research_cache_is_source_bound",
+    "measure_before_optimize",
+    "telemetry_never_contains_prompts_or_secrets",
+    "unknown_metrics_remain_null_not_estimated",
+    "benchmark_comparisons_require_matching_keys"
+  ],
+  "handoff": {
+    "max_estimated_tokens": 4000,
+    "transcript_allowed": false,
+    "max_summary_chars": 2200,
+    "max_evidence_items": 24,
+    "max_decisions": 16,
+    "max_open_questions": 12
+  },
+  "pressure_ratios": {
+    "watch": 0.58,
+    "checkpoint": 0.67,
+    "compact": 0.72,
+    "hard_guard": 0.8
+  },
+  "agent_budgets": {
+    "default": {
+      "target_ratio": 0.3,
+      "max_target_tokens": 14000
+    },
+    "orchestrator": {
+      "target_ratio": 0.22,
+      "max_target_tokens": 10000
+    },
+    "researcher": {
+      "target_ratio": 0.48,
+      "max_target_tokens": 22000
+    },
+    "architect": {
+      "target_ratio": 0.32,
+      "max_target_tokens": 14000
+    },
+    "auditor": {
+      "target_ratio": 0.26,
+      "max_target_tokens": 12000
+    },
+    "builder": {
+      "target_ratio": 0.48,
+      "max_target_tokens": 22000
+    },
+    "editor-frontend": {
+      "target_ratio": 0.44,
+      "max_target_tokens": 20000
+    },
+    "editor-backend": {
+      "target_ratio": 0.44,
+      "max_target_tokens": 20000
+    },
+    "editor-database": {
+      "target_ratio": 0.4,
+      "max_target_tokens": 18000
+    },
+    "editor-tests": {
+      "target_ratio": 0.4,
+      "max_target_tokens": 18000
+    },
+    "editor-config": {
+      "target_ratio": 0.3,
+      "max_target_tokens": 14000
+    },
+    "verifier": {
+      "target_ratio": 0.18,
+      "max_target_tokens": 8000
+    },
+    "judge-requirements": {
+      "target_ratio": 0.22,
+      "max_target_tokens": 10000
+    },
+    "judge-regression": {
+      "target_ratio": 0.22,
+      "max_target_tokens": 10000
+    },
+    "judge-quality": {
+      "target_ratio": 0.22,
+      "max_target_tokens": 10000
+    },
+    "repairer": {
+      "target_ratio": 0.36,
+      "max_target_tokens": 16000
+    }
+  },
+  "runtime_profiles": {
+    "generic-64k": {
+      "context_window": 65536,
+      "max_output_tokens": 8192,
+      "native_compaction_buffer_tokens": 0,
+      "keep_tokens": 0,
+      "notes": "Portable reference profile; adapters may override reserve behavior."
+    },
+    "opencode-qwen64k": {
+      "context_window": 65536,
+      "max_output_tokens": 8192,
+      "native_compaction_buffer_tokens": 20000,
+      "keep_tokens": 8000,
+      "notes": "OpenCode runtime profile. Provider/model selection and native buffer are external runtime concerns, not Core policy."
+    }
+  },
+  "checkpoint": {
+    "version": "0.2.0",
+    "max_estimated_tokens": 8000,
+    "resume_max_estimated_tokens": 8000,
+    "checkpoint_before_compaction": true,
+    "resume_packet_before_transition": true,
+    "verify_integrity_before_resume": true,
+    "hard_guard_strategy": "NEW_SESSION_AND_RESUME",
+    "reasons": [
+      "BUDGET_CHECKPOINT",
+      "PRE_COMPACTION",
+      "PRE_NEW_SESSION",
+      "MANUAL"
+    ]
+  },
+  "diff_first": {
+    "enabled": true,
+    "default_base": "HEAD",
+    "max_snapshot_estimated_tokens": 14000,
+    "max_tracked_patch_chars": 40000,
+    "max_untracked_preview_chars": 6000,
+    "full_file_fallback_requires_reason": true,
+    "review_agents": [
+      "auditor",
+      "verifier",
+      "judge-requirements",
+      "judge-regression",
+      "judge-quality",
+      "repairer"
+    ],
+    "priority_order": [
+      "task_contract",
+      "approved_scope",
+      "diff_summary",
+      "diff_patch",
+      "verification_evidence",
+      "knowledge_summary",
+      "domain_map_ref",
+      "dependency_map_ref",
+      "symbol_map_ref",
+      "repo_map_ref",
+      "structured_handoff",
+      "decision_record",
+      "risk",
+      "targeted_excerpt",
+      "full_file",
+      "other"
+    ]
+  },
+  "dedup": {
+    "enabled": true,
+    "transcript_allowed": false,
+    "max_packet_estimated_tokens": 12000,
+    "max_packet_ratio_of_agent_target": 0.8,
+    "max_inline_item_estimated_tokens": 6000,
+    "duplicate_action": "REFERENCE_ONLY",
+    "changed_content_action": "INLINE",
+    "allowed_kinds": [
+      "task_contract",
+      "approved_scope",
+      "diff_summary",
+      "diff_patch",
+      "verification_evidence",
+      "knowledge_summary",
+      "repo_map_ref",
+      "domain_map_ref",
+      "dependency_map_ref",
+      "symbol_map_ref",
+      "structured_handoff",
+      "decision_record",
+      "risk",
+      "targeted_excerpt",
+      "full_file",
+      "other"
+    ]
+  },
+  "knowledge": {
+    "enabled": true,
+    "version": "0.5.0",
+    "output_dir": ".aledevos/state/knowledge",
+    "max_files": 25000,
+    "max_parse_file_bytes": 2097152,
+    "ignore_directory_names": [
+      ".git",
+      "node_modules",
+      ".aledevos",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      ".cache",
+      "vendor",
+      "target",
+      ".venv",
+      "venv"
+    ],
+    "domain_root_patterns": [
+      "src/features/*",
+      "src/modules/*",
+      "src/domains/*",
+      "src/pages/*",
+      "src/app/*",
+      "app/*",
+      "apps/*",
+      "packages/*"
+    ],
+    "incremental_refresh": true,
+    "freshness_required_before_research": true,
+    "internal_cache_dir": ".internal"
+  },
+  "research_cache": {
+    "enabled": true,
+    "version": "0.5.0",
+    "output_dir": ".aledevos/state/knowledge/research",
+    "default_max_age_seconds": 604800,
+    "max_max_age_seconds": 2592000,
+    "max_summary_chars": 6000,
+    "transcript_allowed": false,
+    "require_sources": true,
+    "stale_entries_usable": false,
+    "invalidate_on_source_change": true
+  },
+  "telemetry": {
+    "enabled": true,
+    "version": "1.0.0",
+    "output_dir": ".aledevos/state/telemetry/contextos",
+    "max_event_bytes": 16384,
+    "max_events_per_run": 10000,
+    "single_writer_per_run": true,
+    "integrity_chain": "sha256",
+    "raw_prompt_storage": false,
+    "raw_completion_storage": false,
+    "transcript_storage": false,
+    "secret_storage": false,
+    "unknown_numeric_metrics": "null",
+    "benchmark_requires_matching_key": true,
+    "tracked_metrics": [
+      "input_tokens",
+      "output_tokens",
+      "context_peak_tokens",
+      "pressure_bands",
+      "handoff_tokens",
+      "checkpoint_tokens",
+      "resume_tokens",
+      "compactions",
+      "research_cache_status",
+      "knowledge_refresh_reparse_reuse",
+      "files_read",
+      "bytes_read",
+      "gate_results",
+      "judge_scores",
+      "repair_count",
+      "decode_tokens_per_sec",
+      "workflow_duration_ms",
+      "final_state"
+    ]
+  }
+}

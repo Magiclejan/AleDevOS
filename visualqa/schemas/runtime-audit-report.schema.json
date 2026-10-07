@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://visualqa/runtime-audit-report.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","phase","task_id","status","claims","phase2_receipt_path","phase2_receipt_file_sha256","accessibility_policy_path","accessibility_policy_file_sha256","responsive_policy_path","responsive_policy_file_sha256","accessibility_standard","runtime_profile","cases","summary","report_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"phase":{"const":"VISUAL_QA_P4"},"task_id":{"type":"string","minLength":1},
+    "status":{"enum":["VISUAL_RUNTIME_AUDIT_PASS","VISUAL_RUNTIME_AUDIT_FAIL","VISUAL_RUNTIME_AUDIT_BLOCKED"]},
+    "claims":{"type":"object"},"phase2_receipt_path":{"type":"string"},"phase2_receipt_file_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "phase3_report_path":{"type":["string","null"]},"phase3_report_file_sha256":{"type":["string","null"]},"phase3_status":{"type":["string","null"]},
+    "accessibility_policy_path":{"type":"string"},"accessibility_policy_file_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "responsive_policy_path":{"type":"string"},"responsive_policy_file_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "accessibility_standard":{"type":"string"},"runtime_profile":{"type":"object"},"provider":{"type":"object"},"server_probe":{"type":"object"},
+    "started_at":{"type":"string"},"ended_at":{"type":"string"},"duration_ms":{"type":"number","minimum":0},
+    "cases":{"type":"array"},"summary":{"type":"object"},"report_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

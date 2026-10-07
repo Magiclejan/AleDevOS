@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/judge-diversity-decision.schema.json",
+  "title": "AleDevOS Multi-Model P3 Judge Diversity Decision",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "judge_role", "required_tier", "observed_tier", "primary", "secondary", "pair_allowed", "fallback_used", "replacement_model", "final_judge_decision", "decision_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "MULTIMODEL_P3_JUDGE_DIVERSITY"},
+    "status": {"enum": ["JUDGE_DIVERSITY_PASS", "JUDGE_DIVERSITY_BLOCKED"]},
+    "judge_role": {"enum": ["requirements", "regression", "quality", "uxui", "visual"]},
+    "required_tier": {"enum": ["DISTINCT_MODEL_SAME_PROVIDER", "CROSS_PROVIDER_SAME_FAMILY", "CROSS_FAMILY"]},
+    "observed_tier": {"enum": ["DISTINCT_MODEL_SAME_PROVIDER", "CROSS_PROVIDER_SAME_FAMILY", "CROSS_FAMILY", "INVALID_SAME_MODEL"]},
+    "pair_allowed": {"type": "boolean"},
+    "fallback_used": {"const": false},
+    "replacement_model": {"type": "null"},
+    "final_judge_decision": {"type": "null"},
+    "decision_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

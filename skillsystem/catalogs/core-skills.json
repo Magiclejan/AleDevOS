@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.0",
+  "catalog_id": "aledevos-core-skills",
+  "catalog_version": "1.0.0",
+  "skills": [
+    {
+      "schema_version": "1.0",
+      "id": "backend-change",
+      "display_name": "backend-change",
+      "domain": "development",
+      "role": "implementation",
+      "description": "Implement backend/service/API changes with contract and failure-mode discipline.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/backend-change/SKILL.md",
+      "instruction_sha256": "bffe8c503e330e3f797d4d10ac15735776a108745f9fb285769a7d20a72fbe91",
+      "capabilities": [
+        "backend.change",
+        "api.implementation",
+        "server.validation"
+      ],
+      "intents": [
+        "feature",
+        "bugfix",
+        "refactor"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "database-change",
+      "display_name": "database-change",
+      "domain": "development",
+      "role": "implementation",
+      "description": "Plan and implement database changes with migration, compatibility and data-integrity safeguards.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/database-change/SKILL.md",
+      "instruction_sha256": "51a93f5b688ea9f5e31848cd1a585a73757379044d79e9f3902e6ad657d4cc57",
+      "capabilities": [
+        "database.change",
+        "schema.migration",
+        "data.integrity"
+      ],
+      "intents": [
+        "feature",
+        "migration",
+        "bugfix"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "diff-review",
+      "display_name": "diff-review",
+      "domain": "development",
+      "role": "review",
+      "description": "Review the actual Git diff for scope, accidental edits, security and maintainability risks.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/diff-review/SKILL.md",
+      "instruction_sha256": "1e3eaef2a88f7992015ed9e696e894257adfaa1e61aa1ff5ebf4dc3f50d35d54",
+      "capabilities": [
+        "diff.review",
+        "regression.evidence",
+        "change.scope"
+      ],
+      "intents": [
+        "review",
+        "verify",
+        "audit"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "frontend-change",
+      "display_name": "frontend-change",
+      "domain": "development",
+      "role": "implementation",
+      "description": "Implement frontend/UI changes with state, accessibility and regression discipline.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/frontend-change/SKILL.md",
+      "instruction_sha256": "fe81c862f29ef708939c7d4a92edae81f865cb8b96a7419334af501447aaef32",
+      "capabilities": [
+        "frontend.change",
+        "ui.implementation",
+        "component.change"
+      ],
+      "intents": [
+        "feature",
+        "bugfix",
+        "refactor"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "implementation-plan",
+      "display_name": "implementation-plan",
+      "domain": "development",
+      "role": "planning",
+      "description": "Create the smallest safe implementation plan grounded in repository evidence.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/implementation-plan/SKILL.md",
+      "instruction_sha256": "d2956f5c52f3e8aaa92bad7934a04acd0ca3356de04a6b59d11a07ca97fbe56a",
+      "capabilities": [
+        "planning.implementation",
+        "scope.decomposition",
+        "risk.planning"
+      ],
+      "intents": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "maintenance"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "regression-analysis",
+      "display_name": "regression-analysis",
+      "domain": "development",
+      "role": "review",
+      "description": "Trace blast radius and likely regressions for a proposed or completed change.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/regression-analysis/SKILL.md",
+      "instruction_sha256": "49a7db9e41a718613ec8b212c0c47183963e70b175e1b3e4cb24643b05e8fdba",
+      "capabilities": [
+        "regression.analysis",
+        "blast.radius",
+        "compatibility.review"
+      ],
+      "intents": [
+        "review",
+        "verify",
+        "audit"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "repair-loop",
+      "display_name": "repair-loop",
+      "domain": "development",
+      "role": "repair",
+      "description": "Repair failed verifier/judge gates without expanding scope.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/repair-loop/SKILL.md",
+      "instruction_sha256": "84d52f2d07fd7885826df59b5d8577a66653e6a3f06faf726a80c129b3e828ca",
+      "capabilities": [
+        "repair.execution",
+        "failure.remediation",
+        "reverification.prepare"
+      ],
+      "intents": [
+        "repair"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "repo-map",
+      "display_name": "repo-map",
+      "domain": "development",
+      "role": "research",
+      "description": "Map the relevant repository area before planning or editing.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/repo-map/SKILL.md",
+      "instruction_sha256": "081498939225103d01579d20a17e1761ab1008c0698d775e14fa27569150a031",
+      "capabilities": [
+        "repository.mapping",
+        "codebase.navigation",
+        "structure.discovery"
+      ],
+      "intents": [
+        "research",
+        "onboarding"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "requirements-check",
+      "display_name": "requirements-check",
+      "domain": "development",
+      "role": "review",
+      "description": "Verify every acceptance criterion against code and test evidence.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/requirements-check/SKILL.md",
+      "instruction_sha256": "385b8397a24e7ff1316ab3609202fbc06b2a6fc1415995d3ab79642166766bdc",
+      "capabilities": [
+        "requirements.validation",
+        "acceptance.criteria",
+        "coverage.review"
+      ],
+      "intents": [
+        "review",
+        "verify"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "safe-edit",
+      "display_name": "safe-edit",
+      "domain": "development",
+      "role": "implementation",
+      "description": "Apply minimal code edits while protecting user data, Git history and existing behavior.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/safe-edit/SKILL.md",
+      "instruction_sha256": "f39235cba1f1ace590c5027366a2efc7e28445fd2275d3297dba1e3db2033b4e",
+      "capabilities": [
+        "safe.edit",
+        "scope.control",
+        "minimal.change"
+      ],
+      "intents": [
+        "implementation",
+        "repair"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "security-check",
+      "display_name": "security-check",
+      "domain": "development",
+      "role": "review",
+      "description": "Perform a scoped security review for code touching auth, permissions, secrets, user input or sensitive data.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/security-check/SKILL.md",
+      "instruction_sha256": "f4f8f7842327aa768cc9f85d43e444d134fdfa1471d5144c1e8e83aa73a98f03",
+      "capabilities": [
+        "security.review",
+        "permission.review",
+        "risk.detection"
+      ],
+      "intents": [
+        "audit",
+        "review"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "task-contract",
+      "display_name": "task-contract",
+      "domain": "development",
+      "role": "planning",
+      "description": "Turn a user request into a testable scope contract before implementation.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/task-contract/SKILL.md",
+      "instruction_sha256": "171e8f848f4ef24bc69deb5b45d059270faf56d128855556b6f4f4aee9732643",
+      "capabilities": [
+        "task.contract",
+        "scope.definition",
+        "acceptance.criteria"
+      ],
+      "intents": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "maintenance",
+        "system-test"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "test-strategy",
+      "display_name": "test-strategy",
+      "domain": "development",
+      "role": "planning",
+      "description": "Design tests that prove the requested behavior and catch regressions without weakening existing coverage.",
+      "source_kind": "bundled-core",
+      "provenance": "aledevos-core",
+      "instruction_ref": "core/skills/test-strategy/SKILL.md",
+      "instruction_sha256": "01708baa68bdd3977f25cd0976e8b450fc2f57b64edf2683cb35ad80309ba801",
+      "capabilities": [
+        "test.strategy",
+        "verification.design",
+        "coverage.planning"
+      ],
+      "intents": [
+        "feature",
+        "bugfix",
+        "refactor",
+        "verify"
+      ],
+      "dependencies": [],
+      "conflicts": [],
+      "context_loading": "on-demand",
+      "trust": "bundled",
+      "declared_status": "BUNDLED"
+    }
+  ]
+}

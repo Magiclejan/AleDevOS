@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "phase",
+    "target_runtime",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "phase": {
+      "const": "MASTER_VALIDATION_P4_TARGET_PROFILE"
+    },
+    "target_runtime": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "phase2_receipt",
+        "phase4_report",
+        "visual_judgment",
+        "native_image_invocation",
+        "repair_success_cycle",
+        "repair_success_before_invocation",
+        "repair_success_after_invocation",
+        "repair_exhaustion_cycle1",
+        "repair_exhaustion_cycle2",
+        "repair_exhaustion_initial_invocation",
+        "repair_exhaustion_after1_invocation",
+        "repair_exhaustion_after2_invocation",
+        "third_repair_probe"
+      ],
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

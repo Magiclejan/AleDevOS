@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://uxui/reuse-decision.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "action",
+    "reason",
+    "target_component_id",
+    "canonical_path",
+    "requested",
+    "missing_capabilities",
+    "missing_variants",
+    "registry_integrity_sha256",
+    "decision_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "status": {
+      "enum": [
+        "APPROVED",
+        "BLOCKED",
+        "REVIEW_REQUIRED"
+      ]
+    },
+    "action": {
+      "enum": [
+        "REUSE_CANONICAL",
+        "EXTEND_CANONICAL",
+        "CREATE_NEW_JUSTIFIED",
+        "BLOCK_LOCAL_FORK",
+        "CREATE_BLOCKED_NONCANONICAL_PATH",
+        "CREATE_BLOCKED_JUSTIFICATION_REQUIRED",
+        "REVIEW_REQUIRED_AMBIGUOUS",
+        "REVIEW_REQUIRED_PARTIAL_MATCH"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "target_component_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "canonical_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "requested": {
+      "type": "object"
+    },
+    "missing_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_variants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "registry_integrity_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "decision_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

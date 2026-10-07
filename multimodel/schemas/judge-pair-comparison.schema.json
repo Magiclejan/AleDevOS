@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.judge-pair-comparison.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","judge_role","state","primary","secondary","same_input","same_rubric","same_outcome","final_decision_authority","created_at","comparison_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"MULTIMODEL_P1_JUDGE_COMPARISON"},
+    "state": {"enum":["AGREE","DISAGREE","INCOMPLETE"]},
+    "comparison_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

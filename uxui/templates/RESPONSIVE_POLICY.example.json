@@ -1,0 +1,10 @@
+{
+  "strategy": "FLUID",
+  "viewports": [
+    {"id":"narrow","width":390,"height":844,"expectation":"Primary content remains usable without horizontal overflow."},
+    {"id":"wide","width":1440,"height":900,"expectation":"Content uses the approved wide layout without excessive stretching."}
+  ],
+  "container_policy": "Use the approved layout/container system from Design Context.",
+  "overflow_policy": "Horizontal overflow is not allowed unless explicitly approved.",
+  "source_ref": "UI-ADR-1001"
+}

@@ -1,0 +1,42 @@
+AleDevOS V1.51 - Hotfix13 Target Profile Orchestrator
+
+OBJETIVO
+Hotfix12 resolvia proyecto/rutas/campana, pero la opcion 4 solo BUSCABA perfiles P3-P8 ya existentes.
+Eso dejaba al usuario como responsable de preparar manualmente los target profiles.
+
+HOTFIX13
+La opcion 4 pasa a ser:
+  Preparar P3-P8 + campana FINAL automaticamente
+
+Flujo:
+1. Usa el proyecto seleccionado para la sesion.
+2. Busca perfiles reales en TODO el estado AleDevOS del proyecto, no solo release/master.
+3. Si falta un perfil, localiza el certifier/validator canonico de su fase.
+4. Ejecuta solamente comandos de discovery/preparacion que el propio source declara
+   (help/inventory/prepare/generate/profile create cuando existan).
+5. Rescanea los artefactos tras cada intento.
+6. Nunca convierte *.example.json en evidencia real.
+7. Nunca inventa model IDs, proveedores, browser targets ni resultados.
+8. Escribe logs por fase y un informe canonico:
+   <proyecto>\.aledevos\state\release\master\preparation\target-profile-preparation-report.json
+9. Solo si P3-P8 quedan resueltos genera FINAL_MASTER_CAMPAIGN.json.
+
+FASES
+P3  Multi-model real
+P4  Visual runtime real
+P5  Advanced execution real
+P6  End-to-end real project
+P7  Efficiency real
+P8  Security/reliability real
+
+INSTALACION
+Extraer encima de la misma raiz de AleDevOS donde ya esta Hotfix12 y reemplazar:
+- START_ALEDEVOS.bat
+- EMPEZAR_AQUI.bat
+- scripts\70-aledevos-app.ps1
+
+DESPUES
+Abrir START_ALEDEVOS.bat y elegir:
+  4. Preparar P3-P8 + campana FINAL automaticamente
+
+Si una fase sigue BLOCKED, copiar la salida. Los logs ya estaran guardados dentro del proyecto y el bloqueo correspondera a un requisito target real, no a una ruta/JSON manual.

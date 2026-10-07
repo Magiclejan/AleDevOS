@@ -1,0 +1,16 @@
+{
+  "task_id": "task-ui-001",
+  "provider": "playwright",
+  "browser": "chromium",
+  "locale": "es-ES",
+  "timezone_id": "Europe/Madrid",
+  "color_scheme": "light",
+  "stable_ms": 120,
+  "case_bindings": [
+    {
+      "case_id": "home--loading--narrow",
+      "route_suffix": "?vqaState=loading",
+      "ready_selector": "[data-vqa-state='LOADING']"
+    }
+  ]
+}

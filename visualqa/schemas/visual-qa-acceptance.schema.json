@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.acceptance.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","status","claims","judgment_path","judgment_file_sha256","judgment_sha256","repair_count","max_repairs","scope_version","cycle_path","cycle_file_sha256","cycle_sha256","created_at","acceptance_sha256"],
+  "properties": {
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"VISUAL_QA_P5_ACCEPTANCE"},
+    "status":{"const":"VISUAL_QA_PASS"},
+    "repair_count":{"type":"integer","minimum":0,"maximum":2},
+    "max_repairs":{"type":"integer","minimum":1,"maximum":2},
+    "acceptance_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

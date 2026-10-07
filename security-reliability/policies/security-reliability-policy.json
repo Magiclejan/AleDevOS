@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "phase": "SECURITY_RELIABILITY_P8",
+  "principles": [
+    "defense_in_depth",
+    "least_privilege",
+    "deterministic_scan_before_model_opinion",
+    "security_reviewer_is_read_only",
+    "no_security_pass_with_open_critical_or_high",
+    "every_fixed_bug_requires_regression_evidence",
+    "incidents_and_vulnerabilities_are_durable_records",
+    "accepted_risk_requires_explicit_approval",
+    "test_integrity_cannot_be_weakened_to_green",
+    "unknown_security_evidence_fails_closed"
+  ],
+  "blocking_severities": [
+    "CRITICAL",
+    "HIGH"
+  ],
+  "scan": {
+    "extensions": [
+      ".js",
+      ".mjs",
+      ".cjs",
+      ".ts",
+      ".tsx",
+      ".jsx",
+      ".py",
+      ".json",
+      ".toml",
+      ".yaml",
+      ".yml",
+      ".ps1",
+      ".sh",
+      ".md"
+    ],
+    "exclude_dirs": [
+      "node_modules",
+      ".git",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      ".cache",
+      ".aledevos"
+    ],
+    "max_file_bytes": 2000000,
+    "secret_rules": [
+      {
+        "id": "private_key",
+        "severity": "CRITICAL",
+        "pattern": "-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"
+      },
+      {
+        "id": "aws_access_key",
+        "severity": "CRITICAL",
+        "pattern": "AKIA[0-9A-Z]{16}"
+      },
+      {
+        "id": "generic_secret_assignment",
+        "severity": "HIGH",
+        "pattern": "(?:api[_-]?key|secret|token|password)\\s*[:=]\\s*['\\\"][^'\\\"]{12,}['\\\"]"
+      }
+    ],
+    "code_rules": [
+      {
+        "id": "eval_call",
+        "severity": "HIGH",
+        "pattern": "\\beval\\s*\\("
+      },
+      {
+        "id": "function_constructor",
+        "severity": "HIGH",
+        "pattern": "new\\s+Function\\s*\\("
+      },
+      {
+        "id": "node_shell_true",
+        "severity": "HIGH",
+        "pattern": "shell\\s*:\\s*true"
+      },
+      {
+        "id": "child_process_exec",
+        "severity": "MEDIUM",
+        "pattern": "(?:exec|execSync)\\s*\\("
+      },
+      {
+        "id": "python_shell_true",
+        "severity": "HIGH",
+        "pattern": "subprocess\\.[A-Za-z_]+\\([^\\n]*shell\\s*=\\s*True"
+      },
+      {
+        "id": "unsafe_yaml_load",
+        "severity": "HIGH",
+        "pattern": "yaml\\.load\\s*\\("
+      },
+      {
+        "id": "sql_string_concat",
+        "severity": "MEDIUM",
+        "pattern": "(?:SELECT|INSERT|UPDATE|DELETE)[^\\n]{0,120}(?:\\+|\\$\\{)"
+      }
+    ],
+    "test_integrity_rules": [
+      {
+        "id": "test_skip",
+        "severity": "HIGH",
+        "pattern": "^\\s*(?:test|it|describe)\\.skip\\s*\\("
+      },
+      {
+        "id": "test_only",
+        "severity": "HIGH",
+        "pattern": "^\\s*(?:test|it|describe)\\.only\\s*\\("
+      },
+      {
+        "id": "pass_with_no_tests",
+        "severity": "HIGH",
+        "pattern": "--passWithNoTests|passWithNoTests\\s*[:=]\\s*true"
+      }
+    ]
+  },
+  "dependency_detection": {
+    "node": [
+      "package-lock.json",
+      "npm-shrinkwrap.json"
+    ],
+    "python": [
+      "requirements.txt",
+      "poetry.lock",
+      "uv.lock"
+    ],
+    "rust": [
+      "Cargo.lock"
+    ]
+  },
+  "registry": {
+    "bugs": ".aledevos/state/reliability/bugs",
+    "vulnerabilities": ".aledevos/state/reliability/vulnerabilities",
+    "incidents": ".aledevos/state/reliability/incidents",
+    "test_health": ".aledevos/state/reliability/test-health",
+    "known_issues": ".aledevos/state/reliability/known-issues"
+  },
+  "test_health": {
+    "max_unapproved_skips": 0,
+    "max_focused_tests": 0,
+    "max_known_flaky_critical": 0
+  },
+  "non_claims": [
+    "perfect_security",
+    "complete_penetration_test",
+    "zero_day_detection_guarantee",
+    "formal_verification",
+    "compliance_certification"
+  ]
+}

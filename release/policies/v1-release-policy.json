@@ -1,0 +1,457 @@
+{
+  "schema_version": "2.0",
+  "release_name": "AleDevOS V1 Final Validation",
+  "state_root": ".aledevos/state/release/v1",
+  "preflight_root": ".aledevos/state/release/v1/preflight",
+  "evidence_root": ".aledevos/state/release/v1/evidence",
+  "reports_root": ".aledevos/state/release/v1/reports",
+  "minimum_node_major": 20,
+  "required_adapter": "opencode",
+  "required_browser_provider": "playwright",
+  "required_browser": "chromium",
+  "required_visual_observation_mode": "NATIVE_IMAGE",
+  "required_checks": [
+    {
+      "id": "real_playwright_capture",
+      "description": "Real Playwright + Chromium Phase 2 capture using the target adapter provider, never a controlled test provider."
+    },
+    {
+      "id": "real_runtime_audit",
+      "description": "Real Phase 4 DOM/layout/accessibility runtime audit through the Playwright adapter."
+    },
+    {
+      "id": "native_image_visual_judge",
+      "description": "The Visual Judge actually observes sealed screenshot files through native image input."
+    },
+    {
+      "id": "visual_fail_repair_pass",
+      "description": "Controlled visual FAIL -> repair-1 -> fresh P2/P3/P4/P5 -> PASS."
+    },
+    {
+      "id": "visual_two_repair_exhaustion",
+      "description": "Controlled FAIL through repair-1 and repair-2 -> exhausted, with no third repair."
+    },
+    {
+      "id": "full_stack_real_project",
+      "description": "Full AleDevOS stack reaches final PASS on a controlled real project with deterministic gates and all three judges."
+    },
+    {
+      "id": "security_permissions_target",
+      "description": "Target adapter retains required dangerous-operation denies and role separation."
+    },
+    {
+      "id": "deterministic_regression",
+      "description": "Frozen deterministic package suite remains green before V1 freeze."
+    }
+  ],
+  "release_states": [
+    "V1_RELEASE_READY",
+    "V1_RELEASE_BLOCKED",
+    "V1_RELEASE_FAILED"
+  ],
+  "fail_closed": true,
+  "allow_missing_required_evidence": false,
+  "allow_blocked_required_evidence": false,
+  "allow_test_provider_for_target_evidence": false,
+  "dynamic_motion_quality_required": false,
+  "full_wcag_conformance_required": false,
+  "deterministic_regression_minimums": {
+    "tests_passed": 600,
+    "mjs_syntax_passed": 53,
+    "json_parse_passed": 124,
+    "failures": 0
+  },
+  "legacy_gate": {
+    "retained": true,
+    "authorizes_v1_freeze": false,
+    "note": "The original v1.27 eight-check gate is retained for backward compatibility only. Final V1 freeze authority moved to master_validation."
+  },
+  "master_validation": {
+    "schema_version": "1.0",
+    "phase": "MASTER_VALIDATION_FINAL_GATE",
+    "state_root": ".aledevos/state/release/master",
+    "evidence_root": ".aledevos/state/release/master/evidence",
+    "reports_root": ".aledevos/state/release/master/reports",
+    "inputs_root": ".aledevos/state/release/master/inputs",
+    "package_baseline": "release/templates/master-validation-package-baseline.json",
+    "installed_package_baseline": ".aledevos/release/templates/master-validation-package-baseline.json",
+    "final_states": [
+      "V1_RELEASE_READY",
+      "V1_RELEASE_BLOCKED",
+      "V1_RELEASE_FAILED"
+    ],
+    "fail_closed": true,
+    "allow_missing_required_evidence": false,
+    "allow_pass_for_deferred_validator": false,
+    "minimums": {
+      "tests_passed": 1941,
+      "mjs_syntax_passed": 119,
+      "json_parse_passed": 265,
+      "toml_parse_passed": 26,
+      "failures": 0
+    },
+    "checks": [
+      {
+        "id": "package_certifications_current",
+        "group": "PACKAGE",
+        "validator": "PACKAGE_CERTIFICATES",
+        "automatic": true,
+        "depends_on": [],
+        "validator_phase": "P1"
+      },
+      {
+        "id": "deterministic_regression_current",
+        "group": "PACKAGE",
+        "validator": "DETERMINISTIC_REGRESSION",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P1"
+      },
+      {
+        "id": "opencode_runtime_security",
+        "group": "ADAPTER_RUNTIME",
+        "validator": "ADAPTER_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P2"
+      },
+      {
+        "id": "codex_runtime_security",
+        "group": "ADAPTER_RUNTIME",
+        "validator": "ADAPTER_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P2"
+      },
+      {
+        "id": "claude_code_runtime_security",
+        "group": "ADAPTER_RUNTIME",
+        "validator": "ADAPTER_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P2"
+      },
+      {
+        "id": "antigravity_runtime_security",
+        "group": "ADAPTER_RUNTIME",
+        "validator": "ADAPTER_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P2"
+      },
+      {
+        "id": "primary_secondary_models_real",
+        "group": "MULTIMODEL",
+        "validator": "MULTIMODEL",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P3"
+      },
+      {
+        "id": "model_router_real",
+        "group": "MULTIMODEL",
+        "validator": "MULTIMODEL",
+        "automatic": false,
+        "depends_on": [
+          "primary_secondary_models_real"
+        ],
+        "validator_phase": "P3"
+      },
+      {
+        "id": "judge_diversity_real",
+        "group": "MULTIMODEL",
+        "validator": "MULTIMODEL",
+        "automatic": false,
+        "depends_on": [
+          "primary_secondary_models_real"
+        ],
+        "validator_phase": "P3"
+      },
+      {
+        "id": "model_fallback_real",
+        "group": "MULTIMODEL",
+        "validator": "MULTIMODEL",
+        "automatic": false,
+        "depends_on": [
+          "model_router_real",
+          "judge_diversity_real"
+        ],
+        "validator_phase": "P3"
+      },
+      {
+        "id": "playwright_chromium_real",
+        "group": "VISUAL_RUNTIME",
+        "validator": "VISUAL_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P4"
+      },
+      {
+        "id": "runtime_layout_a11y_real",
+        "group": "VISUAL_RUNTIME",
+        "validator": "VISUAL_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "playwright_chromium_real"
+        ],
+        "validator_phase": "P4"
+      },
+      {
+        "id": "native_image_visual_judge_real",
+        "group": "VISUAL_RUNTIME",
+        "validator": "VISUAL_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "primary_secondary_models_real",
+          "playwright_chromium_real"
+        ],
+        "validator_phase": "P4"
+      },
+      {
+        "id": "visual_repair_success_real",
+        "group": "VISUAL_RUNTIME",
+        "validator": "VISUAL_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "runtime_layout_a11y_real",
+          "native_image_visual_judge_real"
+        ],
+        "validator_phase": "P4"
+      },
+      {
+        "id": "visual_repair_exhaustion_real",
+        "group": "VISUAL_RUNTIME",
+        "validator": "VISUAL_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "runtime_layout_a11y_real",
+          "native_image_visual_judge_real"
+        ],
+        "validator_phase": "P4"
+      },
+      {
+        "id": "worktree_worker_real",
+        "group": "ADVANCED_EXECUTION",
+        "validator": "ADVANCED_EXECUTION",
+        "automatic": false,
+        "depends_on": [
+          "package_certifications_current"
+        ],
+        "validator_phase": "P5"
+      },
+      {
+        "id": "safe_concurrency_real",
+        "group": "ADVANCED_EXECUTION",
+        "validator": "ADVANCED_EXECUTION",
+        "automatic": false,
+        "depends_on": [
+          "worktree_worker_real"
+        ],
+        "validator_phase": "P5"
+      },
+      {
+        "id": "dispatcher_queue_real",
+        "group": "ADVANCED_EXECUTION",
+        "validator": "ADVANCED_EXECUTION",
+        "automatic": false,
+        "depends_on": [
+          "safe_concurrency_real"
+        ],
+        "validator_phase": "P5"
+      },
+      {
+        "id": "multi_machine_transport_real",
+        "group": "ADVANCED_EXECUTION",
+        "validator": "ADVANCED_EXECUTION",
+        "automatic": false,
+        "depends_on": [
+          "dispatcher_queue_real"
+        ],
+        "validator_phase": "P5"
+      },
+      {
+        "id": "crash_recovery_real",
+        "group": "RESILIENCE",
+        "validator": "ADVANCED_EXECUTION",
+        "automatic": false,
+        "depends_on": [
+          "safe_concurrency_real",
+          "dispatcher_queue_real",
+          "multi_machine_transport_real"
+        ],
+        "validator_phase": "P5"
+      },
+      {
+        "id": "cross_adapter_target_security",
+        "group": "SECURITY",
+        "validator": "ADAPTER_RUNTIME",
+        "automatic": false,
+        "depends_on": [
+          "opencode_runtime_security",
+          "codex_runtime_security",
+          "claude_code_runtime_security",
+          "antigravity_runtime_security"
+        ],
+        "validator_phase": "P2"
+      },
+      {
+        "id": "full_stack_real_project",
+        "group": "END_TO_END",
+        "validator": "END_TO_END",
+        "automatic": false,
+        "depends_on": [
+          "deterministic_regression_current",
+          "cross_adapter_target_security",
+          "model_fallback_real",
+          "visual_repair_success_real",
+          "visual_repair_exhaustion_real",
+          "crash_recovery_real"
+        ],
+        "validator_phase": "P6"
+      },
+      {
+        "id": "adaptive_execution_governor_real",
+        "group": "EFFICIENCY",
+        "validator": "EFFICIENCY",
+        "automatic": false,
+        "depends_on": [
+          "full_stack_real_project"
+        ],
+        "validator_phase": "P7"
+      },
+      {
+        "id": "context_token_efficiency_real",
+        "group": "EFFICIENCY",
+        "validator": "EFFICIENCY",
+        "automatic": false,
+        "depends_on": [
+          "adaptive_execution_governor_real"
+        ],
+        "validator_phase": "P7"
+      },
+      {
+        "id": "quality_preservation_real",
+        "group": "EFFICIENCY",
+        "validator": "EFFICIENCY",
+        "automatic": false,
+        "depends_on": [
+          "adaptive_execution_governor_real",
+          "context_token_efficiency_real"
+        ],
+        "validator_phase": "P7"
+      },
+      {
+        "id": "user_project_manager_independence_real",
+        "group": "EFFICIENCY",
+        "validator": "EFFICIENCY",
+        "automatic": false,
+        "depends_on": [
+          "adaptive_execution_governor_real",
+          "quality_preservation_real"
+        ],
+        "validator_phase": "P7"
+      },
+      {
+        "id": "security_native_scan_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "user_project_manager_independence_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "security_reviewer_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_native_scan_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "dependency_security_scan_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_native_scan_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "bug_regression_registry_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_native_scan_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "incident_vulnerability_registry_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_native_scan_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "test_health_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_native_scan_real"
+        ],
+        "validator_phase": "P8"
+      },
+      {
+        "id": "security_reliability_assurance_real",
+        "group": "SECURITY_RELIABILITY",
+        "validator": "SECURITY_RELIABILITY",
+        "automatic": false,
+        "depends_on": [
+          "security_reviewer_real",
+          "dependency_security_scan_real",
+          "bug_regression_registry_real",
+          "incident_vulnerability_registry_real",
+          "test_health_real"
+        ],
+        "validator_phase": "P8"
+      }
+    ],
+    "non_claims": {
+      "semantic_model_independence": true,
+      "physical_exactly_once_compute_under_partition": true,
+      "full_wcag_conformance": true,
+      "dynamic_motion_frame_quality": true,
+      "global_token_efficiency_certified": true,
+      "security_reliability_assurance_complete": false,
+      "p8_security_reliability_complete": false,
+      "final_v1_freeze_before_p8": false,
+      "perfect_security_guarantee": true,
+      "complete_penetration_test": true,
+      "final_v1_freeze_without_target_evidence": true
+    }
+  }
+}

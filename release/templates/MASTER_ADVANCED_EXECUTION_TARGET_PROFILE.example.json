@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P5_TARGET_PROFILE",
+  "target_runtime": "windows-target",
+  "artifacts": {
+    "worktree_receipt": "REPLACE/worktree-receipt.json",
+    "worker_assignment": "REPLACE/worker-assignment.json",
+    "worker_session": "REPLACE/worker-session.json",
+    "concurrency_plan": "REPLACE/concurrency-plan.json",
+    "concurrency_group": "REPLACE/concurrency-group.json",
+    "concurrency_conflict_plan": "REPLACE/concurrency-conflict-plan.json",
+    "dispatcher_queue": ".aledevos/state/execution/phase4/queue.json",
+    "dispatcher_started_receipt": "REPLACE/dispatch-started-receipt.json",
+    "transport_probe": "REPLACE/transport-probe.json",
+    "remote_result_envelope": "REPLACE/remote-result.json",
+    "crash_recovery_probe": "REPLACE/crash-recovery-probe.json",
+    "stale_result_envelope": "REPLACE/stale-result.json",
+    "current_result_envelope": "REPLACE/current-result.json"
+  },
+  "multi_machine": {
+    "task_id": "mv-p5-remote-task",
+    "remote_machine_id": "node-b"
+  },
+  "recovery": {
+    "task_id": "mv-p5-fencing-task",
+    "current_machine_id": "node-b",
+    "stale_machine_id": "node-a"
+  }
+}

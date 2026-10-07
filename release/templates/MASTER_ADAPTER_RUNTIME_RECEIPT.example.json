@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P2_ADAPTER_RUNTIME",
+  "adapter": "opencode",
+  "status": "ADAPTER_RUNTIME_TARGET_BLOCKED",
+  "target": {
+    "platform": "win32",
+    "arch": "x64",
+    "node_version": "0.0.0",
+    "target_fingerprint_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "cli": {
+    "binary": "opencode",
+    "present": false,
+    "version": null,
+    "active_smoke": false,
+    "commands": []
+  },
+  "package_certification": {},
+  "runtime_smoke": {},
+  "security_probes": {},
+  "artifacts": [],
+  "claims": {
+    "real_target_runtime": false,
+    "dangerous_bypass_used": false
+  },
+  "observed_at": "1970-01-01T00:00:00.000Z",
+  "receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "check_id": "opencode_runtime_security",
+  "status": "BLOCKED",
+  "target": {
+    "adapter": "opencode",
+    "machine": "target-windows"
+  },
+  "artifacts": [],
+  "claims": {},
+  "notes": [
+    "P1 harness can seal BLOCKED/FAIL evidence. PASS requires the phase-specific validator to exist and validate its artifacts."
+  ]
+}

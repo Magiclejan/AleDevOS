@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://contextos/research-cache.schema.json",
+  "title": "ContextOS Research Cache Entry v0.5",
+  "type": "object",
+  "required": [
+    "version",
+    "cache_id",
+    "namespace",
+    "query",
+    "query_fingerprint_sha256",
+    "created_at",
+    "max_age_seconds",
+    "source_fingerprint_sha256",
+    "sources",
+    "result_summary",
+    "evidence",
+    "tags",
+    "invalidated_at",
+    "invalidation_reason",
+    "invalidated_paths",
+    "integrity"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.5.0"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ]
+      }
+    },
+    "result_summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array"
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "payload_sha256"
+      ]
+    }
+  }
+}

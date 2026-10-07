@@ -1,0 +1,50 @@
+name: AleDevOS Full Regression
+
+concurrency:
+  group: aledevos-full-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+jobs:
+  full-node-regression:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Run complete AleDevOS Node regression suite
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $env:ALEDEVOS_TEST_FILE_TIMEOUT_MS = "120000"
+          & node scripts/ci/run-full-regression.mjs
+          if ($LASTEXITCODE -ne 0) {
+            throw "FULL_NODE_REGRESSION_FAILED"
+          }
+
+  full-source-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify no generated state or stale test exclusions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test_count="$(find tests -maxdepth 1 -type f -name '*.test.mjs' | wc -l | tr -d ' ')"
+          if [ "$test_count" -lt 1 ]; then
+            echo "NO_TESTS_DISCOVERED"
+            exit 1
+          fi
+          if grep -R --line-number --include='*.test.mjs' -E '(^|[^A-Za-z])(test|it|describe)\.skip\(' tests; then
+            echo "SKIPPED_TESTS_FORBIDDEN_IN_FULL_SUITE"
+            exit 1
+          fi
+          echo "Full suite inventory PASS: $test_count test files"

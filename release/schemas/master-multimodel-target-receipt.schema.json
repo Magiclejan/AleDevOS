@@ -1,0 +1,24 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://aledevos.local/schemas/master-multimodel-target-receipt.schema.json",
+  "title":"AleDevOS Master Validation P3 Multi-Model Target Receipt",
+  "type":"object",
+  "required":["schema_version","phase","status","target","profile","models","judge_invocations","checks","fallback","artifact_index","artifacts","claims","observed_at","receipt_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"MASTER_VALIDATION_P3_MULTIMODEL_TARGET"},
+    "status":{"enum":["MULTIMODEL_TARGET_PASS","MULTIMODEL_TARGET_PARTIAL"]},
+    "target":{"type":"object"},
+    "profile":{"type":"object"},
+    "models":{"type":"object"},
+    "judge_invocations":{"type":"object"},
+    "checks":{"type":"object","required":["primary_secondary_models_real","model_router_real","judge_diversity_real","model_fallback_real"]},
+    "fallback":{"type":"object"},
+    "artifact_index":{"type":"object"},
+    "artifacts":{"type":"array"},
+    "claims":{"type":"object"},
+    "observed_at":{"type":"string","minLength":1},
+    "receipt_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties":false
+}

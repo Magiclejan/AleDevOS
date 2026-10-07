@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/ui-decision-record.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","id","title","context","decision","consequences","scope","source_refs","approval_ref","supersedes","record_sha256"],
+  "properties":{"schema_version":{"const":"1.0"},"id":{"type":"string"},"title":{"type":"string"},"context":{"type":"string"},"decision":{"type":"string"},"consequences":{"type":"string"},"scope":{"type":"array","items":{"type":"string"},"uniqueItems":true},"source_refs":{"type":"array","items":{"type":"string"},"uniqueItems":true},"approval_ref":{"type":"string"},"supersedes":{"type":["string","null"]},"record_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Structured Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "handoff_id",
+    "task_id",
+    "from_agent",
+    "to_agent",
+    "phase",
+    "objective",
+    "approved_scope",
+    "summary",
+    "affected_files",
+    "decisions",
+    "evidence",
+    "relevant_tests",
+    "risks",
+    "open_questions",
+    "next_action",
+    "context_metrics"
+  ],
+  "properties": {
+    "version": { "const": "0.1.0" },
+    "handoff_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "task_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "from_agent": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "to_agent": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "phase": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "objective": { "type": "string", "minLength": 1, "maxLength": 1200 },
+    "approved_scope": {
+      "type": "array",
+      "maxItems": 80,
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 2200 },
+    "affected_files": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "reason"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 600 }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision", "rationale"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "decision": { "type": "string", "minLength": 1, "maxLength": 700 },
+          "rationale": { "type": "string", "minLength": 1, "maxLength": 900 }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "ref", "claim"],
+        "properties": {
+          "kind": { "enum": ["file", "diff", "gate", "test", "decision", "log", "other"] },
+          "ref": { "type": "string", "minLength": 1, "maxLength": 600 },
+          "claim": { "type": "string", "minLength": 1, "maxLength": 900 }
+        }
+      }
+    },
+    "relevant_tests": {
+      "type": "array",
+      "maxItems": 40,
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+    },
+    "risks": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "type": "string", "minLength": 1, "maxLength": 900 }
+    },
+    "open_questions": {
+      "type": "array",
+      "maxItems": 12,
+      "items": { "type": "string", "minLength": 1, "maxLength": 900 }
+    },
+    "next_action": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "context_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_context_tokens", "handoff_estimated_tokens", "budget_status", "transcript_included"],
+      "properties": {
+        "source_context_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "handoff_estimated_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "budget_status": { "enum": ["NORMAL", "TARGET_EXCEEDED", "WATCH", "CHECKPOINT_REQUIRED", "COMPACT_REQUIRED", "HARD_GUARD", "UNKNOWN"] },
+        "transcript_included": { "const": false }
+      }
+    }
+  }
+}

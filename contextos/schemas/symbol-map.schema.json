@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos://contextos/symbol-map.schema.json",
+  "title": "ContextOS Symbol Map v0.5",
+  "type": "object",
+  "required": [
+    "version",
+    "source",
+    "parser_coverage",
+    "files",
+    "total_symbols",
+    "integrity"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.5.0"
+    },
+    "files": {
+      "type": "array"
+    },
+    "total_symbols": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "payload_sha256"
+      ]
+    }
+  }
+}

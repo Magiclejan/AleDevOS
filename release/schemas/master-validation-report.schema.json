@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/master-validation-report.schema.json",
+  "title": "AleDevOS V1 Master Validation Gate Report",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "package_version", "required_checks", "summary", "groups", "created_at", "master_report_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "ALEDEVOS_V1_MASTER_VALIDATION_GATE"},
+    "status": {"enum": ["V1_RELEASE_READY", "V1_RELEASE_BLOCKED", "V1_RELEASE_FAILED"]},
+    "package_version": {"type": ["string", "null"]},
+    "required_checks": {"type": "array"},
+    "summary": {"type": "object"},
+    "groups": {"type": "object"},
+    "non_claims": {"type": "object"},
+    "legacy_gate_authorizes_v1_freeze": {"const": false},
+    "created_at": {"type": "string", "minLength": 1},
+    "master_report_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

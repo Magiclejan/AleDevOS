@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"ContextOS Run Telemetry Summary v1.0",
+  "type":"object",
+  "required":["version","run_id","task_id","event_count","totals","context","research_cache","knowledge","gates","judges","agents","final_state","integrity"],
+  "properties": {
+    "version":{"const":"1.0.0"},"run_id":{"type":"string"},"task_id":{"type":"string"},"benchmark_key":{"type":["string","null"]},
+    "event_count":{"type":"integer","minimum":0},"final_state":{"enum":["PASS","BLOCKED","FAILED",null]},
+    "integrity":{"type":"object","required":["algorithm","event_chain_tail","payload_sha256"]}
+  }
+}

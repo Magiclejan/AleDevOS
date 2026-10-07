@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P3_JUDGE_DIVERSITY",
+  "status": "JUDGE_DIVERSITY_BLOCKED",
+  "judge_role": "quality",
+  "required_tier": "CROSS_FAMILY",
+  "observed_tier": "CROSS_PROVIDER_SAME_FAMILY",
+  "pair_allowed": false,
+  "fallback_used": false,
+  "replacement_model": null,
+  "final_judge_decision": null,
+  "decision_sha256": "EXAMPLE_ONLY"
+}

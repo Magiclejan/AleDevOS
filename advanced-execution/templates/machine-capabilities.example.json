@@ -1,0 +1,6 @@
+{
+  "adapters": ["codex"],
+  "modalities": ["text", "image"],
+  "features": ["git", "playwright"],
+  "max_workers": 4
+}

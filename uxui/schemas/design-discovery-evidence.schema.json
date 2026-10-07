@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"AleDevOS deterministic design discovery evidence",
+  "type":"object",
+  "required":["schema_version","project_mode","source","summary","files","component_candidates","aggregates","integrity_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "project_mode":{"enum":["BROWNFIELD","HYBRID"]},
+    "source":{"const":"verified_runtime_discovery"},
+    "summary":{"type":"object"},
+    "files":{"type":"array"},
+    "component_candidates":{"type":"array","items":{"type":"string"}},
+    "aggregates":{"type":"object"},
+    "integrity_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

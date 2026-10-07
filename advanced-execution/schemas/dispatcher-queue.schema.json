@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Advanced Execution P4 Dispatcher Queue",
+  "type": "object",
+  "required": ["schema_version","phase","repository_root","mode","dispatch_epoch","next_sequence","items","queue_sha256"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"ADVANCED_EXECUTION_P4_DISPATCHER_QUEUE"},
+    "repository_root": {"type":"string"},
+    "mode": {"enum":["ACTIVE","PAUSED","DRAINING","DRAINED"]},
+    "dispatch_epoch": {"type":"integer","minimum":0},
+    "next_sequence": {"type":"integer","minimum":1},
+    "items": {"type":"object"},
+    "queue_sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

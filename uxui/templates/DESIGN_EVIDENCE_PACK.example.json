@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "task_id": "design-foundation-001",
+  "source_kind": "verified_skill_output",
+  "source_ref": "skill-execution:design-foundation-001",
+  "artifacts": [
+    {"section": "brand", "path": "artifacts/design/brand.md", "sha256": "<sha256>"},
+    {"section": "tokens", "path": "artifacts/design/tokens.json", "sha256": "<sha256>"}
+  ]
+}

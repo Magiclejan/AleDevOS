@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.model-fallback-trigger.v1",
+  "type": "object",
+  "required": ["schema_version", "phase", "task_id", "judge_role", "failed_slot", "failure_code", "failed_model", "previous_attempts"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "MULTIMODEL_P4_FALLBACK_TRIGGER"},
+    "failed_slot": {"enum": ["primary", "secondary"]},
+    "failure_code": {"type": "string", "minLength": 1},
+    "previous_attempts": {"type": "array"}
+  }
+}

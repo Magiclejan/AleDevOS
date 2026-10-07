@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P6",
+  "status": "MASTER_VALIDATION_P6_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "full_stack_real_project_validator": true,
+    "complete_pipeline_evidence_binding": true,
+    "orchestration_trace_requires_real_runtime_evidence": true,
+    "contextos_reverified": true,
+    "skillsystem_reverified": true,
+    "multimodel_reverified": true,
+    "advanced_execution_reverified": true,
+    "visualqa_reverified": true,
+    "deterministic_final_state_required": true,
+    "p7_efficiency_not_claimed": true,
+    "p8_security_reliability_not_claimed": true,
+    "final_freeze_authority": "MASTER_GATE_AFTER_P7_P8"
+  },
+  "p5_certificate_valid": true,
+  "deterministic_tests": 32,
+  "inputs": [
+    {
+      "path": "release/templates/master-validator-end-to-end.mjs",
+      "sha256": "614992174017005967bce32fe01757600386e1b7b0108071a3fee4bffc421249"
+    },
+    {
+      "path": "release/templates/master-validation-p6-certifier.mjs",
+      "sha256": "fa795165c8521fae1c084fdd90ba938700bd368fbfd51e05c8a9f99f8cbf4ac4"
+    },
+    {
+      "path": "release/schemas/master-end-to-end-target-profile.schema.json",
+      "sha256": "7aaa050a88a78f7e8b0664cc13c27ba777384d3f5f17e597a6116b3853f41888"
+    },
+    {
+      "path": "release/schemas/master-end-to-end-target-receipt.schema.json",
+      "sha256": "de0de27a4080b4a7ebbb4fe3a51a4259674527efbe9f7a8e377c5edbc6924fa3"
+    },
+    {
+      "path": "release/schemas/master-end-to-end-orchestration-trace.schema.json",
+      "sha256": "764cf745153bd9ec14bcac4269b58ea9ae96af48cae28bd7c58501e76a97ede1"
+    },
+    {
+      "path": "release/templates/MASTER_END_TO_END_TARGET_PROFILE.example.json",
+      "sha256": "b2350b5766294c73324f52a37ceeed8f4e8de03419073ff66816d67f3474b6f3"
+    },
+    {
+      "path": "release/templates/MASTER_END_TO_END_ORCHESTRATION_TRACE.example.json",
+      "sha256": "083b76db5f554574f1a7c3bdd7eba17ced6c51dd2f87327a4722d63c77f198ae"
+    },
+    {
+      "path": "tests/master-validation-phase6.test.mjs",
+      "sha256": "b1ebd61865be19b26eb58916a4ebafd8348ed09c130c355470fe8d1c63de36ff"
+    },
+    {
+      "path": "scripts/60-self-test-master-validation-phase6.ps1",
+      "sha256": "f86f92616a2a3d3570df2822d80a576c7bba7ebd355f374a7dad20e9e261c815"
+    },
+    {
+      "path": "scripts/61-master-validation-p6-target-full-stack.ps1",
+      "sha256": "f67358d52bbb925e65601282a43b1cb5c4af8a72bec9b22a95a79a454b1a7469"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p5.json",
+      "sha256": "7496ebf39c676b0cd7d8095b442f6c55625510797ca6923902b71610a7764df7"
+    },
+    {
+      "path": "core/engine/aledevos.mjs",
+      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+    },
+    {
+      "path": "contextos/engine/contextos.mjs",
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
+    },
+    {
+      "path": "skillsystem/engine/skillsystem.mjs",
+      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+    },
+    {
+      "path": "multimodel/engine/multimodel.mjs",
+      "sha256": "ae469ac45b6e50d3d368a0220e9a15ac15844397bfb2a32bb1f6f01077eec694"
+    },
+    {
+      "path": "multimodel/router/model-router.mjs",
+      "sha256": "4f9b04d4dc3f0e342adcc947f2a83afc5dae610c222d2626802ea73510fb9119"
+    },
+    {
+      "path": "multimodel/extensions/diversity/judge-diversity.mjs",
+      "sha256": "4ca33e3e344a9d6284553e1caed5608e96e708dcb545a2282fe4674d7c50b132"
+    },
+    {
+      "path": "advanced-execution/worktrees/worktree-manager.mjs",
+      "sha256": "c67b730a06b599866172c186b6d86d17e7c255bd8468f5c46ad35b0fa1bc645a"
+    },
+    {
+      "path": "advanced-execution/workers/worker-manager.mjs",
+      "sha256": "af4ef04891616f3d11773452c39117142e0fbb7196927a96f336a2a7cc316cf1"
+    },
+    {
+      "path": "advanced-execution/workers/worker-runtime.mjs",
+      "sha256": "237f6357b11fc39131cc0f4de0cb8717cd8e13fb29a1c3910b1b7f200253d982"
+    },
+    {
+      "path": "advanced-execution/dispatcher/dispatcher-manager.mjs",
+      "sha256": "54ca821ee02439f3b7a770933a0831295e442fe55a4c0c28afca490ce7922876"
+    },
+    {
+      "path": "visualqa/engine/browser-runner.mjs",
+      "sha256": "2ae7e0e05e63c756b5f737035baa5ec1e1ee0563b1232186b16a083f282fbe7d"
+    },
+    {
+      "path": "visualqa/engine/runtime-audit.mjs",
+      "sha256": "22cd819659067a955cdfbc9ed947131b39f3b3d50cb1f3b6ba7c8f6af1c29a03"
+    },
+    {
+      "path": "visualqa/engine/visual-judge.mjs",
+      "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
+    }
+  ],
+  "master_p6_certificate_sha256": "7b2e349512b044d934294a804bfdc9eb994352338a420344ace89ab7d9ea21da"
+}

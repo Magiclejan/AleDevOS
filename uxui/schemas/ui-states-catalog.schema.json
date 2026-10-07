@@ -1,0 +1,7 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/ui-states-catalog.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","status","conventions","source_ref","approval_ref","integrity_sha256"],
+  "properties":{"schema_version":{"const":"1.0"},"status":{"enum":["UNSET","ACTIVE"]},"conventions":{"type":"object","additionalProperties":{"type":"string"}},"source_ref":{"type":["string","null"]},"approval_ref":{"type":["string","null"]},"integrity_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}
+}

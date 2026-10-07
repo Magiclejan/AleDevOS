@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P3",
+  "status": "MASTER_VALIDATION_P3_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_evidence": "COLLECT_ON_TARGET",
+  "claims": {
+    "multimodel_target_validator": true,
+    "explicit_model_selector_required": true,
+    "active_primary_secondary_invocation": true,
+    "real_router_reverification": true,
+    "cross_family_diversity_required": true,
+    "controlled_diversity_blocked_fallback": true,
+    "max_two_fallback_hops_preserved": true,
+    "fresh_p2_after_replacement": true,
+    "fresh_p3_after_replacement": true,
+    "no_model_shopping": true,
+    "semantic_independence_not_claimed": true,
+    "context_window_is_target_declared_metadata": true,
+    "frozen_multimodel_engines_consumed_not_modified": true,
+    "final_freeze_authority": "MASTER_GATE_ONLY"
+  },
+  "p2_certificate_present": true,
+  "deterministic_tests": 40,
+  "inputs": [
+    {
+      "path": "release/templates/master-validator-multimodel.mjs",
+      "sha256": "2e3b1de6198058bc7ed1799c4a6cbdefff50e193872cf7b3f08d37066db1ed78"
+    },
+    {
+      "path": "release/templates/master-validation-p3-certifier.mjs",
+      "sha256": "f7c5c570b165246a1c1aa67ebde05ed64422eea5464741ee5fe65c672f1d1319"
+    },
+    {
+      "path": "release/schemas/master-multimodel-target-profile.schema.json",
+      "sha256": "6b619265ce4c2f554779916c61ee4a6ec4727b10153a934caa9e995c994790a8"
+    },
+    {
+      "path": "release/schemas/master-multimodel-target-receipt.schema.json",
+      "sha256": "5083182b85344aa6510421c033e9ad3e38432bbc4c5ce106e990bdbb82605ef7"
+    },
+    {
+      "path": "release/templates/MASTER_MULTIMODEL_TARGET_PROFILE.example.json",
+      "sha256": "f19cf03ca9e1400b5b0c7d9670b7ea14089cfc6b9ccb1d2e472200934cde68e4"
+    },
+    {
+      "path": "release/templates/MASTER_MULTIMODEL_TARGET_RECEIPT.example.json",
+      "sha256": "688c0f941c807e86372294c06f526a44f0bebacee5b3f9e0f5c7f1e3b8ee1ad0"
+    },
+    {
+      "path": "tests/master-validation-phase3.test.mjs",
+      "sha256": "314f04053057bea16a5b20cf7c5f816ea182408e897bc40771573173fff36e11"
+    },
+    {
+      "path": "scripts/54-self-test-master-validation-phase3.ps1",
+      "sha256": "878d05ae7b927e5cf5b451a27287e5ee997185c9025b1fc36db36b25257cdcb2"
+    },
+    {
+      "path": "scripts/55-master-validation-p3-target-multimodel.ps1",
+      "sha256": "7f650ead225f30be8c9c89f2360a10873e5851dcb81e5b054e4adf5437e30494"
+    },
+    {
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "path": "release/policies/v1-release-policy.json",
+      "sha256": "20f32962ab55c89298399df36ea276b7bb0db3672eb8d76e58c33d9c2c6689ab"
+    },
+    {
+      "path": "release/certifications/master-validation-p2.json",
+      "sha256": "6c2fefa87633e0b8e6ca06fd29837fab44a003453f7e745424b504956ba40cdf"
+    },
+    {
+      "path": "multimodel/engine/multimodel.mjs",
+      "sha256": "ae469ac45b6e50d3d368a0220e9a15ac15844397bfb2a32bb1f6f01077eec694"
+    },
+    {
+      "path": "multimodel/router/model-router.mjs",
+      "sha256": "4f9b04d4dc3f0e342adcc947f2a83afc5dae610c222d2626802ea73510fb9119"
+    },
+    {
+      "path": "multimodel/extensions/diversity/judge-diversity.mjs",
+      "sha256": "4ca33e3e344a9d6284553e1caed5608e96e708dcb545a2282fe4674d7c50b132"
+    },
+    {
+      "path": "multimodel/extensions/fallback/model-fallback.mjs",
+      "sha256": "ef6de4c08f6b38ebdf821b4c00b8bfbab343622c74def0e268768c98908f4892"
+    },
+    {
+      "path": "multimodel/policies/model-router-policy.json",
+      "sha256": "a4894640977eb493a49d653eff9aff765d9d24bc61366e9062c9ebd3f5f43009"
+    },
+    {
+      "path": "multimodel/policies/judge-diversity-policy.json",
+      "sha256": "a35de2668e031d691ca864d938b6357f535c4e9c19ab5364f15d309469d4ee98"
+    },
+    {
+      "path": "multimodel/policies/model-fallback-policy.json",
+      "sha256": "8c3855eb9d19493f13b43ebdb93b8094d91203d6a9915131ec6c401c0c9bcf8d"
+    }
+  ],
+  "master_p3_certificate_sha256": "a7eb0fb15989754e374b77bdc2bf5efc43416c4ff7d2484b5beff2deb75e7f3d"
+}

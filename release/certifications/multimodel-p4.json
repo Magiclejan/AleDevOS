@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P4",
+  "status": "MULTIMODEL_P4_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "explicit_fallback_plans_only": true,
+    "max_two_fallback_hops": true,
+    "no_automatic_provider_or_model_discovery": true,
+    "no_fallback_on_judge_outcome": true,
+    "p2_hard_constraints_preserved": true,
+    "p3_diversity_preserved": true,
+    "no_repeat_models": true,
+    "replacement_requires_fresh_p2_and_p3": true,
+    "final_judge_decision_unchanged": true
+  },
+  "policy_status": "MODEL_FALLBACK_POLICY_VALID",
+  "inputs": [
+    {
+      "path": "multimodel/extensions/fallback/model-fallback.mjs",
+      "sha256": "ef6de4c08f6b38ebdf821b4c00b8bfbab343622c74def0e268768c98908f4892"
+    },
+    {
+      "path": "multimodel/policies/model-fallback-policy.json",
+      "sha256": "8c3855eb9d19493f13b43ebdb93b8094d91203d6a9915131ec6c401c0c9bcf8d"
+    },
+    {
+      "path": "multimodel/policies/model-router-policy.json",
+      "sha256": "a4894640977eb493a49d653eff9aff765d9d24bc61366e9062c9ebd3f5f43009"
+    },
+    {
+      "path": "multimodel/policies/judge-diversity-policy.json",
+      "sha256": "a35de2668e031d691ca864d938b6357f535c4e9c19ab5364f15d309469d4ee98"
+    },
+    {
+      "path": "multimodel/schemas/model-fallback-plan.schema.json",
+      "sha256": "f0e30670257ba7b16e526523ea7b0e81780f6879884bc52374745ee06a8f870c"
+    },
+    {
+      "path": "multimodel/schemas/model-fallback-trigger.schema.json",
+      "sha256": "6dfa1f5184c50d39ed3be1ea4879204746512acc89befa3797e0a2d4fafbc6a7"
+    },
+    {
+      "path": "multimodel/schemas/model-fallback-decision.schema.json",
+      "sha256": "7acab0020bb7767f97fe50e4f519326ca13db544b8f0fb8d0f587dbf1ac9c723"
+    },
+    {
+      "path": "multimodel/templates/model-fallback-plan.example.json",
+      "sha256": "1640df7d572faf18357d9f326e7a12f4638454d1a696770d61fbccbd542d51c7"
+    },
+    {
+      "path": "multimodel/templates/model-fallback-trigger.example.json",
+      "sha256": "ff26fefda017007e7e2348c60a1d509cd2ad271d496a7f644880f33347d64140"
+    },
+    {
+      "path": "release/certifications/multimodel-p1.json",
+      "sha256": "a5b34ac6a60b685dc19be0d4797f863b398509eb1728e2fa0940131b385f65ba"
+    },
+    {
+      "path": "release/certifications/multimodel-p2.json",
+      "sha256": "1134635592c042e119c5256c38e9db1004188480e3103af15ded9ac645e030dc"
+    },
+    {
+      "path": "release/certifications/multimodel-p3.json",
+      "sha256": "71c229d0ed94b57e9a341714e78d1fe95bbaf733d827415a8dfa825b3fa402a2"
+    }
+  ],
+  "created_at": "2026-10-06T16:27:26.118Z",
+  "evidence_sha256": "92372bb9609ba166c9d15c70fb969bd5f4d493ca30a4675eaca88832af9bfe84"
+}

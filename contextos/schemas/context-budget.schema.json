@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Budget Decision",
+  "type": "object",
+  "required": [
+    "version",
+    "profile",
+    "agent",
+    "context_window",
+    "reserve_tokens",
+    "usable_input_tokens",
+    "target_tokens",
+    "thresholds"
+  ],
+  "properties": {
+    "version": { "const": "0.1.0" },
+    "profile": { "type": "string", "minLength": 1 },
+    "agent": { "type": "string", "minLength": 1 },
+    "context_window": { "type": "integer", "minimum": 1 },
+    "reserve_tokens": { "type": "integer", "minimum": 0 },
+    "usable_input_tokens": { "type": "integer", "minimum": 1 },
+    "target_tokens": { "type": "integer", "minimum": 1 },
+    "thresholds": {
+      "type": "object",
+      "required": ["watch", "checkpoint", "compact", "hard_guard"],
+      "properties": {
+        "watch": { "type": "integer", "minimum": 1 },
+        "checkpoint": { "type": "integer", "minimum": 1 },
+        "compact": { "type": "integer", "minimum": 1 },
+        "hard_guard": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "used_tokens": { "type": "integer", "minimum": 0 },
+    "remaining_input_tokens": { "type": "integer" },
+    "pressure_band": {
+      "enum": ["NORMAL", "WATCH", "CHECKPOINT_REQUIRED", "COMPACT_REQUIRED", "HARD_GUARD"]
+    },
+    "target_exceeded": { "type": "boolean" },
+    "large_reads_allowed": { "type": "boolean" },
+    "action": {
+      "enum": ["CONTINUE", "REDUCE_CONTEXT", "EMIT_CHECKPOINT", "COMPACT_OR_NEW_SESSION", "STOP_NEW_READS"]
+    }
+  }
+}

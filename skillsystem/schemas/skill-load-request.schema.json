@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-load-request.schema.json",
+  "title": "AleDevOS Skill Load Request",
+  "type": "object",
+  "required": ["schema_version", "task_id", "target_agent", "runtime_profile"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "target_agent": {"type": "string", "minLength": 1},
+    "runtime_profile": {"type": "string", "minLength": 1},
+    "base_context_tokens": {"type": "integer", "minimum": 0}
+  },
+  "additionalProperties": false
+}

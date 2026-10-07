@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-execution-receipt-request.schema.json",
+  "title": "AleDevOS Skill Execution Receipt Request",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "attempt",
+    "status",
+    "output_refs",
+    "outputs_present",
+    "contract_satisfied"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "SUCCEEDED",
+        "FAILED",
+        "BLOCKED"
+      ]
+    },
+    "output_refs": {
+      "type": "array"
+    },
+    "outputs_present": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contract_satisfied": {
+      "type": "boolean"
+    },
+    "duration_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "input_tokens": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "output_tokens": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "adapter": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "runtime": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

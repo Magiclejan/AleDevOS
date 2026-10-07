@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "adapter": "codex",
+  "target_skill_root": ".agents/skills",
+  "staging": {
+    "required": true,
+    "candidate_roots": [
+      ".agents/skills",
+      ".codex/skills"
+    ]
+  },
+  "skills_cli": {
+    "command": "npx",
+    "package": "skills",
+    "agent": "codex",
+    "copy_mode": true,
+    "yes": true,
+    "global": false,
+    "disable_telemetry_env": "DISABLE_TELEMETRY"
+  },
+  "post_install": [
+    "discovery.scan",
+    "registry.build",
+    "registry.verify",
+    "acquisition.record",
+    "acquisition.verify"
+  ]
+}

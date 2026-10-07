@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "aledevos-portable-core-skills",
+  "pack_version": "1.0.0",
+  "skill_count": 13,
+  "normalization": {
+    "line_endings": "LF",
+    "frontmatter_fields_normalized": [
+      "compatibility"
+    ]
+  },
+  "skills": [
+    {
+      "id": "backend-change",
+      "canonical_path": "core/skills/backend-change/SKILL.md",
+      "semantic_sha256": "dc1c9df51fee533a3f697a62c277703c8a683aea363fa3fc664996e60ee40cd1"
+    },
+    {
+      "id": "database-change",
+      "canonical_path": "core/skills/database-change/SKILL.md",
+      "semantic_sha256": "a207a807d592562d640414549c6b0e392f2700373640b1ce273cdb4ccd66f8c9"
+    },
+    {
+      "id": "diff-review",
+      "canonical_path": "core/skills/diff-review/SKILL.md",
+      "semantic_sha256": "cf4211959c9a12cd376b3d47038147d51598637826c8d2f5d569ebfcd10e778b"
+    },
+    {
+      "id": "frontend-change",
+      "canonical_path": "core/skills/frontend-change/SKILL.md",
+      "semantic_sha256": "8914957847988dd9ccc2d3dbabe43804cdeb49b60025162d2e3570150861b382"
+    },
+    {
+      "id": "implementation-plan",
+      "canonical_path": "core/skills/implementation-plan/SKILL.md",
+      "semantic_sha256": "1d38e71a95a39de7b2b2cc9510a3f65b8c5025ee26083d0d817f4c0c51b727c4"
+    },
+    {
+      "id": "regression-analysis",
+      "canonical_path": "core/skills/regression-analysis/SKILL.md",
+      "semantic_sha256": "66abc307fd8a039edff5198150d6f72f70fff24244d4766516825fcb6787245b"
+    },
+    {
+      "id": "repair-loop",
+      "canonical_path": "core/skills/repair-loop/SKILL.md",
+      "semantic_sha256": "5a5d8243b03051ee6e25d3ae4d455f738b0726c094e8e79a9a58bf5b6193d8a4"
+    },
+    {
+      "id": "repo-map",
+      "canonical_path": "core/skills/repo-map/SKILL.md",
+      "semantic_sha256": "a69ca8f4ae23655a59d2e57f63bfa2ff15099cee621dd757487aa81aa730bdfe"
+    },
+    {
+      "id": "requirements-check",
+      "canonical_path": "core/skills/requirements-check/SKILL.md",
+      "semantic_sha256": "a220dedef045bcb0bf1b3d227a904ee89dced1c29ccae5ea769f93dc189900e6"
+    },
+    {
+      "id": "safe-edit",
+      "canonical_path": "core/skills/safe-edit/SKILL.md",
+      "semantic_sha256": "a711039c4f8977178c196e0d29bd89898bf1a16166e9d3c113a8c520b3f4d787"
+    },
+    {
+      "id": "security-check",
+      "canonical_path": "core/skills/security-check/SKILL.md",
+      "semantic_sha256": "2dacc9c2ac570946b2c5b2265904219c3f6581683a9b2729721cbdd39728f469"
+    },
+    {
+      "id": "task-contract",
+      "canonical_path": "core/skills/task-contract/SKILL.md",
+      "semantic_sha256": "0d713b7f9a9a7aed5c914e48716c1b74c3add4b33cef0a734c06851bef235640"
+    },
+    {
+      "id": "test-strategy",
+      "canonical_path": "core/skills/test-strategy/SKILL.md",
+      "semantic_sha256": "6daf3d841c10734c90d372df0cbb0be2ac51c642206914ce85949a456e0fadcb"
+    }
+  ],
+  "projections": {
+    "opencode": {
+      "skill_root": ".opencode/skills",
+      "compatibility_label": "OpenCode V2 adapter"
+    },
+    "codex": {
+      "skill_root": ".agents/skills",
+      "compatibility_label": "Codex repository skill"
+    },
+    "claude-code": {
+      "skill_root": ".claude/skills",
+      "compatibility_label": "Claude Code project skill"
+    },
+    "antigravity": {
+      "skill_root": ".agents/skills",
+      "compatibility_label": "Google Antigravity workspace skill"
+    }
+  },
+  "alias_projections": {
+    "gemini": "antigravity"
+  }
+}

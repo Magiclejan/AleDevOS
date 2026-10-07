@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.multimodel.model-fallback-decision.v1",
+  "type": "object",
+  "required": ["schema_version", "phase", "status", "task_id", "judge_role", "target_slot", "trigger", "plan", "candidates", "selected", "fallback_used", "fallback_hop", "decision_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "phase": {"const": "MULTIMODEL_P4_MODEL_FALLBACK"},
+    "status": {"enum": ["MODEL_FALLBACK_SELECTED", "MODEL_FALLBACK_EXHAUSTED"]},
+    "fallback_used": {"const": true},
+    "decision_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

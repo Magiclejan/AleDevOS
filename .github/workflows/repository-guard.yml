@@ -1,0 +1,515 @@
+name: AleDevOS Validation
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  source-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check generated state and local credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          bad=0
+
+          while IFS= read -r path; do
+            if [[ "$path" == ".aledevos/state/"* || "$path" == *"/.aledevos/state/"* ]]; then
+              echo "::error file=$path::Generated .aledevos/state content is runtime state, not source"
+              bad=1
+            fi
+
+            base="$(basename "$path")"
+            case "$base" in
+              .env|credentials.json|auth.json)
+                echo "::error file=$path::Local credential file must not be committed"
+                bad=1
+                ;;
+            esac
+          done < <(git ls-files)
+
+          if [[ "$bad" -ne 0 ]]; then
+            exit 1
+          fi
+
+          echo "AleDevOS source hygiene PASS"
+
+  powershell-syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse repository PowerShell scripts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $scripts = Get-ChildItem -Recurse -File -Include *.ps1
+          foreach ($script in $scripts) {
+            $tokens = $null
+            $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              $script.FullName,
+              [ref]$tokens,
+              [ref]$errors
+            )
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object {
+                $line = $_.Extent.StartLineNumber
+                $column = $_.Extent.StartColumnNumber
+                $text = $_.Extent.Text
+                Write-Error "$($script.FullName):${line}:${column}: $($_.Message) [token=$text]"
+              }
+              throw "PowerShell syntax validation failed."
+            }
+          }
+          Write-Host "PowerShell syntax PASS: $($scripts.Count) files"
+
+
+  javascript-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse JavaScript and MJS files
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+            count=$((count + 1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './node_modules/*' -print0)
+          echo "JavaScript syntax PASS: $count files"
+
+
+  skill-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate canonical Skill hashes and adapter bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const crypto = require('crypto');
+
+          const sha = (s) => crypto.createHash('sha256').update(s, 'utf8').digest('hex');
+          const canonical = (s) => s.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          const readCanonical = (p) => canonical(fs.readFileSync(p, 'utf8'));
+
+          const catalog = JSON.parse(fs.readFileSync('skillsystem/catalogs/core-skills.json', 'utf8'));
+          const byId = new Map(catalog.skills.map(s => [s.id, s]));
+
+          for (const skill of catalog.skills) {
+            const p = path.join('core', 'skills', skill.id, 'SKILL.md');
+            const actual = sha(readCanonical(p));
+            if (actual !== skill.instruction_sha256) {
+              console.error(`CATALOG_HASH_MISMATCH ${skill.id} expected=${skill.instruction_sha256} actual=${actual}`);
+              process.exitCode = 1;
+            }
+          }
+
+          for (const adapter of ['codex','opencode','claude-code','antigravity']) {
+            const bindingFile = path.join('skillsystem','bindings',`${adapter}.json`);
+            const doc = JSON.parse(fs.readFileSync(bindingFile, 'utf8'));
+            for (const binding of doc.bindings) {
+              if (!byId.has(binding.skill_id)) {
+                console.error(`UNKNOWN_BINDING_SKILL ${adapter}:${binding.skill_id}`);
+                process.exitCode = 1;
+                continue;
+              }
+              const projected = path.join('adapters', adapter, ...binding.path.split('/'));
+              if (!fs.existsSync(projected)) {
+                console.error(`BINDING_SOURCE_MISSING ${adapter}:${binding.skill_id} path=${projected}`);
+                process.exitCode = 1;
+                continue;
+              }
+              const actual = sha(readCanonical(projected));
+              if (actual !== binding.expected_sha256) {
+                console.error(`BINDING_HASH_MISMATCH ${adapter}:${binding.skill_id} expected=${binding.expected_sha256} actual=${actual}`);
+                process.exitCode = 1;
+              }
+            }
+          }
+
+          if (process.exitCode) process.exit(process.exitCode);
+          console.log('Skill integrity PASS');
+          NODE
+
+
+  installer-transaction-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate multi-adapter installer transaction contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const s = fs.readFileSync('scripts/05-install-into-project.ps1','utf8');
+
+          const scan = "& node $skillRuntime discovery scan --project-root $target --adapter $CanonicalAdapter";
+          const build = "& node $skillRuntime registry build --project-root $target --adapter $CanonicalAdapter";
+          const verify = "& node $skillRuntime registry verify --project-root $target --adapter $CanonicalAdapter";
+          const commit = "# Commit adapter registration only after every installation/validation step passed.";
+
+          for (const [name, needle] of [['scan',scan],['build',build],['verify',verify],['commit',commit]]) {
+            if (!s.includes(needle)) {
+              console.error('INSTALLER_CONTRACT_MISSING ' + name);
+              process.exit(1);
+            }
+          }
+
+          if (!(s.indexOf(scan) < s.indexOf(build) &&
+                s.indexOf(build) < s.indexOf(verify) &&
+                s.indexOf(verify) < s.indexOf(commit))) {
+            console.error('INSTALLER_TRANSACTION_ORDER_INVALID');
+            process.exit(1);
+          }
+
+          console.log('Installer multi-adapter transaction contract PASS');
+          NODE
+
+
+  installer-package-json-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate optional package.json scripts handling
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const s = fs.readFileSync('scripts/05-install-into-project.ps1','utf8');
+
+          if (s.includes('$p.scripts.')) {
+            console.error('INSTALLER_DIRECT_OPTIONAL_SCRIPTS_ACCESS');
+            process.exit(1);
+          }
+          if (!s.includes("$p.PSObject.Properties.Name -contains 'scripts'")) {
+            console.error('INSTALLER_OPTIONAL_SCRIPTS_GUARD_MISSING');
+            process.exit(1);
+          }
+
+          console.log('Installer optional package.json scripts contract PASS');
+          NODE
+
+
+  p2-security-probe-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate and parse P2 security probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const os = require('os');
+          const path = require('path');
+          const { spawnSync } = require('child_process');
+
+          (async () => {
+            const mod = await import('./release/templates/master-validator-adapter-runtime.mjs');
+            const src = mod.securityProbeSource('testtoken');
+            const tmp = path.join(os.tmpdir(), 'MV_P2_SECURITY_PROBE_test.mjs');
+            fs.writeFileSync(tmp, src, 'utf8');
+            const r = spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
+            if (r.status !== 0) {
+              process.stderr.write(r.stdout || '');
+              process.stderr.write(r.stderr || '');
+              process.exit(r.status || 1);
+            }
+            console.log('P2 generated security probe syntax PASS');
+          })().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          NODE
+
+
+  codex-tool-host-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Codex Code Mode separation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const files = [
+            'adapters/codex/.codex/config.toml',
+            ...fs.readdirSync('adapters/codex/.codex/agents')
+              .filter(x => x.endsWith('.toml'))
+              .map(x => path.join('adapters/codex/.codex/agents', x))
+          ];
+
+          for (const file of files) {
+            const s = fs.readFileSync(file, 'utf8');
+            const mode = s.match(/\[features\.code_mode\]\s*\r?\nenabled\s*=\s*(true|false)/);
+            const host = s.match(/\[features\.code_mode_host\]\s*\r?\nenabled\s*=\s*(true|false)/);
+
+            if (!mode || mode[1] !== 'false') {
+              console.error('CODEX_CODE_MODE_MUST_REMAIN_DISABLED ' + file);
+              process.exitCode = 1;
+            }
+            if (!host || host[1] !== 'true') {
+              console.error('CODEX_TOOL_HOST_MUST_BE_ENABLED ' + file);
+              process.exitCode = 1;
+            }
+          }
+
+          const p2 = fs.readFileSync('release/templates/master-validator-adapter-runtime.mjs', 'utf8');
+          if (!p2.includes("features.code_mode.enabled=false") ||
+              !p2.includes("features.code_mode_host.enabled=true")) {
+            console.error('CODEX_P2_TOOL_HOST_CONTRACT_DRIFT');
+            process.exitCode = 1;
+          }
+
+          if (process.exitCode) process.exit(process.exitCode);
+          console.log('Codex Code Mode separation PASS');
+          NODE
+
+
+  codex-certifier-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Codex certifier matches tool-host contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const s = fs.readFileSync('adapters/codex/certification/codex-certifier.mjs','utf8');
+
+          if (!s.includes("section(cfg,'features.code_mode')") ||
+              !s.includes("section(cfg,'features.code_mode_host')") ||
+              !s.includes("stable tool host enabled")) {
+            console.error('CODEX_CERTIFIER_TOOL_HOST_CONTRACT_MISSING');
+            process.exit(1);
+          }
+
+          const bad = /features\.code_mode_host'\)\)\s*&&\s*\/enabled\\s\*=\\s\*false/.test(s);
+          if (bad) {
+            console.error('CODEX_CERTIFIER_STILL_REQUIRES_HOST_OFF');
+            process.exit(1);
+          }
+
+          console.log('Codex certifier tool-host contract PASS');
+          NODE
+
+
+  codex-transparent-ingress-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate transparent Codex ingress contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+
+          const agents = fs.readFileSync('core/templates/AGENTS.md.template','utf8');
+          const config = fs.readFileSync('adapters/codex/.codex/config.toml','utf8');
+          const orch = fs.readFileSync('adapters/codex/.codex/agents/orchestrator.toml','utf8');
+          const skills = fs.readFileSync('skillsystem/engine/skillsystem.mjs','utf8');
+
+          const checks = [
+            ['root_boundary', agents.includes('before the root performs any repository read/search/command or project analysis')],
+            ['root_fail_closed', agents.includes('If the runtime cannot invoke the Orchestrator')],
+            ['delegated_specialist_boundary', agents.includes('A declared AleDevOS specialist that was actually spawned by the Orchestrator MUST NOT attempt to spawn, rediscover, or re-enter another Orchestrator')],
+            ['delegated_task_contract_proof', agents.includes('existing Task Contract + role-specific handoff are the proof of orchestration')],
+            ['codex_developer_ingress', config.includes('AleDevOS root ingress is mandatory')],
+            ['codex_default_runtime_profile', config.includes('default_permissions = "aledevos_runtime"')],
+            ['codex_single_aledevos_profile', !config.includes('permissions.aledevos_readonly') && !config.includes('permissions.aledevos_writer') && !config.includes('permissions.aledevos_state_runner')],
+            ['codex_windows_state_hierarchy', config.includes('".aledevos" = "write"') && config.includes('".aledevos/state" = "write"') && config.includes('".aledevos/runtime" = "read"') && !config.includes('".aledevos" = "read"')],
+            ['codex_control_plane_carveouts', ['adapters','contextos','efficiency','execution','knowledge','multimodel','quality-engineering','release','reliability','runtime','schemas','security-reliability','skills','skillsystem','telemetry','uxui','visualqa'].every(x => config.includes(`".aledevos/${x}" = "read"`))],
+            ['codex_root_shell_off', /\[features\][\s\S]*?shell_tool\s*=\s*false/.test(config)],
+            ['codex_depth_2', /\[agents\][\s\S]*?max_depth\s*=\s*2/.test(config)],
+            ['codex_role_guard_configured', config.includes('aledevos-role-guard.mjs') && config.includes('Bash')],
+            ['orchestrator_boot', orch.includes('state init --task-id auto --adapter codex')],
+            ['orchestrator_task_artifact', orch.includes('.aledevos/state/tasks/<task_id>/task-contract.json')],
+            ['skill_routes_in_state', skills.includes("path.join(r,'.aledevos','state','skills','routes')")]
+          ];
+
+          const failed = checks.filter(([,ok]) => !ok).map(([id]) => id);
+          if (failed.length) {
+            console.error('CODEX_TRANSPARENT_INGRESS_CONTRACT_FAILED ' + failed.join(','));
+            process.exit(1);
+          }
+          console.log('Codex transparent ingress static contract PASS');
+          NODE
+
+      - name: Execute Codex role-guard regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          guard="adapters/codex/.codex/hooks/aledevos-role-guard.mjs"
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\\n*** Add File: x.txt\\n+x\\n*** End Patch"}}' | node "$guard")"
+          echo "$out" | grep -q 'ALEDEVOS_ROLE_WRITE_DENIED'
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"Write","tool_input":{"file_path":"x.txt","content":"x"},"agent_type":"researcher"}' | node "$guard")"
+          echo "$out" | grep -q 'ALEDEVOS_ROLE_WRITE_DENIED'
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"apply_patch","tool_input":{"command":"*** Begin Patch\\n*** Update File: .aledevos/state/current.json\\n@@\\n-x\\n+y\\n*** End Patch"},"agent_type":"builder"}' | node "$guard")"
+          echo "$out" | grep -q 'ALEDEVOS_CONTROL_PLANE_WRITE_DENIED'
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"Write","tool_input":{"file_path":"src/demo.ts","content":"export const x = 1;"},"agent_type":"editor-frontend"}' | node "$guard")"
+          test -z "$out"
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"node .aledevos/runtime/aledevos.mjs state show"},"agent_type":"orchestrator"}' | node "$guard")"
+          test -z "$out"
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"powershell.exe -Command Set-Content src/pwn.txt x"},"agent_type":"orchestrator"}' | node "$guard")"
+          echo "$out" | grep -q 'ALEDEVOS_SHELL_COMMAND_DENIED'
+
+          out="$(printf '%s' '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"node .aledevos/runtime/aledevos.mjs state show"},"agent_type":"builder"}' | node "$guard")"
+          echo "$out" | grep -q 'ALEDEVOS_ROLE_SHELL_DENIED'
+
+          echo 'Codex role-guard regression PASS'
+
+      - name: Execute task-state bootstrap regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/.aledevos/runtime"
+          cp core/engine/aledevos.mjs "$tmp/.aledevos/runtime/aledevos.mjs"
+
+          (
+            cd "$tmp"
+            node .aledevos/runtime/aledevos.mjs state init               --task-id auto               --adapter codex               --objective "CI ingress regression"               --criterion evidence-grounded               --criterion requested-result
+
+            node .aledevos/runtime/aledevos.mjs state agent               --name researcher               --status STARTED
+
+            node .aledevos/runtime/aledevos.mjs state agent               --name researcher               --status COMPLETED
+          )
+
+          node - "$tmp" <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const root = process.argv[2];
+          const current = JSON.parse(fs.readFileSync(path.join(root,'.aledevos/state/current.json'),'utf8'));
+          if (!current.task_id) throw new Error('task_id_missing');
+          if (current.runtime_adapter !== 'codex') throw new Error('adapter_missing');
+          const dir = path.join(root,'.aledevos/state/tasks',current.task_id);
+          if (!fs.existsSync(path.join(dir,'task-contract.json'))) throw new Error('task_contract_missing');
+          if (!fs.existsSync(path.join(dir,'state.json'))) throw new Error('task_state_missing');
+          const state = JSON.parse(fs.readFileSync(path.join(dir,'state.json'),'utf8'));
+          const trace = state.agent_trace || [];
+          if (!trace.some(x => x.agent === 'orchestrator' && x.status === 'STARTED')) throw new Error('orchestrator_trace_missing');
+          if (!trace.some(x => x.agent === 'researcher' && x.status === 'COMPLETED')) throw new Error('researcher_trace_missing');
+          console.log('Task-state bootstrap regression PASS');
+          NODE
+
+      - name: Run Codex source certification
+        shell: bash
+        run: |
+          set -euo pipefail
+          node adapters/codex/certification/codex-certifier.mjs certify run --root . > /tmp/codex-cert.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const q = JSON.parse(fs.readFileSync('/tmp/codex-cert.json','utf8'));
+          if (q.status !== 'CODEX_ADAPTER_CERTIFIED') {
+            console.error(JSON.stringify(q.summary));
+            process.exit(1);
+          }
+          console.log('Codex source certification PASS');
+          NODE
+
+
+  quality-engineering-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Core and Quality Engineering regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/core-engine.test.mjs tests/quality-engineering.test.mjs tests/global-efficiency-phase7.test.mjs
+
+      - name: Validate Quality Engineering installer projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const installer = fs.readFileSync('scripts/05-install-into-project.ps1','utf8');
+          const engine = fs.readFileSync('core/engine/aledevos.mjs','utf8');
+          const agents = fs.readFileSync('core/templates/AGENTS.md.template','utf8');
+
+          const checks = [
+            ['policy_installed', installer.includes("quality-engineering\\policies\\quality-engineering-policy.json")],
+            ['schema_installed', installer.includes("quality-engineering\\schemas")],
+            ['quality_gate_finalization', engine.includes("requiredGates.push('quality_engineering')")],
+            ['bug_regression_contract', engine.includes("regression-test")],
+            ['feature_edge_contract', engine.includes("feature-edge-or-error-path")],
+            ['reuse_contract', engine.includes("reuse-decision")],
+            ['project_rules', agents.includes('Every AleDevOS task requires a Quality Engineering Plan')]
+          ];
+          const failed = checks.filter(([,ok]) => !ok).map(([id]) => id);
+          if (failed.length) {
+            console.error('QUALITY_ENGINEERING_CONTRACT_FAILED ' + failed.join(','));
+            process.exit(1);
+          }
+          console.log('Quality Engineering contract PASS');
+          NODE
+
+
+  runtime-state-ownership:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run mutable-state regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test             tests/contextos-phase5.test.mjs             tests/contextos-phase6.test.mjs             tests/skill-system-phase4.test.mjs
+
+      - name: Enforce runtime state ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+
+          const skill = fs.readFileSync('skillsystem/engine/skillsystem.mjs','utf8');
+          const ctx = JSON.parse(fs.readFileSync('contextos/policies/context-policy.json','utf8'));
+          const sec = JSON.parse(fs.readFileSync('security-reliability/policies/security-reliability-policy.json','utf8'));
+          const installer = fs.readFileSync('scripts/05-install-into-project.ps1','utf8');
+
+          const checks = [
+            ['skill_telemetry_state', skill.includes("path.join(r,'.aledevos','state','telemetry','skills')")],
+            ['knowledge_state', ctx.knowledge.output_dir === '.aledevos/state/knowledge'],
+            ['research_state', ctx.research_cache.output_dir === '.aledevos/state/knowledge/research'],
+            ['context_telemetry_state', ctx.telemetry.output_dir === '.aledevos/state/telemetry/contextos'],
+            ['reliability_state', Object.values(sec.registry).every(x => String(x).startsWith('.aledevos/state/reliability/'))],
+            ['installer_knowledge_state', installer.includes("state\\knowledge\\research")],
+            ['installer_context_telemetry_state', installer.includes("state\\telemetry\\contextos\\runs")],
+            ['installer_skill_telemetry_state', installer.includes("state\\telemetry\\skills")],
+            ['installer_reliability_state', installer.includes("state\\reliability\\bugs")]
+          ];
+
+          const failed = checks.filter(([,ok]) => !ok).map(([id]) => id);
+          if (failed.length) {
+            console.error('RUNTIME_STATE_OWNERSHIP_FAILED ' + failed.join(','));
+            process.exit(1);
+          }
+          console.log('Runtime state ownership PASS');
+          NODE

@@ -1,0 +1,150 @@
+# AleDevOS Codex adapter — project-local configuration
+approval_policy = "never"
+approvals_reviewer = "user"
+default_permissions = "aledevos_runtime"
+allow_login_shell = false
+web_search = "disabled"
+developer_instructions = '''
+AleDevOS root ingress is mandatory. Classify as project-actionable any request that requires reading/searching repository files, inspecting Git, running project commands/tests, analysing project architecture/config/code, creating project artifacts, modifying files, reviewing project risks, or producing project-specific recommendations.
+
+For every project-actionable request, the root session MUST delegate first to the configured AleDevOS orchestrator before performing any repository read/search/command or project analysis. The root MUST NOT perform the project work itself. After delegation, relay the result only if a verifiable task artifact exists under .aledevos/state/tasks/<task_id>/. If the orchestrator cannot be invoked or task evidence is absent, return BLOCKED. Direct root answers are allowed only for pure conversational/meta requests requiring no project-specific operation.
+'''
+
+[features]
+multi_agent = true
+shell_tool = false
+request_permissions_tool = false
+apps = false
+plugins = false
+
+[features.code_mode]
+enabled = false
+
+[features.code_mode_host]
+enabled = true
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 4
+max_depth = 2
+default_subagent_reasoning_effort = "high"
+
+[agents.architect]
+description = "Read-only architect."
+config_file = "agents/architect.toml"
+
+[agents.auditor]
+description = "Read-only auditor."
+config_file = "agents/auditor.toml"
+
+[agents.builder]
+description = "AleDevOS builder; product-only writes."
+config_file = "agents/builder.toml"
+
+[agents.design-system-guardian]
+description = "Read-only Design System Guardian for UX/UI Phase 4."
+config_file = "agents/design-system-guardian.toml"
+
+[agents.editor-backend]
+description = "AleDevOS editor-backend; product-only writes."
+config_file = "agents/editor-backend.toml"
+
+[agents.editor-config]
+description = "High-risk project configuration editor; no shell."
+config_file = "agents/editor-config.toml"
+
+[agents.editor-database]
+description = "AleDevOS editor-database; product-only writes."
+config_file = "agents/editor-database.toml"
+
+[agents.editor-frontend]
+description = "AleDevOS editor-frontend; product-only writes."
+config_file = "agents/editor-frontend.toml"
+
+[agents.editor-tests]
+description = "AleDevOS editor-tests; product-only writes."
+config_file = "agents/editor-tests.toml"
+
+[agents.judge-quality]
+description = "Read-only judge-quality; evidence-based."
+config_file = "agents/judge-quality.toml"
+
+[agents.judge-regression]
+description = "Read-only judge-regression; evidence-based."
+config_file = "agents/judge-regression.toml"
+
+[agents.judge-requirements]
+description = "Read-only judge-requirements; evidence-based."
+config_file = "agents/judge-requirements.toml"
+
+[agents.judge-uxui]
+description = "Read-only UX/UI Judge for Phase 4."
+config_file = "agents/judge-uxui.toml"
+
+[agents.motion-director]
+description = "Read-only Motion Director for UX/UI Phase 5."
+config_file = "agents/motion-director.toml"
+
+[agents.orchestrator]
+description = "Primary AleDevOS coordinator; no product edits."
+config_file = "agents/orchestrator.toml"
+
+[agents.repairer]
+description = "AleDevOS repairer; product-only writes."
+config_file = "agents/repairer.toml"
+
+[agents.researcher]
+description = "Read-only bounded repository mapper."
+config_file = "agents/researcher.toml"
+
+[agents.v1-release-validator]
+description = "AleDevOS V1 final release validator; read-only product access, sealed target-runtime evidence and release-gate control only."
+config_file = "agents/v1-release-validator.toml"
+
+[agents.security-reviewer]
+description = "Read-only AleDevOS AppSec reviewer."
+config_file = "agents/security-reviewer.toml"
+
+[agents.verifier]
+description = "Read-only deterministic verifier; canonical gate only."
+config_file = "agents/verifier.toml"
+
+[agents.visual-capture-runner]
+description = "Narrow Visual QA Phase 2 browser-capture executor; no product edits."
+config_file = "agents/visual-capture-runner.toml"
+
+[agents.visual-judge]
+description = "AleDevOS Visual QA Phase 5 semantic/aesthetic judge; native-image observation only, no product edits."
+config_file = "agents/visual-judge.toml"
+
+[agents.visual-regression-runner]
+description = "Narrow Visual QA Phase 3 baseline/regression executor; no product edits."
+config_file = "agents/visual-regression-runner.toml"
+
+[agents.visual-repair-controller]
+description = "AleDevOS Visual QA Phase 5 repair-cycle controller; no product edits, no judging."
+config_file = "agents/visual-repair-controller.toml"
+
+[agents.visual-runtime-audit-runner]
+description = "Narrow Visual QA Phase 4 rendered runtime audit executor; no product edits."
+config_file = "agents/visual-runtime-audit-runner.toml"
+
+[permissions.aledevos_runtime]
+description = "AleDevOS orchestrated runtime: product workspace writable, control plane protected, AleDevOS state writable, external filesystem/network denied."
+
+[permissions.aledevos_runtime.filesystem]
+":root" = "deny"
+":minimal" = "read"
+":workspace_roots" = { "." = "write", ".aledevos" = "write", ".aledevos/state" = "write", ".aledevos/adapters" = "read", ".aledevos/contextos" = "read", ".aledevos/efficiency" = "read", ".aledevos/execution" = "read", ".aledevos/knowledge" = "read", ".aledevos/multimodel" = "read", ".aledevos/project.json" = "read", ".aledevos/quality-engineering" = "read", ".aledevos/release" = "read", ".aledevos/reliability" = "read", ".aledevos/runtime" = "read", ".aledevos/schemas" = "read", ".aledevos/security-reliability" = "read", ".aledevos/skills" = "read", ".aledevos/skillsystem" = "read", ".aledevos/telemetry" = "read", ".aledevos/uxui" = "read", ".aledevos/visualqa" = "read", ".codex" = "read", ".agents" = "read", "AGENTS.md" = "read", "AGENTS.override.md" = "read", ".git" = "read" }
+
+[permissions.aledevos_runtime.network]
+enabled = false
+allow_local_binding = true
+
+[[hooks.PreToolUse]]
+matcher = "^(apply_patch|Write|Edit|Bash)$"
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "node .codex/hooks/aledevos-role-guard.mjs"
+statusMessage = "AleDevOS role guard"

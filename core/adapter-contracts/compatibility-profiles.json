@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "profiles": {
+    "portable_core": {
+      "description": "Minimum adapter contract for Core + ContextOS + Skill System without claiming browser/vision runtime readiness.",
+      "required": {
+        "repository_read": [
+          "enforced",
+          "implemented"
+        ],
+        "product_write": [
+          "enforced"
+        ],
+        "control_plane_write_deny": [
+          "enforced"
+        ],
+        "arbitrary_shell_deny": [
+          "enforced"
+        ],
+        "canonical_gate": [
+          "enforced",
+          "implemented"
+        ],
+        "repair_cap": [
+          "enforced"
+        ],
+        "scope_prepass": [
+          "enforced"
+        ],
+        "external_directory": [
+          "enforced"
+        ],
+        "network": [
+          "enforced"
+        ],
+        "code_mode": [
+          "enforced"
+        ],
+        "structured_handoff": [
+          "enforced",
+          "implemented"
+        ],
+        "context_budget": [
+          "enforced",
+          "implemented"
+        ],
+        "checkpoint_resume": [
+          "enforced",
+          "implemented"
+        ],
+        "preventive_transition": [
+          "enforced",
+          "implemented"
+        ],
+        "diff_first": [
+          "enforced",
+          "implemented"
+        ],
+        "context_dedup": [
+          "enforced",
+          "implemented"
+        ],
+        "skill_registry": [
+          "enforced",
+          "implemented"
+        ]
+      },
+      "optional": {
+        "scope_prewrite": [
+          "enforced",
+          "implemented",
+          "best_effort",
+          "unsupported"
+        ],
+        "compaction": [
+          "enforced",
+          "implemented",
+          "best_effort",
+          "unsupported"
+        ]
+      }
+    },
+    "uxui": {
+      "extends": [
+        "portable_core"
+      ],
+      "description": "Portable Core plus UX/UI governance.",
+      "required": {
+        "motion_governance": [
+          "enforced",
+          "implemented"
+        ]
+      }
+    },
+    "visualqa": {
+      "extends": [
+        "uxui"
+      ],
+      "description": "Adapter implementation support for Visual QA P1-P5. Target model/browser readiness is evaluated separately.",
+      "required": {
+        "visual_qa_capture_contract": [
+          "enforced",
+          "implemented"
+        ],
+        "visual_qa_browser_capture": [
+          "enforced",
+          "implemented"
+        ],
+        "visual_qa_regression": [
+          "enforced",
+          "implemented"
+        ],
+        "visual_qa_runtime_checks": [
+          "enforced",
+          "implemented"
+        ],
+        "visual_qa_judge": [
+          "enforced",
+          "implemented"
+        ],
+        "visual_qa_bounded_repair": [
+          "enforced",
+          "implemented"
+        ]
+      }
+    },
+    "full_current": {
+      "extends": [
+        "visualqa"
+      ],
+      "description": "All adapter-facing AleDevOS capabilities currently implemented before Multi-Model/Advanced Execution.",
+      "required": {
+        "target_runtime_preflight": [
+          "enforced",
+          "implemented"
+        ],
+        "v1_release_validation": [
+          "enforced",
+          "implemented"
+        ]
+      }
+    }
+  }
+}

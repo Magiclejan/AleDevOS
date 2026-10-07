@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "phase": "MULTIMODEL_P1",
+  "allowed_roles": ["requirements", "regression", "quality", "uxui", "visual"],
+  "allowed_outcomes": ["PASS", "FAIL", "BLOCKED", "UNVERIFIED"],
+  "score_min": 0,
+  "score_max": 100,
+  "require_distinct_model_identity": true,
+  "require_identical_input": true,
+  "require_identical_rubric": true,
+  "comparison_states": ["AGREE", "DISAGREE", "INCOMPLETE"],
+  "pair_never_sets_final_state": true,
+  "runtime_ready_required_for_real_execution": true
+}

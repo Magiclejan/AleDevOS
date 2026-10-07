@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/responsive-policy.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","status","strategy","viewports","container_policy","overflow_policy","source_ref","approval_ref","human_artifact_sha256","integrity_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"status":{"enum":["UNSET","ACTIVE"]},
+    "strategy":{"type":["string","null"]},
+    "viewports":{"type":"array","items":{"type":"object","required":["id","width","expectation"],"properties":{"id":{"type":"string","minLength":1},"width":{"type":"integer","minimum":1},"height":{"type":"integer","minimum":1},"expectation":{"type":"string","minLength":1}}}},
+    "container_policy":{"type":["string","null"]},"overflow_policy":{"type":["string","null"]},
+    "source_ref":{"type":["string","null"]},"approval_ref":{"type":["string","null"]},
+    "human_artifact_sha256":{"type":["string","null"],"pattern":"^[a-f0-9]{64}$"},
+    "integrity_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

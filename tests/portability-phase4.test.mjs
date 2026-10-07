@@ -1,0 +1,81 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const root=process.cwd(),cert=path.join(root,'adapters/claude-code/certification/claude-code-certifier.mjs'),abi=path.join(root,'core/adapter-runtime/adapter.mjs'),guard=path.join(root,'adapters/claude-code/hooks/pretool-guard.mjs');
+const run=(args,cwd=root)=>spawnSync(process.execPath,[cert,...args],{cwd,encoding:'utf8'}), runAbi=(args,cwd=root)=>spawnSync(process.execPath,[abi,...args],{cwd,encoding:'utf8'}), json=r=>JSON.parse(r.stdout);
+const tmp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p4-'));
+function clone(){const d=tmp();fs.cpSync(root,d,{recursive:true});return d}
+function mj(d,rel,fn){const p=path.join(d,rel),o=JSON.parse(fs.readFileSync(p,'utf8'));fn(o);fs.writeFileSync(p,JSON.stringify(o,null,2)+'\n')}
+function mt(d,rel,fn){const p=path.join(d,rel);fs.writeFileSync(p,fn(fs.readFileSync(p,'utf8')))}
+function cp(rel,d,dst=rel){const s=path.join(root,rel),p=path.join(d,dst);fs.mkdirSync(path.dirname(p),{recursive:true});fs.copyFileSync(s,p)}
+function installMinimal(d){
+ cp('adapters/claude-code/.claude/settings.json',d,'.claude/settings.json');
+ for(const f of fs.readdirSync(path.join(root,'adapters/claude-code/.claude/agents')).filter(x=>x.endsWith('.md')))cp('adapters/claude-code/.claude/agents/'+f,d,'.claude/agents/'+f);
+ for(const n of fs.readdirSync(path.join(root,'adapters/claude-code/.claude/skills'))){const r=`adapters/claude-code/.claude/skills/${n}/SKILL.md`;if(fs.existsSync(path.join(root,r)))cp(r,d,`.claude/skills/${n}/SKILL.md`)}
+ cp('adapters/claude-code/adapter-capabilities.json',d,'.aledevos/adapters/claude-code/adapter-capabilities.json');cp('adapters/claude-code/hooks/pretool-guard.mjs',d,'.aledevos/adapters/claude-code/hooks/pretool-guard.mjs');cp('adapters/claude-code/visualqa/playwright-driver.mjs',d,'.aledevos/visualqa/providers/playwright-driver.mjs');cp('adapters/claude-code/project-template.json',d,'.aledevos/project.json');
+ for(const k of ['bindings','discovery','acquisition'])cp(`skillsystem/${k}/claude-code.json`,d,`.aledevos/skillsystem/${k}/claude-code.json`);
+ cp('core/engine/aledevos.mjs',d,'.aledevos/runtime/aledevos.mjs');cp('contextos/engine/contextos.mjs',d,'.aledevos/contextos/runtime/contextos.mjs');cp('skillsystem/engine/skillsystem.mjs',d,'.aledevos/skillsystem/runtime/skillsystem.mjs');cp('visualqa/engine/visual-judge.mjs',d,'.aledevos/visualqa/runtime/visual-judge.mjs');cp('release/engine/v1-release.mjs',d,'.aledevos/release/runtime/v1-release.mjs');cp('adapters/claude-code/certification/claude-code-certifier.mjs',d,'.aledevos/adapters/claude-code/claude-code-certifier.mjs');return d;
+}
+const src=()=>json(run(['certify','run','--root',root]));
+test('Claude source adapter obtains P4 certification',()=>{const r=run(['certify','run','--root',root]);assert.equal(r.status,0,r.stderr);const o=json(r);assert.equal(o.status,'CLAUDE_CODE_ADAPTER_CERTIFIED');assert.equal(o.summary.failed,0);assert.ok(o.summary.total>=250)});
+test('Claude certificate uses current project-settings dialect',()=>assert.equal(src().dialect,'claude-code-project-settings-2026'));
+test('Claude evidence is SHA-256 sealed',()=>assert.match(src().evidence_sha256,/^[0-9a-f]{64}$/));
+test('default permission mode is dontAsk',()=>assert.ok(src().checks.some(x=>x.id==='settings.default_dontask'&&x.status==='PASS')));
+test('changing dontAsk fails certification',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.permissions.defaultMode='default');assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='settings.default_dontask'&&x.status==='FAIL'))});
+test('bypass mode is disabled',()=>assert.ok(src().checks.some(x=>x.id==='settings.bypass_disabled'&&x.status==='PASS')));
+test('enabling bypass fails',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.permissions.disableBypassPermissionsMode='enable');assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='settings.bypass_disabled'&&x.status==='FAIL'))});
+test('auto mode is disabled',()=>assert.ok(src().checks.some(x=>x.id==='settings.auto_disabled'&&x.status==='PASS')));
+test('outside working-directory reads are blocked',()=>assert.ok(src().checks.some(x=>x.id==='settings.external_reads_blocked'&&x.status==='PASS')));
+test('additional directories cannot be silently granted',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.permissions.additionalDirectories=['../']);assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='settings.no_additional_dirs'&&x.status==='FAIL'))});
+test('WebFetch is denied',()=>assert.ok(src().checks.some(x=>x.id==='permissions.deny.WebFetch'&&x.status==='PASS')));
+test('WebSearch is denied',()=>assert.ok(src().checks.some(x=>x.id==='permissions.deny.WebSearch'&&x.status==='PASS')));
+test('MCP wildcard is denied',()=>assert.ok(src().checks.some(x=>x.id==='permissions.deny.mcp__*'&&x.status==='PASS')));
+test('removing WebFetch deny fails',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.permissions.deny=o.permissions.deny.filter(x=>x!=='WebFetch'));assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='permissions.deny.WebFetch'&&x.status==='FAIL'))});
+test('built-in Explore and Plan agents are denied',()=>{const o=src();assert.ok(o.checks.some(x=>x.id==='permissions.deny.Agent(Explore)'&&x.status==='PASS'));assert.ok(o.checks.some(x=>x.id==='permissions.deny.Agent(Plan)'&&x.status==='PASS'))});
+test('all 25 canonical agents are allowlisted',()=>assert.ok(src().checks.some(x=>x.id==='permissions.agent_allowlist'&&x.status==='PASS')));
+test('extra agent allow breaks closed allowlist',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.permissions.allow.push('Agent(root-god)'));assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='permissions.agent_allowlist'&&x.status==='FAIL'))});
+test('control plane Edit paths are denied',()=>{const o=src();for(const id of ['Edit(/.aledevos/**)','Edit(/.claude/**)','Edit(/CLAUDE.md)','Edit(/.git/**)'])assert.ok(o.checks.some(x=>x.id===`permissions.protect.${id}`&&x.status==='PASS'))});
+test('sandbox is enabled as defense in depth',()=>assert.ok(src().checks.some(x=>x.id==='sandbox.enabled'&&x.status==='PASS')));
+test('unsandboxed retry is disabled',()=>assert.ok(src().checks.some(x=>x.id==='sandbox.no_unsandboxed_retry'&&x.status==='PASS')));
+test('sandbox excludedCommands must remain empty',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.sandbox.excludedCommands=['node *']);assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='sandbox.no_excluded_commands'&&x.status==='FAIL'))});
+test('sandbox filesystem cannot be disabled',()=>{const d=clone();mj(d,'adapters/claude-code/.claude/settings.json',o=>o.sandbox.filesystem.disabled=true);assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='sandbox.fs_enabled'&&x.status==='FAIL'))});
+test('sandbox network remains deny-all',()=>assert.ok(src().checks.some(x=>x.id==='sandbox.network_default_deny'&&x.status==='PASS')));
+test('PreToolUse shell guard is configured',()=>assert.ok(src().checks.some(x=>x.id==='hooks.pretool.shell_guard'&&x.status==='PASS')));
+test('guard allows governed AleDevOS runtime command',()=>{const r=spawnSync(process.execPath,[guard],{input:JSON.stringify({tool_name:'Bash',tool_input:{command:'node .aledevos/runtime/aledevos.mjs gate run --task x'}}),encoding:'utf8'});assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow')});
+test('guard denies arbitrary shell command',()=>{const r=spawnSync(process.execPath,[guard],{input:JSON.stringify({tool_name:'Bash',tool_input:{command:'curl https://example.com'}}),encoding:'utf8'});assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny')});
+test('guard denies read-only shell not enumerated',()=>{const r=spawnSync(process.execPath,[guard],{input:JSON.stringify({tool_name:'PowerShell',tool_input:{command:'Get-ChildItem'}}),encoding:'utf8'});assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny')});
+test('guard fails closed on malformed input',()=>{const r=spawnSync(process.execPath,[guard],{input:'{bad',encoding:'utf8'});assert.equal(r.status,2)});
+test('all 24 Claude roles exist',()=>assert.equal(src().checks.filter(x=>/^role\..+\.file$/.test(x.id)&&x.status==='PASS').length,25));
+test('missing role fails certification',()=>{const d=clone();fs.rmSync(path.join(d,'adapters/claude-code/.claude/agents/architect.md'));assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='role.architect.file'&&x.status==='FAIL'))});
+test('writer roles use acceptEdits',()=>{const o=src();for(const n of ['builder','repairer','editor-frontend'])assert.ok(o.checks.some(x=>x.id===`role.${n}.permission_mode`&&x.status==='PASS'))});
+test('builder cannot gain Bash',()=>{const d=clone();mt(d,'adapters/claude-code/.claude/agents/builder.md',s=>s.replace('tools: Read, Grep, Glob, Edit, Write, Skill','tools: Read, Grep, Glob, Edit, Write, Skill, Bash'));assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='role.builder.tool_boundary'&&x.status==='FAIL'))});
+test('researcher remains read only',()=>assert.ok(src().checks.some(x=>x.id==='role.researcher.tool_boundary'&&x.status==='PASS')));
+test('researcher cannot gain Edit',()=>{const d=clone();mt(d,'adapters/claude-code/.claude/agents/researcher.md',s=>s.replace('tools: Read, Grep, Glob, Skill','tools: Read, Grep, Glob, Skill, Edit'));assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='role.researcher.tool_boundary'&&x.status==='FAIL'))});
+test('orchestrator alone receives Agent tool',()=>{const o=src();assert.ok(o.checks.some(x=>x.id==='role.orchestrator.tool_boundary'&&x.status==='PASS'));assert.ok(o.checks.some(x=>x.id==='role.verifier.tool_boundary'&&x.status==='PASS'))});
+test('state roles remain dontAsk',()=>assert.ok(src().checks.some(x=>x.id==='role.verifier.permission_mode'&&x.status==='PASS')));
+test('role turn cap is fixed at 30',()=>assert.equal(src().checks.filter(x=>x.id.endsWith('.turn_cap')&&x.status==='PASS').length,25));
+test('thirteen Claude project skills are present',()=>assert.ok(src().checks.some(x=>x.id==='skills.native_count'&&x.status==='PASS')));
+test('Claude skills use native .claude/skills path',()=>assert.ok(src().checks.some(x=>x.id==='skills.binding_paths'&&x.status==='PASS')));
+test('Claude skill compatibility metadata is native',()=>assert.ok(src().checks.some(x=>x.id==='skills.compatibility'&&x.status==='PASS')));
+test('removing skill fails certification',()=>{const d=clone();fs.rmSync(path.join(d,'adapters/claude-code/.claude/skills/backend-change'),{recursive:true,force:true});assert.ok(json(run(['certify','run','--root',d],d)).checks.some(x=>x.id==='skills.native_count'&&x.status==='FAIL'))});
+test('project template protects Claude control plane',()=>assert.ok(src().checks.some(x=>x.id==='project.protected_paths'&&x.status==='PASS')));
+test('Playwright provider is bound',()=>assert.ok(src().checks.some(x=>x.id==='binding.visual_provider'&&x.status==='PASS')));
+test('repair cap remains exactly two',()=>assert.ok(src().checks.some(x=>x.id==='behavior.repair_cap'&&x.status==='PASS')));
+test('Claude manifest is implemented and installable',()=>assert.ok(src().checks.some(x=>x.id==='manifest.identity'&&x.status==='PASS')));
+test('all declared Claude capabilities have proof',()=>{const c=src().checks.filter(x=>x.id.startsWith('capability.'));assert.ok(c.length>=27);assert.equal(c.filter(x=>x.status!=='PASS').length,0)});
+test('ABI reports Claude full_current compatible',()=>{const r=runAbi(['compatibility','check','--root',root,'--adapter','claude-code','--profile','full_current']);assert.equal(r.status,0,r.stdout+r.stderr);assert.equal(json(r).summary.blocked,0)});
+test('ABI reports Claude installable',()=>{const r=runAbi(['install','check','--root',root,'--adapter','claude-code']);assert.equal(r.status,0);assert.equal(json(r).status,'ADAPTER_INSTALLABLE')});
+test('installed Claude layout certifies',()=>{const d=installMinimal(tmp()),rt=path.join(d,'.aledevos/adapters/claude-code/claude-code-certifier.mjs'),r=spawnSync(process.execPath,[rt,'certify','run','--root',d],{cwd:d,encoding:'utf8'});assert.equal(r.status,0,r.stdout+r.stderr);assert.equal(JSON.parse(r.stdout).layout,'installed')});
+test('source to installed Claude parity passes',()=>{const d=installMinimal(tmp()),r=run(['parity','verify','--source',root,'--installed',d,'--root',root]);assert.equal(r.status,0,r.stdout+r.stderr);assert.equal(json(r).status,'CLAUDE_CODE_SOURCE_INSTALLED_PARITY_PASS')});
+test('installed settings drift is detected',()=>{const d=installMinimal(tmp());fs.appendFileSync(path.join(d,'.claude/settings.json'),'\n ');const r=run(['parity','verify','--source',root,'--installed',d,'--root',root]);assert.equal(r.status,4)});
+test('installed role drift is detected',()=>{const d=installMinimal(tmp());fs.appendFileSync(path.join(d,'.claude/agents/verifier.md'),'\nDRIFT\n');assert.equal(run(['parity','verify','--source',root,'--installed',d]).status,4)});
+test('installed skill drift is detected',()=>{const d=installMinimal(tmp());fs.appendFileSync(path.join(d,'.claude/skills/backend-change/SKILL.md'),'\nDRIFT\n');assert.equal(run(['parity','verify','--source',root,'--installed',d]).status,4)});
+test('installed hook drift is detected',()=>{const d=installMinimal(tmp());fs.appendFileSync(path.join(d,'.aledevos/adapters/claude-code/hooks/pretool-guard.mjs'),'\n// drift\n');assert.equal(run(['parity','verify','--source',root,'--installed',d]).status,4)});
+test('fresh certificate verifies',()=>{const d=tmp(),f=path.join(d,'c.json');assert.equal(run(['certify','run','--root',root,'--out',f]).status,0);const r=run(['certify','verify','--root',root,'--certificate',f]);assert.equal(r.status,0);assert.equal(json(r).status,'CLAUDE_CODE_CERTIFICATE_VALID')});
+test('certificate detects agent drift',()=>{const d=clone(),f=path.join(d,'c.json');assert.equal(run(['certify','run','--root',d,'--out',f],d).status,0);fs.appendFileSync(path.join(d,'adapters/claude-code/.claude/agents/verifier.md'),'\nDRIFT\n');const r=run(['certify','verify','--root',d,'--certificate',f],d);assert.equal(r.status,4);assert.equal(json(r).status,'CLAUDE_CODE_CERTIFICATE_STALE_OR_TAMPERED')});
+test('certifier blocks unknown layout',()=>{const d=tmp(),r=run(['certify','run','--root',d]);assert.equal(r.status,4);assert.equal(json(r).status,'CLAUDE_CODE_CERTIFICATION_BLOCKED')});
+test('runtime preflight truthfully reports Claude CLI',()=>{const r=run(['runtime','preflight','--root',root]);assert.ok([0,4].includes(r.status));assert.ok(['CLAUDE_CODE_RUNTIME_PRESENT','CLAUDE_CODE_RUNTIME_PRESENT_LIMITED','CLAUDE_CODE_RUNTIME_BLOCKED'].includes(json(r).status))});
+test('installer contains explicit Claude projection',()=>{const s=fs.readFileSync('scripts/05-install-into-project.ps1','utf8');assert.match(s,/Adapter -eq 'claude-code'/);assert.match(s,/\.claude/);assert.match(s,/claude-code-certifier\.mjs/);assert.match(s,/pretool-guard\.mjs/)});

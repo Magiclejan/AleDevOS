@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.visual-repair-cycle.v1",
+  "type": "object",
+  "required": ["schema_version","phase","task_id","status","attempt","max_repairs","before_judgment_path","before_judgment_file_sha256","before_judgment_sha256","repair_plan_path","repair_plan_file_sha256","repair_plan_sha256","after_judgment_path","after_judgment_file_sha256","after_judgment_sha256","fresh_evidence","created_at","cycle_sha256"],
+  "properties": {
+    "schema_version":{"const":"1.0"},
+    "phase":{"const":"VISUAL_QA_P5_REPAIR_CYCLE"},
+    "status":{"enum":["VISUAL_REPAIR_CYCLE_PASS","VISUAL_REPAIR_RETRY_ALLOWED","VISUAL_REPAIR_EXHAUSTED","VISUAL_REPAIR_CYCLE_BLOCKED"]},
+    "attempt":{"type":"integer","minimum":1,"maximum":2},
+    "max_repairs":{"type":"integer","minimum":1,"maximum":2},
+    "fresh_evidence":{"type":"object"},
+    "cycle_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

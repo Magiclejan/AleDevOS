@@ -1,0 +1,7 @@
+{
+  "task_contract": "TASK_CONTRACT.json",
+  "worktree_receipt": ".aledevos/state/execution/phase1/worktrees/example.json",
+  "worker_role": "builder",
+  "read_scope": ["**"],
+  "write_scope": ["src/**", "tests/**"]
+}

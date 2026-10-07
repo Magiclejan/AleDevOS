@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Telemetry Event v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version","event_id","run_id","task_id","timestamp","kind","source","metrics"],
+  "properties": {
+    "version": {"const":"1.0.0"},
+    "event_id": {"type":"string","pattern":"^[A-Za-z0-9._-]{1,160}$"},
+    "run_id": {"type":"string","pattern":"^[A-Za-z0-9._-]{1,160}$"},
+    "task_id": {"type":"string","minLength":1},
+    "timestamp": {"type":"string","format":"date-time"},
+    "kind": {"enum":["RUN_START","RUN_END","AGENT_CALL","CONTEXT_SAMPLE","HANDOFF","CHECKPOINT","COMPACTION","RESUME","RESEARCH_CACHE","KNOWLEDGE_REFRESH","FILE_READ","GATE","JUDGE","REPAIR","FINAL_STATE"]},
+    "source": {
+      "type":"object","additionalProperties":false,"required":["runtime","adapter","agent","model","provenance"],
+      "properties": {
+        "runtime":{"type":["string","null"]},"adapter":{"type":["string","null"]},"agent":{"type":["string","null"]},"model":{"type":["string","null"]},
+        "provenance":{"enum":["MEASURED","REPORTED","DERIVED"]}
+      }
+    },
+    "metrics":{"type":"object"},
+    "refs":{"type":"object"}
+  }
+}

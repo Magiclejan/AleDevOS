@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "phase": "ADVANCED_EXECUTION_P1_WORKTREES",
+  "status": "ADVANCED_EXECUTION_P1_PACKAGE_CERTIFIED",
+  "package_only": true,
+  "target_runtime_validation": "DEFERRED",
+  "claims": {
+    "git_worktree_isolation": true,
+    "pinned_base_commit": true,
+    "derived_paths_and_branches": true,
+    "primary_checkout_protected": true,
+    "non_destructive_cleanup": true,
+    "network_disabled": true,
+    "worker_execution_disabled": true,
+    "concurrency_disabled": true,
+    "dispatcher_queue_disabled": true,
+    "multi_machine_disabled": true
+  },
+  "inputs": [
+    {
+      "path": "advanced-execution/worktrees/worktree-manager.mjs",
+      "sha256": "c67b730a06b599866172c186b6d86d17e7c255bd8468f5c46ad35b0fa1bc645a"
+    },
+    {
+      "path": "advanced-execution/policies/worktree-policy.json",
+      "sha256": "878d5f86b12c1f6e838064a58a5d0cff441b68798db18e81cc7718c3cf0874ba"
+    },
+    {
+      "path": "advanced-execution/schemas/worktree-request.schema.json",
+      "sha256": "bf22f3f5bde443916b6bda467bd6c66158fa8da50e55073b81e7358efa38b76e"
+    },
+    {
+      "path": "advanced-execution/schemas/worktree-receipt.schema.json",
+      "sha256": "f1be8577a185469f2d1640db4bd03188f43e6332591ac6453be964398afdbbe8"
+    },
+    {
+      "path": "advanced-execution/templates/worktree-request.example.json",
+      "sha256": "bd6b50a985dbf4d85ad6a4eae0550d9345556e92426a6a70f1753e419299cd16"
+    },
+    {
+      "path": "advanced-execution/contracts/WORKTREE_ISOLATION.md",
+      "sha256": "a7833870848e2d5eede32f975e4a375250dd6eab6d972fbb5a357a47053b7499"
+    },
+    {
+      "path": "scripts/05-install-into-project.ps1",
+      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+    }
+  ],
+  "created_at": "2026-10-06T16:27:26.151Z",
+  "evidence_sha256": "4c47076f1c62cc281af6a6a2c518a9f82186ff446d0061d788289d3e362d1aa8"
+}

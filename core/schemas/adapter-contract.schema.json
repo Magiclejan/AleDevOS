@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Adapter Contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "adapter",
+    "adapter_version",
+    "status",
+    "installation",
+    "capabilities"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "2.0"
+    },
+    "adapter": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "adapter_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "implemented",
+        "partial",
+        "scaffold"
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "installation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported"
+      ],
+      "properties": {
+        "supported": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "enforced",
+              "implemented",
+              "best_effort",
+              "unsupported"
+            ]
+          },
+          "implementation": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alias_of": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "deprecated_alias": {
+      "type": "boolean"
+    }
+  }
+}

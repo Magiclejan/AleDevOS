@@ -1,0 +1,7 @@
+{
+  "schema_version":"1.0",
+  "contract_id":"BOOLEAN_NEED",
+  "choice":"NO",
+  "reason_codes":["KNOWLEDGE_FRESH","SCOPE_LOCAL"],
+  "evidence_refs":["contextos:knowledge:freshness"]
+}

@@ -1,0 +1,18 @@
+# Project Agent Rules — AleDevOS
+
+Project-specific invariants live here. **Canonical verification commands live in `.aledevos/project.json` and are executed only through the protected gate runner.**
+
+## Project identity
+- Product: <NAME>
+- Stack: <STACK>
+
+## Architecture / domain invariants
+- <invariant>
+
+## Mandatory rules
+1. Preserve existing behavior unless explicitly changed.
+2. No placeholders/fake green paths.
+3. No test weakening for PASS.
+4. No silent scope expansion; emit SCOPE_ESCALATION.
+5. No control-plane/self modification.
+6. Final state: PASS / BLOCKED / FAILED only.

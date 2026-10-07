@@ -1,0 +1,11 @@
+{
+  "name": "aledevos-v1-target-runtime-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test smoke.test.mjs",
+    "build": "node --check server.mjs",
+    "lint": "node --check server.mjs",
+    "typecheck": "node --check server.mjs"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aledevos.visualqa.browser-execution-spec.v1",
+  "type": "object",
+  "required": ["task_id"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1},
+    "provider": {"const": "playwright"},
+    "browser": {"enum": ["chromium"]},
+    "locale": {"type": "string", "minLength": 2, "maxLength": 35},
+    "timezone_id": {"type": "string", "minLength": 1, "maxLength": 80},
+    "color_scheme": {"enum": ["light", "dark", "no-preference"]},
+    "stable_ms": {"type": "integer", "minimum": 0, "maximum": 2000},
+    "case_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case_id"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "route_suffix": {"type": ["string", "null"]},
+          "ready_selector": {"type": ["string", "null"], "maxLength": 300}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

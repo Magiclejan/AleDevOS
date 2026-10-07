@@ -1,0 +1,1 @@
+{"schema_version":"1.0","status":"SECURITY_REVIEW_BLOCKED","agent_id":"security-reviewer","runtime_invoked":true,"provider_id":"REQUIRED","model_id":"REQUIRED","threat_model":{"assets":[],"trust_boundaries":[],"entry_points":[],"threats":[],"residual_risk":"UNKNOWN"},"findings":[]}

@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0",
+  "status": "ACTIVE",
+  "policy_id": "ALEDEVOS_QUALITY_ENGINEERING_V1",
+  "principles": {
+    "reuse_first": true,
+    "regression_before_fix_when_practical": true,
+    "no_test_weakening": true,
+    "lowest_sufficient_test_layer": true,
+    "evidence_required_for_pass": true,
+    "documentation_only_may_be_test_not_applicable": true
+  },
+  "change_classes": {
+    "analysis": {
+      "tests_required": false,
+      "regression_test_required": false,
+      "reuse_decision_required": false,
+      "regression_analysis_required": false,
+      "diff_review_required": false,
+      "visual_qa_required": false
+    },
+    "docs": {
+      "tests_required": false,
+      "regression_test_required": false,
+      "reuse_decision_required": false,
+      "regression_analysis_required": false,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "bugfix": {
+      "tests_required": true,
+      "regression_test_required": true,
+      "reuse_decision_required": false,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "feature": {
+      "tests_required": true,
+      "regression_test_required": false,
+      "reuse_decision_required": true,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "refactor": {
+      "tests_required": true,
+      "regression_test_required": false,
+      "reuse_decision_required": true,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "ui": {
+      "tests_required": true,
+      "regression_test_required": false,
+      "reuse_decision_required": true,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": true
+    },
+    "config": {
+      "tests_required": true,
+      "regression_test_required": false,
+      "reuse_decision_required": false,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "schema": {
+      "tests_required": true,
+      "regression_test_required": false,
+      "reuse_decision_required": true,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "migration": {
+      "tests_required": true,
+      "regression_test_required": true,
+      "reuse_decision_required": true,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    },
+    "test-only": {
+      "tests_required": false,
+      "regression_test_required": false,
+      "reuse_decision_required": false,
+      "regression_analysis_required": true,
+      "diff_review_required": true,
+      "visual_qa_required": false
+    }
+  },
+  "allowed_test_layers": [
+    "unit",
+    "component",
+    "integration",
+    "contract",
+    "e2e",
+    "visual",
+    "smoke",
+    "static",
+    "canonical-gate"
+  ],
+  "reuse_decisions": [
+    "REUSE",
+    "EXTEND",
+    "GENERALIZE",
+    "CREATE_NEW",
+    "NOT_APPLICABLE"
+  ],
+  "reuse_targets": [
+    "component",
+    "hook",
+    "service",
+    "helper",
+    "utility",
+    "schema",
+    "type",
+    "api-wrapper",
+    "repository",
+    "design-token",
+    "workflow",
+    "other"
+  ],
+  "bugfix_contract": {
+    "prefer_reproduction_before_fix": true,
+    "regression_evidence_required": true,
+    "old_behavior_failure_should_be_demonstrable_when_practical": true
+  },
+  "feature_contract": {
+    "happy_path_required": true,
+    "material_edge_or_error_path_required": true
+  },
+  "reuse_contract": {
+    "search_existing_before_create": true,
+    "create_new_requires_reason": true,
+    "local_fork_of_existing_canonical_abstraction_is_blocking": true,
+    "candidate_path_segments": [
+      "component",
+      "components",
+      "hook",
+      "hooks",
+      "service",
+      "services",
+      "helper",
+      "helpers",
+      "util",
+      "utils",
+      "utility",
+      "utilities",
+      "schema",
+      "schemas",
+      "type",
+      "types",
+      "repository",
+      "repositories",
+      "workflow",
+      "workflows",
+      "design-system",
+      "tokens"
+    ],
+    "code_extensions": [
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs",
+      ".ts",
+      ".tsx",
+      ".vue",
+      ".svelte",
+      ".py",
+      ".go",
+      ".rs",
+      ".java",
+      ".kt",
+      ".kts",
+      ".cs",
+      ".rb",
+      ".php"
+    ]
+  },
+  "pass_contract": {
+    "gate_id": "quality_engineering",
+    "missing_required_evidence": "BLOCKED",
+    "invalid_or_weakened_evidence": "FAIL",
+    "quality_plan_required_for_every_task": true
+  }
+}

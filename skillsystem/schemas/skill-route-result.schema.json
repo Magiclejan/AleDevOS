@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://aledevos.local/schemas/skill-route-result.schema.json",
+  "title":"AleDevOS Skill Route Result 1.0",
+  "type":"object",
+  "required":["schema_version","task_id","status","selected","missing_required_capabilities","unresolved_suggestions","integrity"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "task_id":{"type":"string"},
+    "status":{"enum":["ROUTE_READY","ROUTE_BLOCKED","NO_RELEVANT_SKILL"]},
+    "selected":{"type":"array"},
+    "missing_required_capabilities":{"type":"array"},
+    "unresolved_suggestions":{"type":"array"},
+    "integrity":{"type":"object"}
+  },
+  "additionalProperties":true
+}

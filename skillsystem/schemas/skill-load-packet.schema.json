@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-load-packet.schema.json",
+  "title": "AleDevOS On-demand Skill Load Packet",
+  "type": "object",
+  "required": ["schema_version", "task_id", "status", "target_agent", "runtime_profile", "budget", "skills", "errors", "instruction_bodies_loaded", "execution_performed", "integrity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["LOAD_READY", "LOAD_BLOCKED"]},
+    "target_agent": {"type": "string", "minLength": 1},
+    "runtime_profile": {"type": "string", "minLength": 1},
+    "budget": {"type": "object"},
+    "skills": {"type": "array"},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "instruction_bodies_loaded": {"type": "boolean"},
+    "execution_performed": {"const": false},
+    "integrity": {"type": "object"}
+  },
+  "additionalProperties": true
+}

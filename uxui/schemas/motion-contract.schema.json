@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Motion Contract",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "motion_required",
+    "rationale",
+    "changed_files",
+    "interactions",
+    "design_context_integrity",
+    "contract_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "motion_required": {
+      "type": "boolean"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "interactions": {
+      "type": "array"
+    },
+    "skill_evidence": {
+      "type": "array"
+    },
+    "contract_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

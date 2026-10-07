@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "phase",
+    "id",
+    "transport_kind",
+    "transport_provenance",
+    "executable",
+    "args",
+    "remote_helper_path",
+    "remote_machine_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "phase": {
+      "const": "MASTER_VALIDATION_P5_TRANSPORT_PROBE_PROFILE"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transport_kind": {
+      "enum": [
+        "SSH",
+        "TAILSCALE_SSH",
+        "WINRS",
+        "POWERSHELL_REMOTING"
+      ]
+    },
+    "transport_provenance": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "const": "CONTROLLED_TEST_PROVIDER"
+      }
+    },
+    "executable": {
+      "type": "string",
+      "minLength": 1
+    },
+    "args": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "remote_helper_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "remote_machine_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 600000
+    }
+  },
+  "additionalProperties": false
+}

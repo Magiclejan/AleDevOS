@@ -1,0 +1,2078 @@
+{
+  "schema_version": "1.0",
+  "adapter": "claude-code",
+  "adapter_contract_version": "2.0",
+  "certification_phase": "portability-p4",
+  "dialect": "claude-code-project-settings-2026",
+  "layout": "source",
+  "status": "CLAUDE_CODE_ADAPTER_CERTIFIED",
+  "summary": {
+    "total": 257,
+    "passed": 257,
+    "failed": 0
+  },
+  "runtime_smoke": {
+    "required_for_target_release": true,
+    "executed": false,
+    "reason": "Claude CLI/auth/model/platform/browser are target-machine evidence. OS sandbox is unavailable on native Windows; WSL2/macOS/Linux must be distinguished at runtime."
+  },
+  "inputs": [
+    {
+      "id": "settings",
+      "path": "adapters/claude-code/.claude/settings.json",
+      "sha256": "567db90fcd7f857f3482d5b76727c23cc61aba623eb25c16f0cabb244f8c9b2d"
+    },
+    {
+      "id": "hook",
+      "path": "adapters/claude-code/hooks/pretool-guard.mjs",
+      "sha256": "2324f94a25f8a9d6f12b52cc388fd710ea846fb7f92f6a7388a91c823c32e0bf"
+    },
+    {
+      "id": "manifest",
+      "path": "adapters/claude-code/adapter-capabilities.json",
+      "sha256": "62ced688a9ff10cca86449a2e9439306fba90a7df001e208407c6ee7b8ea3f5a"
+    },
+    {
+      "id": "provider",
+      "path": "adapters/claude-code/visualqa/playwright-driver.mjs",
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
+    },
+    {
+      "id": "project",
+      "path": "adapters/claude-code/project-template.json",
+      "sha256": "6b97a92286e4409a8c60efd5ea68e69b7ad40e9a0e3a9835443f64ff4fa47697"
+    },
+    {
+      "id": "binding",
+      "path": "skillsystem/bindings/claude-code.json",
+      "sha256": "4ae09b1262f0eadc1fd622ebade608b288f2472d5dcfb6a7c6b7bbb9e733a981"
+    },
+    {
+      "id": "discovery",
+      "path": "skillsystem/discovery/claude-code.json",
+      "sha256": "4cf004bdd70de53e746e86ef78e313c3a453f538a3c1634f7bb803d903c1f157"
+    },
+    {
+      "id": "acquisition",
+      "path": "skillsystem/acquisition/claude-code.json",
+      "sha256": "5df3d830bc5c724e027e0a9a034d8bf4aa5857e3ff3d67b92d9e3fb908b1ac92"
+    },
+    {
+      "id": "engine",
+      "path": "core/engine/aledevos.mjs",
+      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+    },
+    {
+      "id": "ctx",
+      "path": "contextos/engine/contextos.mjs",
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
+    },
+    {
+      "id": "skillsRuntime",
+      "path": "skillsystem/engine/skillsystem.mjs",
+      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+    },
+    {
+      "id": "vqa",
+      "path": "visualqa/engine/visual-judge.mjs",
+      "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
+    },
+    {
+      "id": "release",
+      "path": "release/engine/v1-release.mjs",
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
+    },
+    {
+      "id": "role:architect",
+      "path": "adapters/claude-code/.claude/agents/architect.md",
+      "sha256": "5e25c38f02e602ba30f9ac72be45e90039d6cb052d401db437dc72d4588b7098"
+    },
+    {
+      "id": "role:auditor",
+      "path": "adapters/claude-code/.claude/agents/auditor.md",
+      "sha256": "180914231e3c806c7e9eeec24ec4ddd6c5a5e555c0a085e0b1ee2dd6dbea6687"
+    },
+    {
+      "id": "role:builder",
+      "path": "adapters/claude-code/.claude/agents/builder.md",
+      "sha256": "72254e94a4506a2592a612d9e2d943d21aba64e7fdf3a2d2af4b253d7c53841f"
+    },
+    {
+      "id": "role:design-system-guardian",
+      "path": "adapters/claude-code/.claude/agents/design-system-guardian.md",
+      "sha256": "879a9166e7641031f7b5dbfd87c58083bc9b9738f8fa84be03c5c770811b20c5"
+    },
+    {
+      "id": "role:editor-backend",
+      "path": "adapters/claude-code/.claude/agents/editor-backend.md",
+      "sha256": "db13f20cfc3e871b32fc5647133b384d6ebe886b647948aa2b4905cf4f054034"
+    },
+    {
+      "id": "role:editor-config",
+      "path": "adapters/claude-code/.claude/agents/editor-config.md",
+      "sha256": "ba2f50181cbfe525bed13854ab9cc3275505927e2c2f4d38bedbe5cc99e85dc0"
+    },
+    {
+      "id": "role:editor-database",
+      "path": "adapters/claude-code/.claude/agents/editor-database.md",
+      "sha256": "7280babda2e104b9992f837ef813d1e81fadf7b53c4e75b0394ce07ae56697bc"
+    },
+    {
+      "id": "role:editor-frontend",
+      "path": "adapters/claude-code/.claude/agents/editor-frontend.md",
+      "sha256": "4ef4967e4e6c603e907adde0bd27b55af988997f50ebc9db6bdc43e750b0bee9"
+    },
+    {
+      "id": "role:editor-tests",
+      "path": "adapters/claude-code/.claude/agents/editor-tests.md",
+      "sha256": "7bf59955abb1ffaad7bd55350e38879b7fb5e48c6ad7db7fee18c68063957123"
+    },
+    {
+      "id": "role:judge-quality",
+      "path": "adapters/claude-code/.claude/agents/judge-quality.md",
+      "sha256": "41dc3b356e0f87509f0eba91cca7c23c54f02d8eecdddc0bb89ed2073ec13576"
+    },
+    {
+      "id": "role:judge-regression",
+      "path": "adapters/claude-code/.claude/agents/judge-regression.md",
+      "sha256": "d78b8a9104b14d3a9b8595aafaa61fbe24a0d67767b8b7349ce8e10e23c3c82b"
+    },
+    {
+      "id": "role:judge-requirements",
+      "path": "adapters/claude-code/.claude/agents/judge-requirements.md",
+      "sha256": "8ca2eb47e52ce66192499eaa7c0d8a994153d81097c2e5382fab80886ac3b963"
+    },
+    {
+      "id": "role:judge-uxui",
+      "path": "adapters/claude-code/.claude/agents/judge-uxui.md",
+      "sha256": "1f09c68975cb3c48dd4f178c89ef26dee33ca6552bd7c751815a1ed4efbe8224"
+    },
+    {
+      "id": "role:motion-director",
+      "path": "adapters/claude-code/.claude/agents/motion-director.md",
+      "sha256": "afd609473f6a0b3e909816b6b104791130eaaad1142a5e8edc65fe02dd1559ee"
+    },
+    {
+      "id": "role:orchestrator",
+      "path": "adapters/claude-code/.claude/agents/orchestrator.md",
+      "sha256": "0c5c72d4667acfb9309147267bcafe613b19307a2995c5ff137da162d842b08a"
+    },
+    {
+      "id": "role:repairer",
+      "path": "adapters/claude-code/.claude/agents/repairer.md",
+      "sha256": "2cf6c3f56214b1d9efba10dd151798c48a01ff57e3ea21709edfcdac67472ef2"
+    },
+    {
+      "id": "role:researcher",
+      "path": "adapters/claude-code/.claude/agents/researcher.md",
+      "sha256": "f615b30c9e9ef546bf837ec93c412246ac71a7e5f1de69d5f97b66d8ef3f637d"
+    },
+    {
+      "id": "role:security-reviewer",
+      "path": "adapters/claude-code/.claude/agents/security-reviewer.md",
+      "sha256": "b25b53b42777605b3b5ebac18a90e3a54226b3831b359bea8c49d25eed217b2e"
+    },
+    {
+      "id": "role:v1-release-validator",
+      "path": "adapters/claude-code/.claude/agents/v1-release-validator.md",
+      "sha256": "e9dc51557e35ff495460db56f2d91b1e863347be1e027d509df2cf5a26d81eab"
+    },
+    {
+      "id": "role:verifier",
+      "path": "adapters/claude-code/.claude/agents/verifier.md",
+      "sha256": "380fdcc8208090e483a91cee79163afaaf1acf14a054bdc38026933b6e6cd4a7"
+    },
+    {
+      "id": "role:visual-capture-runner",
+      "path": "adapters/claude-code/.claude/agents/visual-capture-runner.md",
+      "sha256": "45cd4a217d186d40e250aa6686f51ce846d4d24f818970dd958f66aa66ec2370"
+    },
+    {
+      "id": "role:visual-judge",
+      "path": "adapters/claude-code/.claude/agents/visual-judge.md",
+      "sha256": "99d0f3bc489f8f9797ffa9ddcbe9e30022dfc257084880b4ba251fb3fb310b83"
+    },
+    {
+      "id": "role:visual-regression-runner",
+      "path": "adapters/claude-code/.claude/agents/visual-regression-runner.md",
+      "sha256": "5b6850496ad1498a9999fdda1a4262c770ba290af0ac83e324193419a07d72ce"
+    },
+    {
+      "id": "role:visual-repair-controller",
+      "path": "adapters/claude-code/.claude/agents/visual-repair-controller.md",
+      "sha256": "6785b68b491ed497a6a3331dfa8eb84c556b106e5de08f24648c4c2b0f17b610"
+    },
+    {
+      "id": "role:visual-runtime-audit-runner",
+      "path": "adapters/claude-code/.claude/agents/visual-runtime-audit-runner.md",
+      "sha256": "1070f47783a4b2d5d3545305fb89890e9151a284db6876cce5187e111d9e0231"
+    },
+    {
+      "id": "skill:backend-change",
+      "path": "adapters/claude-code/.claude/skills/backend-change/SKILL.md",
+      "sha256": "b861227ef177acc1af4b9e90036c315ec874b6740558160cf6096afe813ea7a0"
+    },
+    {
+      "id": "skill:database-change",
+      "path": "adapters/claude-code/.claude/skills/database-change/SKILL.md",
+      "sha256": "432023250b7bb7a2824e288ce65390b297600378f84eb399c18ab98c8a97497c"
+    },
+    {
+      "id": "skill:diff-review",
+      "path": "adapters/claude-code/.claude/skills/diff-review/SKILL.md",
+      "sha256": "0110b1d0db466ad52be61b4d45075a5452a3576b57f946915039727fd7f463a7"
+    },
+    {
+      "id": "skill:frontend-change",
+      "path": "adapters/claude-code/.claude/skills/frontend-change/SKILL.md",
+      "sha256": "6c1b6f98bb4ebe27097a079347061958492e14c2998d203c851ac3db9d685033"
+    },
+    {
+      "id": "skill:implementation-plan",
+      "path": "adapters/claude-code/.claude/skills/implementation-plan/SKILL.md",
+      "sha256": "6e362f3df2050057144d68b25113df7767616fa7972bfe100b7c25457cfb15c7"
+    },
+    {
+      "id": "skill:regression-analysis",
+      "path": "adapters/claude-code/.claude/skills/regression-analysis/SKILL.md",
+      "sha256": "02f2da917cac3000ddc9f69c2d116332a62be3c5ea2912974b8ef553cc77a037"
+    },
+    {
+      "id": "skill:repair-loop",
+      "path": "adapters/claude-code/.claude/skills/repair-loop/SKILL.md",
+      "sha256": "dec23a3b75c04e53cbce6c940f5c1d1653305138e41ae6bb2b7ad884d95ecf35"
+    },
+    {
+      "id": "skill:repo-map",
+      "path": "adapters/claude-code/.claude/skills/repo-map/SKILL.md",
+      "sha256": "bac1e36c09b21af978e7084141679623d278f8dfd83a2604bca29d4a54a76072"
+    },
+    {
+      "id": "skill:requirements-check",
+      "path": "adapters/claude-code/.claude/skills/requirements-check/SKILL.md",
+      "sha256": "73677608e297b6fac9a85c3e56d11ac93d31552fad7bc818006e10f79ad3a46e"
+    },
+    {
+      "id": "skill:safe-edit",
+      "path": "adapters/claude-code/.claude/skills/safe-edit/SKILL.md",
+      "sha256": "e68623a012fe1fcfa49d2a57c38cbe21202404b9b7b2868a4d428a78cffb06e4"
+    },
+    {
+      "id": "skill:security-check",
+      "path": "adapters/claude-code/.claude/skills/security-check/SKILL.md",
+      "sha256": "676dc571fcfcb72aa81a953ee4ab4718ec6d866e776b5300dcf4632bf62617ed"
+    },
+    {
+      "id": "skill:task-contract",
+      "path": "adapters/claude-code/.claude/skills/task-contract/SKILL.md",
+      "sha256": "20bcb5148a81a6f5c7879ed64738c2f9544f75652758def15b4ac81f86a9dcb4"
+    },
+    {
+      "id": "skill:test-strategy",
+      "path": "adapters/claude-code/.claude/skills/test-strategy/SKILL.md",
+      "sha256": "0b501636bb852da8c2aad2ee77342cb5b7c685921f3692e559bac0b2c980e6e0"
+    }
+  ],
+  "checks": [
+    {
+      "id": "artifact.settings",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/settings.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.agents",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.skills",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/skills",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.hook",
+      "status": "PASS",
+      "detail": "adapters/claude-code/hooks/pretool-guard.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.manifest",
+      "status": "PASS",
+      "detail": "adapters/claude-code/adapter-capabilities.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.provider",
+      "status": "PASS",
+      "detail": "adapters/claude-code/visualqa/playwright-driver.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.project",
+      "status": "PASS",
+      "detail": "adapters/claude-code/project-template.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.binding",
+      "status": "PASS",
+      "detail": "skillsystem/bindings/claude-code.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.discovery",
+      "status": "PASS",
+      "detail": "skillsystem/discovery/claude-code.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.acquisition",
+      "status": "PASS",
+      "detail": "skillsystem/acquisition/claude-code.json",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.engine",
+      "status": "PASS",
+      "detail": "core/engine/aledevos.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.ctx",
+      "status": "PASS",
+      "detail": "contextos/engine/contextos.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.skillsRuntime",
+      "status": "PASS",
+      "detail": "skillsystem/engine/skillsystem.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.vqa",
+      "status": "PASS",
+      "detail": "visualqa/engine/visual-judge.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "artifact.release",
+      "status": "PASS",
+      "detail": "release/engine/v1-release.mjs",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.schema",
+      "status": "PASS",
+      "detail": "published Claude Code settings schema",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.default_dontask",
+      "status": "PASS",
+      "detail": "unapproved calls auto-deny",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.bypass_disabled",
+      "status": "PASS",
+      "detail": "bypassPermissions disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.auto_disabled",
+      "status": "PASS",
+      "detail": "auto mode disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.no_unrestricted_code_mode",
+      "status": "PASS",
+      "detail": "no bypass/auto execution mode",
+      "capability": "code_mode",
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.external_reads_blocked",
+      "status": "PASS",
+      "detail": "outside working directories blocked",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "settings.no_additional_dirs",
+      "status": "PASS",
+      "detail": "no external directory grants",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.deny.WebFetch",
+      "status": "PASS",
+      "detail": "WebFetch",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.deny.WebSearch",
+      "status": "PASS",
+      "detail": "WebSearch",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.deny.mcp__*",
+      "status": "PASS",
+      "detail": "mcp__*",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.deny.Agent(Explore)",
+      "status": "PASS",
+      "detail": "Agent(Explore)",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.deny.Agent(Plan)",
+      "status": "PASS",
+      "detail": "Agent(Plan)",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.protect.Edit(/.aledevos/**)",
+      "status": "PASS",
+      "detail": "Edit(/.aledevos/**)",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.protect.Edit(/.claude/**)",
+      "status": "PASS",
+      "detail": "Edit(/.claude/**)",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.protect.Edit(/CLAUDE.md)",
+      "status": "PASS",
+      "detail": "Edit(/CLAUDE.md)",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.protect.Edit(/CLAUDE.*)",
+      "status": "PASS",
+      "detail": "Edit(/CLAUDE.*)",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.protect.Edit(/.git/**)",
+      "status": "PASS",
+      "detail": "Edit(/.git/**)",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "permissions.agent_allowlist",
+      "status": "PASS",
+      "detail": "25 canonical agents allowed",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "sandbox.enabled",
+      "status": "PASS",
+      "detail": "sandbox defense-in-depth enabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "sandbox.no_unsandboxed_retry",
+      "status": "PASS",
+      "detail": "unsandboxed retry disabled",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "sandbox.fs_enabled",
+      "status": "PASS",
+      "detail": "filesystem isolation not disabled",
+      "capability": "external_directory",
+      "kind": "deterministic"
+    },
+    {
+      "id": "sandbox.no_excluded_commands",
+      "status": "PASS",
+      "detail": "no shell escape exclusions",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "sandbox.network_default_deny",
+      "status": "PASS",
+      "detail": "sandbox network deny-all defense",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "hooks.pretool.shell_guard",
+      "status": "PASS",
+      "detail": "deterministic shell guard configured",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "hook.default_deny",
+      "status": "PASS",
+      "detail": "guard denies non-enumerated shell",
+      "capability": "arbitrary_shell_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "hook.explicit_allow",
+      "status": "PASS",
+      "detail": "guard permits only enumerated commands",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "hook.web_agnostic",
+      "status": "PASS",
+      "detail": "guard contains no network escape",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/architect.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.name",
+      "status": "PASS",
+      "detail": "architect",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.architect.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/auditor.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.name",
+      "status": "PASS",
+      "detail": "auditor",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.auditor.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/builder.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.name",
+      "status": "PASS",
+      "detail": "builder",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.builder.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/design-system-guardian.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.name",
+      "status": "PASS",
+      "detail": "design-system-guardian",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.design-system-guardian.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/editor-backend.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.name",
+      "status": "PASS",
+      "detail": "editor-backend",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-backend.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/editor-config.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.name",
+      "status": "PASS",
+      "detail": "editor-config",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-config.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/editor-database.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.name",
+      "status": "PASS",
+      "detail": "editor-database",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-database.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/editor-frontend.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.name",
+      "status": "PASS",
+      "detail": "editor-frontend",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-frontend.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/editor-tests.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.name",
+      "status": "PASS",
+      "detail": "editor-tests",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.editor-tests.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/judge-quality.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.name",
+      "status": "PASS",
+      "detail": "judge-quality",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-quality.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/judge-regression.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.name",
+      "status": "PASS",
+      "detail": "judge-regression",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-regression.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/judge-requirements.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.name",
+      "status": "PASS",
+      "detail": "judge-requirements",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-requirements.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/judge-uxui.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.name",
+      "status": "PASS",
+      "detail": "judge-uxui",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.judge-uxui.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/motion-director.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.name",
+      "status": "PASS",
+      "detail": "motion-director",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.motion-director.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/orchestrator.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.name",
+      "status": "PASS",
+      "detail": "orchestrator",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "structured_handoff",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.orchestrator.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/repairer.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.name",
+      "status": "PASS",
+      "detail": "repairer",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.permission_mode",
+      "status": "PASS",
+      "detail": "acceptEdits",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.tool_boundary",
+      "status": "PASS",
+      "detail": "product writes without shell/subagents",
+      "capability": "product_write",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.repairer.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/researcher.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.name",
+      "status": "PASS",
+      "detail": "researcher",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.researcher.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/security-reviewer.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.name",
+      "status": "PASS",
+      "detail": "security-reviewer",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.tool_boundary",
+      "status": "PASS",
+      "detail": "read-only specialist tools",
+      "capability": "repository_read",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.security-reviewer.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/v1-release-validator.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.name",
+      "status": "PASS",
+      "detail": "v1-release-validator",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.v1-release-validator.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/verifier.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.name",
+      "status": "PASS",
+      "detail": "verifier",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.verifier.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/visual-capture-runner.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.name",
+      "status": "PASS",
+      "detail": "visual-capture-runner",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-capture-runner.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/visual-judge.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.name",
+      "status": "PASS",
+      "detail": "visual-judge",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-judge.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/visual-regression-runner.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.name",
+      "status": "PASS",
+      "detail": "visual-regression-runner",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-regression-runner.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/visual-repair-controller.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.name",
+      "status": "PASS",
+      "detail": "visual-repair-controller",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-repair-controller.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.file",
+      "status": "PASS",
+      "detail": "adapters/claude-code/.claude/agents/visual-runtime-audit-runner.md",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.name",
+      "status": "PASS",
+      "detail": "visual-runtime-audit-runner",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.permission_mode",
+      "status": "PASS",
+      "detail": "dontAsk",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.web_denied",
+      "status": "PASS",
+      "detail": "native web tools denied",
+      "capability": "network",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.tool_boundary",
+      "status": "PASS",
+      "detail": "state role shell only through global guard",
+      "capability": "canonical_gate",
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.turn_cap",
+      "status": "PASS",
+      "detail": "maxTurns=30",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "role.visual-runtime-audit-runner.instructions",
+      "status": "PASS",
+      "detail": "AleDevOS portable instructions present",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.discovery_root",
+      "status": "PASS",
+      "detail": "Claude project skill discovery",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.acquisition_root",
+      "status": "PASS",
+      "detail": "Claude safe acquisition target",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.native_count",
+      "status": "PASS",
+      "detail": "13 project skills",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.binding_paths",
+      "status": "PASS",
+      "detail": "13 Claude skill bindings",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "skills.compatibility",
+      "status": "PASS",
+      "detail": "Claude-native skill metadata",
+      "capability": "skill_registry",
+      "kind": "deterministic"
+    },
+    {
+      "id": "project.adapter",
+      "status": "PASS",
+      "detail": "project template identifies Claude Code",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "project.protected_paths",
+      "status": "PASS",
+      "detail": "Claude control plane protected",
+      "capability": "control_plane_write_deny",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.visual_provider",
+      "status": "PASS",
+      "detail": "adapter-owned Playwright provider",
+      "capability": "visual_qa_browser_capture",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.visual_judge",
+      "status": "PASS",
+      "detail": "portable Visual Judge runtime",
+      "capability": "visual_qa_judge",
+      "kind": "deterministic"
+    },
+    {
+      "id": "binding.release",
+      "status": "PASS",
+      "detail": "portable release runtime",
+      "capability": "v1_release_validation",
+      "kind": "deterministic"
+    },
+    {
+      "id": "behavior.repair_cap",
+      "status": "PASS",
+      "detail": "global repair cap=2",
+      "capability": "repair_cap",
+      "kind": "deterministic"
+    },
+    {
+      "id": "manifest.identity",
+      "status": "PASS",
+      "detail": "Claude ABI manifest implemented/installable",
+      "capability": null,
+      "kind": "deterministic"
+    },
+    {
+      "id": "capability.repository_read.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "repository_read",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.product_write.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "product_write",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.control_plane_write_deny.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "control_plane_write_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.arbitrary_shell_deny.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "arbitrary_shell_deny",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.canonical_gate.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "canonical_gate",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.repair_cap.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "repair_cap",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prewrite.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "scope_prewrite",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.scope_prepass.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "scope_prepass",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.external_directory.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "external_directory",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.network.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "network",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.code_mode.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "code_mode",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.compaction.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "compaction",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.structured_handoff.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "structured_handoff",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_budget.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "context_budget",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.checkpoint_resume.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "checkpoint_resume",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.preventive_transition.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "preventive_transition",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.diff_first.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "diff_first",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.context_dedup.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "context_dedup",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.skill_registry.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "skill_registry",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.motion_governance.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "motion_governance",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_capture_contract.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_capture_contract",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_browser_capture.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "visual_qa_browser_capture",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_regression.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_regression",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_runtime_checks.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_runtime_checks",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_judge.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "visual_qa_judge",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.visual_qa_bounded_repair.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "visual_qa_bounded_repair",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.target_runtime_preflight.proof",
+      "status": "PASS",
+      "detail": "portable frozen subsystem binding + cumulative regression",
+      "capability": "target_runtime_preflight",
+      "kind": "capability-proof"
+    },
+    {
+      "id": "capability.v1_release_validation.proof",
+      "status": "PASS",
+      "detail": "direct Claude adapter proof",
+      "capability": "v1_release_validation",
+      "kind": "capability-proof"
+    }
+  ],
+  "evidence_sha256": "b3b3c7af260782ca06517f8f4ffd8cacd9122a0920b28c28f4f358151af82fca"
+}

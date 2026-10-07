@@ -1,0 +1,77 @@
+{
+  "version": "0.2.0",
+  "checkpoint_id": "example-checkpoint",
+  "task_id": "task-example",
+  "created_at": "2026-10-05T12:00:00.000Z",
+  "reason": "PRE_COMPACTION",
+  "agent": "orchestrator",
+  "phase": "verification",
+  "task": {
+    "objective": "Example only; real checkpoints are captured by the engine.",
+    "constraints": [
+      "Do not include transcript history"
+    ]
+  },
+  "run_state": {
+    "version": 1,
+    "task_id": "task-example",
+    "approved_scope": [
+      "src/example.ts"
+    ],
+    "scope_version": 1,
+    "acceptance_criteria": [
+      {
+        "id": "AC1",
+        "status": "UNVERIFIED"
+      }
+    ],
+    "gates": {},
+    "judges": {},
+    "blockers": [],
+    "repair_count": 0,
+    "max_repairs": 2,
+    "blocked_reason": null,
+    "final_state": null,
+    "history": []
+  },
+  "working_set": {
+    "is_git_repo": true,
+    "head": "example",
+    "changed_paths": [
+      "src/example.ts"
+    ],
+    "diff_stat": "src/example.ts | 2 ++"
+  },
+  "summary": "Example state before compaction.",
+  "decisions": [
+    "Use the approved scope only"
+  ],
+  "evidence": [
+    "Verifier evidence is still pending"
+  ],
+  "relevant_tests": [
+    "canonical gate"
+  ],
+  "risks": [],
+  "open_questions": [],
+  "next": {
+    "agent": "verifier",
+    "action": "Run deterministic verification",
+    "required_reads": [
+      "git diff HEAD"
+    ],
+    "forbidden_actions": [
+      "Do not modify product code"
+    ]
+  },
+  "context_metrics": {
+    "runtime_profile": "opencode-qwen64k",
+    "used_tokens": 33000,
+    "pressure_band": "COMPACT_REQUIRED",
+    "transcript_included": false
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "payload_sha256": "84a9d01866adc8d26a42b64c506a97df19d8d2a2f3c8c3efcf615db6fb0e0ed1"
+  }
+}

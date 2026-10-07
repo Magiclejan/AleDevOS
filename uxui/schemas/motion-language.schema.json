@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AleDevOS Motion Language",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "language_version",
+    "status",
+    "durations",
+    "easings",
+    "reduced_motion",
+    "rules",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "language_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "UNSET",
+        "ACTIVE"
+      ]
+    },
+    "durations": {
+      "type": "object"
+    },
+    "easings": {
+      "type": "object"
+    },
+    "semantic_roles": {
+      "type": "object"
+    },
+    "reduced_motion": {
+      "type": "object"
+    },
+    "rules": {
+      "type": "object"
+    },
+    "integrity_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

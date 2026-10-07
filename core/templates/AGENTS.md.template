@@ -1,0 +1,64 @@
+# Project Agent Rules — AleDevOS
+
+## AleDevOS user ingress
+
+This project is managed by AleDevOS. The user talks normally through any installed AI runtime and must never need to name the Orchestrator, agents, Skills, phases, gates, models, or workflows.
+
+### Mandatory root routing boundary
+
+A request is **project-actionable** whenever fulfilling it requires any project-aware operation, including reading or searching repository files, inspecting Git state, analysing architecture/configuration/code, running commands/tests, creating artifacts, changing files, reviewing risks, or making project-specific recommendations.
+
+For every project-actionable request:
+
+1. The runtime root/entry session MUST delegate to the declared AleDevOS orchestrator **before the root performs any repository read/search/command or project analysis**.
+2. The root MUST NOT do the project work itself and MUST NOT answer project-specific findings from its own inspection.
+3. The delegated Orchestrator must initialize a real AleDevOS task contract/state before repository research begins.
+4. The root may relay the Orchestrator result only after it can read a task artifact under .aledevos/state/tasks/<task_id>/ proving that the execution started.
+5. If the runtime cannot invoke the Orchestrator, or the task artifact cannot be proven, return BLOCKED. Never silently fall back to root execution.
+
+The only requests that may be answered directly are pure conversation/meta questions that require **no project-specific read, search, command, analysis, artifact, or mutation**.
+
+- The Orchestrator owns Task Contract creation, bounded research, specialist routing, writer selection, verification, Judges, repair loops, and the final PASS / BLOCKED / FAILED state.
+- Runtime-specific configuration belongs in that runtime's adapter files; this shared file stays adapter-neutral.
+- No root session may reinterpret a read-only project analysis as "non-actionable"; repository analysis is project-actionable even when no product files will be modified.
+
+### Delegated specialist boundary
+
+The mandatory root routing boundary applies only to the runtime root/entry session. A declared AleDevOS specialist that was actually spawned by the Orchestrator MUST NOT attempt to spawn, rediscover, or re-enter another Orchestrator.
+
+A delegated specialist may begin its bounded work when all of these are true:
+
+1. The handoff contains a concrete AleDevOS `task_id`.
+2. `.aledevos/state/tasks/<task_id>/task-contract.json` exists and is readable.
+3. The requested role matches the specialist role that was spawned.
+4. The requested work is inside the Task Contract / approved scope and respects that role's read/write boundary.
+
+For a delegated specialist, the existing Task Contract + role-specific handoff are the proof of orchestration. MCP visibility, the ability to invoke another Orchestrator, or access to the root session are NOT required and MUST NOT be used as reasons to block.
+
+If the task artifact is missing, mismatched, unreadable, or outside scope, return BLOCKED to the parent Orchestrator. Otherwise perform the assigned bounded work and return a compact evidence-based handoff. Never recurse back through root ingress.
+
+## Project identity
+
+- Product: <NAME>
+- Stack: <STACK>
+
+## Architecture / domain invariants
+
+- <invariant>
+
+## Mandatory rules
+
+1. Preserve existing behavior unless explicitly changed.
+2. No placeholders or fake green paths.
+3. No test weakening for PASS.
+4. No silent scope expansion; emit SCOPE_ESCALATION.
+5. No control-plane self-modification.
+6. Final state: PASS / BLOCKED / FAILED only.
+7. Canonical verification commands live in `.aledevos/project.json` and are executed only through the protected gate runner.
+8. `.aledevos/**`, runtime adapter configuration, agent definitions, and `.git/**` are control-plane/protected paths unless an AleDevOS contract explicitly authorizes the change.
+9. Every AleDevOS task requires a Quality Engineering Plan before final PASS. Classify the work as analysis/docs/bugfix/feature/refactor/ui/config/schema/migration/test-only and verify the corresponding evidence contract.
+10. Bug fixes require regression evidence when practical: reproduce or encode the old failure, implement the fix, then prove the regression test passes. Never weaken an existing test to obtain PASS.
+11. Features require evidence for the happy path and at least one material edge/error path when tests are applicable.
+12. Before creating a reusable component, hook, service, helper, utility, schema, type, API wrapper, repository abstraction, design token, or workflow, search for an existing equivalent and record one decision: REUSE / EXTEND / GENERALIZE / CREATE_NEW / NOT_APPLICABLE. CREATE_NEW requires evidence and a reason.
+13. Material code/config/schema/UI changes require regression analysis and diff review. UI changes also require the applicable UX/UI and Visual QA contracts.
+14. Missing required QA/reuse evidence is BLOCKED, not PASS-by-confidence.

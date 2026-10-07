@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://visualqa/runtime-audit-evidence.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","phase","task_id","case_id","contract","provider","navigation","measurements","evidence_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"phase":{"const":"VISUAL_QA_P4_EVIDENCE"},"task_id":{"type":"string","minLength":1},"case_id":{"type":"string","minLength":1},
+    "contract":{"type":"object"},"provider":{"type":"object"},"navigation":{"type":"object"},"measurements":{"type":"object"},
+    "evidence_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

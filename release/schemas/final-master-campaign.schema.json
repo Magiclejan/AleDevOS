@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/final-master-campaign.schema.json",
+  "title": "AleDevOS V1 Final Master Campaign",
+  "type": "object",
+  "required": ["schema_version","phase","regression_summary","p3","p4","p5","p6","p7","p8"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "phase": {"const":"ALEDEVOS_V1_FINAL_MASTER_CAMPAIGN"},
+    "regression_summary": {"type":"string","minLength":1},
+    "p2": {"type":"object"},
+    "p3": {"type":"object","required":["profile"]},
+    "p4": {"type":"object","required":["profile"]},
+    "p5": {"type":"object","required":["profile"]},
+    "p6": {"type":"object","required":["profile"]},
+    "p7": {"type":"object","required":["task_contract","signals","benchmark_profile"]},
+    "p8": {"type":"object","required":["profile"]}
+  },
+  "additionalProperties": true
+}

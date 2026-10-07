@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "principles": [
+    "least_privilege",
+    "no_self_modification",
+    "evidence_before_pass",
+    "reuse_before_create"
+  ],
+  "default": {
+    "external_directory": "DENY",
+    "external_network": "DENY",
+    "publish": "DENY",
+    "deploy": "DENY",
+    "elevation": "DENY",
+    "global_install": "DENY",
+    "destructive_git": "DENY",
+    "control_plane_write": "DENY",
+    "secret_read": "DENY"
+  },
+  "write_agents": [
+    "builder",
+    "editor-frontend",
+    "editor-backend",
+    "editor-database",
+    "editor-tests",
+    "repairer",
+    "editor-config"
+  ],
+  "read_only_agents": [
+    "researcher",
+    "architect",
+    "auditor",
+    "verifier",
+    "judge-requirements",
+    "judge-regression",
+    "judge-quality",
+    "security-reviewer"
+  ],
+  "control_plane_patterns": [
+    ".aledevos/**",
+    ".git/**"
+  ],
+  "test_integrity": {
+    "forbid_for_green_only": [
+      "test.skip",
+      "it.skip",
+      "describe.skip",
+      "test.only",
+      "it.only",
+      "describe.only",
+      "passWithNoTests",
+      "lower_thresholds",
+      "replace_real_assertions_with_noop"
+    ]
+  },
+  "adapter_control_plane": "Resolved from the selected adapter project-template.json protected_paths; Core must not embed runtime-specific adapter paths or runtime-specific instruction filenames."
+}

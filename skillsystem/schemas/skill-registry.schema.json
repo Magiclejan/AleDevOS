@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aledevos.local/schemas/skill-registry.schema.json",
+  "title": "AleDevOS Skill Registry 1.0",
+  "type": "object",
+  "required": ["schema_version","registry_version","created_at","adapter","skills","capability_index","summary","integrity"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "registry_version": {"const":"1.0"},
+    "created_at": {"type":"string"},
+    "adapter": {"type":"string"},
+    "skills": {"type":"array"},
+    "capability_index": {"type":"object"},
+    "summary": {"type":"object"},
+    "integrity": {
+      "type":"object",
+      "required":["algorithm","payload_sha256"],
+      "properties":{"algorithm":{"const":"sha256"},"payload_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

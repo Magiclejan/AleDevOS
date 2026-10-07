@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","required":["schema_version","phase","repository_root","nodes","registry_sha256"],"properties":{"schema_version":{"const":"1.0"},"phase":{"const":"ADVANCED_EXECUTION_P5_MULTI_MACHINE"},"repository_root":{"type":"string"},"nodes":{"type":"object"},"registry_sha256":{"type":"string"}}}

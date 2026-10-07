@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "catalog_id": "aledevos-skill-acquisition-sources",
+  "resolver_order": ["catalog", "skills-sh", "manual-approved"],
+  "trusted_owners": ["anthropics", "vercel-labs", "expo"],
+  "entries": [
+    {
+      "skill_id": "frontend-design",
+      "source": "https://github.com/anthropics/skills",
+      "source_skill": "frontend-design",
+      "source_class": "official",
+      "installer_kind": "skills-cli-staged-copy",
+      "adapters": ["opencode", "codex", "claude-code", "gemini", "antigravity", "generic"]
+    },
+    {
+      "skill_id": "find-skills",
+      "source": "https://github.com/vercel-labs/skills",
+      "source_skill": "find-skills",
+      "source_class": "official",
+      "installer_kind": "skills-cli-staged-copy",
+      "adapters": ["opencode", "codex", "claude-code", "gemini", "antigravity", "generic"]
+    }
+  ]
+}

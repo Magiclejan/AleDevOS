@@ -1,0 +1,5 @@
+{
+  "priority": 5,
+  "label": "example-safe-concurrency-group",
+  "note": "Submit with dispatcher-manager.mjs queue submit --repo <repo> --plan <p3-plan.json> --priority 5"
+}

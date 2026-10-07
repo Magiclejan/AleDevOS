@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextOS Context Input v0.3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "task_id",
+    "target_agent",
+    "items"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.3.0"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "content"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "kind": {
+            "enum": [
+              "task_contract",
+              "approved_scope",
+              "diff_summary",
+              "diff_patch",
+              "verification_evidence",
+              "knowledge_summary",
+              "repo_map_ref",
+              "domain_map_ref",
+              "dependency_map_ref",
+              "symbol_map_ref",
+              "structured_handoff",
+              "decision_record",
+              "risk",
+              "targeted_excerpt",
+              "full_file",
+              "other"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "fallback_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content": {}
+        }
+      }
+    }
+  }
+}

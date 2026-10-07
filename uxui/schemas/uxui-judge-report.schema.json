@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"aledevos://uxui/uxui-judge-report.schema.json",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","task_id","score","verdict","dimensions","blockers","unverified","guardian_report_sha256","judge_sha256"],
+  "properties":{
+    "schema_version":{"const":"1.0"},
+    "task_id":{"type":"string"},
+    "score":{"type":"integer","minimum":0,"maximum":100},
+    "verdict":{"enum":["PASS","FAIL"]},
+    "dimensions":{"type":"object"},
+    "blockers":{"type":"array","items":{"type":"string"}},
+    "unverified":{"type":"array","items":{"type":"string"}},
+    "guardian_report_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "judge_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  }
+}

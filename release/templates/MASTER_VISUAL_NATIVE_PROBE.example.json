@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "phase": "MASTER_VALIDATION_P4_NATIVE_IMAGE_PROBE",
+  "id": "visual-initial",
+  "model_ref": "provider/model",
+  "model_selector": "provider/model",
+  "executable": "replace-with-real-cli",
+  "args": [
+    "--model",
+    "{model}",
+    "--image",
+    "{image}",
+    "--prompt",
+    "{prompt}"
+  ],
+  "image_path": ".aledevos/state/visualqa/phase1/artifacts/task/initial/case.png",
+  "prompt": "Inspect this exact screenshot natively and report what you observe.",
+  "timeout_ms": 180000
+}

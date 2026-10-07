@@ -1,0 +1,131 @@
+{
+  "contract_version": "2.0",
+  "adapter": "claude-code",
+  "adapter_version": "1.0",
+  "status": "implemented",
+  "runtime": {
+    "family": "claude-code",
+    "agent_mode": "subagents",
+    "reference": false,
+    "config_dialect": "claude-code-project-settings-2026",
+    "certification": "portability-p4"
+  },
+  "installation": {
+    "supported": true,
+    "notes": "Claude Code project adapter; installed by scripts/05-install-into-project.ps1."
+  },
+  "capabilities": {
+    "repository_read": {
+      "status": "enforced",
+      "implementation": "Claude Code Read/Grep/Glob tool allowlists plus blockReadsOutsideWorkingDirectories"
+    },
+    "product_write": {
+      "status": "enforced",
+      "implementation": "writer subagents use acceptEdits with Edit/Write only; protected control-plane paths denied globally"
+    },
+    "control_plane_write_deny": {
+      "status": "enforced",
+      "implementation": "project permission deny rules block edits to .aledevos/.claude/CLAUDE/.git; writers have no shell"
+    },
+    "arbitrary_shell_deny": {
+      "status": "enforced",
+      "implementation": "default dontAsk + explicit tool sets + deterministic PreToolUse guard allow only enumerated AleDevOS node runtime commands"
+    },
+    "canonical_gate": {
+      "status": "enforced",
+      "implementation": "verifier/state roles may invoke only governed AleDevOS runtime commands through PreToolUse guard"
+    },
+    "repair_cap": {
+      "status": "enforced",
+      "implementation": "portable run-state engine max_repairs=2"
+    },
+    "scope_prewrite": {
+      "status": "best_effort",
+      "implementation": "writer tool boundary protects control plane before write; task-specific product scope remains deterministic prepass"
+    },
+    "scope_prepass": {
+      "status": "enforced",
+      "implementation": "portable deterministic scope check blocks PASS and emits SCOPE_ESCALATION"
+    },
+    "external_directory": {
+      "status": "enforced",
+      "implementation": "blockReadsOutsideWorkingDirectories plus no additionalDirectories; shell is deny-by-default through PreToolUse guard"
+    },
+    "network": {
+      "status": "enforced",
+      "implementation": "WebFetch/WebSearch/MCP denied; arbitrary shell denied; Claude sandbox network default deny adds defense-in-depth where platform supports it"
+    },
+    "code_mode": {
+      "status": "enforced",
+      "implementation": "Claude Code adapter exposes no unrestricted execution mode; Bash/PowerShell require deterministic allowlisted hook"
+    },
+    "compaction": {
+      "status": "implemented",
+      "implementation": "Claude Code native compaction hooks plus portable ContextOS checkpoint/resume discipline"
+    },
+    "structured_handoff": {
+      "status": "implemented",
+      "implementation": "portable handoff contract + Claude Code custom subagents"
+    },
+    "context_budget": {
+      "status": "implemented",
+      "implementation": "portable ContextOS engine using generic runtime profile until exact target telemetry is available"
+    },
+    "checkpoint_resume": {
+      "status": "implemented",
+      "implementation": "portable ContextOS checkpoint/resume engine with sealed state under .aledevos/state"
+    },
+    "preventive_transition": {
+      "status": "implemented",
+      "implementation": "ContextOS pressure bands require verified checkpoint/resume before unsafe transitions"
+    },
+    "diff_first": {
+      "status": "implemented",
+      "implementation": "portable bounded git diff snapshot + targeted escalation"
+    },
+    "context_dedup": {
+      "status": "implemented",
+      "implementation": "portable SHA-256 context-item ledger + budgeted packet planner"
+    },
+    "skill_registry": {
+      "status": "implemented",
+      "implementation": "portable Skill System + Claude Code project skills under .claude/skills"
+    },
+    "motion_governance": {
+      "status": "implemented",
+      "implementation": "frozen UX/UI Motion governance contracts and specialist routing"
+    },
+    "visual_qa_capture_contract": {
+      "status": "implemented",
+      "implementation": "frozen Visual QA Phase 1 evidence contract"
+    },
+    "visual_qa_browser_capture": {
+      "status": "implemented",
+      "implementation": "adapter-owned Playwright provider installed for Claude Code project runtime"
+    },
+    "visual_qa_regression": {
+      "status": "implemented",
+      "implementation": "frozen Visual QA Phase 3 deterministic pixel regression"
+    },
+    "visual_qa_runtime_checks": {
+      "status": "implemented",
+      "implementation": "portable Phase 4 runtime audit over adapter-owned Playwright provider"
+    },
+    "visual_qa_judge": {
+      "status": "implemented",
+      "implementation": "Claude visual-judge subagent + portable Phase 5 semantic judge; target model must demonstrate image observation"
+    },
+    "visual_qa_bounded_repair": {
+      "status": "implemented",
+      "implementation": "frozen Phase 5 bounded repair controller integrated with global max_repairs=2"
+    },
+    "target_runtime_preflight": {
+      "status": "implemented",
+      "implementation": "Claude certifier runtime preflight distinguishes CLI/platform readiness from package certification"
+    },
+    "v1_release_validation": {
+      "status": "implemented",
+      "implementation": "portable sealed V1 release gate installed unchanged under Claude Code adapter"
+    }
+  }
+}
