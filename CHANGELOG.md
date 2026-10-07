@@ -1,4 +1,13 @@
+# v1.52.0 — Productized Macro-Skill Release
 
+- Added Auto-Telemetry V2 with real per-agent Codex token/runtime evidence.
+- Validated token-efficiency benchmarks B1-B4, including a repeated real software-engineering E2E edit benchmark with preserved quality.
+- Added `aledevos start` install-on-first-use onboarding and simplified the Windows app around one primary `INICIAR ALEDEVOS` action.
+- Added explicit support for new/empty projects, existing projects without Git and existing Git repositories without implicit `git init`.
+- Reduced the Windows product surface to one launcher: `START_ALEDEVOS.bat`.
+- Reworked README/Quickstart around installation, project support and product boundaries.
+- Removed obsolete duplicate launchers and historical hotfix onboarding artifacts.
+- Release closure requires a fresh manifest/package-tree, deterministic regression inventory, package recertification, public-release audit and Final Master Gate before tagging.
 ## v1.51 Hotfix 10 â€” OpenCode runtime discovery hardening
 - OpenCode P2 discovery now queries pnpm, Yarn, Bun and Mise for actual global executable locations.
 - Added PNPM_HOME, WinGet links, ~/.local/bin, extensionless launchers and already-running process path recovery.
