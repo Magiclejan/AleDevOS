@@ -245,3 +245,22 @@ test('B4 keeps external repository details private and can pin model plus reason
   assert.match(s,/--reasoning-effort/);
   assert.match(s,/model_reasoning_effort=/);
 });
+
+
+test('B4 supports non-Git source folders via disposable snapshots',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/EPHEMERAL_GIT_SNAPSHOT/);
+  assert.match(s,/prepareExecutionRepository/);
+  assert.match(s,/copySafeFilesToSnapshot/);
+  assert.match(s,/run\('git',\['init'\],executionRepo\)/);
+  assert.match(s,/source-snapshot/);
+});
+
+test('B4 never initializes Git in the external source folder and verifies source digest after execution',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/verifySourceUntouched/);
+  assert.match(s,/source_digest/);
+  assert.match(s,/safeDigest\(currentFiles\)/);
+  assert.doesNotMatch(s,/run\('git',\['init'\],repoProject/);
+  assert.match(s,/source_folder.*READ_ONLY|source folder.*READ_ONLY/i);
+});
