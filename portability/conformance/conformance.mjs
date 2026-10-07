@@ -22,7 +22,9 @@ const scenarios=()=>readJson(scenariosPath).scenarios||[];
 const pack=()=>readJson(packPath);
 const manifest=a=>readJson(path.join(root,'adapters',a,'adapter-capabilities.json'));
 const add=(checks,id,ok,detail={})=>checks.push({id,status:ok?'PASS':'FAIL',...detail});
-const normalizeSkill=s=>s.replace(/\r\n/g,'\n').replace(/^compatibility:.*$/gm,'compatibility: <adapter-native>').trim()+'\n';
+const normalizeLineEndings=s=>s.replace(/\r\n?/g,'\n');
+const canonicalTextSha=p=>shaBuf(Buffer.from(normalizeLineEndings(fs.readFileSync(p,'utf8'))));
+const normalizeSkill=s=>normalizeLineEndings(s).replace(/^compatibility:.*$/gm,'compatibility: <adapter-native>').trim()+'\n';
 const skillSemanticSha=p=>shaBuf(Buffer.from(normalizeSkill(fs.readFileSync(p,'utf8'))));
 const runNode=(script,args=[])=>spawnSync(process.execPath,[script,...args],{cwd:root,encoding:'utf8'});
 const parseStd=r=>{try{return JSON.parse(r.stdout)}catch{return null}};
@@ -68,7 +70,7 @@ function skillsVerify(){
      add(checks,`adapter.${a}.${s.id}.exists`,fs.existsSync(sp));
      if(fs.existsSync(sp)){
        add(checks,`adapter.${a}.${s.id}.semantic`,skillSemanticSha(sp)===s.semantic_sha256);
-       add(checks,`adapter.${a}.${s.id}.binding_sha`,!!b&&b.expected_sha256===shaFile(sp));
+       add(checks,`adapter.${a}.${s.id}.binding_sha`,!!b&&b.expected_sha256===canonicalTextSha(sp));
        const expectedSuffix=(p.projections[a]?.skill_root||'')+'/'+s.id+'/SKILL.md';
        add(checks,`adapter.${a}.${s.id}.binding_path`,!!b&&b.path.replaceAll('\\','/')===expectedSuffix);
      }
@@ -148,7 +150,7 @@ function evidenceSha(inputs){return shaBuf(Buffer.from(JSON.stringify(inputs)))}
 function certificateRun(){
  const matrix=matrixRun(),skill=skillsVerify(),proj=projectionVerify(),inputs=evidenceInputs();
  const good=matrix.status==='CROSS_ADAPTER_CONFORMANCE_PASS'&&skill.status==='PORTABLE_SKILL_PACK_PASS'&&proj.status==='CROSS_ADAPTER_PROJECTION_PASS';
- const cert={schema_version:'1.0',certification_phase:'portability-p6',status:good?'CROSS_ADAPTER_CONFORMANCE_CERTIFIED':'CROSS_ADAPTER_CONFORMANCE_FAILED',normalized_state:good?'PASS':'FAILED',canonical_adapters:policy().canonical_adapters,aliases:policy().aliases,package_only:true,target_runtime_validation:'DEFERRED',matrix_summary:matrix.summary,skill_pack_summary:skill.summary,projection_summary:proj.summary,inputs,evidence_sha256:evidenceSha(inputs)};
+ const cert={schema_version:'1.0',certification_phase:'portability-p6',status:good?'CROSS_ADAPTER_CONFORMANCE_CERTIFIED':'CROSS_ADAPTER_CONFORMANCE_FAILED',normalized_state:good?'PASS':'FAILED',canonical_adapters:policy().canonical_adapters,aliases:policy().aliases,package_only:true,target_runtime_validation:'DEFERRED',matrix_summary:matrix.summary,skill_pack_summary:skill.summary,projection_summary:proj.summary,diagnostics:{matrix_failed_checks:matrix.checks.filter(x=>x.status==='FAIL').map(x=>x.id),skill_pack_failed_checks:skill.checks.filter(x=>x.status==='FAIL').map(x=>x.id),projection_failed_checks:proj.checks.filter(x=>x.status==='FAIL').map(x=>x.id)},inputs,evidence_sha256:evidenceSha(inputs)};
  if(outPath){fs.mkdirSync(path.dirname(path.resolve(outPath)),{recursive:true});fs.writeFileSync(path.resolve(outPath),JSON.stringify(cert,null,2)+'\n')}
  return cert;
 }
