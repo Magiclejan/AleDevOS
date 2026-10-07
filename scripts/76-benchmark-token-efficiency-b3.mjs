@@ -16,6 +16,9 @@ const timeoutMs=Math.max(10000,Number(take('--timeout-ms','180000'))||180000);
 const runs=Math.max(1,Math.min(5,Number(take('--runs','1'))||1));
 const priorReceiptArg=take('--prior-receipt',null);
 const model=take('--model',null);
+const reasoningEffort=take('--reasoning-effort',null);
+const allowedReasoning=new Set(['none','minimal','low','medium','high','xhigh','max']);
+if(reasoningEffort&&!allowedReasoning.has(reasoningEffort))throw new Error('B3_REASONING_EFFORT_INVALID:'+reasoningEffort);
 if(!project||!fs.existsSync(path.join(project,'.aledevos','project.json')))throw new Error('B3_ALEDEVOS_PROJECT_REQUIRED');
 if(!fs.existsSync(path.join(project,'.codex','config.toml')))throw new Error('B3_CODEX_ADAPTER_NOT_INSTALLED');
 if(!fs.existsSync(corpusProject)||!fs.statSync(corpusProject).isDirectory())throw new Error('B3_CORPUS_PROJECT_NOT_FOUND:'+corpusProject);
@@ -91,7 +94,7 @@ function priorPairs(c,targetHash){
   return xs.map((x,i)=>({...x,run:x.run??(i+1),reused:true}));
 }
 function launch(prompt){
-  const args=['exec','--json','--skip-git-repo-check'];if(model)args.push('--model',model);args.push('-');
+  const args=['exec','--json','--skip-git-repo-check'];if(model)args.push('--model',model);if(reasoningEffort)args.push('--config','model_reasoning_effort='+reasoningEffort);args.push('-');
   let exe='codex',final=args;
   if(process.platform==='win32'){
     const launcher=path.join(root,'core','agent-runtime','windows-cli-launcher.ps1');
@@ -205,7 +208,7 @@ const validationLevel=pairs.length>=3&&status==='B3_PASS'?'VALIDATED':'PRELIMINA
 
 const receipt={schema_version:'1.0',benchmark:'B3_REAL_PROJECT_RETRIEVAL',benchmark_key:KEY,status,validation_level:validationLevel,scope:'REAL_PROJECT_READ_ONLY_RETRIEVAL',
   claim_boundary:'Measures broad real-project context versus deterministic targeted retrieval on one frozen safe corpus. Setup scanning is excluded from agent file-read metrics. Does not measure code-edit quality or establish a universal savings percentage.',
-  runtime:'codex',model:model||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED',
+  runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_EFFORT_UNREPORTED',
   project:{runtime_path_stored:false,corpus_path_stored:false,runtime_equals_corpus:path.resolve(project)===path.resolve(corpusProject),eligible_safe_files:c.eligible.length,baseline_files:c.files.length,corpus_digest:c.digest,baseline_context_bytes:bbytes,candidate_context_bytes:cbytes},
   target:{file:c.pick.f.rel,line_number:c.pick.n,line_sha256:targetHash,line_content_stored:false},
   runs:pairs.length,reused_prior_pairs:reused.length,newly_executed_pairs:runs,
@@ -232,7 +235,10 @@ console.log('File-context reduction    : '+pct(rf));
 console.log('Context-byte reduction    : '+pct(rb));
 console.log('Quality preserved         : '+quality);
 console.log('Telemetry verified        : '+telemetry);
+console.log('Model                     : '+(model||'DEFAULT_UNREPORTED'));
+console.log('Reasoning effort          : '+(reasoningEffort||'DEFAULT_UNREPORTED'));
 console.log('Model comparability       : '+receipt.model_comparability);
+console.log('Reasoning comparability   : '+receipt.reasoning_comparability);
 console.log('Receipt                   : '+norm(path.relative(project,out)));
 if(reasons.length)console.log('Reasons                   : '+reasons.join(', '));
 console.log('\n'+status);
