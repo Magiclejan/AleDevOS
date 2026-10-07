@@ -53,4 +53,4 @@ Write-Host "Canonical source: $RepoRoot"
 Write-Host ""
 Write-Host "Open a NEW terminal and, inside any project folder, run:"
 Write-Host ""
-Write-Host "  aledevos init" -ForegroundColor Cyan
+Write-Host "  aledevos start -Adapter codex" -ForegroundColor Cyan
