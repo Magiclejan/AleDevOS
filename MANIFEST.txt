@@ -731,6 +731,7 @@ tests/portability-phase5.test.mjs
 tests/portability-phase6.test.mjs
 tests/product-onboarding.test.mjs
 tests/quality-engineering.test.mjs
+tests/release-closure.test.mjs
 tests/security-reliability-phase8.test.mjs
 tests/skill-system-phase1.test.mjs
 tests/skill-system-phase2.test.mjs
