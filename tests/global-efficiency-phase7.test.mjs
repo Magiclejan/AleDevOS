@@ -155,3 +155,34 @@ test('B2 can reuse a verified prior receipt instead of wasting a valid pair',()=
   assert.match(s,/newly_executed_pairs/);
   assert.match(s,/pairResults=\[\.\.\.reusedPairs\]/);
 });
+
+
+test('B3 real-project benchmark uses actual repository corpus and no synthetic fixture',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  assert.match(s,/B3_REAL_PROJECT_RETRIEVAL/);
+  assert.match(s,/walk\(project\)/);
+  assert.match(s,/B3_INSUFFICIENT_REAL_PROJECT_CORPUS/);
+  assert.doesNotMatch(s,/fixtureContext/);
+  assert.match(s,/corpus_digest/);
+});
+
+test('B3 excludes control-plane dependency build and credential surfaces',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  for(const x of ["'.git'","'.aledevos'","'.codex'","'node_modules'","'dist'","'build'"])assert.ok(s.includes(x),x);
+  assert.match(s,/SECRET=/);
+  assert.match(s,/credentials?/);
+  assert.match(s,/PRIVATE KEY/);
+  assert.match(s,/line_content_stored:false/);
+});
+
+test('B3 uses stdin and measures real context file and byte reduction without raw prompt storage',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  assert.match(s,/args\.push\('-'\)/);
+  assert.match(s,/input:prompt/);
+  assert.match(s,/files_read:filesRead/);
+  assert.match(s,/bytes_read:bytesRead/);
+  assert.match(s,/raw_prompt_stored:false/);
+  assert.match(s,/raw_completion_stored:false/);
+  assert.match(s,/REAL_PROJECT_BROAD_CONTEXT/);
+  assert.match(s,/ALEDEVOS_TARGETED_RETRIEVAL/);
+});
