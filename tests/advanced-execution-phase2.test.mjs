@@ -36,6 +36,15 @@ function startSetup(opts={}){const z=setup(opts),s=start(z.x,z.p);assert.equal(s
 function commit(wt,rel,content='changed\n'){const f=path.join(wt,...rel.split('/'));fs.mkdirSync(path.dirname(f),{recursive:true});fs.writeFileSync(f,content);g(wt,['add','-A']);assert.equal(g(wt,['commit','-qm',`change ${rel}`]).status,0)}
 function handoffInput(x,name,{outcome='READY_FOR_VERIFICATION',summary='done',evidence=['src/app.txt']}={}){const f=path.join(x.d,`${name}-handoff-input.json`);write(f,{outcome,summary,evidence_refs:evidence});return f}
 function sealHandoff(z,input){const r=run(mgr,['handoff','seal','--repo',z.x.r,'--session',z.p.session,'--input',input]);return{r,data:j(r),path:j(r).handoff_path}}
+function directoryRedirect(target,link,{broken=false}={}){
+  if(process.platform==='win32'){
+    fs.mkdirSync(target,{recursive:true});
+    fs.symlinkSync(target,link,'junction');
+    if(broken)fs.rmSync(target,{recursive:true,force:true});
+  }else{
+    fs.symlinkSync(target,link,'dir');
+  }
+}
 
 // Policy / boundaries.
 test('P2 policy verifies',()=>assert.equal(run(mgr,['policy','verify']).status,0));
@@ -104,8 +113,8 @@ test('absolute external path is blocked',()=>{const z=startSetup(),outside=path.
 test('worker A cannot access worker B worktree',()=>{const x=repo(),w1=worktree(x,'one'),t1=taskContract(x,'one'),a1=assignment(x,w1,{taskFile:t1}),p1x=provision(x,a1),s1=start(x,p1x);assert.equal(s1.r.status,0);p1x.pid=s1.pid;const w2=worktree(x,'two'),r=run(mgr,['scope','check','--repo',x.r,'--session',p1x.session,'--operation','read','--path',path.join(w2.wt,'src','app.txt')]);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('PATH_OUTSIDE_ASSIGNED_WORKTREE'))});
 test('.git is protected even though read scope defaults to all',()=>{const z=startSetup(),r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','read','--path','.git']);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('PROTECTED_PATH'))});
 test('.aledevos is protected even if created inside worktree',()=>{const z=startSetup();fs.mkdirSync(path.join(z.w.wt,'.aledevos'),{recursive:true});const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','read','--path','.aledevos']);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('PROTECTED_PATH'))});
-test('symlink escape outside worktree is blocked',()=>{const z=startSetup(),outside=path.join(z.x.d,'outside.txt');fs.writeFileSync(outside,'secret');fs.symlinkSync(outside,path.join(z.w.wt,'src','escape-link'));const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','read','--path','src/escape-link']);assert.notEqual(r.status,0);assert.ok(j(r).errors.some(e=>e.includes('SYMLINK')||e.includes('REALPATH')))});
-test('broken symlink path is blocked fail-closed',()=>{const z=startSetup();fs.symlinkSync(path.join(z.x.d,'missing-target'),path.join(z.w.wt,'src','broken'));const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','write','--path','src/broken/new.txt']);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('PATH_SYMLINK_UNRESOLVABLE'))});
+test('symlink escape outside worktree is blocked',()=>{const z=startSetup(),outside=path.join(z.x.d,'outside-dir'),link=path.join(z.w.wt,'src','escape-link');fs.mkdirSync(outside,{recursive:true});fs.writeFileSync(path.join(outside,'secret.txt'),'secret');directoryRedirect(outside,link);const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','read','--path','src/escape-link/secret.txt']);assert.notEqual(r.status,0);assert.ok(j(r).errors.some(e=>e.includes('SYMLINK')||e.includes('REALPATH')))});
+test('broken symlink path is blocked fail-closed',()=>{const z=startSetup(),missing=path.join(z.x.d,'missing-target'),link=path.join(z.w.wt,'src','broken');directoryRedirect(missing,link,{broken:true});const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','write','--path','src/broken/new.txt']);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('PATH_SYMLINK_UNRESOLVABLE')||j(r).errors.includes('PATH_UNRESOLVABLE'))});
 test('worker stop is cooperative and transitions to STOPPED',()=>{const z=startSetup(),r=stop(z.x,z.p);assert.equal(r.r.status,0,r.r.stdout);assert.equal(r.data.session.state,'STOPPED')});
 test('stopped worker no longer authorizes path operations',()=>{const z=startSetup();stop(z.x,z.p);const r=run(mgr,['scope','check','--repo',z.x.r,'--session',z.p.session,'--operation','read','--path','src/app.txt']);assert.notEqual(r.status,0);assert.ok(j(r).errors.includes('WORKER_NOT_RUNNING'))});
 test('primary checkout remains clean while worker supervisor runs',()=>{const z=startSetup();assert.equal(g(z.x.r,['status','--porcelain']).stdout.trim(),'')});
