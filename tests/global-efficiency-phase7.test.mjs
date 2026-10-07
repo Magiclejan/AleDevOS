@@ -216,3 +216,32 @@ test('B3 prior evidence is bound to model and reasoning effort',()=>{
   assert.match(s,/q\?\.model/);
   assert.match(s,/q\?\.reasoning_effort/);
 });
+
+
+test('B4 real software-engineering benchmark isolates edits in disposable worktrees',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/worktree','add','--detach'/);
+  assert.match(s,/reset','--hard','HEAD'/);
+  assert.match(s,/worktree','remove'/);
+  assert.match(s,/worktree','prune'/);
+  assert.match(s,/source_untouched/);
+});
+
+test('B4 requires an exact identical one-line edit and preserves the source repository',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/added===1&&deleted===0/);
+  assert.match(s,/sameDiff=bv\.diff_sha256===cv\.diff_sha256/);
+  assert.match(s,/sourceUntouched/);
+  assert.match(s,/git\(\['diff','--check'\]/);
+  assert.match(s,/B4_EDIT_DONE/);
+});
+
+test('B4 keeps external repository details private and can pin model plus reasoning',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/absolute_path_stored:false/);
+  assert.match(s,/target_path_stored:false/);
+  assert.match(s,/anchor_content_stored:false/);
+  assert.match(s,/--model/);
+  assert.match(s,/--reasoning-effort/);
+  assert.match(s,/model_reasoning_effort=/);
+});
