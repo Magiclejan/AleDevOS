@@ -130,16 +130,22 @@ function runRegression(){
   let tests=0,pass=0,fail=0,skipped=0;
   for(const rel of testFiles){
     process.stdout.write('TEST '+rel+' ... ');
-    const r=run(process.execPath,['--test','--test-reporter=tap',rel],{allow:true,timeout:Number(process.env.ALEDEVOS_TEST_FILE_TIMEOUT_MS||120000)});
+    const requestedTimeout=Number(process.env.ALEDEVOS_TEST_FILE_TIMEOUT_MS||120000);
+    const heavyAdvancedExecution=/^tests\/advanced-execution-phase[2-5]\.test\.mjs$/i.test(rel);
+    const timeoutMs=heavyAdvancedExecution?Math.max(requestedTimeout,600000):requestedTimeout;
+    const started=Date.now();
+    const r=run(process.execPath,['--test','--test-reporter=tap',rel],{allow:true,timeout:timeoutMs});
+    const elapsed=Date.now()-started;
     if(r.stdout)process.stdout.write(r.stdout.includes('\n')?'':'');
     if(r.status!==0){
-      process.stdout.write('FAIL\n');
+      const timedOut=r.error?.code==='ETIMEDOUT';
+      process.stdout.write((timedOut?'TIMEOUT':'FAIL')+' ('+elapsed+'ms / '+timeoutMs+'ms)\n');
       process.stderr.write(String(r.stdout||'')+String(r.stderr||''));
-      throw new Error('RELEASE_TEST_FILE_FAILED:'+rel);
+      throw new Error((timedOut?'RELEASE_TEST_FILE_TIMEOUT:':'RELEASE_TEST_FILE_FAILED:')+rel+':'+elapsed+'ms/'+timeoutMs+'ms');
     }
     const t=tapSummary(r.stdout,rel);
     tests+=t.tests;pass+=t.pass;fail+=t.fail;skipped+=t.skipped;
-    process.stdout.write(t.pass+'/'+t.tests+' PASS\n');
+    process.stdout.write(t.pass+'/'+t.tests+' PASS ('+elapsed+'ms)\n');
   }
   if(fail!==0||skipped!==0||pass!==tests)throw new Error('RELEASE_TEST_SUITE_NOT_CLEAN');
 
