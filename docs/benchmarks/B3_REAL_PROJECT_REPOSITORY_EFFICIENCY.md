@@ -1,73 +1,82 @@
 # B3 — Real Project Repository Efficiency
 
-Status: **PRELIMINARY PASS / n=1**
+Status: **VALIDATED / PASS / n=3**
 
 Date: 2026-10-07
 
 ## Scope
 
-B3 moves beyond synthetic fixtures and measures context efficiency against a real repository corpus.
+B3 measures context efficiency against a real external software repository corpus rather than a synthetic fixture.
 
-Runtime / telemetry project:
-- AleDevOS consumer project with the Codex adapter installed.
+The runtime/telemetry project remains an AleDevOS consumer environment with the Codex adapter installed. The repository corpus is used read-only.
 
-Corpus:
-- the canonical AleDevOS repository, used read-only;
+Safety boundaries:
 - control-plane, dependency/build directories and credential-like surfaces are excluded;
 - secret-like content is excluded before corpus construction;
-- raw prompts, completions and the target source line are not persisted.
+- raw prompts, raw completions and the target source line are not persisted;
+- absolute runtime/corpus paths are not stored in the receipt;
+- the corpus is frozen by SHA-256 digest for evidence reuse.
 
 The benchmark compares:
-- baseline: broad real-project context from up to 20 safe repository files;
-- candidate: one deterministic targeted retrieval result with the relevant file excerpt.
+- baseline: broad real-project context;
+- candidate: deterministic targeted retrieval of the relevant file/excerpt.
 
-## First real pair
+## Validated real result
 
-| Metric | Result |
+Three full baseline/candidate pairs completed successfully on the same frozen corpus digest and target identity.
+
+| Metric | Validated result |
 | --- | ---: |
-| Eligible safe files | 637 |
-| Baseline files supplied | 20 |
+| Eligible safe files in corpus | 1,061 |
+| Baseline files supplied | 15 |
 | Candidate files supplied | 1 |
-| Baseline context bytes | 112,814 |
-| Candidate context bytes | 899 |
-| Input-token reduction | **69.86%** |
-| Total-token reduction | **69.78%** |
-| File-context reduction | **95.00%** |
-| Context-byte reduction | **99.20%** |
+| Baseline context bytes | 164,606 |
+| Candidate context bytes | 665 |
+| Median input-token reduction | **74.58%** |
+| Median total-token reduction | **74.49%** |
+| File-context reduction | **93.33%** |
+| Context-byte reduction | **99.60%** |
 | Quality preserved | **YES** |
 | Telemetry integrity | **VERIFIED** |
-| Repetitions | **n=1 pair** |
+| Repetitions | **n=3 pairs** |
+| Model | **gpt-5.6-luna** |
+| Reasoning effort | **low** |
+| Model comparability | **EXPLICIT_SAME_MODEL** |
+| Reasoning comparability | **EXPLICIT_SAME_REASONING_EFFORT** |
 
-The selected target was a real repository file:
+Observed total-token reductions across the three pairs were approximately:
 
-`adapters/antigravity/visualqa/playwright-driver.mjs`
+- 74.49%
+- 74.52%
+- 74.28%
 
-The target source line itself was not stored in benchmark evidence.
+The second executed pair intentionally ran the candidate before the baseline to reduce simple order bias. The result remained effectively unchanged.
 
 ## Interpretation
 
-This first pair supports the narrow claim:
+B3 supports the narrow claim:
 
-> On the frozen real-project B3 corpus, deterministic targeted retrieval reduced total token use by 69.78% versus broad repository context while preserving the exact required result.
+> On the frozen real-project B3 corpus, deterministic targeted retrieval reduced median total token use by 74.49% versus broad repository context while preserving the exact required result across three repeated pairs.
 
-B3 does not yet measure code-edit quality or a complete software-engineering workflow. It measures real-repository retrieval/context efficiency.
+This extends B1's controlled context-pruning result to a real repository corpus.
 
 ## Claim boundary
 
-This result is preliminary until at least three full baseline/candidate pairs complete on the same corpus digest and target identity with quality preserved and telemetry verified.
+B3 is validated for real-project retrieval/context efficiency, but it does **not** measure complete code-editing quality or establish that every AleDevOS task saves 74.49%.
 
-The current runtime uses the same Codex default runtime path but does not expose model identity in telemetry, so evidence remains:
+Broader system-level claims require end-to-end software-engineering tasks where the model reads, reasons, edits and verifies real code.
 
-`SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED`.
+No external project name or absolute path is stored in the canonical public evidence.
 
-## Validation gate
+## Validation gate result
 
-B3 becomes VALIDATED when:
+1. >=3 full baseline/candidate pairs — **PASS**
+2. Same corpus digest and target identity — **PASS**
+3. Explicit same model — **PASS**
+4. Explicit same reasoning effort — **PASS**
+5. Exact quality preserved — **PASS**
+6. Telemetry summaries verified — **PASS**
+7. Median input-token reduction >=35% — **PASS (74.58%)**
+8. Median total-token reduction >=30% — **PASS (74.49%)**
 
-1. >=3 full baseline/candidate pairs complete;
-2. the corpus digest and target identity remain unchanged across reused evidence;
-3. exact quality is preserved;
-4. telemetry summaries verify;
-5. median input-token reduction meets the P7 MICRO target (>=35%);
-6. median total-token reduction meets the P7 MICRO target (>=30%);
-7. no observed model-identity mismatch occurs.
+**B3_REAL_PROJECT_REPOSITORY_EFFICIENCY_VALIDATED**
