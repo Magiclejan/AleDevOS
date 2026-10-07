@@ -543,3 +543,27 @@ jobs:
           if(q.summary.agents_inventoried<40) process.exit(2);
           console.log('P36 inventory truthful baseline PASS');
           NODE
+
+
+  p36-pro-agent-roles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate agent role contracts and fail-closed handoff matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/pro-quality-phase36-2.test.mjs
+          node certification/pro/engine/pro-agent-audit.mjs inventory --root . > /tmp/p36-agents.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const d=JSON.parse(fs.readFileSync('/tmp/p36-agents.json','utf8'));
+          if(d.summary.expected_roles!==25 || d.summary.core_roles!==22 ||
+             d.summary.projected_role_files!==122 || d.summary.invalid_contracts!==0 ||
+             d.summary.pro_certified!==0) process.exit(1);
+          console.log('P36.2 25 roles, 122 projections: source inventory PASS; PRO_CERTIFIED=0');
+          console.log('Role files needing remediation: '+d.summary.role_files_blocked);
+          NODE
