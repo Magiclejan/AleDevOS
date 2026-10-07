@@ -43,19 +43,19 @@ function run(exe,args,cwd,{input=null,timeout=timeoutMs,allow=false}={}){
   if(!allow&&r.status!==0)throw new Error('B4_COMMAND_FAILED:'+exe+' '+args.join(' ')+' :: '+String(r.stderr||r.stdout||r.error||'').slice(0,500));
   return r;
 }
-function git(args,cwd=repoProject,opts={}){return run('git',args,cwd,opts)}
-function gitText(args,cwd=repoProject){return String(git(args,cwd).stdout||'').trim()}
-function assertRepo(){
-  const top=path.resolve(gitText(['rev-parse','--show-toplevel']));
-  if(process.platform==='win32'?top.toLowerCase()!==repoProject.toLowerCase():top!==repoProject)throw new Error('B4_REPOSITORY_ROOT_REQUIRED');
-  const head=gitText(['rev-parse','HEAD']);
-  const target=path.join(repoProject,targetRel);
-  if(!fs.existsSync(target)||!fs.statSync(target).isFile())throw new Error('B4_TARGET_FILE_MISSING:'+targetRel);
-  if(!EXT.has(path.extname(target).toLowerCase()))throw new Error('B4_TARGET_EXTENSION_UNSUPPORTED');
-  const dirtyTarget=String(git(['status','--porcelain=v1','--',targetRel],repoProject,{allow:true}).stdout||'').trim();
-  if(dirtyTarget)throw new Error('B4_TARGET_FILE_DIRTY');
-  const statusBefore=String(git(['status','--porcelain=v1','--untracked-files=all'],repoProject,{allow:true}).stdout||'');
-  return {head,statusBefore,statusHash:sha(Buffer.from(statusBefore,'utf8'))};
+let executionRepo=repoProject;
+function git(args,cwd=executionRepo,opts={}){return run('git',args,cwd,opts)}
+function gitText(args,cwd=executionRepo){return String(git(args,cwd).stdout||'').trim()}
+function pathEq(a,b){
+  const A=path.resolve(a),B=path.resolve(b);
+  return process.platform==='win32'?A.toLowerCase()===B.toLowerCase():A===B;
+}
+function safeDigest(files){return sha(Buffer.from(files.map(x=>x.rel+'\0'+x.hash).join('\n'),'utf8'))}
+function detectNativeGitRoot(){
+  const r=run('git',['rev-parse','--show-toplevel'],repoProject,{allow:true});
+  if(r.status!==0)return null;
+  const top=String(r.stdout||'').trim();
+  return top&&pathEq(top,repoProject)?path.resolve(top):null;
 }
 function safeFiles(){
   const out=[];
@@ -79,7 +79,7 @@ function selectCorpus(targetFile){
   const files=[target];let bytes=target.bytes;
   for(const f of all){if(f.rel===targetRel||files.length>=MAXFILES)continue;if(bytes+f.bytes>MAXBYTES)continue;files.push(f);bytes+=f.bytes}
   if(files.length<5)throw new Error('B4_INSUFFICIENT_REAL_PROJECT_CORPUS');
-  return {all,files,target,digest:sha(Buffer.from(files.map(x=>x.rel+'\0'+x.hash).join('\n'),'utf8'))};
+  return {all,files,target,digest:safeDigest(files),source_digest:safeDigest(all)};
 }
 function anchorFor(text){
   const lines=text.split(/\r?\n/);
@@ -151,15 +151,55 @@ function verifyEdit(worktree,anchor){
 }
 function addWorktree(base,tag,head){
   const wt=path.join(base,tag);
-  git(['worktree','add','--detach',wt,head],repoProject);
+  git(['worktree','add','--detach',wt,head],executionRepo);
   return wt;
 }
 function cleanupWorktree(wt){
   if(!wt||!fs.existsSync(wt))return;
   git(['reset','--hard','HEAD'],wt,{allow:true});
   git(['clean','-fd'],wt,{allow:true});
-  git(['worktree','remove',wt],repoProject,{allow:true});
+  git(['worktree','remove',wt],executionRepo,{allow:true});
 }
+
+function copySafeFilesToSnapshot(files,dest){
+  for(const f of files){
+    const out=path.join(dest,...f.rel.split('/'));
+    fs.mkdirSync(path.dirname(out),{recursive:true});
+    fs.copyFileSync(path.join(repoProject,...f.rel.split('/')),out);
+  }
+}
+function prepareExecutionRepository(temp,corpus){
+  const nativeRoot=detectNativeGitRoot();
+  if(nativeRoot){
+    executionRepo=nativeRoot;
+    const dirtyTarget=String(run('git',['status','--porcelain=v1','--',targetRel],executionRepo,{allow:true}).stdout||'').trim();
+    if(dirtyTarget)throw new Error('B4_TARGET_FILE_DIRTY');
+    const statusBefore=String(run('git',['status','--porcelain=v1','--untracked-files=all'],executionRepo,{allow:true}).stdout||'');
+    return {mode:'NATIVE_GIT',head:gitText(['rev-parse','HEAD'],executionRepo),status_hash:sha(Buffer.from(statusBefore,'utf8')),source_digest:corpus.source_digest};
+  }
+  const snap=path.join(temp,'source-snapshot');
+  fs.mkdirSync(snap,{recursive:true});
+  copySafeFilesToSnapshot(corpus.all,snap);
+  executionRepo=snap;
+  run('git',['init'],executionRepo);
+  run('git',['config','user.name','AleDevOS B4 Benchmark'],executionRepo);
+  run('git',['config','user.email','benchmark@localhost'],executionRepo);
+  run('git',['add','--','.'],executionRepo);
+  run('git',['commit','-m','B4 ephemeral source snapshot'],executionRepo);
+  return {mode:'EPHEMERAL_GIT_SNAPSHOT',head:gitText(['rev-parse','HEAD'],executionRepo),status_hash:null,source_digest:corpus.source_digest};
+}
+function verifySourceUntouched(source){
+  const currentFiles=safeFiles();
+  const digest=safeDigest(currentFiles);
+  if(digest!==source.source_digest)return false;
+  if(source.mode==='NATIVE_GIT'){
+    const head=String(run('git',['rev-parse','HEAD'],repoProject,{allow:true}).stdout||'').trim();
+    const status=String(run('git',['status','--porcelain=v1','--untracked-files=all'],repoProject,{allow:true}).stdout||'');
+    return head===source.head&&sha(Buffer.from(status,'utf8'))===source.status_hash;
+  }
+  return true;
+}
+
 function telemetry(label,raw,verification,prompt){
   const parsed=parseCodexJsonl(raw.stdout||'');
   const exit=Number.isInteger(raw.status)?raw.status:(raw.error?.code==='ETIMEDOUT'?124:127);
@@ -176,25 +216,26 @@ function telemetry(label,raw,verification,prompt){
   return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id};
 }
 
-const source=assertRepo();
 const corpus=selectCorpus();
 const anchor=anchorFor(corpus.target.text);
 const broad=corpus.files.map(f=>'FILE: '+f.rel+'\n'+f.text).join('\n\n---\n\n');
 const targeted=['TARGET FILE: '+targetRel,'TARGET SHA256: '+corpus.target.hash,'FILE CONTENT:',corpus.target.text].join('\n');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-b4-e2e-'));
-let baselineWt=null,candidateWt=null;
+let baselineWt=null,candidateWt=null,source=null;
 try{
+  source=prepareExecutionRepository(temp,corpus);
   baselineWt=addWorktree(temp,'baseline',source.head);
   candidateWt=addWorktree(temp,'candidate',source.head);
 
   console.log('\nB4 real software-engineering task');
-  console.log('  repo HEAD            : '+source.head);
+  console.log('  source mode          : '+source.mode);
+  console.log('  execution HEAD       : '+source.head);
   console.log('  safe eligible files : '+corpus.all.length);
   console.log('  baseline files      : '+corpus.files.length);
   console.log('  candidate files     : 1');
   console.log('  target file         : '+targetRel);
   console.log('  anchor content      : NOT STORED');
-  console.log('  source repo dirty   : '+(source.statusBefore.trim()?true:false));
+  console.log('  source folder       : READ_ONLY');
   console.log('  model               : '+(model||'DEFAULT_UNREPORTED'));
   console.log('  reasoning effort    : '+(reasoningEffort||'DEFAULT_UNREPORTED'));
 
@@ -216,19 +257,17 @@ try{
   const quality=bt.quality&&ct.quality;
   const telem=bt.verified&&ct.verified;
   const sameDiff=bv.diff_sha256===cv.diff_sha256;
-  const headAfter=gitText(['rev-parse','HEAD']);
-  const statusAfter=String(git(['status','--porcelain=v1','--untracked-files=all'],repoProject,{allow:true}).stdout||'');
-  const sourceUntouched=headAfter===source.head&&sha(Buffer.from(statusAfter,'utf8'))===source.statusHash;
+  const sourceUntouched=verifySourceUntouched(source);
   let status='B4_PASS',reasons=[];
   if(!telem||rin===null||rt===null){status='B4_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
   else if(!quality||!sameDiff){status='B4_FAIL';reasons.push('QUALITY_OR_DIFF_NOT_PRESERVED')}
   else if(!sourceUntouched){status='B4_FAIL';reasons.push('SOURCE_REPOSITORY_MUTATED')}
 
   const receipt={schema_version:'1.0',benchmark:'B4_REAL_SOFTWARE_ENGINEERING_E2E',benchmark_key:KEY,status,validation_level:'PRELIMINARY',
-    scope:'REAL_REPOSITORY_ISOLATED_EDIT_E2E',
-    claim_boundary:'Measures one deterministic non-functional real-code edit in isolated worktrees. It validates locate/edit/diff verification efficiency, not arbitrary feature-development quality or a universal savings percentage.',
+    scope:'REAL_PROJECT_ISOLATED_EDIT_E2E',
+    claim_boundary:'Measures one deterministic non-functional edit on real project code in isolated worktrees. Non-Git source folders are first frozen into an ephemeral Git snapshot without modifying the source. It validates locate/edit/diff verification efficiency, not arbitrary feature-development quality or a universal savings percentage.',
     runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
-    repository:{absolute_path_stored:false,head:source.head,source_untouched:sourceUntouched,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
+    repository:{absolute_path_stored:false,source_mode:source.mode,execution_head:source.head,source_untouched:sourceUntouched,source_digest:source.source_digest,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
     task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
     result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
     pair:{baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,edit:bv},candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,edit:cv}},
@@ -261,5 +300,5 @@ try{
   cleanupWorktree(baselineWt);
   cleanupWorktree(candidateWt);
   try{fs.rmSync(temp,{recursive:true,force:true})}catch{}
-  git(['worktree','prune'],repoProject,{allow:true});
+  if(executionRepo&&fs.existsSync(executionRepo))git(['worktree','prune'],executionRepo,{allow:true});
 }
