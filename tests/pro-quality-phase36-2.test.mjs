@@ -27,6 +27,8 @@ test('P36.2 contracts span exactly 25 specialist roles and 22 canonical Core rol
  assert.equal(q.summary.adapter_roles,100);
  assert.equal(q.summary.invalid_contracts,0,JSON.stringify(q.role_contract_findings));
  assert.equal(q.summary.pro_certified,0);
+ assert.equal(q.summary.role_files_blocked,0,JSON.stringify(q.role_sources.filter(x=>x.issues.length)));
+ assert.equal(q.status,'STRUCTURAL_CANDIDATE');
  assert.ok(q.role_sources.every(x=>x.source_sha256?.length===64&&x.certification==='NOT_CERTIFIED'));
 });
 test('all roles define individual inputs, outputs, decisions, responsibilities and negative boundaries',()=>{
@@ -94,4 +96,15 @@ test('a third repair, missing finding or judge-as-repair are all denied',()=>{
  const fake=validateHandoff(workflow,{from:'ROUTING',to:'WRITER',actor:'judge-quality',completed_stages:['ROUTING'],repair_cycle:1});
  assert.ok(fake.errors.includes('REPAIR_WRITER_ROLE_REQUIRED'));
  assert.ok(fake.errors.includes('FAILED_FINDING_REQUIRED'));
+});
+
+test('missing required governance marker is detected without changing role authority',()=>{
+ const root=project();
+ const p=path.join(root,'core/agents/verifier.md');
+ const s=fs.readFileSync(p,'utf8');
+ assert.match(s,/## Skill System Phase 4/);
+ fs.writeFileSync(p,s.replace('## Skill System Phase 4','## Missing policy marker'));
+ const q=auditAgents(root,policy);
+ assert.ok(q.role_sources.find(x=>x.adapter==='core'&&x.id==='verifier').issues.includes('REQUIRED_PHASE_DISCIPLINE_MISSING:governance'));
+ assert.equal(q.summary.pro_certified,0);
 });
