@@ -1,4 +1,4 @@
-import test from 'node:test';
+import test,{afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -14,7 +14,7 @@ function project(){
  for(const dir of toCopy){const target=path.join(root,dir);fs.mkdirSync(path.dirname(target),{recursive:true});fs.cpSync(dir,target,{recursive:true})}
  return root;
 }
-test.afterEach(()=>{for(const root of fixtures.splice(0))fs.rmSync(root,{recursive:true,force:true})});
+afterEach(()=>{for(const root of fixtures.splice(0))fs.rmSync(root,{recursive:true,force:true})});
 
 test('P36.2 contracts span exactly 25 specialist roles and 22 canonical Core roles',()=>{
  assert.equal(policy.roles.length,25);
