@@ -4,6 +4,12 @@ Status: **IMPLEMENTED / PACKAGE-CERTIFIED / TARGET BENCHMARK PENDING**
 
 P7 is a transversal AleDevOS control layer. It does not replace Orchestrator, ContextOS, Skills, Model Router, workers, QA or Judges. It decides how much of the existing system should be activated for a task and then proves that the optimized execution preserved quality.
 
+## Macro-skill efficiency invariant
+
+AleDevOS is a portable macro-skill whose efficiency objective is to reduce unnecessary context, model calls, agent activation, tool use and output while preserving required quality. Auto-Telemetry provides the real per-agent token/runtime measurements needed to turn that objective into comparable evidence. A completed telemetry run proves measurement capability; only a matched baseline/candidate benchmark may prove actual savings.
+
+Canonical identity contract: `docs/ALEDEVOS_MACRO_SKILL.md`.
+
 ## Governing principles
 
 1. The user is the goal owner, not AleDevOS's project manager.
