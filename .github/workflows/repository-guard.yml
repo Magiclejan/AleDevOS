@@ -526,7 +526,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node --test tests/pro-quality-phase36.test.mjs
+          node --test tests/pro-quality-phase36.test.mjs tests/pro-quality-phase36-1.test.mjs
+          node certification/pro/engine/render-pro-skills.mjs verify --root .
           node certification/pro/engine/pro-quality-audit.mjs inventory --root . > /tmp/p36-inventory.json
           node - <<'NODE'
           const fs=require('fs');
