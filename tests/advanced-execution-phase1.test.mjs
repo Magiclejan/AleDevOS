@@ -25,6 +25,15 @@ function repo(){
 function prep(x,task='task-1',base='HEAD'){x.req=path.join(x.d,`${task}-request.json`);const p=run(['request','prepare','--repo',x.r,'--task-id',task,'--base-ref',base,'--out',x.req]);assert.equal(p.status,0,p.stdout+p.stderr);x.prep=j(p);return x}
 function create(x,task='task-1'){x.receipt=path.join(x.d,`${task}-receipt.json`);const r=run(['worktree','create','--repo',x.r,'--request',x.req,'--out',x.receipt]);assert.equal(r.status,0,r.stdout+r.stderr);x.created=j(r);x.wt=x.created.worktree.path;return x}
 function cleanCommit(wt,msg='worker commit'){g(wt,['add','-A']);assert.equal(g(wt,['commit','-qm',msg]).status,0)}
+function directoryRedirect(target,link,{broken=false}={}){
+  if(process.platform==='win32'){
+    fs.mkdirSync(target,{recursive:true});
+    fs.symlinkSync(target,link,'junction');
+    if(broken)fs.rmSync(target,{recursive:true,force:true});
+  }else{
+    fs.symlinkSync(target,link,'dir');
+  }
+}
 
 // Policy and phase boundaries.
 test('P1 policy verifies',()=>assert.equal(run(['policy','verify']).status,0));
@@ -102,8 +111,8 @@ test('same task cannot be recreated after safe cleanup because branch is preserv
 test('Windows reserved task device name is rejected',()=>{const x=repo(),r=run(['request','prepare','--repo',x.r,'--task-id','CON','--out',path.join(x.d,'r.json')]);assert.equal(r.status,3);assert.ok(j(r).errors.includes('TASK_ID_INVALID'))});
 test('task id ending in .lock is rejected before Git branch creation',()=>{const x=repo(),r=run(['request','prepare','--repo',x.r,'--task-id','feature.lock','--out',path.join(x.d,'r.json')]);assert.equal(r.status,3)});
 test('task id ending in dot is rejected for cross-platform path safety',()=>{const x=repo(),r=run(['request','prepare','--repo',x.r,'--task-id','feature.','--out',path.join(x.d,'r.json')]);assert.equal(r.status,3)});
-test('symlinked worktree container blocks creation',()=>{const x=prep(repo(),'alpha'),outside=path.join(x.d,'outside'),container=path.join(x.d,'.aledevos-worktrees');fs.mkdirSync(outside);fs.symlinkSync(outside,container,'dir');const r=run(['worktree','create','--repo',x.r,'--request',x.req,'--out',path.join(x.d,'rec.json')]);assert.equal(r.status,5);assert.ok(j(r).errors.includes('CONTAINER_IS_SYMLINK'))});
-test('broken symlink at deterministic target counts as existing path',()=>{const x=prep(repo(),'alpha'),target=x.prep.derived.worktree_path;fs.mkdirSync(path.dirname(target),{recursive:true});fs.symlinkSync(path.join(x.d,'missing-target'),target);const r=run(['worktree','create','--repo',x.r,'--request',x.req,'--out',path.join(x.d,'rec.json')]);assert.equal(r.status,5);assert.ok(j(r).errors.includes('TARGET_PATH_EXISTS'))});
+test('symlinked worktree container blocks creation',()=>{const x=prep(repo(),'alpha'),outside=path.join(x.d,'outside'),container=path.join(x.d,'.aledevos-worktrees');directoryRedirect(outside,container);const r=run(['worktree','create','--repo',x.r,'--request',x.req,'--out',path.join(x.d,'rec.json')]);assert.equal(r.status,5);const errors=j(r).errors;assert.ok(errors.includes('CONTAINER_IS_SYMLINK')||errors.includes('CONTAINER_REALPATH_DRIFT'))});
+test('broken symlink at deterministic target counts as existing path',()=>{const x=prep(repo(),'alpha'),target=x.prep.derived.worktree_path,missing=path.join(x.d,'missing-target');fs.mkdirSync(path.dirname(target),{recursive:true});directoryRedirect(missing,target,{broken:true});const r=run(['worktree','create','--repo',x.r,'--request',x.req,'--out',path.join(x.d,'rec.json')]);assert.equal(r.status,5);assert.ok(j(r).errors.includes('TARGET_PATH_EXISTS'))});
 
 // Package certification, installation and structure.
 test('P1 package certificate can be generated',()=>{const d=tmp(),f=path.join(d,'cert.json'),r=run(['certify','run','--out',f]);assert.equal(r.status,0,r.stdout+r.stderr);assert.equal(j(r).status,'ADVANCED_EXECUTION_P1_PACKAGE_CERTIFIED')});
