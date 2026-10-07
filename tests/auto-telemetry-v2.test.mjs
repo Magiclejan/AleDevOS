@@ -175,3 +175,22 @@ test('agent runtime accepts an explicit per-call timeout override',()=>{
   assert.match(s,/effectiveTimeout/);
   assert.match(s,/--timeout-ms <ms>/);
 });
+
+
+test('Codex repo trust bypass is opt-in and profile-declared',()=>{
+  const codex=JSON.parse(fs.readFileSync(path.resolve('adapters/codex/runtime-profile.json'),'utf8'));
+  assert.equal(codex.repo_check_bypass_flag,'--skip-git-repo-check');
+  assert.deepEqual(
+    buildInvocation(codex,{agent:'orchestrator',model:null,prompt:'PING',skipRepoCheck:false}).args,
+    ['exec','--json','PING']
+  );
+  assert.deepEqual(
+    buildInvocation(codex,{agent:'orchestrator',model:null,prompt:'PING',skipRepoCheck:true}).args,
+    ['exec','--json','--skip-git-repo-check','PING']
+  );
+});
+
+test('controlled E2E enables repo-check bypass only for Codex',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/72-e2e-auto-telemetry-v2.ps1'),'utf8');
+  assert.match(s,/if\(\$adapter -eq 'codex'\)\{\$callArgs\+=@\('--skip-repo-check'\)\}/);
+});
