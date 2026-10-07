@@ -44,6 +44,12 @@ test('portable Skill Pack has 245 deterministic checks',()=>assert.equal(baseSki
 test('portable Skill Pack has zero failures',()=>assert.equal(baseSkills.summary.failed,0));
 test('portable Skill Pack id is canonical',()=>assert.equal(baseSkills.pack_id,'aledevos-portable-core-skills'));
 test('portable Skill Pack version is 1.0.0',()=>assert.equal(baseSkills.pack_version,'1.0.0'));
+test('portable Skill binding seals are invariant to LF versus CRLF checkout',()=>{
+ const d=clone();
+ const roots=['adapters/opencode/.opencode/skills','adapters/codex/.agents/skills','adapters/claude-code/.claude/skills','adapters/antigravity/.agents/skills'];
+ for(const rel of roots)for(const id of fs.readdirSync(path.join(d,rel))){const p=path.join(d,rel,id,'SKILL.md');if(!fs.existsSync(p))continue;const src=fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');fs.writeFileSync(p,src.replace(/\n/g,'\r\n'),'utf8')}
+ const o=json(run(['skills','verify','--root',d],d));assert.equal(o.status,'PORTABLE_SKILL_PACK_PASS');assert.equal(o.summary.failed,0);
+});
 test('semantic drift in one adapter Skill is detected',()=>{
  const d=clone(),p=path.join(d,'adapters/claude-code/.claude/skills/safe-edit/SKILL.md');fs.appendFileSync(p,'\n- silently weaken safety\n');
  const o=json(run(['skills','verify','--root',d],d));assert.equal(o.status,'PORTABLE_SKILL_PACK_FAILED');assert.equal(o.checks.find(x=>x.id==='adapter.claude-code.safe-edit.semantic').status,'FAIL');
