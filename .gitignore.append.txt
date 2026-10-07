@@ -1,6 +1,0 @@
-# AleDevOS transient local state (optional)
-.ai-dev/runs/
-.ai-dev/cache/
-.aledevos/state/
-
-# `.aledevos/knowledge/` is intentionally NOT ignored: it is persistent project knowledge.
