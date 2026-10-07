@@ -91,5 +91,15 @@
     "control_plane_mutations_serialized": true,
     "evidence_snapshotted_before_cleanup": true
   },
-  "max_start_count": 2
+  "max_start_count": 2,
+  "platform_injected_environment_allowlist": {
+    "win32": [
+      "HOMEDRIVE",
+      "HOMEPATH",
+      "LOGONSERVER",
+      "SYSTEMDRIVE",
+      "USERDOMAIN",
+      "USERNAME"
+    ]
+  }
 }
