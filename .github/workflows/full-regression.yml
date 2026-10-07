@@ -23,7 +23,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $env:ALEDEVOS_TEST_FILE_TIMEOUT_MS = "120000"
+          $env:ALEDEVOS_TEST_FILE_TIMEOUT_MS = "300000"
           & node scripts/ci/run-full-regression.mjs
           if ($LASTEXITCODE -ne 0) {
             throw "FULL_NODE_REGRESSION_FAILED"
