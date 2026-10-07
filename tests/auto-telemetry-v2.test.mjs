@@ -159,3 +159,19 @@ test('installer projects central agent runtime and selected adapter runtime prof
   assert.match(s,/runtime-profile\.json/);
   assert.match(s,/agent-runtime\\adapters/);
 });
+
+
+test('E2E exposes explicit adapter selection and bounded call timeout',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/72-e2e-auto-telemetry-v2.ps1'),'utf8');
+  assert.match(s,/RequestedAdapter/);
+  assert.match(s,/CallTimeoutSeconds/);
+  assert.match(s,/--timeout-ms/);
+  assert.match(s,/AUTO_TELEMETRY_V2_PROVIDER_FAILURE_PATH_PASS/);
+});
+
+test('agent runtime accepts an explicit per-call timeout override',()=>{
+  const s=fs.readFileSync(path.resolve('core/agent-runtime/agent-runtime.mjs'),'utf8');
+  assert.match(s,/timeoutMs=null/);
+  assert.match(s,/effectiveTimeout/);
+  assert.match(s,/--timeout-ms <ms>/);
+});
