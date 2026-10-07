@@ -46,6 +46,7 @@ test('release closure preparer uses the same package-tree exclusions as the veri
 
 test('release closure regression measures tests MJS JSON and TOML fail-closed',()=>{
   const s=read('scripts/78-release-closure-prepare.mjs');
+  assert.match(s,/--test-reporter=tap/);
   assert.match(s,/tests_passed/);
   assert.match(s,/mjs_syntax_passed/);
   assert.match(s,/json_parse_passed/);
