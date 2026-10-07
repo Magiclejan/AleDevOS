@@ -13,7 +13,7 @@ test('installer deploys Phase 5 runtime, state roots and v1.26 marker',()=>{
 
 test('Visual Judge is product-read-only and native-image only',()=>{
   const s=read('adapters/opencode/.opencode/agents/visual-judge.md');
-  assert.match(s,/resource: "\*"\n\s+effect: deny/);
+  assert.match(s,/resource: "\*"\r?\n\s+effect: deny/);
   assert.match(s,/phase5\/submissions\/\*\*/);
   assert.match(s,/native image input/i);
   assert.match(s,/UNVERIFIED/);
@@ -68,8 +68,9 @@ test('Phase 5 schemas and adapter capabilities are registered',()=>{
 test('release metadata closes static P1-P5 while keeping runtime smoke and nonclaims explicit',()=>{
   const vnum=read('VERSION.txt').trim().match(/^(\d+)\.(\d+)\./);
   assert.ok(vnum && Number(vnum[1])===1 && Number(vnum[2])>=26,'Phase 5 must remain frozen in v1.26+ releases');
-  const r=read('README.md'),n=read('docs/NEXT_VALIDATION.md'),v=read('docs/VISUALQA_PHASE5_VALIDATION.md');
-  assert.match(r,/Phase 5.*COMPLETE|Phase 5.*FROZEN/is);
+  const c=read('CHANGELOG.md'),n=read('docs/NEXT_VALIDATION.md'),v=read('docs/VISUALQA_PHASE5_VALIDATION.md');
+  assert.match(c,/v1\.26\.0[^\n]*Visual QA Phase 5/i);
+  assert.match(c,/Preserved the frozen Visual QA P1-P5 engines|Preserved Visual QA P1-P5 frozen behavior/i);
   assert.match(n,/Playwright.*Chromium/i);
   assert.match(n,/native-image/i);
   assert.match(v,/motion/i);
