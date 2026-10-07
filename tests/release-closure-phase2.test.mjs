@@ -16,19 +16,23 @@ test('phase2 runner recertifies exactly the canonical 14 package certificates',(
   assert.match(s,/if\(certs\.length!==14\)/);
 });
 
-test('phase2 runner preserves dependency order before baseline rebuild',()=>{
-  const adapter=s.indexOf("3_ADAPTER_CERTIFICATES");
-  const mm=s.indexOf("4_MULTIMODEL_CERTIFICATES");
-  const adv=s.indexOf("5_ADVANCED_EXECUTION_CERTIFICATES");
-  const baseline=s.indexOf("6_REBUILD_PACKAGE_BASELINE");
-  const master=s.indexOf("8_REISSUE_MASTER_P1_CERTIFICATE");
-  assert.ok(adapter>0&&adapter<mm&&mm<adv&&adv<baseline&&baseline<master);
+test('phase2 runner bootstraps package dependencies before measured regression and final sealing',()=>{
+  const adapter=s.indexOf("2_ADAPTER_CERTIFICATES");
+  const mm=s.indexOf("3_MULTIMODEL_CERTIFICATES");
+  const adv=s.indexOf("4_ADVANCED_EXECUTION_CERTIFICATES");
+  const bootstrap=s.indexOf("5_BOOTSTRAP_PACKAGE_BASELINE");
+  const bootstrapMaster=s.indexOf("6_BOOTSTRAP_MASTER_P1_CERTIFICATE");
+  const regression=s.indexOf("7_FULL_DETERMINISTIC_REGRESSION");
+  const baseline=s.indexOf("8_REBUILD_FINAL_PACKAGE_BASELINE");
+  const master=s.indexOf("10_REISSUE_FINAL_MASTER_P1_CERTIFICATE");
+  assert.ok(adapter>0&&adapter<mm&&mm<adv&&adv<bootstrap&&bootstrap<bootstrapMaster&&bootstrapMaster<regression&&regression<baseline&&baseline<master);
 });
 
-test('phase2 runner requires a clean worktree and runs measured regression before certification',()=>{
+test('phase2 runner requires a clean worktree and measures regression only after current package dependencies exist',()=>{
   assert.match(s,/RELEASE_CLOSURE_REQUIRES_CLEAN_WORKTREE/);
-  assert.match(s,/78-release-closure-prepare\.mjs/);
-  assert.match(s,/2_FULL_DETERMINISTIC_REGRESSION/);
+  assert.match(s,/bootstrap-baseline/);
+  assert.match(s,/RELEASE_CLOSURE_BOOTSTRAP_BASELINE_READY/);
+  assert.match(s,/7_FULL_DETERMINISTIC_REGRESSION/);
   assert.match(s,/RELEASE_CLOSURE_REGRESSION_PASS/);
 });
 
