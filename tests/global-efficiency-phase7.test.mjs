@@ -113,3 +113,35 @@ test('B1 benchmark streams long prompts over stdin instead of argv',()=>{
   assert.doesNotMatch(s,/args\.push\(prompt\)/);
   assert.match(s,/prompt_transport:'STDIN'/);
 });
+
+
+test('B2 controlled macro-orchestration benchmark is P7-driven and telemetry-backed',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/74-benchmark-token-efficiency-b2.mjs'),'utf8');
+  assert.match(s,/efficiency-governor\.mjs/);
+  assert.match(s,/plan\.profile!=='MICRO'/);
+  assert.match(s,/startTaskTelemetry/);
+  assert.match(s,/emitAgentCallTelemetry/);
+  assert.match(s,/appendTelemetryEvent/);
+  assert.match(s,/kind,'HANDOFF'/);
+  assert.match(s,/kind,'CONTEXT_SAMPLE'/);
+});
+
+test('B2 uses stdin and never persists raw prompts or completions',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/74-benchmark-token-efficiency-b2.mjs'),'utf8');
+  assert.match(s,/args\.push\('-'\)/);
+  assert.match(s,/input:prompt/);
+  assert.match(s,/raw_prompt_stored:false/);
+  assert.match(s,/raw_completion_stored:false/);
+  assert.match(s,/raw_prompts_persisted:false/);
+  assert.match(s,/raw_completions_persisted:false/);
+});
+
+test('B2 compares broad baseline against minimum necessary MICRO activation',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/74-benchmark-token-efficiency-b2.mjs'),'utf8');
+  assert.match(s,/BROAD_FULL_CONTEXT_BASELINE/);
+  assert.match(s,/P7_MICRO_RELEVANT_CONTEXT/);
+  assert.match(s,/baselineAgents=\['orchestrator','researcher','architect','auditor','editor-backend','verifier','judge-requirements','judge-regression','judge-quality'\]/);
+  assert.match(s,/candidateAgents/);
+  assert.match(s,/quality_preserved/);
+  assert.match(s,/telemetry_verified/);
+});
