@@ -12,21 +12,44 @@ on:
 
 jobs:
   full-node-regression:
-    runs-on: windows-latest
-    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Run complete AleDevOS Node regression suite
+      - name: Run all portable Node regression files (no omissions)
+        shell: bash
+        env:
+          ALEDEVOS_TEST_FILE_TIMEOUT_MS: "300000"
+        run: |
+          set -euo pipefail
+          node scripts/ci/run-full-regression.mjs
+
+  windows-integration-contract:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Windows Core and V1 package contract regressions
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $env:ALEDEVOS_TEST_FILE_TIMEOUT_MS = "300000"
-          & node scripts/ci/run-full-regression.mjs
-          if ($LASTEXITCODE -ne 0) {
-            throw "FULL_NODE_REGRESSION_FAILED"
+          & node --test --test-reporter=tap tests/core-engine.test.mjs tests/v1-release-validation.test.mjs
+          if ($LASTEXITCODE -ne 0) { throw "WINDOWS_INTEGRATION_CONTRACT_FAILED" }
+      - name: Validate Windows PowerShell release harness parser
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $paths = @('scripts/34-v1-target-runtime-smoke.ps1','scripts/35-self-test-v1-release-candidate.ps1','scripts/05-install-into-project.ps1')
+          foreach ($file in $paths) {
+            $tokens = $null; $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file).Path, [ref]$tokens, [ref]$errors)
+            if ($errors.Count -ne 0) { $errors | ForEach-Object { Write-Error $_.Message }; throw "WINDOWS_SCRIPT_SYNTAX_INVALID:$file" }
           }
 
   full-source-parity:
