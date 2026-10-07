@@ -6,7 +6,7 @@ $root=Split-Path -Parent $PSScriptRoot
 Push-Location $root
 try {
   function Run-Test([string]$File,[string]$Pattern=''){
-    $a=@('--test')
+    $a=@('--test','--test-reporter=tap')
     if($Pattern){$a += "--test-name-pattern=$Pattern"}
     $a += $File
     $output=(& node @a 2>&1 | Out-String)
