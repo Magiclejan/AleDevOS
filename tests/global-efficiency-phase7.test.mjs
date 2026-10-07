@@ -302,3 +302,21 @@ test('B4 successful runs do not persist noisy startup diagnostics',()=>{
   assert.match(s,/replace\(\/\[A-Za-z\]:/);
   assert.match(s,/diagnostic=null|diagnostic=\(/);
 });
+
+
+test('B4 can reconcile multiple sealed receipts without rerunning valid pairs',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/takeAll\('--prior-receipt'\)/);
+  assert.match(s,/B4_RUNS_ZERO_REQUIRES_PRIOR_RECEIPT/);
+  assert.match(s,/B4_PRIOR_RECEIPTS_HAVE_NO_REUSABLE_PAIRS/);
+  assert.match(s,/prior_receipts_merged/);
+  assert.match(s,/seen\.has\(key\)/);
+});
+
+test('B4 legacy single-pair receipts inherit sealed aggregate quality and telemetry only for that legacy shape',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/legacySingle/);
+  assert.match(s,/q\?\.result\?\.quality_preserved/);
+  assert.match(s,/q\?\.result\?\.telemetry_verified/);
+  assert.match(s,/q\?\.result\?\.identical_diff/);
+});
