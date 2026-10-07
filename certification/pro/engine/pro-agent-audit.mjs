@@ -46,7 +46,9 @@ function opencodeEditPermissions(front){
 }
 function checkRoleContract(s){
  const failures=[];
- for(const prop of ['id','role_class','objective','trigger','non_trigger','prohibition','handoff','examples']){
+ if(!/^[a-z0-9][a-z0-9-]*$/.test(s.id||''))failures.push('ROLE_ID_INVALID');
+ if(!['coordinator','analyst','planner','reviewer','writer','judge','verifier','controller','executor'].includes(s.role_class))failures.push('ROLE_CLASS_INVALID');
+ for(const prop of ['objective','trigger','non_trigger','prohibition','handoff','examples']){
   if(typeof s[prop]!=='string'||s[prop].trim().length<12)failures.push('ROLE_FIELD_INCOMPLETE:'+prop);
  }
  for(const prop of ['inputs','outputs','procedure','decisions']){
