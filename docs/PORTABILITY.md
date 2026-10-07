@@ -1,5 +1,13 @@
 # Portability / Adapter ABI
 
+## Macro-skill portability invariant
+
+AleDevOS is a portable AI macro-skill. The Core is not owned by any runtime, provider, model or host OS. An AI runtime participates only through a truthful Adapter ABI implementation. "Any AI" therefore means any runtime that can satisfy the ABI and required AleDevOS semantics; unsupported capabilities must remain explicit rather than being faked.
+
+Host portability follows the same rule: platform-specific launch/install mechanics live at the host/adapter boundary. Windows has current real-target evidence; macOS is a target platform by design and requires its own real-target campaign before target certification.
+
+Canonical identity contract: `docs/ALEDEVOS_MACRO_SKILL.md`.
+
 Every supported runtime is represented by a truthful Adapter ABI 2.0 manifest. Core evaluates capabilities without runtime-specific workflow branches.
 
 ## Phase map
