@@ -15,6 +15,7 @@ const take=(flag,def=null)=>{const i=argv.indexOf(flag);return i>=0&&i+1<argv.le
 const runs=Math.max(1,Math.min(5,Number(take('--runs','1'))||1));
 const timeoutMs=Math.max(10000,Math.min(900000,Number(take('--timeout-ms','180000'))||180000));
 const explicitModel=take('--model',null);
+const priorReceiptArg=take('--prior-receipt',null);
 const projectArg=take('--project',null);
 if(!projectArg)throw new Error('B2_PROJECT_REQUIRED: use --project <AleDevOS consumer project>');
 const project=path.resolve(projectArg);
@@ -34,6 +35,20 @@ function ratio(base,cand){return typeof base==='number'&&typeof cand==='number'&
 function pct(v){return v===null?null:Math.round(v*10000)/100}
 function median(xs){const a=[...xs].sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
 function writeJson(p,v){fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n','utf8')}
+function priorReceiptPairs(){
+  if(!priorReceiptArg)return [];
+  const projectRoot=path.resolve(project);
+  const receiptPath=path.resolve(project,priorReceiptArg);
+  if(receiptPath!==projectRoot&&!receiptPath.startsWith(projectRoot+path.sep))throw new Error('B2_PRIOR_RECEIPT_OUTSIDE_PROJECT');
+  if(!fs.existsSync(receiptPath))throw new Error('B2_PRIOR_RECEIPT_NOT_FOUND:'+receiptPath);
+  const q=JSON.parse(fs.readFileSync(receiptPath,'utf8'));
+  if(q?.schema_version!=='1.0'||q?.benchmark!=='B2_MACRO_ORCHESTRATION'||q?.benchmark_key!==benchmarkKey)throw new Error('B2_PRIOR_RECEIPT_INCOMPATIBLE');
+  const copy=structuredClone(q);const expectedHash=copy?.integrity?.payload_sha256??null;delete copy.integrity;
+  if(!expectedHash||sha(JSON.stringify(copy))!==expectedHash)throw new Error('B2_PRIOR_RECEIPT_INTEGRITY_INVALID');
+  if(!Array.isArray(q.pairs)||q.pairs.length<1)throw new Error('B2_PRIOR_RECEIPT_HAS_NO_PAIRS');
+  if(q.status==='B2_FAIL'||q.status==='B2_INCOMPARABLE')throw new Error('B2_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
+  return q.pairs;
+}
 function estTokens(s){return Math.max(1,Math.ceil(String(s||'').length/4))}
 function eventId(kind){return 'b2-'+String(kind).toLowerCase()+'-'+Date.now()+'-'+crypto.randomBytes(3).toString('hex')}
 
@@ -216,9 +231,12 @@ const candidateSkills=[...plan.skills];
 const baselineSkills=[...new Set([...candidateSkills,...(efficiencyPolicy.skill_activation.STANDARD_plus||[])])];
 const fixture=fixtureContext();
 
-const pairResults=[];
+const reusedPairs=priorReceiptPairs();
+const pairResults=[...reusedPairs];
 for(let i=1;i<=runs;i++){
-  process.stdout.write(`\n[B2 ${i}/${runs}] Controlled broad pipeline vs P7 MICRO pipeline\n`);
+  const pairNumber=reusedPairs.length+i;
+  const pairTarget=reusedPairs.length+runs;
+  process.stdout.write(`\n[B2 ${pairNumber}/${pairTarget}] Controlled broad pipeline vs P7 MICRO pipeline\n`);
   let baseline,candidate;
   if(i%2===0){
     process.stdout.write('  Candidate first (order balancing)\n');
@@ -240,7 +258,7 @@ for(let i=1;i<=runs;i++){
   const quality=baseline.quality&&candidate.quality;
   const verified=baseline.verification?.valid===true&&candidate.verification?.valid===true;
   pairResults.push({
-    run:i,
+    run:pairNumber,
     baseline:{run_id:baseline.run_id,input_tokens:bin,output_tokens:bout,total_tokens:btotal,model_calls:baselineAgents.length,active_agents:Object.keys(b?.agents||{}).length,handoff_tokens:b?.totals?.handoff_tokens??null,quality:baseline.quality,telemetry_verified:baseline.verification?.valid===true},
     candidate:{run_id:candidate.run_id,input_tokens:cin,output_tokens:cout,total_tokens:ctotal,model_calls:candidateAgents.length,active_agents:Object.keys(c?.agents||{}).length,handoff_tokens:c?.totals?.handoff_tokens??null,quality:candidate.quality,telemetry_verified:candidate.verification?.valid===true},
     input_reduction_ratio:inputReduction,total_reduction_ratio:totalReduction,model_call_reduction_ratio:callReduction,active_agent_reduction_ratio:activeAgentReduction,handoff_reduction_ratio:handoffReduction,quality_preserved:quality,telemetry_verified:verified
@@ -274,7 +292,9 @@ const receipt={
   runtime:'codex',
   model:explicitModel,
   model_comparability:explicitModel?'EXPLICIT_SAME_MODEL':'SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED',
-  runs,
+  runs:pairResults.length,
+  reused_prior_pairs:reusedPairs.length,
+  newly_executed_pairs:runs,
   plan:{profile:plan.profile,complexity_score:plan.complexity_score,payload_sha256:plan.integrity?.payload_sha256??null},
   activation:{
     baseline_agents:baselineAgents,candidate_agents:candidateAgents,
@@ -294,7 +314,9 @@ process.stdout.write('\n========================================================
 process.stdout.write(' ALEDEVOS B2 - CONTROLLED MACRO-ORCHESTRATION EFFICIENCY\n');
 process.stdout.write('============================================================\n');
 process.stdout.write(`Status                    : ${status}\n`);
-process.stdout.write(`Runs                      : ${runs}\n`);
+process.stdout.write(`Runs total                : ${pairResults.length}\n`);
+process.stdout.write(`Prior pairs reused         : ${reusedPairs.length}\n`);
+process.stdout.write(`New pairs executed         : ${runs}\n`);
 process.stdout.write(`P7 profile                : ${plan.profile}\n`);
 process.stdout.write(`Baseline agents           : ${baselineAgents.length}\n`);
 process.stdout.write(`Candidate agents          : ${candidateAgents.length}\n`);
