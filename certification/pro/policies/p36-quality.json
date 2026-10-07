@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "phase": "ALEDEVOS_P36_PRO_QUALITY",
+  "certification": "PRO_CERTIFIED",
+  "scope": {
+    "bundled_skills": [
+      "backend-change",
+      "database-change",
+      "diff-review",
+      "frontend-change",
+      "implementation-plan",
+      "regression-analysis",
+      "repair-loop",
+      "repo-map",
+      "requirements-check",
+      "safe-edit",
+      "security-check",
+      "task-contract",
+      "test-strategy"
+    ],
+    "agent_roots": [
+      "core/agents",
+      "adapters/opencode/.opencode/agents"
+    ],
+    "future_components": [
+      "workflow",
+      "adapter",
+      "runtime",
+      "tool",
+      "schema",
+      "orchestrator",
+      "judge",
+      "repair-controller",
+      "installer",
+      "security-control"
+    ]
+  },
+  "skill_required_sections": [
+    {
+      "id": "use_when",
+      "pattern": "^(when to use|activation|trigger(s|ing)?|routing)$"
+    },
+    {
+      "id": "do_not_use",
+      "pattern": "^(do not use|non.triggers?|out of scope|boundaries)$"
+    },
+    {
+      "id": "inputs",
+      "pattern": "^(inputs?|preconditions?)$"
+    },
+    {
+      "id": "outputs",
+      "pattern": "^(outputs?|artifacts?|deliverables?)$"
+    },
+    {
+      "id": "procedure",
+      "pattern": "^(workflow|procedure|steps?|execution)$"
+    },
+    {
+      "id": "decisions",
+      "pattern": "^(decisions?|branches|decision points?)$"
+    },
+    {
+      "id": "permissions",
+      "pattern": "^(permissions?|tools?|security boundaries)$"
+    },
+    {
+      "id": "failure_modes",
+      "pattern": "^(failures?|failure modes?|recovery|escalation)$"
+    },
+    {
+      "id": "verification",
+      "pattern": "^(verification|validation|gates|acceptance)$"
+    },
+    {
+      "id": "evidence",
+      "pattern": "^(evidence|proof|receipts?)$"
+    },
+    {
+      "id": "examples",
+      "pattern": "^(examples?|anti.patterns?|counterexamples?)$"
+    }
+  ],
+  "principles": {
+    "no_line_count_threshold": true,
+    "no_filler_for_length": true,
+    "static_lint_is_not_semantic_review": true,
+    "dynamic_execution_required_for_pro_certified": true,
+    "permission_conflict_blocks": true,
+    "stale_hash_blocks": true,
+    "external_skills_never_assumed_installed": true,
+    "missing_evidence_blocks": true,
+    "certification_requires_hash_and_coverage": true
+  },
+  "states": [
+    "NOT_ASSESSED",
+    "NEEDS_PRO_EXPANSION",
+    "BINDING_DRIFT",
+    "DOCUMENTATION_CANDIDATE",
+    "BLOCKED",
+    "FAILED",
+    "PRO_CERTIFIED"
+  ]
+}
