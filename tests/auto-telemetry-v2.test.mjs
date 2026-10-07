@@ -4,10 +4,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {
-  parseOpenCodeJsonl,parseOpenCodeExport,parseCodexJsonl,parseClaudeStreamJson,
-  parseAntigravityText,buildInvocation,cliLaunchStrategy,encodeWindowsTransportArg
-} from '../core/agent-runtime/agent-runtime.mjs';
+import {buildInvocation,cliLaunchStrategy,encodeWindowsTransportArg} from '../core/agent-runtime/agent-runtime.mjs';
+import {parseRuntimeOutput as parseOpenCodeJsonl,parseFallback as parseOpenCodeExport} from '../adapters/opencode/runtime-parser.mjs';
+import {parseRuntimeOutput as parseCodexJsonl} from '../adapters/codex/runtime-parser.mjs';
+import {parseRuntimeOutput as parseClaudeStreamJson} from '../adapters/claude-code/runtime-parser.mjs';
+import {parseRuntimeOutput as parseAntigravityText} from '../adapters/antigravity/runtime-parser.mjs';
 import {startTaskTelemetry,emitAgentCallTelemetry,finishTaskTelemetry} from '../core/engine/telemetry-bridge.mjs';
 
 const temp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-tel-v2-'));
@@ -157,6 +158,7 @@ test('installer projects central agent runtime and selected adapter runtime prof
   const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');
   assert.match(s,/core\\agent-runtime\\agent-runtime\.mjs/);
   assert.match(s,/runtime-profile\.json/);
+  assert.match(s,/runtime-parser\.mjs/);
   assert.match(s,/agent-runtime\\adapters/);
 });
 
