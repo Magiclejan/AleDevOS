@@ -59,8 +59,12 @@ test('release closure regression measures tests MJS JSON and TOML fail-closed',(
   assert.match(s,/skipped/);
 });
 
-test('baseline rebuild requires clean measured regression and sealed certificates',()=>{
+test('baseline closure preserves the Master Gate floor and records measured regression separately',()=>{
   const s=read('scripts/78-release-closure-prepare.mjs');
+  assert.match(s,/function baselineFloor/);
+  assert.match(s,/master_validation\?\.minimums/);
+  assert.match(s,/bootstrap-baseline/);
+  assert.match(s,/measured_regression/);
   assert.match(s,/RELEASE_REGRESSION_SUMMARY_REQUIRED/);
   assert.match(s,/RELEASE_REGRESSION_SUMMARY_NOT_CLEAN/);
   assert.match(s,/RELEASE_CERTIFICATE_NOT_SEALED/);
