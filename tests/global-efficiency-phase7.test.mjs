@@ -268,9 +268,19 @@ test('B4 never initializes Git in the external source folder and verifies source
 
 test('B4 explicitly enables workspace-write only inside disposable worktrees',()=>{
   const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
-  assert.match(s,/--sandbox','workspace-write'/);
-  assert.match(s,/--ask-for-approval','never'/);
+  assert.match(s,/sandbox_mode=workspace-write/);
+  assert.match(s,/approval_policy=never/);
   assert.match(s,/sandbox:'workspace-write'/);
   assert.match(s,/approval_policy:'never'/);
   assert.match(s,/codex\(worktree,prompt\)/);
+});
+
+
+test('B4 reports sanitized startup diagnostics when Codex exits before telemetry',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/function safeDiagnostic/);
+  assert.match(s,/baseline diagnostic=/);
+  assert.match(s,/candidate diagnostic=/);
+  assert.match(s,/diagnostic:bt\.diagnostic/);
+  assert.match(s,/diagnostic:ct\.diagnostic/);
 });
