@@ -12,12 +12,15 @@ const run=(cwd,...a)=>spawnSync(process.execPath,[runtime,...a],{cwd,encoding:'u
 const jsonOut=r=>JSON.parse(r.stdout);
 function dir(){return fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-skills-p1-'))}
 function copyDir(src,dst){fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});}
+function configureAdapter(p){const d=path.join(p,'.aledevos');fs.mkdirSync(d,{recursive:true});fs.writeFileSync(path.join(d,'project.json'),JSON.stringify({schema_version:'1.0',adapter:'opencode',adapters:['opencode']},null,2));}
+const instructionHash=p=>crypto.createHash('sha256').update(Buffer.from(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n'),'utf8')).digest('hex');
 function project(){
   const p=dir();
   copyDir(path.resolve('skillsystem/catalogs'),path.join(p,'.aledevos/skillsystem/catalogs'));
   copyDir(path.resolve('skillsystem/policies'),path.join(p,'.aledevos/skillsystem/policies'));
   copyDir(path.resolve('skillsystem/bindings'),path.join(p,'.aledevos/skillsystem/bindings'));
   copyDir(path.resolve('adapters/opencode/.opencode/skills'),path.join(p,'.opencode/skills'));
+  configureAdapter(p);
   return p;
 }
 function build(p){return run(p,'registry','build','--project-root',p,'--adapter','opencode')}
@@ -52,7 +55,7 @@ test('OpenCode binding covers every bundled core skill exactly once',()=>{
 
 test('OpenCode binding hashes match the actual adapter skill files in the master distribution',()=>{
   const b=JSON.parse(fs.readFileSync('skillsystem/bindings/opencode.json','utf8'));
-  for(const x of b.bindings){const p=path.resolve('adapters/opencode',x.path.replace(/^\.opencode\//,'.opencode/'));assert.ok(fs.existsSync(p),x.skill_id);const h=crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');assert.equal(h,x.expected_sha256,x.skill_id)}
+  for(const x of b.bindings){const p=path.resolve('adapters/opencode',x.path.replace(/^\.opencode\//,'.opencode/'));assert.ok(fs.existsSync(p),x.skill_id);const h=instructionHash(p);assert.equal(h,x.expected_sha256,x.skill_id)}
 });
 
 test('registry build creates 31 metadata records but only 13 usable skills',()=>{
@@ -60,7 +63,7 @@ test('registry build creates 31 metadata records but only 13 usable skills',()=>
 });
 
 test('registry never embeds skill instruction bodies',()=>{
-  const p=project();assert.equal(build(p).status,0);const raw=fs.readFileSync(path.join(p,'.aledevos/skills/registry.json'),'utf8');assert.doesNotMatch(raw,/# Task Contract/);assert.doesNotMatch(raw,/Produce:\s*- Objective/);
+  const p=project();assert.equal(build(p).status,0);const raw=fs.readFileSync(path.join(p,'.aledevos/skills/registries/opencode.json'),'utf8');assert.doesNotMatch(raw,/# Task Contract/);assert.doesNotMatch(raw,/Produce:\s*- Objective/);
 });
 
 test('registry verify succeeds on an intact build',()=>{
@@ -68,7 +71,7 @@ test('registry verify succeeds on an intact build',()=>{
 });
 
 test('registry integrity tampering is detected',()=>{
-  const p=project();assert.equal(build(p).status,0);const rp=path.join(p,'.aledevos/skills/registry.json');const r=JSON.parse(fs.readFileSync(rp,'utf8'));r.skills[0].domain='tampered';fs.writeFileSync(rp,JSON.stringify(r,null,2));const v=run(p,'registry','verify','--project-root',p);assert.notEqual(v.status,0);assert.equal(jsonOut(v).valid,false);assert.ok(jsonOut(v).errors.includes('registry_integrity_mismatch'));
+  const p=project();assert.equal(build(p).status,0);const rp=path.join(p,'.aledevos/skills/registries/opencode.json');const r=JSON.parse(fs.readFileSync(rp,'utf8'));r.skills[0].domain='tampered';fs.writeFileSync(rp,JSON.stringify(r,null,2));const v=run(p,'registry','verify','--project-root',p);assert.notEqual(v.status,0);assert.equal(jsonOut(v).valid,false);assert.ok(jsonOut(v).errors.includes('registry_integrity_mismatch'));
 });
 
 test('runtime binding drift fails closed for bundled skills',()=>{
