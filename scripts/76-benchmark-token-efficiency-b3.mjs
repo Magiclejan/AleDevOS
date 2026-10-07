@@ -11,10 +11,12 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const a=process.argv.slice(2);
 const take=(f,d=null)=>{const i=a.indexOf(f);return i>=0&&i+1<a.length?a[i+1]:d};
 const project=path.resolve(take('--project',''));
+const corpusProject=path.resolve(take('--corpus-project',project));
 const timeoutMs=Math.max(10000,Number(take('--timeout-ms','180000'))||180000);
 const model=take('--model',null);
 if(!project||!fs.existsSync(path.join(project,'.aledevos','project.json')))throw new Error('B3_ALEDEVOS_PROJECT_REQUIRED');
 if(!fs.existsSync(path.join(project,'.codex','config.toml')))throw new Error('B3_CODEX_ADAPTER_NOT_INSTALLED');
+if(!fs.existsSync(corpusProject)||!fs.statSync(corpusProject).isDirectory())throw new Error('B3_CORPUS_PROJECT_NOT_FOUND:'+corpusProject);
 
 const policy=JSON.parse(fs.readFileSync(path.join(root,'efficiency','policies','efficiency-policy.json'),'utf8'));
 const targetIn=Number(policy.profiles.MICRO.input_token_reduction_target);
@@ -42,7 +44,7 @@ function walk(dir,out=[]){
     const st=fs.statSync(p);if(!st.size||st.size>MAXFILE)continue;
     const b=fs.readFileSync(p);if(b.includes(0))continue;
     const text=b.toString('utf8').replace(/^\uFEFF/,'');if(SECRET.test(text))continue;
-    out.push({rel:norm(path.relative(project,p)),text,bytes:b.length,hash:sha(b)});
+    out.push({rel:norm(path.relative(corpusProject,p)),text,bytes:b.length,hash:sha(b)});
   }
   return out;
 }
@@ -51,7 +53,7 @@ function good(line){
   return s.length>=24&&s.length<=180&&/[A-Za-z]{6}/.test(s)&&!SECRET.test(s)&&!/^https?:\/\//i.test(s)&&!/^(\s|[{}[\]();,.'"])+$/.test(s);
 }
 function corpus(){
-  const eligible=walk(project),files=[];let bytes=0;
+  const eligible=walk(corpusProject),files=[];let bytes=0;
   for(const f of eligible){if(files.length>=MAXFILES)break;if(bytes+f.bytes>MAXBYTES)continue;files.push(f);bytes+=f.bytes}
   if(files.length<MINFILES)throw Object.assign(new Error('B3_INSUFFICIENT_REAL_PROJECT_CORPUS: eligible='+eligible.length+' selected='+files.length+' required='+MINFILES),{blocked:true});
   const count=new Map();
@@ -128,6 +130,8 @@ const prompt=(label,ctx,n)=>[
 
 const bbytes=Buffer.byteLength(broad,'utf8'),cbytes=Buffer.byteLength(targeted,'utf8');
 console.log('\nB3 real corpus');
+console.log('  runtime project      : '+project);
+console.log('  corpus project       : '+corpusProject);
 console.log('  eligible safe files : '+c.eligible.length);
 console.log('  baseline files      : '+c.files.length);
 console.log('  baseline bytes      : '+bbytes);
@@ -153,7 +157,7 @@ else if(rin<targetIn||rt<targetTotal){status='B3_BELOW_TARGET';if(rin<targetIn)r
 const receipt={schema_version:'1.0',benchmark:'B3_REAL_PROJECT_RETRIEVAL',benchmark_key:KEY,status,validation_level:'PRELIMINARY',scope:'REAL_PROJECT_READ_ONLY_RETRIEVAL',
   claim_boundary:'Measures broad real-project context versus deterministic targeted retrieval on one frozen safe corpus. Setup scanning is excluded from agent file-read metrics. Does not measure code-edit quality or establish a universal savings percentage.',
   runtime:'codex',model:model||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED',
-  project:{path_stored:false,eligible_safe_files:c.eligible.length,baseline_files:c.files.length,corpus_digest:c.digest,baseline_context_bytes:bbytes,candidate_context_bytes:cbytes},
+  project:{runtime_path_stored:false,corpus_path_stored:false,runtime_equals_corpus:path.resolve(project)===path.resolve(corpusProject),eligible_safe_files:c.eligible.length,baseline_files:c.files.length,corpus_digest:c.digest,baseline_context_bytes:bbytes,candidate_context_bytes:cbytes},
   target:{file:c.pick.f.rel,line_number:c.pick.n,line_sha256:targetHash,line_content_stored:false},
   result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,file_reduction_pct:Math.round(rf*10000)/100,context_byte_reduction_pct:Math.round(rb*10000)/100,quality_preserved:quality,telemetry_verified:telemetry,target_pass:status==='B3_PASS'},
   pair:{baseline:{run_id:base.run,input_tokens:bin,total_tokens:bt,files_supplied:c.files.length,context_bytes:bbytes,quality:base.ok},candidate:{run_id:cand.run,input_tokens:cin,total_tokens:ct,files_supplied:1,context_bytes:cbytes,quality:cand.ok}},
