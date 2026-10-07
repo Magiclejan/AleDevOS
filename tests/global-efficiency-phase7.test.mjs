@@ -104,3 +104,12 @@ test('Master quality-preservation validator requires the same recomputable PASS 
 test('Master project-manager-independence validator rejects operational user coordination',()=>{const f=benchFixture({events:[{reason:'CHOOSE_NEXT_STEP',required:true,decision_ref:null}]});assess(f);const i=write(path.join(f.b,'master.json'),{schema_version:'1.0',check_id:'user_project_manager_independence_real',status:'PASS',target:{},artifacts:[{role:'efficiency_benchmark_profile',path:rel(f.bp)},{role:'efficiency_benchmark_receipt',path:rel(f.receipt)}],claims:{},notes:[]}),r=run(release,['master-evidence','seal','--project-root',root,'--input',i,'--out',path.join(f.b,'e.json')]);assert.notEqual(r.status,0);assert.ok(r.q.errors.some(x=>x.includes('efficiency_receipt_not_pass')||x.includes('project_manager_independence')))});
 test('Master efficiency validator defeats receipt rehash fraud through profile recomputation',()=>{const f=benchFixture();assess(f);const q=read(f.receipt);q.metrics.input_tokens.reduction_ratio=.99;const x=structuredClone(q);delete x.integrity;q.integrity.payload_sha256=hash(x);write(f.receipt,q);const i=write(path.join(f.b,'master.json'),{schema_version:'1.0',check_id:'context_token_efficiency_real',status:'PASS',target:{},artifacts:[{role:'efficiency_benchmark_profile',path:rel(f.bp)},{role:'efficiency_benchmark_receipt',path:rel(f.receipt)}],claims:{},notes:[]}),r=run(release,['master-evidence','seal','--project-root',root,'--input',i,'--out',path.join(f.b,'e.json')]);assert.notEqual(r.status,0);assert.ok(r.q.errors.some(x=>x.includes('receipt_semantic_drift:metrics')))});
 test('P8 successor cannot accept PASS without required security evidence',()=>{const b=tmp(),i=write(path.join(b,'master.json'),{schema_version:'1.0',check_id:'security_reliability_assurance_real',status:'PASS',target:{},artifacts:[],claims:{},notes:[]}),r=run(release,['master-evidence','seal','--project-root',root,'--input',i,'--out',path.join(b,'e.json')]);assert.notEqual(r.status,0);assert.equal(r.q.status,'MASTER_EVIDENCE_VALIDATION_FAILED')});
+
+
+test('B1 benchmark streams long prompts over stdin instead of argv',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/73-benchmark-token-efficiency-b1.mjs'),'utf8');
+  assert.match(s,/args\.push\('-'\)/);
+  assert.match(s,/input:prompt/);
+  assert.doesNotMatch(s,/args\.push\(prompt\)/);
+  assert.match(s,/prompt_transport:'STDIN'/);
+});
