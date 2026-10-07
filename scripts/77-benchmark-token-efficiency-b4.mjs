@@ -1,0 +1,265 @@
+#!/usr/bin/env node
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {parseCodexJsonl,encodeWindowsTransportArg} from '../core/agent-runtime/agent-runtime.mjs';
+import {startTaskTelemetry,emitAgentCallTelemetry,finishTaskTelemetry} from '../core/engine/telemetry-bridge.mjs';
+
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const argv=process.argv.slice(2);
+const take=(f,d=null)=>{const i=argv.indexOf(f);return i>=0&&i+1<argv.length?argv[i+1]:d};
+const runtimeProject=path.resolve(take('--project',''));
+const repoProject=path.resolve(take('--repo-project',''));
+const targetRel=String(take('--target-file','')).replaceAll('\\','/');
+const model=take('--model',null);
+const reasoningEffort=take('--reasoning-effort',null);
+const timeoutMs=Math.max(10000,Math.min(900000,Number(take('--timeout-ms','180000'))||180000));
+const allowedReasoning=new Set(['none','minimal','low','medium','high','xhigh','max']);
+if(reasoningEffort&&!allowedReasoning.has(reasoningEffort))throw new Error('B4_REASONING_EFFORT_INVALID:'+reasoningEffort);
+if(!runtimeProject||!fs.existsSync(path.join(runtimeProject,'.aledevos','project.json')))throw new Error('B4_ALEDEVOS_RUNTIME_PROJECT_REQUIRED');
+if(!fs.existsSync(path.join(runtimeProject,'.codex','config.toml')))throw new Error('B4_CODEX_ADAPTER_NOT_INSTALLED');
+if(!repoProject||!fs.existsSync(repoProject))throw new Error('B4_REPO_PROJECT_REQUIRED');
+if(!targetRel||targetRel.startsWith('/')||targetRel.includes('..'))throw new Error('B4_TARGET_FILE_INVALID');
+
+const TASK='B4-REAL-SOFTWARE-ENGINEERING-E2E',KEY='B4_REAL_SOFTWARE_ENGINEERING_E2E_V1';
+const MARKER='// ALEDEVOS_B4_E2E_MARKER';
+const EXT=new Set(['.js','.mjs','.cjs','.ts','.tsx','.jsx']);
+const DIR=new Set(['.git','.aledevos','.codex','.claude','.agents','.opencode','node_modules','dist','build','coverage','.next','.cache','vendor','target','.venv','venv','__pycache__','.idea','.vscode']);
+const BADNAME=[/^\.env(?:\.|$)/i,/\.pem$/i,/\.key$/i,/credentials?/i,/secrets?/i,/lock/i];
+const SECRET=/(password|passwd|secret|api[_-]?key|access[_-]?token|refresh[_-]?token|private[_-]?key|client[_-]?secret)\s*[:=]\s*(?:["'][^"']{4,}["']|[^\s#]{8,})|-----BEGIN [A-Z ]*PRIVATE KEY-----|\bAKIA[0-9A-Z]{16}\b|\bgh[pousr]_[A-Za-z0-9]{20,}\b|\bsk-[A-Za-z0-9]{20,}\b/i;
+const MAXFILES=15,MAXBYTES=170*1024,MAXFILE=96*1024;
+const sha=v=>crypto.createHash('sha256').update(v).digest('hex');
+const norm=p=>p.replaceAll('\\','/');
+const safeNum=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null;
+const ratio=(b,c)=>typeof b==='number'&&typeof c==='number'&&b>0?(b-c)/b:null;
+const pct=v=>v===null?'n/a':(Math.round(v*10000)/100)+'%';
+const write=(p,v)=>{fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n','utf8')};
+
+function run(exe,args,cwd,{input=null,timeout=timeoutMs,allow=false}={}){
+  const r=spawnSync(exe,args,{cwd,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout,input});
+  if(!allow&&r.status!==0)throw new Error('B4_COMMAND_FAILED:'+exe+' '+args.join(' ')+' :: '+String(r.stderr||r.stdout||r.error||'').slice(0,500));
+  return r;
+}
+function git(args,cwd=repoProject,opts={}){return run('git',args,cwd,opts)}
+function gitText(args,cwd=repoProject){return String(git(args,cwd).stdout||'').trim()}
+function assertRepo(){
+  const top=path.resolve(gitText(['rev-parse','--show-toplevel']));
+  if(process.platform==='win32'?top.toLowerCase()!==repoProject.toLowerCase():top!==repoProject)throw new Error('B4_REPOSITORY_ROOT_REQUIRED');
+  const head=gitText(['rev-parse','HEAD']);
+  const target=path.join(repoProject,targetRel);
+  if(!fs.existsSync(target)||!fs.statSync(target).isFile())throw new Error('B4_TARGET_FILE_MISSING:'+targetRel);
+  if(!EXT.has(path.extname(target).toLowerCase()))throw new Error('B4_TARGET_EXTENSION_UNSUPPORTED');
+  const dirtyTarget=String(git(['status','--porcelain=v1','--',targetRel],repoProject,{allow:true}).stdout||'').trim();
+  if(dirtyTarget)throw new Error('B4_TARGET_FILE_DIRTY');
+  const statusBefore=String(git(['status','--porcelain=v1','--untracked-files=all'],repoProject,{allow:true}).stdout||'');
+  return {head,statusBefore,statusHash:sha(Buffer.from(statusBefore,'utf8'))};
+}
+function safeFiles(){
+  const out=[];
+  function walk(dir){
+    for(const e of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){
+      if(e.isSymbolicLink())continue;
+      const p=path.join(dir,e.name);
+      if(e.isDirectory()){if(!DIR.has(e.name))walk(p);continue}
+      if(!e.isFile()||BADNAME.some(r=>r.test(e.name))||!EXT.has(path.extname(e.name).toLowerCase()))continue;
+      const b=fs.readFileSync(p);if(!b.length||b.length>MAXFILE||b.includes(0))continue;
+      const text=b.toString('utf8').replace(/^\uFEFF/,'');if(SECRET.test(text))continue;
+      out.push({rel:norm(path.relative(repoProject,p)),text,bytes:b.length,hash:sha(b)});
+    }
+  }
+  walk(repoProject);return out;
+}
+function selectCorpus(targetFile){
+  const all=safeFiles();
+  const target=all.find(x=>x.rel===targetRel);
+  if(!target)throw new Error('B4_TARGET_NOT_SAFE_FOR_BENCHMARK');
+  const files=[target];let bytes=target.bytes;
+  for(const f of all){if(f.rel===targetRel||files.length>=MAXFILES)continue;if(bytes+f.bytes>MAXBYTES)continue;files.push(f);bytes+=f.bytes}
+  if(files.length<5)throw new Error('B4_INSUFFICIENT_REAL_PROJECT_CORPUS');
+  return {all,files,target,digest:sha(Buffer.from(files.map(x=>x.rel+'\0'+x.hash).join('\n'),'utf8'))};
+}
+function anchorFor(text){
+  const lines=text.split(/\r?\n/);
+  const stem=path.basename(targetRel,path.extname(targetRel)).replace(/[^A-Za-z0-9_$]/g,'');
+  const rx=/^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:function|class)\s+[A-Za-z_$][\w$]*|^(?:export\s+)?const\s+[A-Za-z_$][\w$]*\s*=/;
+  let candidates=[];
+  for(let i=0;i<lines.length;i++){
+    const raw=lines[i],trim=raw.trim();
+    if(raw!==trim||!rx.test(trim)||trim.includes(MARKER))continue;
+    candidates.push({line:trim,n:i+1,score:(stem&&trim.includes(stem)?100:0)+Math.min(20,trim.length)});
+  }
+  candidates.sort((a,b)=>b.score-a.score||a.n-b.n);
+  if(!candidates.length)throw new Error('B4_NO_SAFE_TOP_LEVEL_DECLARATION_ANCHOR');
+  return candidates[0];
+}
+function promptFor(label,context,anchor){
+  return [
+    'ALEDEVOS B4 REAL SOFTWARE-ENGINEERING E2E BENCHMARK.',
+    'This is an isolated disposable git worktree. You MAY inspect and edit this worktree.',
+    'Do not commit, do not install dependencies, do not use network, and do not modify any file except the one required by the task.',
+    'USER GOAL: Add a non-functional maintenance marker immediately above the unique top-level declaration matching the supplied ANCHOR LINE.',
+    'EXACT MARKER TO INSERT: '+MARKER,
+    'ANCHOR LINE: '+anchor.line,
+    'Do not alter the anchor line or any other content.',
+    'When the edit is complete, reply exactly "B4_EDIT_DONE".',
+    'PIPELINE: '+label,
+    '',
+    'PRECOMPUTED REPOSITORY CONTEXT:',
+    context
+  ].join('\n');
+}
+function codex(worktree,prompt){
+  const args=['exec','--json','--skip-git-repo-check'];
+  if(model)args.push('--model',model);
+  if(reasoningEffort)args.push('--config','model_reasoning_effort='+reasoningEffort);
+  args.push('-');
+  let exe='codex',final=args;
+  if(process.platform==='win32'){
+    const launcher=path.join(root,'core','agent-runtime','windows-cli-launcher.ps1');
+    const enc=['codex',...args].map(encodeWindowsTransportArg);
+    exe='powershell.exe';final=['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',launcher,...enc];
+  }
+  const t=Date.now();
+  const r=run(exe,final,worktree,{input:prompt,allow:true});
+  r.ms=Date.now()-t;return r;
+}
+function answer(stdout){
+  let out=null;
+  for(const line of String(stdout||'').split(/\r?\n/)){
+    let q;try{q=JSON.parse(line)}catch{continue}
+    const it=q?.item;
+    if(it&&String(it.type||'').toLowerCase()==='agent_message'&&typeof it.text==='string')out=it.text.trim();
+    if(q?.type==='message'&&q?.role==='assistant'&&typeof q.content==='string')out=q.content.trim();
+  }
+  return out;
+}
+function verifyEdit(worktree,anchor){
+  const names=String(git(['diff','--name-only'],worktree,{allow:true}).stdout||'').trim().split(/\r?\n/).filter(Boolean).map(norm);
+  const num=String(git(['diff','--numstat','--',targetRel],worktree,{allow:true}).stdout||'').trim().split(/\s+/);
+  const check=git(['diff','--check'],worktree,{allow:true});
+  const text=fs.readFileSync(path.join(worktree,targetRel),'utf8').replace(/^\uFEFF/,'');
+  const lines=text.split(/\r?\n/);
+  let adjacency=0;
+  for(let i=0;i<lines.length-1;i++)if(lines[i].trim()===MARKER&&lines[i+1].trim()===anchor.line)adjacency++;
+  const markerCount=lines.filter(x=>x.trim()===MARKER).length;
+  const added=Number(num[0]),deleted=Number(num[1]);
+  const pass=names.length===1&&names[0]===targetRel&&added===1&&deleted===0&&check.status===0&&markerCount===1&&adjacency===1;
+  return {pass,changed_files:names,added_lines:Number.isFinite(added)?added:null,deleted_lines:Number.isFinite(deleted)?deleted:null,diff_check_pass:check.status===0,marker_count:markerCount,anchor_adjacency:adjacency,diff_sha256:sha(Buffer.from(String(git(['diff','--binary'],worktree,{allow:true}).stdout||''),'utf8'))};
+}
+function addWorktree(base,tag,head){
+  const wt=path.join(base,tag);
+  git(['worktree','add','--detach',wt,head],repoProject);
+  return wt;
+}
+function cleanupWorktree(wt){
+  if(!wt||!fs.existsSync(wt))return;
+  git(['reset','--hard','HEAD'],wt,{allow:true});
+  git(['clean','-fd'],wt,{allow:true});
+  git(['worktree','remove',wt],repoProject,{allow:true});
+}
+function telemetry(label,raw,verification,prompt){
+  const parsed=parseCodexJsonl(raw.stdout||'');
+  const exit=Number.isInteger(raw.status)?raw.status:(raw.error?.code==='ETIMEDOUT'?124:127);
+  const responseOk=exit===0&&answer(raw.stdout||'')==='B4_EDIT_DONE';
+  const quality=responseOk&&verification.pass;
+  const start=startTaskTelemetry({cwd:runtimeProject,taskId:TASK,adapter:'codex',benchmarkKey:KEY,model:parsed.model||model||null,profile:label});
+  if(!start.ok)throw new Error('B4_TELEMETRY_START_FAILED');
+  const ev=emitAgentCallTelemetry({cwd:runtimeProject,runId:start.run_id,taskId:TASK,runtime:'codex',adapter:'codex',agent:'orchestrator',model:parsed.model||model||null,
+    metrics:{input_tokens:parsed.input_tokens??null,output_tokens:parsed.output_tokens??null,context_tokens:null,duration_ms:raw.ms,generation_ms:null,tool_calls:parsed.tool_calls??0,files_read:parsed.files_read??0,bytes_read:null},
+    attributes:{benchmark_leg:label,call_status:exit===0?'COMPLETED':'FAILED',exit_code:exit,usage_source:parsed.usage_source??'unavailable',quality_exact_match:quality,response_contract_pass:responseOk,diff_contract_pass:verification.pass,raw_prompt_stored:false,raw_completion_stored:false,prompt_sha256:sha(Buffer.from(prompt,'utf8'))}});
+  if(!ev.ok)throw new Error('B4_AGENT_TELEMETRY_FAILED');
+  const fin=finishTaskTelemetry({cwd:runtimeProject,runId:start.run_id,taskId:TASK,adapter:'codex',finalState:quality?'PASS':'FAILED'});
+  if(!fin.ok)throw new Error('B4_TELEMETRY_FINALIZE_FAILED');
+  return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id};
+}
+
+const source=assertRepo();
+const corpus=selectCorpus();
+const anchor=anchorFor(corpus.target.text);
+const broad=corpus.files.map(f=>'FILE: '+f.rel+'\n'+f.text).join('\n\n---\n\n');
+const targeted=['TARGET FILE: '+targetRel,'TARGET SHA256: '+corpus.target.hash,'FILE CONTENT:',corpus.target.text].join('\n');
+const temp=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-b4-e2e-'));
+let baselineWt=null,candidateWt=null;
+try{
+  baselineWt=addWorktree(temp,'baseline',source.head);
+  candidateWt=addWorktree(temp,'candidate',source.head);
+
+  console.log('\nB4 real software-engineering task');
+  console.log('  repo HEAD            : '+source.head);
+  console.log('  safe eligible files : '+corpus.all.length);
+  console.log('  baseline files      : '+corpus.files.length);
+  console.log('  candidate files     : 1');
+  console.log('  target file         : '+targetRel);
+  console.log('  anchor content      : NOT STORED');
+  console.log('  source repo dirty   : '+(source.statusBefore.trim()?true:false));
+  console.log('  model               : '+(model||'DEFAULT_UNREPORTED'));
+  console.log('  reasoning effort    : '+(reasoningEffort||'DEFAULT_UNREPORTED'));
+
+  const bp=promptFor('REAL_PROJECT_BROAD_CONTEXT',broad,anchor);
+  const cp=promptFor('ALEDEVOS_TARGETED_CONTEXT',targeted,anchor);
+
+  console.log('\n[B4] Baseline real edit...');
+  const br=codex(baselineWt,bp),bv=verifyEdit(baselineWt,anchor),bt=telemetry('REAL_PROJECT_BROAD_CONTEXT',br,bv,bp);
+  console.log('  baseline edit='+ (bv.pass?'PASS':'FAIL') +' response='+ (bt.responseOk?'PASS':'FAIL') +' input='+ (bt.summary?.totals?.input_tokens??'null') +' tools='+ (bt.summary?.totals?.tool_calls??'null'));
+
+  console.log('[B4] AleDevOS targeted real edit...');
+  const cr=codex(candidateWt,cp),cv=verifyEdit(candidateWt,anchor),ct=telemetry('ALEDEVOS_TARGETED_CONTEXT',cr,cv,cp);
+  console.log('  candidate edit='+ (cv.pass?'PASS':'FAIL') +' response='+ (ct.responseOk?'PASS':'FAIL') +' input='+ (ct.summary?.totals?.input_tokens??'null') +' tools='+ (ct.summary?.totals?.tool_calls??'null'));
+
+  const bin=safeNum(bt.summary?.totals?.input_tokens),bout=safeNum(bt.summary?.totals?.output_tokens);
+  const cin=safeNum(ct.summary?.totals?.input_tokens),cout=safeNum(ct.summary?.totals?.output_tokens);
+  const btotal=bin!==null&&bout!==null?bin+bout:null,ctotal=cin!==null&&cout!==null?cin+cout:null;
+  const rin=ratio(bin,cin),rt=ratio(btotal,ctotal);
+  const quality=bt.quality&&ct.quality;
+  const telem=bt.verified&&ct.verified;
+  const sameDiff=bv.diff_sha256===cv.diff_sha256;
+  const headAfter=gitText(['rev-parse','HEAD']);
+  const statusAfter=String(git(['status','--porcelain=v1','--untracked-files=all'],repoProject,{allow:true}).stdout||'');
+  const sourceUntouched=headAfter===source.head&&sha(Buffer.from(statusAfter,'utf8'))===source.statusHash;
+  let status='B4_PASS',reasons=[];
+  if(!telem||rin===null||rt===null){status='B4_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
+  else if(!quality||!sameDiff){status='B4_FAIL';reasons.push('QUALITY_OR_DIFF_NOT_PRESERVED')}
+  else if(!sourceUntouched){status='B4_FAIL';reasons.push('SOURCE_REPOSITORY_MUTATED')}
+
+  const receipt={schema_version:'1.0',benchmark:'B4_REAL_SOFTWARE_ENGINEERING_E2E',benchmark_key:KEY,status,validation_level:'PRELIMINARY',
+    scope:'REAL_REPOSITORY_ISOLATED_EDIT_E2E',
+    claim_boundary:'Measures one deterministic non-functional real-code edit in isolated worktrees. It validates locate/edit/diff verification efficiency, not arbitrary feature-development quality or a universal savings percentage.',
+    runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
+    repository:{absolute_path_stored:false,head:source.head,source_untouched:sourceUntouched,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
+    task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
+    result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
+    pair:{baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,edit:bv},candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,edit:cv}},
+    reasons};
+  receipt.integrity={algorithm:'sha256',payload_sha256:sha(Buffer.from(JSON.stringify(receipt),'utf8'))};
+  const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  const out=path.join(runtimeProject,'.aledevos','state','efficiency','benchmarks','b4-real-software-engineering-'+stamp+'.json');
+  write(out,receipt);
+
+  console.log('\n============================================================');
+  console.log(' ALEDEVOS B4 - REAL SOFTWARE-ENGINEERING E2E');
+  console.log('============================================================');
+  console.log('Status                    : '+status);
+  console.log('Validation                : PRELIMINARY');
+  console.log('Input saving              : '+pct(rin));
+  console.log('Total saving              : '+pct(rt));
+  console.log('Baseline edit             : '+bv.pass);
+  console.log('Candidate edit            : '+cv.pass);
+  console.log('Identical verified diff   : '+sameDiff);
+  console.log('Quality preserved         : '+quality);
+  console.log('Telemetry verified        : '+telem);
+  console.log('Source repository intact  : '+sourceUntouched);
+  console.log('Model                     : '+(model||'DEFAULT_UNREPORTED'));
+  console.log('Reasoning effort          : '+(reasoningEffort||'DEFAULT_UNREPORTED'));
+  console.log('Receipt                   : '+norm(path.relative(runtimeProject,out)));
+  if(reasons.length)console.log('Reasons                   : '+reasons.join(', '));
+  console.log('\n'+status);
+  process.exitCode=status==='B4_PASS'?0:status==='B4_INCOMPARABLE'?5:7;
+} finally {
+  cleanupWorktree(baselineWt);
+  cleanupWorktree(candidateWt);
+  try{fs.rmSync(temp,{recursive:true,force:true})}catch{}
+  git(['worktree','prune'],repoProject,{allow:true});
+}
