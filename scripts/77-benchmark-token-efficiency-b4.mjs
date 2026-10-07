@@ -17,6 +17,8 @@ const targetRel=String(take('--target-file','')).replaceAll('\\','/');
 const model=take('--model',null);
 const reasoningEffort=take('--reasoning-effort',null);
 const timeoutMs=Math.max(10000,Math.min(900000,Number(take('--timeout-ms','180000'))||180000));
+const runs=Math.max(1,Math.min(5,Number(take('--runs','1'))||1));
+const priorReceiptArg=take('--prior-receipt',null);
 const allowedReasoning=new Set(['none','minimal','low','medium','high','xhigh','max']);
 if(reasoningEffort&&!allowedReasoning.has(reasoningEffort))throw new Error('B4_REASONING_EFFORT_INVALID:'+reasoningEffort);
 if(!runtimeProject||!fs.existsSync(path.join(runtimeProject,'.aledevos','project.json')))throw new Error('B4_ALEDEVOS_RUNTIME_PROJECT_REQUIRED');
@@ -201,14 +203,17 @@ function verifySourceUntouched(source){
 }
 
 function safeDiagnostic(raw){
-  const text=[raw?.stderr,raw?.stdout].filter(Boolean).join('\n');
-  return String(text||'')
+  let text=[raw?.stderr,raw?.stdout].filter(Boolean).join('\n');
+  text=String(text||'')
+    .replace(/[A-Za-z]:[\\/][^\r\n"' ]+/g,'<PATH>')
+    .replace(/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b/ig,'<ID>');
+  return text
     .split(/\r?\n/)
     .map(x=>x.trim())
     .filter(Boolean)
     .slice(0,4)
     .join(' | ')
-    .replace(/[^A-Za-z0-9 ._:/=+\-]/g,'_')
+    .replace(/[^A-Za-z0-9 <>._:/=+\-]/g,'_')
     .slice(0,600)||null;
 }
 function telemetry(label,raw,verification,prompt){
@@ -224,7 +229,28 @@ function telemetry(label,raw,verification,prompt){
   if(!ev.ok)throw new Error('B4_AGENT_TELEMETRY_FAILED');
   const fin=finishTaskTelemetry({cwd:runtimeProject,runId:start.run_id,taskId:TASK,adapter:'codex',finalState:quality?'PASS':'FAILED'});
   if(!fin.ok)throw new Error('B4_TELEMETRY_FINALIZE_FAILED');
-  return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id,diagnostic:safeDiagnostic(raw)};
+  const diagnostic=(exit!==0||!responseOk||!verification.pass)?safeDiagnostic(raw):null;
+  return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id,diagnostic};
+}
+
+function loadPriorPairs({corpus,anchor}){
+  if(!priorReceiptArg)return [];
+  const base=path.resolve(runtimeProject),rp=path.resolve(runtimeProject,priorReceiptArg);
+  if(rp!==base&&!rp.startsWith(base+path.sep))throw new Error('B4_PRIOR_RECEIPT_OUTSIDE_RUNTIME_PROJECT');
+  if(!fs.existsSync(rp))throw new Error('B4_PRIOR_RECEIPT_NOT_FOUND:'+rp);
+  const q=JSON.parse(fs.readFileSync(rp,'utf8'));
+  if(q?.schema_version!=='1.0'||q?.benchmark!=='B4_REAL_SOFTWARE_ENGINEERING_E2E'||q?.benchmark_key!==KEY)throw new Error('B4_PRIOR_RECEIPT_INCOMPATIBLE');
+  const copy=structuredClone(q),h=copy?.integrity?.payload_sha256??null;delete copy.integrity;
+  if(!h||sha(Buffer.from(JSON.stringify(copy),'utf8'))!==h)throw new Error('B4_PRIOR_RECEIPT_INTEGRITY_INVALID');
+  if((q?.model??null)!==(model??null))throw new Error('B4_PRIOR_RECEIPT_MODEL_MISMATCH');
+  if((q?.reasoning_effort??null)!==(reasoningEffort??null))throw new Error('B4_PRIOR_RECEIPT_REASONING_MISMATCH');
+  if(q?.repository?.source_digest!==corpus.source_digest||q?.repository?.corpus_digest!==corpus.digest)throw new Error('B4_PRIOR_RECEIPT_SOURCE_DRIFT');
+  if(q?.task?.target_file_sha256!==corpus.target.hash||q?.task?.anchor_sha256!==sha(Buffer.from(anchor.line,'utf8')))throw new Error('B4_PRIOR_RECEIPT_TARGET_DRIFT');
+  if(q?.sandbox!=='workspace-write'||q?.approval_policy!=='never')throw new Error('B4_PRIOR_RECEIPT_RUNTIME_POLICY_MISMATCH');
+  if(q.status==='B4_FAIL'||q.status==='B4_INCOMPARABLE')throw new Error('B4_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
+  const xs=Array.isArray(q.pairs)?q.pairs:(q.pair?[q.pair]:[]);
+  if(!xs.length)throw new Error('B4_PRIOR_RECEIPT_HAS_NO_PAIR');
+  return xs.map((x,i)=>({...x,run:x.run??(i+1),reused:true}));
 }
 
 const corpus=selectCorpus();
@@ -254,38 +280,77 @@ try{
 
   const bp=promptFor('REAL_PROJECT_BROAD_CONTEXT',broad,anchor);
   const cp=promptFor('ALEDEVOS_TARGETED_CONTEXT',targeted,anchor);
+  const reused=loadPriorPairs({corpus,anchor});
+  const pairs=[...reused];
 
-  console.log('\n[B4] Baseline real edit...');
-  const br=codex(baselineWt,bp),bv=verifyEdit(baselineWt,anchor),bt=telemetry('REAL_PROJECT_BROAD_CONTEXT',br,bv,bp);
-  console.log('  baseline edit='+ (bv.pass?'PASS':'FAIL') +' response='+ (bt.responseOk?'PASS':'FAIL') +' input='+ (bt.summary?.totals?.input_tokens??'null') +' tools='+ (bt.summary?.totals?.tool_calls??'null'));
-  if(bt.diagnostic)console.log('  baseline diagnostic='+bt.diagnostic);
+  // Worktrees are recreated for every new pair from the same frozen snapshot.
+  cleanupWorktree(baselineWt); baselineWt=null;
+  cleanupWorktree(candidateWt); candidateWt=null;
 
-  console.log('[B4] AleDevOS targeted real edit...');
-  const cr=codex(candidateWt,cp),cv=verifyEdit(candidateWt,anchor),ct=telemetry('ALEDEVOS_TARGETED_CONTEXT',cr,cv,cp);
-  console.log('  candidate edit='+ (cv.pass?'PASS':'FAIL') +' response='+ (ct.responseOk?'PASS':'FAIL') +' input='+ (ct.summary?.totals?.input_tokens??'null') +' tools='+ (ct.summary?.totals?.tool_calls??'null'));
-  if(ct.diagnostic)console.log('  candidate diagnostic='+ct.diagnostic);
+  for(let i=1;i<=runs;i++){
+    const pairNumber=reused.length+i,totalRuns=reused.length+runs;
+    baselineWt=addWorktree(temp,'baseline-'+pairNumber,source.head);
+    candidateWt=addWorktree(temp,'candidate-'+pairNumber,source.head);
 
-  const bin=safeNum(bt.summary?.totals?.input_tokens),bout=safeNum(bt.summary?.totals?.output_tokens);
-  const cin=safeNum(ct.summary?.totals?.input_tokens),cout=safeNum(ct.summary?.totals?.output_tokens);
-  const btotal=bin!==null&&bout!==null?bin+bout:null,ctotal=cin!==null&&cout!==null?cin+cout:null;
-  const rin=ratio(bin,cin),rt=ratio(btotal,ctotal);
-  const quality=bt.quality&&ct.quality;
-  const telem=bt.verified&&ct.verified;
-  const sameDiff=bv.diff_sha256===cv.diff_sha256;
+    console.log('\n[B4 '+pairNumber+'/'+totalRuns+'] real software-engineering pair');
+    let br,bv,bt,cr,cv,ct;
+    if(pairNumber%2===1){
+      console.log('  Baseline first');
+      br=codex(baselineWt,bp); bv=verifyEdit(baselineWt,anchor); bt=telemetry('REAL_PROJECT_BROAD_CONTEXT',br,bv,bp);
+      cr=codex(candidateWt,cp); cv=verifyEdit(candidateWt,anchor); ct=telemetry('ALEDEVOS_TARGETED_CONTEXT',cr,cv,cp);
+    }else{
+      console.log('  Candidate first (order balancing)');
+      cr=codex(candidateWt,cp); cv=verifyEdit(candidateWt,anchor); ct=telemetry('ALEDEVOS_TARGETED_CONTEXT',cr,cv,cp);
+      br=codex(baselineWt,bp); bv=verifyEdit(baselineWt,anchor); bt=telemetry('REAL_PROJECT_BROAD_CONTEXT',br,bv,bp);
+    }
+    console.log('  baseline edit='+(bv.pass?'PASS':'FAIL')+' response='+(bt.responseOk?'PASS':'FAIL')+' input='+(bt.summary?.totals?.input_tokens??'null')+' tools='+(bt.summary?.totals?.tool_calls??'null'));
+    if(bt.diagnostic)console.log('  baseline diagnostic='+bt.diagnostic);
+    console.log('  candidate edit='+(cv.pass?'PASS':'FAIL')+' response='+(ct.responseOk?'PASS':'FAIL')+' input='+(ct.summary?.totals?.input_tokens??'null')+' tools='+(ct.summary?.totals?.tool_calls??'null'));
+    if(ct.diagnostic)console.log('  candidate diagnostic='+ct.diagnostic);
+
+    const bin=safeNum(bt.summary?.totals?.input_tokens),bout=safeNum(bt.summary?.totals?.output_tokens);
+    const cin=safeNum(ct.summary?.totals?.input_tokens),cout=safeNum(ct.summary?.totals?.output_tokens);
+    const btotal=bin!==null&&bout!==null?bin+bout:null,ctotal=cin!==null&&cout!==null?cin+cout:null;
+    const rin=ratio(bin,cin),rt=ratio(btotal,ctotal);
+    const sameDiff=bv.diff_sha256===cv.diff_sha256;
+    const pair={
+      run:pairNumber,
+      baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,diagnostic:bt.diagnostic,quality:bt.quality,telemetry_verified:bt.verified,edit:bv},
+      candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,diagnostic:ct.diagnostic,quality:ct.quality,telemetry_verified:ct.verified,edit:cv},
+      input_reduction_ratio:rin,total_reduction_ratio:rt,identical_diff:sameDiff,
+      quality_preserved:bt.quality&&ct.quality,telemetry_verified:bt.verified&&ct.verified,reused:false
+    };
+    pairs.push(pair);
+    console.log('  input saving='+pct(rin)+' | total saving='+pct(rt)+' | identical diff='+sameDiff);
+
+    cleanupWorktree(baselineWt);baselineWt=null;
+    cleanupWorktree(candidateWt);candidateWt=null;
+  }
+
+  const med=xs=>{const a=[...xs].sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2};
+  const inputRatios=pairs.map(x=>x.input_reduction_ratio??ratio(x.baseline?.input_tokens,x.candidate?.input_tokens)).filter(Number.isFinite);
+  const totalRatios=pairs.map(x=>x.total_reduction_ratio??ratio(x.baseline?.total_tokens,x.candidate?.total_tokens)).filter(Number.isFinite);
+  const rin=med(inputRatios),rt=med(totalRatios);
+  const quality=pairs.every(x=>(x.quality_preserved??(x.baseline?.quality&&x.candidate?.quality))===true);
+  const telem=pairs.every(x=>(x.telemetry_verified??(x.baseline?.telemetry_verified&&x.candidate?.telemetry_verified))===true);
+  const sameDiff=pairs.every(x=>(x.identical_diff??(x.baseline?.edit?.diff_sha256===x.candidate?.edit?.diff_sha256))===true);
   const sourceUntouched=verifySourceUntouched(source);
+  const measured=inputRatios.length===pairs.length&&totalRatios.length===pairs.length;
   let status='B4_PASS',reasons=[];
-  if(!telem||rin===null||rt===null){status='B4_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
+  if(!telem||!measured){status='B4_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
   else if(!quality||!sameDiff){status='B4_FAIL';reasons.push('QUALITY_OR_DIFF_NOT_PRESERVED')}
   else if(!sourceUntouched){status='B4_FAIL';reasons.push('SOURCE_REPOSITORY_MUTATED')}
+  const validationLevel=pairs.length>=3&&status==='B4_PASS'?'VALIDATED':'PRELIMINARY';
 
-  const receipt={schema_version:'1.0',benchmark:'B4_REAL_SOFTWARE_ENGINEERING_E2E',benchmark_key:KEY,status,validation_level:'PRELIMINARY',
+  const receipt={schema_version:'1.0',benchmark:'B4_REAL_SOFTWARE_ENGINEERING_E2E',benchmark_key:KEY,status,validation_level:validationLevel,
     scope:'REAL_PROJECT_ISOLATED_EDIT_E2E',
     claim_boundary:'Measures one deterministic non-functional edit on real project code in isolated worktrees. Non-Git source folders are first frozen into an ephemeral Git snapshot without modifying the source. It validates locate/edit/diff verification efficiency, not arbitrary feature-development quality or a universal savings percentage.',
     runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,sandbox:'workspace-write',approval_policy:'never',model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
     repository:{absolute_path_stored:false,source_mode:source.mode,execution_head:source.head,source_untouched:sourceUntouched,source_digest:source.source_digest,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
     task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
-    result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
-    pair:{baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,diagnostic:bt.diagnostic,edit:bv},candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,diagnostic:ct.diagnostic,edit:cv}},
+    runs:pairs.length,reused_prior_pairs:reused.length,newly_executed_pairs:runs,
+    result:{median_input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,median_total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
+    pairs,
     reasons};
   receipt.integrity={algorithm:'sha256',payload_sha256:sha(Buffer.from(JSON.stringify(receipt),'utf8'))};
   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
@@ -296,11 +361,12 @@ try{
   console.log(' ALEDEVOS B4 - REAL SOFTWARE-ENGINEERING E2E');
   console.log('============================================================');
   console.log('Status                    : '+status);
-  console.log('Validation                : PRELIMINARY');
-  console.log('Input saving              : '+pct(rin));
-  console.log('Total saving              : '+pct(rt));
-  console.log('Baseline edit             : '+bv.pass);
-  console.log('Candidate edit            : '+cv.pass);
+  console.log('Validation                : '+validationLevel);
+  console.log('Runs total                : '+pairs.length);
+  console.log('Prior pairs reused        : '+reused.length);
+  console.log('New pairs executed        : '+runs);
+  console.log('Input saving median       : '+pct(rin));
+  console.log('Total saving median       : '+pct(rt));
   console.log('Identical verified diff   : '+sameDiff);
   console.log('Quality preserved         : '+quality);
   console.log('Telemetry verified        : '+telem);
