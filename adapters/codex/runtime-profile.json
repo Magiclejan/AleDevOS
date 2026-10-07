@@ -15,5 +15,6 @@
   "default_timeout_ms": 600000,
   "usage_fallback": {
     "enabled": false
-  }
+  },
+  "repo_check_bypass_flag": "--skip-git-repo-check"
 }
