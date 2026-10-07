@@ -129,7 +129,7 @@ function Find-NearbyProjects {
   return @($found | Sort-Object -Unique)
 }
 
-function function Show-AdvancedMenu {
+function Show-AdvancedMenu {
   while ($true) {
     Clear-Host
     Write-Host '============================================================'
