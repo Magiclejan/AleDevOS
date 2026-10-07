@@ -3,7 +3,7 @@
 > **A portable AI macro-skill for software engineering.**  
 > One reusable operating layer that can sit above different AI runtimes, models and providers without coupling its Core to any of them.
 
-AleDevOS is not a model, provider, IDE or single-agent prompt. It is a **macro-hability / operating skill** that packages orchestration, context management, specialized agents, reusable Skills, deterministic gates, QA, repair loops, portability, observability and efficiency policy into one system that can be projected into supported AI runtimes.
+AleDevOS is not a model, provider, IDE or single-agent prompt. It is a **macro-skill / operating layer** that packages orchestration, context management, specialized agents, reusable Skills, deterministic gates, QA, repair loops, portability, observability and efficiency policy into one system that can be projected into supported AI runtimes.
 
 ## What AleDevOS is
 
@@ -64,6 +64,24 @@ It does this through ContextOS and the Global Efficiency governor:
 - real per-agent token/runtime telemetry.
 
 **Token savings are evidence-based, not guessed.** AleDevOS only claims an efficiency improvement from comparable baseline/candidate runs with preserved gates, acceptance criteria and Judge quality. Unknown token counts stay unknown.
+
+
+### Validated token-efficiency evidence
+
+AleDevOS now has repeated real Codex benchmark evidence for two controlled MICRO scenarios:
+
+| Benchmark | What it isolates | Median total-token reduction | Quality | Repetitions |
+| --- | --- | ---: | --- | ---: |
+| **B1 Context Efficiency** | full context vs relevant context | **50.67%** | preserved | 3 pairs |
+| **B2 Macro-Orchestration Efficiency** | broad pipeline vs P7 MICRO + relevant context + compact handoffs | **77.24%** | preserved | 3 pairs |
+
+B2 also reduced model calls and active agents by **33.33%**, and handoff tokens by **99.73%** in the controlled benchmark.
+
+These are **benchmark-specific measurements**, not a universal savings promise. Broader claims require more task classes, real project work, adapters and host platforms.
+
+Canonical evidence:
+- `docs/benchmarks/B1_CONTEXT_EFFICIENCY.md`
+- `docs/benchmarks/B2_MACRO_ORCHESTRATION_EFFICIENCY.md`
 
 ## Auto-Telemetry V2 — real runtime proof
 
