@@ -186,3 +186,14 @@ test('B3 uses stdin and measures real context file and byte reduction without ra
   assert.match(s,/REAL_PROJECT_BROAD_CONTEXT/);
   assert.match(s,/ALEDEVOS_TARGETED_RETRIEVAL/);
 });
+
+
+test('B3 can separate runtime project from corpus project without storing absolute paths',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  assert.match(s,/--corpus-project/);
+  assert.match(s,/corpusProject/);
+  assert.match(s,/walk\(corpusProject\)/);
+  assert.match(s,/runtime_equals_corpus/);
+  assert.match(s,/runtime_path_stored:false/);
+  assert.match(s,/corpus_path_stored:false/);
+});
