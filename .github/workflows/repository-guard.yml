@@ -385,8 +385,11 @@ jobs:
         run: |
           set -euo pipefail
           tmp="$(mktemp -d)"
-          mkdir -p "$tmp/.aledevos/runtime"
+          mkdir -p "$tmp/.aledevos/runtime" "$tmp/.aledevos/contextos/runtime" "$tmp/.aledevos/contextos/policies"
           cp core/engine/aledevos.mjs "$tmp/.aledevos/runtime/aledevos.mjs"
+          cp core/engine/telemetry-bridge.mjs "$tmp/.aledevos/runtime/telemetry-bridge.mjs"
+          cp contextos/engine/telemetry.mjs "$tmp/.aledevos/contextos/runtime/telemetry.mjs"
+          cp contextos/policies/context-policy.json "$tmp/.aledevos/contextos/policies/context-policy.json"
 
           (
             cd "$tmp"
