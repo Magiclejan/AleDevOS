@@ -513,3 +513,25 @@ jobs:
           }
           console.log('Runtime state ownership PASS');
           NODE
+
+
+  p36-pro-quality-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Test fail-closed PRO certification inventory and drift detection
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/pro-quality-phase36.test.mjs
+          node certification/pro/engine/pro-quality-audit.mjs inventory --root . > /tmp/p36-inventory.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const q=JSON.parse(fs.readFileSync('/tmp/p36-inventory.json','utf8'));
+          if(q.summary.bundled_skills!==13 || q.summary.pro_certified!==0 || q.status!=='P36_NEEDS_WORK') process.exit(1);
+          if(q.summary.agents_inventoried<40) process.exit(2);
+          console.log('P36 inventory truthful baseline PASS');
+          NODE
