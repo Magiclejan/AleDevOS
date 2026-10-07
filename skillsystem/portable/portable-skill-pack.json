@@ -13,67 +13,67 @@
     {
       "id": "backend-change",
       "canonical_path": "core/skills/backend-change/SKILL.md",
-      "semantic_sha256": "dc1c9df51fee533a3f697a62c277703c8a683aea363fa3fc664996e60ee40cd1"
+      "semantic_sha256": "0048d9b7468b7d0861c6d7cc7f01a16604344f4357933b5bb102ca5d09def844"
     },
     {
       "id": "database-change",
       "canonical_path": "core/skills/database-change/SKILL.md",
-      "semantic_sha256": "a207a807d592562d640414549c6b0e392f2700373640b1ce273cdb4ccd66f8c9"
+      "semantic_sha256": "13f126db0615d684d0078e77170efc38ebc598e2642b9be5d81ae1254520afae"
     },
     {
       "id": "diff-review",
       "canonical_path": "core/skills/diff-review/SKILL.md",
-      "semantic_sha256": "cf4211959c9a12cd376b3d47038147d51598637826c8d2f5d569ebfcd10e778b"
+      "semantic_sha256": "22e9779f846902a0e1d3cd52c5da23b51bbcfbeebfe0d20d9bf3d22dc923a682"
     },
     {
       "id": "frontend-change",
       "canonical_path": "core/skills/frontend-change/SKILL.md",
-      "semantic_sha256": "8914957847988dd9ccc2d3dbabe43804cdeb49b60025162d2e3570150861b382"
+      "semantic_sha256": "5777a7894d6615ccabc481c9b589874b122d5604acf4a1fc824f0902be0b9344"
     },
     {
       "id": "implementation-plan",
       "canonical_path": "core/skills/implementation-plan/SKILL.md",
-      "semantic_sha256": "1d38e71a95a39de7b2b2cc9510a3f65b8c5025ee26083d0d817f4c0c51b727c4"
+      "semantic_sha256": "ae537020c15819d28d9905b03877ce0b68c79bba2e69c635b87c3c2aa22228bd"
     },
     {
       "id": "regression-analysis",
       "canonical_path": "core/skills/regression-analysis/SKILL.md",
-      "semantic_sha256": "66abc307fd8a039edff5198150d6f72f70fff24244d4766516825fcb6787245b"
+      "semantic_sha256": "192dd15d8dd9a73742a40ba7a2bd88516c05b1e6455be4053bde0f3651ef33d4"
     },
     {
       "id": "repair-loop",
       "canonical_path": "core/skills/repair-loop/SKILL.md",
-      "semantic_sha256": "5a5d8243b03051ee6e25d3ae4d455f738b0726c094e8e79a9a58bf5b6193d8a4"
+      "semantic_sha256": "dc7c9bc9bd84b3de17f4c56726290952bef40fa3e8c466d112c0bd9d92a63691"
     },
     {
       "id": "repo-map",
       "canonical_path": "core/skills/repo-map/SKILL.md",
-      "semantic_sha256": "a69ca8f4ae23655a59d2e57f63bfa2ff15099cee621dd757487aa81aa730bdfe"
+      "semantic_sha256": "3d9fb9d63702422c00e83954318cae400383a48610f750a15df51dab6222558c"
     },
     {
       "id": "requirements-check",
       "canonical_path": "core/skills/requirements-check/SKILL.md",
-      "semantic_sha256": "a220dedef045bcb0bf1b3d227a904ee89dced1c29ccae5ea769f93dc189900e6"
+      "semantic_sha256": "24a067ebcf73e472f54e7bf4b444505c11ce5ea7c62703d013f6d0544d9563c2"
     },
     {
       "id": "safe-edit",
       "canonical_path": "core/skills/safe-edit/SKILL.md",
-      "semantic_sha256": "a711039c4f8977178c196e0d29bd89898bf1a16166e9d3c113a8c520b3f4d787"
+      "semantic_sha256": "02faca197f0820a6c56da3a094a2859b412ccae03be6fe61109aa5203d6d0e93"
     },
     {
       "id": "security-check",
       "canonical_path": "core/skills/security-check/SKILL.md",
-      "semantic_sha256": "2dacc9c2ac570946b2c5b2265904219c3f6581683a9b2729721cbdd39728f469"
+      "semantic_sha256": "29a189f5265538d62ac178ffbeba9e267a8492e42a4a256805261617ffb06427"
     },
     {
       "id": "task-contract",
       "canonical_path": "core/skills/task-contract/SKILL.md",
-      "semantic_sha256": "0d713b7f9a9a7aed5c914e48716c1b74c3add4b33cef0a734c06851bef235640"
+      "semantic_sha256": "041e47debef932d56636b216eec1e46469bf9bd602508f3d15481195c638c42f"
     },
     {
       "id": "test-strategy",
       "canonical_path": "core/skills/test-strategy/SKILL.md",
-      "semantic_sha256": "6daf3d841c10734c90d372df0cbb0be2ac51c642206914ce85949a456e0fadcb"
+      "semantic_sha256": "05435bacca42d9729fb8676bd2ddd14e15d3e75039d90f59fc1cd8b24b851ae4"
     }
   ],
   "projections": {

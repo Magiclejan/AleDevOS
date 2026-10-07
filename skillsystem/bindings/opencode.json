@@ -6,67 +6,67 @@
     {
       "skill_id": "backend-change",
       "path": ".opencode/skills/backend-change/SKILL.md",
-      "expected_sha256": "7dbee20cfd8879c8c84c1d2f4341f43a231ec1ca66d5c9618adf3fd64639fb25"
+      "expected_sha256": "e8c8600a88c8003c37e3f49435e7c79bbfaa2ed56b17d9954f81ba892fb7e2b0"
     },
     {
       "skill_id": "database-change",
       "path": ".opencode/skills/database-change/SKILL.md",
-      "expected_sha256": "790d22152c6ed4f3d7c7a9ecb95f32b1bd5ff64ff9258114082e77304142a4bc"
+      "expected_sha256": "ffcdacd803a2a7d520697ed1bedb9ba159db32e4092c2f7d94d230dbd3e76c04"
     },
     {
       "skill_id": "diff-review",
       "path": ".opencode/skills/diff-review/SKILL.md",
-      "expected_sha256": "05b6a6c8b48f400630d3cedf2aad50ed92fd1a995ccb42e47c62ec0f120a083a"
+      "expected_sha256": "2363ceb7a0371838995a6166563eff47e2a949e912c4915e7e412e239d81667d"
     },
     {
       "skill_id": "frontend-change",
       "path": ".opencode/skills/frontend-change/SKILL.md",
-      "expected_sha256": "ee6a1b3c018ac3e2f4c7e2452e41a507c4cfd797ef591bae997bb71eab1568f3"
+      "expected_sha256": "6a813f5b11498c0de7ff2dd5d656dcf6ece23141e6d7b2704b72cf8793625e80"
     },
     {
       "skill_id": "implementation-plan",
       "path": ".opencode/skills/implementation-plan/SKILL.md",
-      "expected_sha256": "fa599943b670697d6eca5d676e92b2826f44778f711657e7869f39cab76fa796"
+      "expected_sha256": "1f3cfe340226f11bd674dbd86f8f6bf86e258879ced0c1ddff6befc5f8b8fa62"
     },
     {
       "skill_id": "regression-analysis",
       "path": ".opencode/skills/regression-analysis/SKILL.md",
-      "expected_sha256": "77c8d5561abc03253c1d1ebf86d34df1194cebc2fba1d3ce4cab7ea0e035f799"
+      "expected_sha256": "04f08a6b388b40d3c40426cc984e08af059adf7a4671d76d4ff6f0457da57b36"
     },
     {
       "skill_id": "repair-loop",
       "path": ".opencode/skills/repair-loop/SKILL.md",
-      "expected_sha256": "acbb346ca87716e32136615ccfd06faa9f8806ea13ef7ccb897432e9076d369e"
+      "expected_sha256": "e69f0b06591fef44f716486ab885d3bd8adfa5ced1b94f82a03e14d34b1b069e"
     },
     {
       "skill_id": "repo-map",
       "path": ".opencode/skills/repo-map/SKILL.md",
-      "expected_sha256": "bc0e74ce21a2ceeb906661df9edcaa9af43409c50249122e43ef814ce66237c5"
+      "expected_sha256": "89d7e2c86a7f7bd0f769876c243cc95d58016cc7590def6e2cab8f68b377d805"
     },
     {
       "skill_id": "requirements-check",
       "path": ".opencode/skills/requirements-check/SKILL.md",
-      "expected_sha256": "9e10d841b7b8da83aa497c10d5935b7cd99e12aa3f4df12fa3f1f6399e6f8992"
+      "expected_sha256": "72162421a04f4d02261bc23c203158daadcb990b4b059bfcf6af94a55dff826f"
     },
     {
       "skill_id": "safe-edit",
       "path": ".opencode/skills/safe-edit/SKILL.md",
-      "expected_sha256": "83ef5d4ccc221e5fbc550286b8777500033a340b6c2b7724dec8f0eceb4219ed"
+      "expected_sha256": "3b82886968baadbb074b9a434eb67b2d80159379f392bb96d4593d1d42ce6765"
     },
     {
       "skill_id": "security-check",
       "path": ".opencode/skills/security-check/SKILL.md",
-      "expected_sha256": "6b6974bb28597f4ce985be15120e83c369beea91fd992547b256e156c8999052"
+      "expected_sha256": "c9ef94a26611bd71d83261b21ccff39c509e915701648d8433fbb440c9bcf830"
     },
     {
       "skill_id": "task-contract",
       "path": ".opencode/skills/task-contract/SKILL.md",
-      "expected_sha256": "c2338ddd337d3a301167c0ceb5d34f37080c2e0afd490d1b9e10c8b884cefaa5"
+      "expected_sha256": "0d741f9b981ff513a1442920a7f5605e90dc470b1355c1d695ee7ed0de1e09fc"
     },
     {
       "skill_id": "test-strategy",
       "path": ".opencode/skills/test-strategy/SKILL.md",
-      "expected_sha256": "af6952c58d205be47e04a2a29d2c16b681b3f9c8b1963ab1ea77bb3a00685ee7"
+      "expected_sha256": "45c6552478fa00a208d303beb19b715ee73ada73f01ab860007feb595c2b9928"
     }
   ]
 }
