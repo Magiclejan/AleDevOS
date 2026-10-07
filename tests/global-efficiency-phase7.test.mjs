@@ -264,3 +264,13 @@ test('B4 never initializes Git in the external source folder and verifies source
   assert.doesNotMatch(s,/run\('git',\['init'\],repoProject/);
   assert.match(s,/source_folder.*READ_ONLY|source folder.*READ_ONLY/i);
 });
+
+
+test('B4 explicitly enables workspace-write only inside disposable worktrees',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/--sandbox','workspace-write'/);
+  assert.match(s,/--ask-for-approval','never'/);
+  assert.match(s,/sandbox:'workspace-write'/);
+  assert.match(s,/approval_policy:'never'/);
+  assert.match(s,/codex\(worktree,prompt\)/);
+});
