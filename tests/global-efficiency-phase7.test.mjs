@@ -145,3 +145,13 @@ test('B2 compares broad baseline against minimum necessary MICRO activation',()=
   assert.match(s,/quality_preserved/);
   assert.match(s,/telemetry_verified/);
 });
+
+
+test('B2 can reuse a verified prior receipt instead of wasting a valid pair',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/74-benchmark-token-efficiency-b2.mjs'),'utf8');
+  assert.match(s,/--prior-receipt/);
+  assert.match(s,/B2_PRIOR_RECEIPT_INTEGRITY_INVALID/);
+  assert.match(s,/reused_prior_pairs/);
+  assert.match(s,/newly_executed_pairs/);
+  assert.match(s,/pairResults=\[\.\.\.reusedPairs\]/);
+});
