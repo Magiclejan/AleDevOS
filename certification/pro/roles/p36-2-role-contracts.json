@@ -286,7 +286,7 @@
         "Target responsive and a11y policies"
       ],
       "outputs": [
-        "Component diff",
+        "Scoped frontend component source diff and state changes",
         "State/interaction and accessibility tests",
         "Real-browser evidence request when applicable"
       ],
