@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 785,
+  "file_count": 787,
   "entries": [
     {
       "path": ".github/workflows/full-regression.yml",
@@ -2995,6 +2995,11 @@
       "size": 10845
     },
     {
+      "path": "scripts/79-release-closure-recertify.mjs",
+      "sha256": "e1c3d17763b131cd9b69d37e83042c528a9bf960a875016796bc8e61d98e1498",
+      "size": 10680
+    },
+    {
       "path": "scripts/ci/run-full-regression.mjs",
       "sha256": "d213fe5e5ae7792c058a0be4c05c257286e256f868e95c1955408a56717ed6da",
       "size": 1774
@@ -3480,6 +3485,11 @@
       "size": 8155
     },
     {
+      "path": "tests/release-closure-phase2.test.mjs",
+      "sha256": "d0487bbbd072ca452a5e4fc49c0e81607c9db58c0e5e76081e7eeb8e5c46b255",
+      "size": 2260
+    },
+    {
       "path": "tests/release-closure.test.mjs",
       "sha256": "4f6bb8b81b88201a9c366e616ce59d03f08ebfceced5618c7b720d5b9bb28273",
       "size": 2459
@@ -3940,6 +3950,6 @@
       "size": 305
     }
   ],
-  "tree_sha256": "047a8ce97a6463e3558d74d6785a1889a1f750564c5c41ab34ce1e2e23278635",
-  "manifest_sha256": "5cde58421ce7e51ebca7ce5f0f29465a8154defff06fde7ed7e347739711975a"
+  "tree_sha256": "8529ba21008d9be9393cf36ef95e15c6f56e243ac90c2252170a62a6aaaaf884",
+  "manifest_sha256": "8b9e384365a3e01e4cf607a3fd7132cf1b61103a737a858783cc8e57018f34b6"
 }
