@@ -528,6 +528,13 @@ jobs:
           set -euo pipefail
           node --test tests/pro-quality-phase36.test.mjs tests/pro-quality-phase36-1.test.mjs
           node certification/pro/engine/render-pro-skills.mjs verify --root .
+          node portability/conformance/conformance.mjs skills verify --root . > /tmp/p36-portability.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const q=JSON.parse(fs.readFileSync('/tmp/p36-portability.json','utf8'));
+          if(q.status!=='PORTABLE_SKILL_PACK_PASS'||q.summary.failed!==0||q.summary.total!==245)process.exit(1);
+          console.log('Portable Skill Pack: 245/245 deterministic integrity checks PASS');
+          NODE
           node certification/pro/engine/pro-quality-audit.mjs inventory --root . > /tmp/p36-inventory.json
           node - <<'NODE'
           const fs=require('fs');
