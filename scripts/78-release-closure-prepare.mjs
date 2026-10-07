@@ -180,12 +180,19 @@ function runRegression(){
 }
 
 function readJson(p){return JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,''));}
-function rebuildBaseline(){
-  const summaryPath=path.join(stateDir,'deterministic-regression-summary.json');
-  if(!fs.existsSync(summaryPath))throw new Error('RELEASE_REGRESSION_SUMMARY_REQUIRED:'+norm(path.relative(root,summaryPath)));
-  const regression=readJson(summaryPath);
-  if(regression.release_candidate!==version||regression.failures!==0||regression.skipped!==0||regression.tests_passed!==regression.tests_total)throw new Error('RELEASE_REGRESSION_SUMMARY_NOT_CLEAN');
-
+function baselineFloor(){
+  const p=readJson(path.join(root,'release','policies','v1-release-policy.json'));
+  const m=p?.master_validation?.minimums;
+  if(!m)throw new Error('RELEASE_MASTER_MINIMUMS_MISSING');
+  return {
+    tests_passed:Number(m.tests_passed),
+    mjs_syntax_passed:Number(m.mjs_syntax_passed),
+    json_parse_passed:Number(m.json_parse_passed),
+    toml_parse_passed:Number(m.toml_parse_passed),
+    failures:Number(m.failures||0)
+  };
+}
+function currentCertificateInventory(){
   const baselinePath=path.join(root,'release','templates','master-validation-package-baseline.json');
   const old=readJson(baselinePath);
   const certs=[];
@@ -196,31 +203,64 @@ function rebuildBaseline(){
     if(!q.status||!q.evidence_sha256)throw new Error('RELEASE_CERTIFICATE_NOT_SEALED:'+d.id);
     certs.push({id:d.id,path:d.path,status:q.status,evidence_sha256:q.evidence_sha256,...(d.input_base?{input_base:d.input_base}:{})});
   }
+  if(certs.length!==14)throw new Error('RELEASE_CERTIFICATE_INVENTORY_COUNT_INVALID:'+certs.length);
+  return certs;
+}
+function writeBaseline({regression=null,bootstrap=false}={}){
+  if(regression){
+    if(regression.release_candidate!==version||regression.failures!==0||regression.skipped!==0||regression.tests_passed!==regression.tests_total)throw new Error('RELEASE_REGRESSION_SUMMARY_NOT_CLEAN');
+  }
+  const certs=currentCertificateInventory();
   const treePath=path.join(root,'release','templates','package-tree-manifest.json');
   if(!fs.existsSync(treePath))throw new Error('RELEASE_PACKAGE_TREE_REQUIRED');
   const tree=readJson(treePath);
   if(tree.manifest_sha256!==seal(tree))throw new Error('RELEASE_PACKAGE_TREE_SEAL_INVALID');
-
+  const floor=baselineFloor();
+  const measured=regression?{
+    tests_passed:regression.tests_passed,
+    tests_total:regression.tests_total,
+    test_files:regression.test_files,
+    mjs_syntax_passed:regression.mjs_syntax_passed,
+    json_parse_passed:regression.json_parse_passed,
+    toml_parse_passed:regression.toml_parse_passed,
+    failures:regression.failures,
+    skipped:regression.skipped,
+    generated_at:regression.generated_at
+  }:null;
   const baseline={
     schema_version:'1.0',
     phase:'MASTER_VALIDATION_P1_PACKAGE_BASELINE',
     package_version:version,
-    deterministic_inventory:{
-      tests_passed:regression.tests_passed,
-      mjs_syntax_passed:regression.mjs_syntax_passed,
-      json_parse_passed:regression.json_parse_passed,
-      toml_parse_passed:regression.toml_parse_passed,
-      failures:0
-    },
+    deterministic_inventory:floor,
+    measured_regression:measured,
     certificate_count:certs.length,
     certificates:certs,
-    source_attestation:'Package baseline was regenerated from the current v1.52.0 source tree and current sealed package certificates. Installed targets retain this baseline as package provenance; real target runtime proof remains separate.',
+    source_attestation:bootstrap
+      ? 'Bootstrap baseline for v1.52.0 closure self-validation. Deterministic inventory remains the frozen Master Gate floor; measured regression is attached only after a clean full regression.'
+      : 'v1.52.0 package baseline regenerated from the current source tree and current sealed package certificates. Deterministic inventory is the frozen Master Gate floor; measured_regression records the clean current full-regression measurement.',
     baseline_sha256:'',
     package_tree_manifest_sha256:fileSha(treePath)
   };
   baseline.baseline_sha256=seal(baseline);
+  const baselinePath=path.join(root,'release','templates','master-validation-package-baseline.json');
   writeJson(baselinePath,baseline);
-  return {package_version:version,certificate_count:certs.length,baseline_sha256:baseline.baseline_sha256,package_tree_manifest_sha256:baseline.package_tree_manifest_sha256};
+  return {
+    package_version:version,
+    certificate_count:certs.length,
+    deterministic_inventory:floor,
+    measured_regression:measured,
+    bootstrap,
+    baseline_sha256:baseline.baseline_sha256,
+    package_tree_manifest_sha256:baseline.package_tree_manifest_sha256
+  };
+}
+function bootstrapBaseline(){
+  return writeBaseline({bootstrap:true});
+}
+function rebuildBaseline(){
+  const summaryPath=path.join(stateDir,'deterministic-regression-summary.json');
+  if(!fs.existsSync(summaryPath))throw new Error('RELEASE_REGRESSION_SUMMARY_REQUIRED:'+norm(path.relative(root,summaryPath)));
+  return writeBaseline({regression:readJson(summaryPath),bootstrap:false});
 }
 
 function status(){
@@ -240,6 +280,9 @@ try{
   }else if(command==='regression'){
     const r=runRegression();
     console.log(JSON.stringify({status:'RELEASE_CLOSURE_REGRESSION_PASS',...r},null,2));
+  }else if(command==='bootstrap-baseline'){
+    const r=bootstrapBaseline();
+    console.log(JSON.stringify({status:'RELEASE_CLOSURE_BOOTSTRAP_BASELINE_READY',...r},null,2));
   }else if(command==='baseline'){
     const r=rebuildBaseline();
     console.log(JSON.stringify({status:'RELEASE_CLOSURE_BASELINE_REBUILT',...r},null,2));
