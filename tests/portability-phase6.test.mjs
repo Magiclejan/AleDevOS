@@ -111,6 +111,7 @@ test('P6 certificate is invalidated by skill binding drift',()=>{
 });
 test('P6 certificate inputs are root-relative',()=>{const d=tmp(),f=path.join(d,'p6.json');assert.equal(run(['certify','run','--root',root,'--out',f]).status,0);const o=JSON.parse(fs.readFileSync(f,'utf8'));for(const x of o.inputs){assert.equal(path.isAbsolute(x.path),false);assert.equal(x.path.includes('..'),false)}});
 test('P6 certificate explicitly defers target runtime validation',()=>{const d=tmp(),f=path.join(d,'p6.json');assert.equal(run(['certify','run','--root',root,'--out',f]).status,0);const o=JSON.parse(fs.readFileSync(f,'utf8'));assert.equal(o.target_runtime_validation,'DEFERRED');assert.equal(o.package_only,true)});
+test('P6 certificate seals every adapter runtime profile and parser',()=>{const d=tmp(),f=path.join(d,'p6.json');assert.equal(run(['certify','run','--root',root,'--out',f]).status,0);const o=JSON.parse(fs.readFileSync(f,'utf8')),paths=new Set(o.inputs.map(x=>x.path));for(const a of o.canonical_adapters){assert.ok(paths.has(`adapters/${a}/runtime-profile.json`));assert.ok(paths.has(`adapters/${a}/runtime-parser.mjs`))}});
 
 // Installer and frozen architecture wiring.
 test('installer carries portable Skill Pack metadata into installed projects',()=>{const s=fs.readFileSync('scripts/05-install-into-project.ps1','utf8');assert.match(s,/portable-skill-pack\.json/)});
