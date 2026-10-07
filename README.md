@@ -1,3 +1,107 @@
+# AleDevOS
+
+> **A portable AI macro-skill for software engineering.**  
+> One reusable operating layer that can sit above different AI runtimes, models and providers without coupling its Core to any of them.
+
+AleDevOS is not a model, provider, IDE or single-agent prompt. It is a **macro-hability / operating skill** that packages orchestration, context management, specialized agents, reusable Skills, deterministic gates, QA, repair loops, portability, observability and efficiency policy into one system that can be projected into supported AI runtimes.
+
+## What AleDevOS is
+
+```text
+USER GOAL
+   |
+   v
+AleDevOS  <- portable macro-skill / operating layer
+   |
+   +-- ContextOS            -> relevant context, budgets, maps, cache, handoffs
+   +-- Skill System         -> reusable capabilities loaded when needed
+   +-- Specialized Agents   -> minimum necessary agent set
+   +-- Deterministic Gates  -> evidence before PASS
+   +-- Judges / Repair      -> bounded quality control
+   +-- Efficiency Governor  -> minimum necessary intelligence
+   +-- Auto-Telemetry       -> real token/runtime measurements
+   |
+   v
+Adapter ABI
+   |
+   +-- OpenCode
+   +-- Codex
+   +-- Claude Code
+   +-- Google Antigravity
+   +-- future adapters
+   |
+   v
+External runtime / provider / model
+```
+
+The **Core never owns a concrete model or provider**. A new AI runtime can participate by implementing the AleDevOS Adapter ABI and preserving the required workflow, security and evidence semantics. Adapters translate AleDevOS into runtime-native configuration; they do not redefine the Core.
+
+## Portable by design
+
+AleDevOS is designed as an OS- and runtime-portable macro-skill rather than a Windows-only application.
+
+- **AI/runtime portability:** OpenCode, Codex, Claude Code and Google Antigravity are the current canonical adapters. Future runtimes can be added through the Adapter ABI.
+- **Provider/model neutrality:** provider and model selection remain external to AleDevOS.
+- **Host portability:** Core contracts and artifacts are platform-neutral. Windows is the currently exercised target in the real E2E evidence; macOS remains a target platform and must complete its own real-target validation before being described as target-certified.
+- **No hidden fallback:** an adapter may not silently impersonate another runtime or inject a project-specific backend.
+
+## Token efficiency is a first-class requirement
+
+AleDevOS is intentionally designed to make large AI-assisted projects **cheaper to operate over time without reducing quality**.
+
+It does this through ContextOS and the Global Efficiency governor:
+
+- context budgets instead of loading everything;
+- diff-first context and de-duplication;
+- structured compact handoffs;
+- checkpoint/resume instead of rediscovery;
+- persistent repo/dependency/symbol/domain maps;
+- research cache with freshness/invalidation;
+- minimum-necessary agent and Skill activation;
+- adaptive reasoning profiles;
+- model routing and bounded fallback;
+- closed decision contracts instead of unnecessary prose;
+- real per-agent token/runtime telemetry.
+
+**Token savings are evidence-based, not guessed.** AleDevOS only claims an efficiency improvement from comparable baseline/candidate runs with preserved gates, acceptance criteria and Judge quality. Unknown token counts stay unknown.
+
+## Auto-Telemetry V2 — real runtime proof
+
+The V2 agent-call telemetry path has now been exercised with a real Codex call:
+
+```text
+call_status   = COMPLETED
+exit_code     = 0
+usage_status  = REPORTED
+input_tokens  = 11894
+output_tokens = 13
+duration_ms   = 7454
+tool_calls    = 0
+files_read    = 0
+telemetry     = VERIFIED
+```
+
+This proves that AleDevOS can execute a real adapter/model call, capture reported token usage and measured duration, aggregate the agent metrics, finalize the task telemetry and independently verify the event chain and summary integrity.
+
+This result validates **measurement**, not a percentage token-saving claim. Token-saving benchmarks start from this instrumentation.
+
+## Core identity invariants
+
+1. **AleDevOS is a macro-skill, not an AI model.**
+2. **The user owns the goal; AleDevOS owns orchestration.**
+3. **Core is runtime/provider/model agnostic.**
+4. **Adapters are replaceable projections, never Core dependencies.**
+5. **Use the minimum necessary intelligence that preserves quality.**
+6. **Relevant context beats maximum context.**
+7. **No efficiency PASS without real comparable measurements.**
+8. **No quality reduction in exchange for token savings.**
+9. **No PASS without deterministic evidence.**
+10. **Every supported platform/runtime must prove its own target readiness.**
+
+Canonical identity contract: `docs/ALEDEVOS_MACRO_SKILL.md`.
+
+---
+
 # AleDevOS Local v1.51 — Final Master Gate
 
 Current implementation roadmap is complete through P8. v1.51 adds the only V1 freeze authority: a Final Master Gate that consumes the existing 33 checks and issues `ALEDEVOS_V1_FROZEN` only after a current real-target campaign reaches **33/33 PASS**. Package certification alone never freezes V1.
