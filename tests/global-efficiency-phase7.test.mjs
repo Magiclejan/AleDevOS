@@ -122,8 +122,8 @@ test('B2 controlled macro-orchestration benchmark is P7-driven and telemetry-bac
   assert.match(s,/startTaskTelemetry/);
   assert.match(s,/emitAgentCallTelemetry/);
   assert.match(s,/appendTelemetryEvent/);
-  assert.match(s,/kind,'HANDOFF'/);
-  assert.match(s,/kind,'CONTEXT_SAMPLE'/);
+  assert.match(s,/appendAux\(started\.run_id,'HANDOFF'/);
+  assert.match(s,/appendAux\(started\.run_id,'CONTEXT_SAMPLE'/);
 });
 
 test('B2 uses stdin and never persists raw prompts or completions',()=>{
