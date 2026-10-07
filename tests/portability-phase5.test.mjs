@@ -41,6 +41,7 @@ function installMinimal(d){
 const src=()=>json(run(['certify','run','--root',root]));
 
 test('Antigravity source adapter obtains P5 certification',()=>{const r=run(['certify','run','--root',root]);assert.equal(r.status,0,r.stdout+r.stderr);const o=json(r);assert.equal(o.status,'ANTIGRAVITY_ADAPTER_CERTIFIED');assert.equal(o.summary.failed,0);assert.ok(o.summary.total>=240)});
+test('Antigravity role frontmatter certifies with CRLF checkout line endings',()=>{const d=clone(),dir=path.join(d,'adapters/antigravity/.agents/agents');for(const name of fs.readdirSync(dir).filter(x=>x.endsWith('.md'))){const p=path.join(dir,name),src=fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n');fs.writeFileSync(p,src.replace(/\n/g,'\r\n'),'utf8')}const r=run(['certify','run','--root',d],d);assert.equal(r.status,0,r.stdout+r.stderr);const o=json(r);assert.equal(o.status,'ANTIGRAVITY_ADAPTER_CERTIFIED');assert.equal(o.summary.failed,0)});
 test('Antigravity certificate uses current Google dialect',()=>assert.equal(src().dialect,'google-antigravity-cli-1.2+'));
 test('Antigravity evidence is SHA-256 sealed',()=>assert.match(src().evidence_sha256,/^[0-9a-f]{64}$/));
 test('workspace PreToolUse safety gate is enabled',()=>assert.ok(src().checks.some(x=>x.id==='hooks.pretool.enabled'&&x.status==='PASS')));
