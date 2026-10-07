@@ -112,7 +112,7 @@ function promptFor(label,context,anchor){
   ].join('\n');
 }
 function codex(worktree,prompt){
-  const args=['exec','--json','--skip-git-repo-check'];
+  const args=['exec','--json','--skip-git-repo-check','--sandbox','workspace-write','--ask-for-approval','never'];
   if(model)args.push('--model',model);
   if(reasoningEffort)args.push('--config','model_reasoning_effort='+reasoningEffort);
   args.push('-');
@@ -238,6 +238,8 @@ try{
   console.log('  source folder       : READ_ONLY');
   console.log('  model               : '+(model||'DEFAULT_UNREPORTED'));
   console.log('  reasoning effort    : '+(reasoningEffort||'DEFAULT_UNREPORTED'));
+  console.log('  sandbox             : workspace-write');
+  console.log('  approvals           : never');
 
   const bp=promptFor('REAL_PROJECT_BROAD_CONTEXT',broad,anchor);
   const cp=promptFor('ALEDEVOS_TARGETED_CONTEXT',targeted,anchor);
@@ -266,7 +268,7 @@ try{
   const receipt={schema_version:'1.0',benchmark:'B4_REAL_SOFTWARE_ENGINEERING_E2E',benchmark_key:KEY,status,validation_level:'PRELIMINARY',
     scope:'REAL_PROJECT_ISOLATED_EDIT_E2E',
     claim_boundary:'Measures one deterministic non-functional edit on real project code in isolated worktrees. Non-Git source folders are first frozen into an ephemeral Git snapshot without modifying the source. It validates locate/edit/diff verification efficiency, not arbitrary feature-development quality or a universal savings percentage.',
-    runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
+    runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,sandbox:'workspace-write',approval_policy:'never',model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
     repository:{absolute_path_stored:false,source_mode:source.mode,execution_head:source.head,source_untouched:sourceUntouched,source_digest:source.source_digest,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
     task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
     result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
