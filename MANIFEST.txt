@@ -329,6 +329,7 @@ core/design/contracts/VISUAL_QA_REGRESSION.md
 core/design/contracts/VISUAL_QA_RUNTIME.md
 core/design/ui-reuse-policy.json
 core/engine/aledevos.mjs
+core/engine/telemetry-bridge.mjs
 core/policies/security-policy.json
 core/policies/workflow-policy.json
 core/schemas/adapter-contract.schema.json
@@ -591,6 +592,8 @@ scripts/64-self-test-security-reliability-phase8.ps1
 scripts/65-master-validation-p8-target-security-reliability.ps1
 scripts/66-self-test-final-master-gate.ps1
 scripts/67-final-master-gate.ps1
+scripts/68-self-test-auto-telemetry-v1.ps1
+scripts/69-e2e-auto-telemetry-v1.ps1
 scripts/README.md
 security-reliability/contracts/SECURITY_RELIABILITY_ASSURANCE.md
 security-reliability/engine/reliability-registry.mjs
@@ -652,6 +655,7 @@ tests/advanced-execution-phase2.test.mjs
 tests/advanced-execution-phase3.test.mjs
 tests/advanced-execution-phase4.test.mjs
 tests/advanced-execution-phase5.test.mjs
+tests/auto-telemetry-v1.test.mjs
 tests/contextos-phase1.test.mjs
 tests/contextos-phase2.test.mjs
 tests/contextos-phase3.test.mjs

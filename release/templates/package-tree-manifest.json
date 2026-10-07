@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 771,
+  "file_count": 775,
   "entries": [
     {
       "path": ".github/workflows/full-regression.yml",
@@ -1661,8 +1661,13 @@
     },
     {
       "path": "core/engine/aledevos.mjs",
-      "sha256": "112ce7ca239cfd9fd403353c31113a349cce34622d9a2a211ac8b0b322daf791",
-      "size": 21801
+      "sha256": "337393af3dac45463032af415b9d063607fda579f80cbb4f449ec551dbda01e6",
+      "size": 23105
+    },
+    {
+      "path": "core/engine/telemetry-bridge.mjs",
+      "sha256": "86541156ff66c1461ef03b8c7dcd6b143b5739a6ce8c6c743de5d1e2e68ea5c4",
+      "size": 5383
     },
     {
       "path": "core/policies/security-policy.json",
@@ -2621,8 +2626,8 @@
     },
     {
       "path": "scripts/05-install-into-project.ps1",
-      "sha256": "37cf8693baf3bececdf1febd6867ab0a992e2af850a1db061286b1519d0ef47f",
-      "size": 35966
+      "sha256": "92b13fa021c36a53fc244375bbecb88e040ffe0b22da40dc4147a9acb9ae86a6",
+      "size": 36082
     },
     {
       "path": "scripts/06-start-ai-dev.ps1",
@@ -2933,6 +2938,16 @@
       "path": "scripts/67-final-master-gate.ps1",
       "sha256": "0d226549bd33fe54ada5b8811d291ced83bc9055b6e247813380e022e0ac8529",
       "size": 6597
+    },
+    {
+      "path": "scripts/68-self-test-auto-telemetry-v1.ps1",
+      "sha256": "5ec3f122cd221655f01dd3f541f5dcef0e3141ba0f126889027d2f676e103043",
+      "size": 541
+    },
+    {
+      "path": "scripts/69-e2e-auto-telemetry-v1.ps1",
+      "sha256": "97962a7e0e7afc24682d64f3043fdb10199a8c9b73ec5737c50595f5f28c5134",
+      "size": 5085
     },
     {
       "path": "scripts/70-aledevos-app.ps1",
@@ -3258,6 +3273,11 @@
       "path": "tests/advanced-execution-phase5.test.mjs",
       "sha256": "ebd14e322ad78f6cd43af35566a8e5de8ea1cf54d2eda97e52072142bda0fd2f",
       "size": 25901
+    },
+    {
+      "path": "tests/auto-telemetry-v1.test.mjs",
+      "sha256": "eb111c43a8568ac2b8b89f36b893ecbe74b7158d14c1e05c1ec3c078c97a9ee5",
+      "size": 4102
     },
     {
       "path": "tests/contextos-phase1.test.mjs",
@@ -3870,6 +3890,6 @@
       "size": 305
     }
   ],
-  "tree_sha256": "b10fc31d5a261c5eb6e1b76adc3dcc43edf54684db85703da574b22f266b67d8",
-  "manifest_sha256": "9b2960cc45653501b14817f64f3fcdb696b1157f486f8c3968ff483d3a1dc8a5"
+  "tree_sha256": "24a509c01225811829b260fde9233f6203cd2807391bdb023a2326f033413661",
+  "manifest_sha256": "9bd94b7921736060f0ae6ba826c2df85f3ef2733a28732fb5aa50eb80518297d"
 }

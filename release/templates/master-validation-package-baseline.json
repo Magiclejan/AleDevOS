@@ -94,10 +94,10 @@
       "id": "opencode-portability-p2",
       "path": "release/certifications/opencode-portability-p2.json",
       "status": "OPENCODE_ADAPTER_CERTIFIED",
-      "evidence_sha256": "8eda0df6104ccd94b487f46e618dcdf3557c9342a20ee5a5182df1ceb3107be0"
+      "evidence_sha256": "9d1989b8f830bc531e334af493a170bdf835d3722608bba772ff5a85a67c2642"
     }
   ],
   "source_attestation": "Package baseline was generated from the final frozen certificates carried by the source package. Installed targets retain this baseline as package provenance; real target runtime proof is separate.",
-  "baseline_sha256": "066e5a0d3b41e16eb0344088ea398c49fabd4b292098c8620161a5c26d31c655",
-  "package_tree_manifest_sha256": "af6af6881300e0e8b44fab8036cb7c7f730c6e11e088b2c446301191355eef07"
+  "baseline_sha256": "bf8c7d2ea4177faf683211e7e52233a626f386c64b772e174f1ad27014747534",
+  "package_tree_manifest_sha256": "38a03136b04b778153490ef60ce4a9901bd7ce628d5ff037f5c7fcdb9bb88022"
 }

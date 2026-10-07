@@ -3,6 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
+import {
+  startTaskTelemetry,
+  emitGateTelemetry,
+  emitJudgeTelemetry,
+  emitRepairTelemetry,
+  finishTaskTelemetry
+} from './telemetry-bridge.mjs';
 
 const args=process.argv.slice(2);
 const cwd=process.cwd();
@@ -24,7 +31,14 @@ function taskContractPath(taskId){return path.join(taskStateDir(taskId),'task-co
 function loadState(){const p=statePath();if(!fs.existsSync(p))fail(`STATE_NOT_FOUND: ${p}`,2);return[p,readJson(p)]}
 function event(s,type,data={}){s.history??=[];s.history.push({at:new Date().toISOString(),type,...data})}
 function persistState(p,s){writeJson(p,s);if(s?.task_id)writeJson(path.join(taskStateDir(s.task_id),'state.json'),s)}
-function saveGate(id,status,details={}){if(!fs.existsSync(statePath()))return;const[p,s]=loadState();s.gates[id]={status,at:new Date().toISOString(),...details};event(s,'GATE',{id,status});persistState(p,s)}
+function saveGate(id,status,details={}){
+ if(!fs.existsSync(statePath()))return;
+ const[p,s]=loadState();
+ s.gates[id]={status,at:new Date().toISOString(),...details};
+ event(s,'GATE',{id,status});
+ persistState(p,s);
+ emitGateTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,gateId:id,status});
+}
 function sha256File(p){return crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')}
 function sha256Json(v){return crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex')}
 const qualityPolicyPath=path.join(cwd,'.aledevos','quality-engineering','policies','quality-engineering-policy.json');
@@ -101,14 +115,16 @@ const [group,cmd]=args;
 if(group==='state'&&cmd==='init'){
  const requested=take('--task-id');if(!requested)fail('Missing --task-id');
  const task=requested==='auto'?(`task-${new Date().toISOString().replace(/\D/g,'').slice(0,14)}-${crypto.randomBytes(3).toString('hex')}`):requested;
- const scope=takes('--scope').map(norm),criteria=takes('--criterion'),adapter=take('--adapter',null),objective=take('--objective',''),createdAt=new Date().toISOString();
+ const scope=takes('--scope').map(norm),criteria=takes('--criterion'),adapter=take('--adapter',null),objective=take('--objective',''),benchmarkKey=take('--benchmark-key',null),createdAt=new Date().toISOString();
  const acceptance=criteria.map(id=>({id,status:'UNVERIFIED'}));
  const contract={schema_version:'1.0',task_id:task,adapter,objective,approved_scope:scope,acceptance_criteria:acceptance.map(x=>x.id),created_at:createdAt,integrity:{algorithm:'sha256',payload_sha256:''}};
  contract.integrity.payload_sha256=sha256Json({...contract,integrity:undefined});
  const contractPath=taskContractPath(task);writeJson(contractPath,contract);
- const s={version:1,task_id:task,runtime_adapter:adapter,task_contract_path:norm(path.relative(cwd,contractPath)),approved_scope:scope,scope_version:1,acceptance_criteria:acceptance,gates:{},judges:{},blockers:[],repair_count:0,max_repairs:2,blocked_reason:null,final_state:null,quality_engineering:{required:true,status:'UNPLANNED',plan_path:null},agent_trace:[{agent:'orchestrator',status:'STARTED',at:createdAt}],history:[]};
+ const telemetry=startTaskTelemetry({cwd,taskId:task,adapter,benchmarkKey});
+ const telemetryStatus=telemetry.disabled?'DISABLED':telemetry.ok?'ACTIVE':'DEGRADED';
+ const s={version:1,task_id:task,runtime_adapter:adapter,telemetry_run_id:telemetry.run_id??null,telemetry_status:telemetryStatus,telemetry_benchmark_key:benchmarkKey,task_contract_path:norm(path.relative(cwd,contractPath)),approved_scope:scope,scope_version:1,acceptance_criteria:acceptance,gates:{},judges:{},blockers:[],repair_count:0,max_repairs:2,blocked_reason:null,final_state:null,quality_engineering:{required:true,status:'UNPLANNED',plan_path:null},agent_trace:[{agent:'orchestrator',status:'STARTED',at:createdAt}],history:[]};
  event(s,'STATE_INIT',{adapter,task_contract_path:s.task_contract_path});persistState(statePath(),s);
- console.log('STATE_INITIALIZED');console.log(JSON.stringify({task_id:task,task_contract:s.task_contract_path,state:norm(path.relative(cwd,statePath()))},null,2));process.exit(0)
+ console.log('STATE_INITIALIZED');console.log(JSON.stringify({task_id:task,task_contract:s.task_contract_path,state:norm(path.relative(cwd,statePath())),telemetry_run_id:s.telemetry_run_id,telemetry_status:s.telemetry_status},null,2));process.exit(0)
 }
 if(group==='state'&&cmd==='show'){const[,s]=loadState();console.log(JSON.stringify(s,null,2));process.exit(0)}
 if(group==='state'&&cmd==='scope-approve'){
@@ -120,7 +136,10 @@ if(group==='state'&&cmd==='criterion'){
 if(group==='state'&&cmd==='judge'){
  const[p,s]=loadState(),judge=take('--judge'),score=Number(take('--score')),blockers=Number(take('--blockers','0')),unverified=Number(take('--unverified','0'));
  if(!['requirements','regression','quality'].includes(judge))fail('Invalid judge');if(!Number.isFinite(score)||score<0||score>100)fail('Invalid score');if(!Number.isInteger(blockers)||blockers<0||!Number.isInteger(unverified)||unverified<0)fail('Invalid blocker/unverified count');
- s.judges[judge]={score,blockers,unverified,at:new Date().toISOString()};event(s,'JUDGE',{judge,score,blockers,unverified});persistState(p,s);console.log('JUDGE_RECORDED');process.exit(0)
+ s.judges[judge]={score,blockers,unverified,at:new Date().toISOString()};
+ event(s,'JUDGE',{judge,score,blockers,unverified});persistState(p,s);
+ emitJudgeTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,judge,score,blockers,unverified});
+ console.log('JUDGE_RECORDED');process.exit(0)
 }
 if(group==='state'&&cmd==='agent'){
  const[p,s]=loadState(),name=take('--name'),status=take('--status'),threadId=take('--thread-id',null);
@@ -131,7 +150,11 @@ if(group==='state'&&cmd==='block'){
  const[p,s]=loadState(),reason=take('--reason');if(!reason)fail('Missing --reason');s.blocked_reason=reason;event(s,'BLOCKED',{reason});persistState(p,s);console.log('BLOCK_RECORDED');process.exit(0)
 }
 if(group==='state'&&cmd==='repair-start'){
- const[p,s]=loadState();if(s.repair_count>=s.max_repairs){console.log('MAX_REPAIRS_REACHED');process.exit(4)}s.repair_count+=1;event(s,'REPAIR_START',{repair_count:s.repair_count});persistState(p,s);console.log(`REPAIR_${s.repair_count}_STARTED`);process.exit(0)
+ const[p,s]=loadState();
+ if(s.repair_count>=s.max_repairs){console.log('MAX_REPAIRS_REACHED');process.exit(4)}
+ s.repair_count+=1;event(s,'REPAIR_START',{repair_count:s.repair_count});persistState(p,s);
+ emitRepairTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,repairCount:s.repair_count});
+ console.log(`REPAIR_${s.repair_count}_STARTED`);process.exit(0)
 }
 if(group==='state'&&cmd==='finalize'){
  const[p,s]=loadState();if(s.blocked_reason)s.final_state='BLOCKED';else{
@@ -146,7 +169,12 @@ if(group==='state'&&cmd==='finalize'){
   else if(s.repair_count>=s.max_repairs)s.final_state='FAILED';
   else{console.log('NOT_FINAL');process.exit(5)}
  }
- event(s,'FINAL',{state:s.final_state});persistState(p,s);console.log(s.final_state);process.exit(s.final_state==='PASS'?0:s.final_state==='BLOCKED'?6:7)
+ event(s,'FINAL',{state:s.final_state});persistState(p,s);
+ const telemetry=finishTaskTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,finalState:s.final_state});
+ s.telemetry_status=telemetry.disabled?'DISABLED':telemetry.ok?'VERIFIED':'DEGRADED';
+ s.telemetry_summary_path=telemetry.summary_path??null;
+ persistState(p,s);
+ console.log(s.final_state);process.exit(s.final_state==='PASS'?0:s.final_state==='BLOCKED'?6:7)
 }
 
 if(group==='quality'&&cmd==='plan'){

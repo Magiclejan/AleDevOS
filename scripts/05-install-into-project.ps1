@@ -56,6 +56,7 @@ if($CanonicalAdapter -eq 'opencode'){
 
 $ale=Join-Path $target '.aledevos'
 Copy-SafeFile (Join-Path $root 'core\engine\aledevos.mjs') (Join-Path $ale 'runtime\aledevos.mjs')
+Copy-SafeFile (Join-Path $root 'core\engine\telemetry-bridge.mjs') (Join-Path $ale 'runtime\telemetry-bridge.mjs')
 Get-ChildItem (Join-Path $root 'core\schemas') -File | ForEach-Object {Copy-SafeFile $_.FullName (Join-Path $ale "schemas\$($_.Name)")}
 
 # Quality Engineering: universal QA/regression/reuse policy enforced by the Core runtime.
