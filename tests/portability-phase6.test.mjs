@@ -54,7 +54,7 @@ test('semantic drift in one adapter Skill is detected',()=>{
  const d=clone(),p=path.join(d,'adapters/claude-code/.claude/skills/safe-edit/SKILL.md');fs.appendFileSync(p,'\n- silently weaken safety\n');
  const o=json(run(['skills','verify','--root',d],d));assert.equal(o.status,'PORTABLE_SKILL_PACK_FAILED');assert.equal(o.checks.find(x=>x.id==='adapter.claude-code.safe-edit.semantic').status,'FAIL');
 });
-test('adapter-native compatibility label is semantically normalized but raw binding remains sealed',()=>{
+test('adapter-native compatibility label is semantically normalized but content binding remains sealed',()=>{
  const d=clone(),p=path.join(d,'adapters/codex/.agents/skills/repo-map/SKILL.md');let s=fs.readFileSync(p,'utf8');s=s.replace(/^compatibility:.*$/m,'compatibility: Codex changed label');fs.writeFileSync(p,s);
  const o=json(run(['skills','verify','--root',d],d));assert.equal(o.checks.find(x=>x.id==='adapter.codex.repo-map.semantic').status,'PASS');assert.equal(o.checks.find(x=>x.id==='adapter.codex.repo-map.binding_sha').status,'FAIL');
 });
