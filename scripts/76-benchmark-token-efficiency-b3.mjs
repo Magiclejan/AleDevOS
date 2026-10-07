@@ -87,6 +87,8 @@ function priorPairs(c,targetHash){
   const copy=structuredClone(q),h=copy?.integrity?.payload_sha256??null;delete copy.integrity;
   if(!h||sha(Buffer.from(JSON.stringify(copy),'utf8'))!==h)throw new Error('B3_PRIOR_RECEIPT_INTEGRITY_INVALID');
   if(q?.project?.corpus_digest!==c.digest)throw new Error('B3_PRIOR_RECEIPT_CORPUS_DRIFT');
+  if((q?.model??null)!==(model??null))throw new Error('B3_PRIOR_RECEIPT_MODEL_MISMATCH');
+  if((q?.reasoning_effort??null)!==(reasoningEffort??null))throw new Error('B3_PRIOR_RECEIPT_REASONING_MISMATCH');
   if(q?.target?.file!==c.pick.f.rel||q?.target?.line_sha256!==targetHash)throw new Error('B3_PRIOR_RECEIPT_TARGET_DRIFT');
   if(q.status==='B3_FAIL'||q.status==='B3_INCOMPARABLE')throw new Error('B3_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
   const xs=Array.isArray(q.pairs)?q.pairs:(q.pair?[q.pair]:[]);
