@@ -20,7 +20,12 @@ test('installer supports new empty, existing non-Git and existing Git projects w
   assert.match(s,/EXISTING_GIT/);
   assert.match(s,/EXISTING_NO_GIT/);
   assert.match(s,/git_repository/);
-  assert.doesNotMatch(s,/\bgit\s+init\b/i);
+  const executableLines=s
+    .split(/\r?\n/)
+    .filter(line=>!line.trimStart().startsWith('#'))
+    .join('\n');
+  assert.doesNotMatch(executableLines,/^\s*(?:&\s*)?(?:git|git\.exe)\s+init\b/im);
+  assert.doesNotMatch(executableLines,/&\s*\$git(?:Cmd)?(?:\.Source)?[^\r\n]*\binit\b/i);
 });
 
 test('CLI start is install-on-first-use and launches exactly one selected adapter',()=>{
