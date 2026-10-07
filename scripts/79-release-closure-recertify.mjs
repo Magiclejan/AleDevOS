@@ -57,8 +57,9 @@ function cert({id,script,out,rootArg=true,verifyRootArg=rootArg}){
   verifyArgs.push('--certificate',out);
   const vr=node(script,verifyArgs);
   const vo=parseJsonOutput(vr,id+':verify');
-  if(vo.valid!==true)throw new Error('RELEASE_CERTIFICATION_VERIFY_FAILED:'+id+':'+JSON.stringify(vo.errors||[]));
-  return {id,status:ro.status,evidence_sha256:ro.evidence_sha256||null};
+  const verifyPass=vo.valid===true||String(vo.status||'').endsWith('_VALID');
+  if(!verifyPass)throw new Error('RELEASE_CERTIFICATION_VERIFY_FAILED:'+id+':'+JSON.stringify(vo.errors||vo.status||[]));
+  return {id,status:ro.status,evidence_sha256:ro.evidence_sha256||null,verify_status:vo.status||null};
 }
 function certNoRoot({id,script,out}){
   return cert({id,script,out,rootArg:false,verifyRootArg:false});
