@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {spawnSync} from 'node:child_process';
@@ -24,7 +23,11 @@ const has=flag=>argv.includes(flag);
 const runs=Math.max(1,Math.min(9,Number(take('--runs','1'))||1));
 const timeoutMs=Math.max(10000,Math.min(900000,Number(take('--timeout-ms','180000'))||180000));
 const explicitModel=take('--model',null);
-const keep=has('--keep-workdir');
+const projectArg=take('--project',null);
+if(!projectArg)throw new Error('B1_PROJECT_REQUIRED: use --project <AleDevOS consumer project>');
+const project=path.resolve(projectArg);
+if(!fs.existsSync(path.join(project,'.aledevos','project.json')))throw new Error('B1_ALEDEVOS_PROJECT_NOT_FOUND:'+project);
+if(!fs.existsSync(path.join(project,'.codex','config.toml')))throw new Error('B1_CODEX_ADAPTER_NOT_INSTALLED:'+project);
 const benchmarkKey='B1_CONTEXT_PRUNING_V1';
 const taskId='B1-CONTEXT-PRUNING';
 const expected='RETRY_BACKOFF_MS=2750';
@@ -110,6 +113,11 @@ function extractAnswer(text){
   return answer;
 }
 
+function safeDiag(result){
+  const stderr=String(result.stderr||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,3).join(' | ');
+  return stderr.replace(/[^A-Za-z0-9 ._:/-]/g,'_').slice(0,300)||null;
+}
+
 function emitMeasuredRun({cwd,label,prompt,result}){
   const parsed=parseCodexJsonl(result.stdout||'');
   const exitCode=Number.isInteger(result.status)?result.status:(result.error?.code==='ETIMEDOUT'?124:127);
@@ -147,24 +155,23 @@ function emitMeasuredRun({cwd,label,prompt,result}){
   if(!ev.ok)throw new Error(`TELEMETRY_AGENT_CALL_FAILED:${ev.error||'unknown'}`);
   const fin=finishTaskTelemetry({cwd,runId:started.run_id,taskId,adapter:'codex',finalState:quality?'PASS':'FAILED'});
   if(!fin.ok)throw new Error(`TELEMETRY_FINALIZE_FAILED:${fin.error||'unknown'}`);
-  return {parsed,exitCode,callStatus,answer,quality,model,summary:fin.summary,verification:fin.verification,runId:started.run_id};
+  return {parsed,exitCode,callStatus,answer,quality,model,summary:fin.summary,verification:fin.verification,runId:started.run_id,diagnostic:safeDiag(result)};
 }
 
 const fixture=fixtureContext();
 const baselinePrompt=promptFor(fixture.full,'BASELINE_FULL_CONTEXT',fixture.file_count);
 const candidatePrompt=promptFor(fixture.relevant,'ALEDEVOS_RELEVANT_CONTEXT',1);
-const work=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-b1-context-'));
 const pairs=[];
 
 try{
   for(let i=1;i<=runs;i++){
     process.stdout.write(`\n[B1 ${i}/${runs}] Baseline full-context call...\n`);
-    const bRaw=runCodex(work,baselinePrompt);
-    const baseline=emitMeasuredRun({cwd:work,label:'BASELINE_FULL_CONTEXT',prompt:baselinePrompt,result:bRaw});
+    const bRaw=runCodex(project,baselinePrompt);
+    const baseline=emitMeasuredRun({cwd:project,label:'BASELINE_FULL_CONTEXT',prompt:baselinePrompt,result:bRaw});
 
     process.stdout.write(`[B1 ${i}/${runs}] Candidate relevant-context call...\n`);
-    const cRaw=runCodex(work,candidatePrompt);
-    const candidate=emitMeasuredRun({cwd:work,label:'ALEDEVOS_RELEVANT_CONTEXT',prompt:candidatePrompt,result:cRaw});
+    const cRaw=runCodex(project,candidatePrompt);
+    const candidate=emitMeasuredRun({cwd:project,label:'ALEDEVOS_RELEVANT_CONTEXT',prompt:candidatePrompt,result:cRaw});
 
     const cmp=compareTelemetrySummaries({baseline:baseline.summary,candidate:candidate.summary});
     const bin=safeNumber(baseline.summary?.totals?.input_tokens);
@@ -177,14 +184,16 @@ try{
     const totalReduction=ratio(btotal,ctotal);
     pairs.push({
       run:i,
-      baseline:{run_id:baseline.runId,input_tokens:bin,output_tokens:bout,total_tokens:btotal,quality:baseline.quality,model:baseline.model,telemetry_verified:baseline.verification?.valid===true},
-      candidate:{run_id:candidate.runId,input_tokens:cin,output_tokens:cout,total_tokens:ctotal,quality:candidate.quality,model:candidate.model,telemetry_verified:candidate.verification?.valid===true},
+      baseline:{run_id:baseline.runId,exit_code:baseline.exitCode,call_status:baseline.callStatus,usage_source:baseline.parsed.usage_source??null,input_tokens:bin,output_tokens:bout,total_tokens:btotal,quality:baseline.quality,model:baseline.model,telemetry_verified:baseline.verification?.valid===true,diagnostic:baseline.diagnostic},
+      candidate:{run_id:candidate.runId,exit_code:candidate.exitCode,call_status:candidate.callStatus,usage_source:candidate.parsed.usage_source??null,input_tokens:cin,output_tokens:cout,total_tokens:ctotal,quality:candidate.quality,model:candidate.model,telemetry_verified:candidate.verification?.valid===true,diagnostic:candidate.diagnostic},
       input_reduction_ratio:inputReduction,
       total_reduction_ratio:totalReduction,
       telemetry_comparable:cmp.comparable===true
     });
-    process.stdout.write(`  baseline input=${bin ?? 'null'} total=${btotal ?? 'null'} quality=${baseline.quality?'PASS':'FAIL'}\n`);
-    process.stdout.write(`  candidate input=${cin ?? 'null'} total=${ctotal ?? 'null'} quality=${candidate.quality?'PASS':'FAIL'}\n`);
+    process.stdout.write(`  baseline exit=${baseline.exitCode} status=${baseline.callStatus} usage=${baseline.parsed.usage_source??'unavailable'} input=${bin ?? 'null'} total=${btotal ?? 'null'} quality=${baseline.quality?'PASS':'FAIL'}\n`);
+    if(baseline.diagnostic)process.stdout.write(`  baseline diagnostic=${baseline.diagnostic}\n`);
+    process.stdout.write(`  candidate exit=${candidate.exitCode} status=${candidate.callStatus} usage=${candidate.parsed.usage_source??'unavailable'} input=${cin ?? 'null'} total=${ctotal ?? 'null'} quality=${candidate.quality?'PASS':'FAIL'}\n`);
+    if(candidate.diagnostic)process.stdout.write(`  candidate diagnostic=${candidate.diagnostic}\n`);
     process.stdout.write(`  input saving=${inputReduction===null?'n/a':pct(inputReduction)+'%'} | total saving=${totalReduction===null?'n/a':pct(totalReduction)+'%'}\n`);
   }
 
@@ -247,7 +256,7 @@ try{
   receipt.integrity={algorithm:'sha256',payload_sha256:sha(JSON.stringify(receipt))};
 
   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
-  const out=path.join(root,'.aledevos','state','efficiency','benchmarks',`b1-context-pruning-${stamp}.json`);
+  const out=path.join(project,'.aledevos','state','efficiency','benchmarks',`b1-context-pruning-${stamp}.json`);
   writeJson(out,receipt);
 
   process.stdout.write('\n============================================================\n');
@@ -262,16 +271,12 @@ try{
   process.stdout.write(`Quality preserved   : ${qualityPass}\n`);
   process.stdout.write(`Telemetry verified  : ${telemetryPass}\n`);
   process.stdout.write(`Model comparability : ${modelComparability}\n`);
-  process.stdout.write(`Receipt             : ${path.relative(root,out).replaceAll('\\','/')}\n`);
+  process.stdout.write(`Project             : ${project}\n`);
+  process.stdout.write(`Receipt             : ${path.relative(project,out).replaceAll('\\','/')}\n`);
   if(reasons.length)process.stdout.write(`Reasons             : ${reasons.join(', ')}\n`);
   process.stdout.write('\n');
   process.stdout.write(status+'\n');
 
   process.exitCode=status==='B1_PASS'?0:status==='B1_BELOW_TARGET'?4:status==='B1_INCOMPARABLE'?5:7;
 } finally {
-  if(!keep){
-    try{fs.rmSync(work,{recursive:true,force:true})}catch{}
-  }else{
-    process.stdout.write(`Workdir preserved: ${work}\n`);
-  }
 }
