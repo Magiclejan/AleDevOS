@@ -23,5 +23,7 @@
       "--sanitize"
     ],
     "timeout_ms": 30000
-  }
+  },
+  "parser_module": "runtime-parser.mjs",
+  "structured_output": true
 }
