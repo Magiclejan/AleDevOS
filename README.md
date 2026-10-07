@@ -75,15 +75,19 @@ AleDevOS now has repeated real Codex benchmark evidence for two controlled MICRO
 | **B1 Context Efficiency** | full context vs relevant context | **50.67%** | preserved | 3 pairs |
 | **B2 Macro-Orchestration Efficiency** | broad pipeline vs P7 MICRO + relevant context + compact handoffs | **77.24%** | preserved | 3 pairs |
 | **B3 Real Project Repository Efficiency** | broad real-project context vs deterministic targeted retrieval | **74.49%** | preserved | 3 pairs |
+| **B4 Real Software-Engineering E2E** | broad project context vs targeted context on a real verified code edit | **72.40%** | preserved | 3 pairs |
 
 B2 also reduced model calls and active agents by **33.33%**, and handoff tokens by **99.73%** in the controlled benchmark. B3 used a real external repository corpus with 1,061 safe eligible files, reduced supplied file context from 15 files to 1, and reduced context bytes by **99.60%** while preserving the exact required result. B3 pinned the same model (`gpt-5.6-luna`) and reasoning effort (`low`) across compared runs.
 
-These are **benchmark-specific measurements**, not a universal savings promise. Broader claims require more task classes, real project work, adapters and host platforms.
+B4 extends the evidence to a real software-engineering edit: both paths produced the same independently verified diff while the source project remained unchanged.
+
+These are **benchmark-specific measurements**, not a universal savings promise. Broader claims require more task classes, repositories, adapters and host platforms.
 
 Canonical evidence:
 - `docs/benchmarks/B1_CONTEXT_EFFICIENCY.md`
 - `docs/benchmarks/B2_MACRO_ORCHESTRATION_EFFICIENCY.md`
 - `docs/benchmarks/B3_REAL_PROJECT_REPOSITORY_EFFICIENCY.md`
+- `docs/benchmarks/B4_REAL_SOFTWARE_ENGINEERING_E2E.md`
 
 ## Auto-Telemetry V2 — real runtime proof
 
