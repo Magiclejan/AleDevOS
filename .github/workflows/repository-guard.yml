@@ -566,4 +566,6 @@ jobs:
              d.summary.pro_certified!==0) process.exit(1);
           console.log('P36.2 25 roles, 122 projections: source inventory PASS; PRO_CERTIFIED=0');
           console.log('Role files needing remediation: '+d.summary.role_files_blocked);
+          for(const row of d.role_sources.filter(x=>x.issues.length))
+            console.log('P36_2_FINDING '+row.adapter+'/'+row.id+' '+row.issues.join(','));
           NODE
