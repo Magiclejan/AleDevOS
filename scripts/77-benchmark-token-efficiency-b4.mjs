@@ -112,7 +112,7 @@ function promptFor(label,context,anchor){
   ].join('\n');
 }
 function codex(worktree,prompt){
-  const args=['exec','--json','--skip-git-repo-check','--sandbox','workspace-write','--ask-for-approval','never'];
+  const args=['exec','--json','--skip-git-repo-check','--config','sandbox_mode=workspace-write','--config','approval_policy=never'];
   if(model)args.push('--model',model);
   if(reasoningEffort)args.push('--config','model_reasoning_effort='+reasoningEffort);
   args.push('-');
@@ -200,6 +200,17 @@ function verifySourceUntouched(source){
   return true;
 }
 
+function safeDiagnostic(raw){
+  const text=[raw?.stderr,raw?.stdout].filter(Boolean).join('\n');
+  return String(text||'')
+    .split(/\r?\n/)
+    .map(x=>x.trim())
+    .filter(Boolean)
+    .slice(0,4)
+    .join(' | ')
+    .replace(/[^A-Za-z0-9 ._:/=+\-]/g,'_')
+    .slice(0,600)||null;
+}
 function telemetry(label,raw,verification,prompt){
   const parsed=parseCodexJsonl(raw.stdout||'');
   const exit=Number.isInteger(raw.status)?raw.status:(raw.error?.code==='ETIMEDOUT'?124:127);
@@ -213,7 +224,7 @@ function telemetry(label,raw,verification,prompt){
   if(!ev.ok)throw new Error('B4_AGENT_TELEMETRY_FAILED');
   const fin=finishTaskTelemetry({cwd:runtimeProject,runId:start.run_id,taskId:TASK,adapter:'codex',finalState:quality?'PASS':'FAILED'});
   if(!fin.ok)throw new Error('B4_TELEMETRY_FINALIZE_FAILED');
-  return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id};
+  return {exit,responseOk,quality,parsed,summary:fin.summary,verified:fin.verification?.valid===true,run_id:start.run_id,diagnostic:safeDiagnostic(raw)};
 }
 
 const corpus=selectCorpus();
@@ -247,10 +258,12 @@ try{
   console.log('\n[B4] Baseline real edit...');
   const br=codex(baselineWt,bp),bv=verifyEdit(baselineWt,anchor),bt=telemetry('REAL_PROJECT_BROAD_CONTEXT',br,bv,bp);
   console.log('  baseline edit='+ (bv.pass?'PASS':'FAIL') +' response='+ (bt.responseOk?'PASS':'FAIL') +' input='+ (bt.summary?.totals?.input_tokens??'null') +' tools='+ (bt.summary?.totals?.tool_calls??'null'));
+  if(bt.diagnostic)console.log('  baseline diagnostic='+bt.diagnostic);
 
   console.log('[B4] AleDevOS targeted real edit...');
   const cr=codex(candidateWt,cp),cv=verifyEdit(candidateWt,anchor),ct=telemetry('ALEDEVOS_TARGETED_CONTEXT',cr,cv,cp);
   console.log('  candidate edit='+ (cv.pass?'PASS':'FAIL') +' response='+ (ct.responseOk?'PASS':'FAIL') +' input='+ (ct.summary?.totals?.input_tokens??'null') +' tools='+ (ct.summary?.totals?.tool_calls??'null'));
+  if(ct.diagnostic)console.log('  candidate diagnostic='+ct.diagnostic);
 
   const bin=safeNum(bt.summary?.totals?.input_tokens),bout=safeNum(bt.summary?.totals?.output_tokens);
   const cin=safeNum(ct.summary?.totals?.input_tokens),cout=safeNum(ct.summary?.totals?.output_tokens);
@@ -272,7 +285,7 @@ try{
     repository:{absolute_path_stored:false,source_mode:source.mode,execution_head:source.head,source_untouched:sourceUntouched,source_digest:source.source_digest,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
     task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
     result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
-    pair:{baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,edit:bv},candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,edit:cv}},
+    pair:{baseline:{run_id:bt.run_id,input_tokens:bin,total_tokens:btotal,tool_calls:bt.summary?.totals?.tool_calls??null,files_read:bt.summary?.totals?.files_read??null,diagnostic:bt.diagnostic,edit:bv},candidate:{run_id:ct.run_id,input_tokens:cin,total_tokens:ctotal,tool_calls:ct.summary?.totals?.tool_calls??null,files_read:ct.summary?.totals?.files_read??null,diagnostic:ct.diagnostic,edit:cv}},
     reasons};
   receipt.integrity={algorithm:'sha256',payload_sha256:sha(Buffer.from(JSON.stringify(receipt),'utf8'))};
   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
