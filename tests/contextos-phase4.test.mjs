@@ -27,7 +27,8 @@ function makeRepo({commit=true}={}){
   return dir;
 }
 function build(dir){return run(dir,'knowledge','build');}
-function read(dir,name){return JSON.parse(fs.readFileSync(path.join(dir,'.aledevos','knowledge',name),'utf8'));}
+function knowledgeRoot(dir){const p=JSON.parse(fs.readFileSync(basePolicy,'utf8'));return path.join(dir,...String(p.knowledge.output_dir).split('/'))}
+function read(dir,name){return JSON.parse(fs.readFileSync(path.join(knowledgeRoot(dir),name),'utf8'));}
 
 test('phase 4 policy enables persistent knowledge maps without changing the 64K safety reserve',()=>{
   const p=JSON.parse(fs.readFileSync(basePolicy,'utf8'));
@@ -66,8 +67,8 @@ test('unsupported source languages are inventoried without fabricated symbols or
 });
 
 test('rebuild atomically replaces prior domain snapshot so removed domains do not leave stale map files',()=>{
-  const dir=makeRepo();build(dir);const idx1=read(dir,'domains.index.json'),users=idx1.domains.find(x=>x.root==='src/features/users');assert.ok(users);assert.equal(fs.existsSync(path.join(dir,'.aledevos','knowledge','domains',`${users.id}.json`)),true);
-  fs.rmSync(path.join(dir,'src','features','users'),{recursive:true,force:true});build(dir);const idx2=read(dir,'domains.index.json');assert.equal(idx2.domains.some(x=>x.root==='src/features/users'),false);assert.equal(fs.existsSync(path.join(dir,'.aledevos','knowledge','domains',`${users.id}.json`)),false);
+  const dir=makeRepo();build(dir);const idx1=read(dir,'domains.index.json'),users=idx1.domains.find(x=>x.root==='src/features/users');assert.ok(users);assert.equal(fs.existsSync(path.join(knowledgeRoot(dir),'domains',`${users.id}.json`)),true);
+  fs.rmSync(path.join(dir,'src','features','users'),{recursive:true,force:true});build(dir);const idx2=read(dir,'domains.index.json');assert.equal(idx2.domains.some(x=>x.root==='src/features/users'),false);assert.equal(fs.existsSync(path.join(knowledgeRoot(dir),'domains',`${users.id}.json`)),false);
 });
 
 test('manifest seals every generated map and verify succeeds',()=>{
@@ -75,7 +76,7 @@ test('manifest seals every generated map and verify succeeds',()=>{
 });
 
 test('knowledge verification detects map tampering',()=>{
-  const dir=makeRepo();build(dir);const p=path.join(dir,'.aledevos','knowledge','repo-map.json'),d=JSON.parse(fs.readFileSync(p,'utf8'));d.stats.files+=1;fs.writeFileSync(p,JSON.stringify(d,null,2));
+  const dir=makeRepo();build(dir);const p=path.join(knowledgeRoot(dir),'repo-map.json'),d=JSON.parse(fs.readFileSync(p,'utf8'));d.stats.files+=1;fs.writeFileSync(p,JSON.stringify(d,null,2));
   const v=run(dir,'knowledge','verify');assert.notEqual(v.status,0);assert.equal(jsonOut(v).valid,false);
 });
 
@@ -102,9 +103,9 @@ test('knowledge summary is compact and does not embed source file bodies',()=>{
   const dir=makeRepo();build(dir);const r=run(dir,'knowledge','summary');assert.equal(r.status,0,r.stderr||r.stdout);const x=jsonOut(r);assert.equal(x.project.name,'p4-fixture');assert.ok(x.domains.length>=2);assert.equal(JSON.stringify(x).includes('BillingService { amount'),false);
 });
 
-test('installer creates persistent knowledge directories without adding them to runtime-state ignore',()=>{
-  const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/knowledge\\domains/);assert.match(s,/ContextOS Phase 1\+2\+3\+4\+5/);
-  const gi=fs.readFileSync(path.resolve('.gitignore.append.txt'),'utf8');assert.match(gi,/\.aledevos\/state\//);assert.equal(gi.split(/\r?\n/).some(line=>line.trim()==='.aledevos/knowledge/'),false);
+test('installer creates mutable knowledge state under the ignored AleDevOS state plane',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/state\\knowledge\\domains/);assert.match(s,/ContextOS Phase 1\+2\+3\+4\+5/);
+  const gi=fs.readFileSync(path.resolve('.gitignore'),'utf8');assert.match(gi,/\.aledevos\/state\//);assert.equal(gi.split(/\r?\n/).some(line=>line.trim()==='.aledevos/knowledge/'),false);
 });
 
 test('all Core and OpenCode agents carry a concise Phase 4 map-first discipline',()=>{
