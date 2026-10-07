@@ -207,3 +207,12 @@ test('B3 can pin model and reasoning effort for reproducible Codex comparisons',
   assert.match(s,/reasoning_comparability/);
   assert.match(s,/--model/);
 });
+
+
+test('B3 prior evidence is bound to model and reasoning effort',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  assert.match(s,/B3_PRIOR_RECEIPT_MODEL_MISMATCH/);
+  assert.match(s,/B3_PRIOR_RECEIPT_REASONING_MISMATCH/);
+  assert.match(s,/q\?\.model/);
+  assert.match(s,/q\?\.reasoning_effort/);
+});
