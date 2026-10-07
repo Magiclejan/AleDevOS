@@ -1,6 +1,6 @@
 # B2 — Controlled Macro-Orchestration Efficiency
 
-Status: **PRELIMINARY PASS / n=1**
+Status: **VALIDATED / PASS / n=3**
 
 Date: 2026-10-07
 
@@ -25,7 +25,28 @@ It compares:
 
 Both legs use the same Codex runtime, the same benchmark key and the same exact quality contract.
 
-## Real result — first pair
+## Validated real result
+
+Three full baseline/candidate pairs completed successfully.
+
+| Metric | Validated result |
+| --- | ---: |
+| Median input-token reduction | **77.28%** |
+| Median total-token reduction | **77.24%** |
+| Median model-call reduction | **33.33%** |
+| Median active-agent reduction | **33.33%** |
+| Median handoff-token reduction | **99.73%** |
+| Baseline agents | 9 |
+| Candidate agents | 6 |
+| Baseline Skill IDs | 9 |
+| Candidate Skill IDs | 7 |
+| Quality preserved | **YES** |
+| Telemetry integrity | **VERIFIED** |
+| Runs | **n=3 pairs** |
+
+Observed total-token reductions across the three pairs were approximately **77.24%, 77.23% and 77.24%**.
+
+The first pair contained:
 
 | Metric | Broad baseline | P7 MICRO candidate | Reduction |
 | --- | ---: | ---: | ---: |
@@ -34,43 +55,45 @@ Both legs use the same Codex runtime, the same benchmark key and the same exact 
 | Total tokens | 320,821 | 73,020 | **77.24%** |
 | Model calls | 9 | 6 | **33.33%** |
 | Active agents | 9 | 6 | **33.33%** |
-| Handoff tokens | measured | measured | **99.73%** |
 
-Quality was preserved for every role in both legs. Telemetry integrity was verified.
+All agent calls in all three pairs preserved the exact quality contract and all benchmark telemetry summaries verified.
+
+The third pair intentionally ran the candidate before the baseline to reduce simple execution-order bias; the result remained effectively unchanged.
 
 ## Interpretation
 
-This first B2 pair supports the narrow claim:
+B2 supports the narrow claim:
 
-> In the controlled B2 MICRO benchmark, the combined AleDevOS efficiency path reduced total token use by 77.24% versus the broad baseline while preserving the exact required result.
+> In the controlled B2 MICRO benchmark, the combined AleDevOS efficiency path reduced median total token use by 77.24% versus the broad baseline while preserving the exact required result across three repeated pairs.
 
-The observed saving is attributable to the combined benchmark treatment:
+The observed saving is attributable to the **combined benchmark treatment**:
+
 - minimum-necessary agent activation;
 - reduced Skill activation;
 - relevant-context selection;
 - compact delta handoffs.
 
-B2 does not isolate the contribution of each mechanism individually. B1 separately measured context pruning.
+B2 does not isolate the contribution of each mechanism individually. B1 separately measured context pruning and found a 50.67% median total-token reduction.
 
 ## Claim boundary
 
-This is **n=1** and is therefore preliminary evidence.
+B2 is now validated for this controlled MICRO benchmark, but it does **not** support the universal statement that every AleDevOS task saves 77.24%.
 
-It does not support a universal claim that AleDevOS always saves 77.24%.
+Broader claims require additional task classes, real project work, adapters and host platforms.
 
-Before B2 is marked VALIDATED, repeat the full pair at least three times and use the median result with quality preserved and telemetry verified.
-
-The current runtime reports the same Codex default runtime path but does not expose a model identity in telemetry, so the evidence is recorded as:
+The current runtime used the same Codex default runtime path for every leg but did not expose a model identity in telemetry. Evidence therefore remains:
 
 `SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED`.
 
-## Validation gate
+Future benchmark families should explicitly pin or record the model identity when the target runtime permits it.
 
-B2 becomes VALIDATED when:
+## Validation gate result
 
-1. at least 3 full baseline/candidate pairs complete;
-2. all calls preserve the exact quality contract;
-3. all telemetry summaries verify;
-4. median input-token reduction meets the P7 MICRO target (>=35%);
-5. median total-token reduction meets the P7 MICRO target (>=30%);
-6. no model-identity mismatch is observed.
+1. >=3 full baseline/candidate pairs — **PASS**
+2. Exact quality preserved — **PASS**
+3. Telemetry summaries verified — **PASS**
+4. Median input-token reduction >=35% — **PASS (77.28%)**
+5. Median total-token reduction >=30% — **PASS (77.24%)**
+6. No observed model-identity mismatch — **PASS**
+
+**B2_MACRO_ORCHESTRATION_VALIDATED**
