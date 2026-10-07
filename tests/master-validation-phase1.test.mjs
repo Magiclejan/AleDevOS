@@ -10,6 +10,7 @@ const sourceRoot=path.resolve('.');
 const sourceEngine=path.resolve('release/engine/v1-release.mjs');
 const sourcePolicy=path.resolve('release/policies/v1-release-policy.json');
 const sourceBaseline=path.resolve('release/templates/master-validation-package-baseline.json');
+const sourceVersion=fs.readFileSync(path.join(sourceRoot,'VERSION.txt'),'utf8').trim();
 const sourceTreeManifest=path.resolve('release/templates/package-tree-manifest.mjs');
 const tmp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-master-p1-'));
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
@@ -27,7 +28,7 @@ function installedFixture(){
   cp(sourceEngine,path.join(rel,'runtime','v1-release.mjs'));
   cp(sourcePolicy,path.join(rel,'policies','v1-release-policy.json'));
   cp(sourceBaseline,path.join(rel,'templates','master-validation-package-baseline.json'));
-  write(path.join(rel,'VERSION.txt'),'1.51.0-final-master-gate\n');
+  write(path.join(rel,'VERSION.txt'),sourceVersion+'\n');
   return {root,engine:path.join(rel,'runtime','v1-release.mjs'),rel};
 }
 function miniSourcePackage(){
