@@ -130,7 +130,7 @@ function runRegression(){
   let tests=0,pass=0,fail=0,skipped=0;
   for(const rel of testFiles){
     process.stdout.write('TEST '+rel+' ... ');
-    const r=run(process.execPath,['--test',rel],{allow:true,timeout:Number(process.env.ALEDEVOS_TEST_FILE_TIMEOUT_MS||120000)});
+    const r=run(process.execPath,['--test','--test-reporter=tap',rel],{allow:true,timeout:Number(process.env.ALEDEVOS_TEST_FILE_TIMEOUT_MS||120000)});
     if(r.stdout)process.stdout.write(r.stdout.includes('\n')?'':'');
     if(r.status!==0){
       process.stdout.write('FAIL\n');
