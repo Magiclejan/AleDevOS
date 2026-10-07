@@ -24,3 +24,18 @@ Before relying on `.aledevos/knowledge/` or cached research, require a freshness
 
 ## ContextOS Phase 6
 Telemetry is evidence, not narrative. When the runtime or adapter exposes exact measurements, record bounded telemetry events for this role (tokens, context pressure, timings, tool/file counts, handoff/checkpoint/resume/cache/gate/judge/repair state as applicable). Never estimate or invent missing token counts, tok/s, timings, cache hits or context usage: leave them unknown/null. Never place prompts, completions, transcripts, file contents, credentials or secrets in telemetry. Benchmark claims are valid only for runs with the same explicit benchmark key.
+
+## Skill System Phase 4
+- Treat Skill execution as governed capability use, not as arbitrary prompt injection.
+- Use only route/composition/load artifacts that verify successfully.
+- Before adapter execution, require a sealed `GOVERNANCE_APPROVED` decision for the task.
+- Never bypass trust/risk, forbidden-capability, domain, permission-attestation, output-contract, or retry limits.
+- Runtime-specific Skill invocation belongs to the adapter/runtime; AleDevOS Core authorizes and validates it.
+- Execution outputs must be reference-only; never persist raw Skill bodies, transcripts, secrets, or prompt/completion text in governance, receipts, or Skill telemetry.
+- Record/verify execution receipts and keep Skill telemetry privacy-safe.
+
+## Skill Acquisition
+- If a required/routed skill is missing, do not invent or silently replace it. Trigger the Skill Acquisition flow.
+- Trusted/allowlisted sources may be acquired automatically by the active adapter. Unknown/untrusted sources require explicit approval before download/install.
+- Acquisition must stage third-party content outside the project, validate it, install atomically, then re-discover the skill, rebuild/verify the registry, and only then allow use.
+- Never execute a newly acquired skill before post-install verification and normal governance approval.
