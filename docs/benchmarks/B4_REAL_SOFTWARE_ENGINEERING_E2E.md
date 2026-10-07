@@ -1,6 +1,6 @@
 # B4 — Real Software-Engineering E2E Efficiency
 
-Status: **PRELIMINARY PASS / n=1**
+Status: **VALIDATED / PASS / n=3**
 
 Date: 2026-10-07
 
@@ -20,38 +20,63 @@ Task contract:
 - baseline and candidate must produce the identical verified diff;
 - source project must remain unchanged.
 
-## First real pair
+## Validated real result
 
-| Metric | Result |
+Three full baseline/candidate pairs completed successfully with the same frozen source, task, model, reasoning effort and runtime policy.
+
+| Metric | Validated result |
 | --- | ---: |
 | Safe eligible source files | 83 |
 | Baseline context files | 11 |
 | Candidate context files | 1 |
-| Baseline input tokens | 222,548 |
-| Candidate input tokens | 59,751 |
-| Input-token reduction | **73.15%** |
-| Total-token reduction | **73.12%** |
+| Median input-token reduction | **72.41%** |
+| Median total-token reduction | **72.40%** |
 | Baseline edit | **PASS** |
 | Candidate edit | **PASS** |
 | Identical verified diff | **YES** |
 | Quality preserved | **YES** |
 | Telemetry integrity | **VERIFIED** |
-| Source repository intact | **YES** |
+| Source project intact | **YES** |
+| Repetitions | **n=3 pairs** |
 | Model | **gpt-5.6-luna** |
 | Reasoning effort | **low** |
+| Sandbox | **workspace-write** |
+| Approval policy | **never** |
+
+Observed total-token reductions across the three pairs were approximately:
+- 73.12%
+- 70.73%
+- 72.40%
+
+Execution order was balanced across repeated runs.
 
 ## Interpretation
 
-This first pair supports the narrow claim:
+B4 supports the narrow claim:
 
-> In the controlled B4 real software-engineering edit, AleDevOS targeted context reduced total token use by 73.12% versus broad project context while producing the exact same verified code diff.
+> In the controlled B4 real software-engineering benchmark, AleDevOS targeted context reduced median total token use by 72.40% versus broad project context while producing the same independently verified code diff across three repeated pairs.
 
 B4 is stronger than B3 because the model performs a real file edit and the result is independently verified from Git evidence.
 
 ## Claim boundary
 
-This is still **n=1**.
+B4 validates this real, deterministic software-engineering edit workflow. It does **not** establish that arbitrary feature development, debugging or refactoring will always save 72.40%.
 
-It does not establish that arbitrary feature development, debugging or refactoring will save 73.12%. Validation requires at least three comparable pairs with the same frozen source, task, model, reasoning effort and runtime policy.
+Broader claims require additional task classes and repositories.
 
-No external project name, absolute source path, anchor content or raw prompt/completion is stored in canonical public evidence.
+No external project name, absolute source path, anchor content, raw prompt or raw completion is stored in canonical public evidence.
+
+## Validation gate result
+
+1. >=3 full baseline/candidate pairs — **PASS**
+2. Same frozen source and target identity — **PASS**
+3. Explicit same model — **PASS**
+4. Explicit same reasoning effort — **PASS**
+5. Same sandbox / approval policy — **PASS**
+6. Exact edit contract satisfied — **PASS**
+7. Identical verified diff — **PASS**
+8. Quality preserved — **PASS**
+9. Telemetry verified — **PASS**
+10. Source project unchanged — **PASS**
+
+**B4_REAL_SOFTWARE_ENGINEERING_E2E_VALIDATED**
