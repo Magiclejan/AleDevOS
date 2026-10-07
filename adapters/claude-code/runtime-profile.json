@@ -16,5 +16,7 @@
   "default_timeout_ms": 600000,
   "usage_fallback": {
     "enabled": false
-  }
+  },
+  "parser_module": "runtime-parser.mjs",
+  "structured_output": true
 }
