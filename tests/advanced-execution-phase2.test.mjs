@@ -58,6 +58,7 @@ test('cross-worktree access is disabled',()=>assert.equal(read(policyFile).rules
 test('external path access is disabled',()=>assert.equal(read(policyFile).rules.external_path_access_allowed,false));
 test('arbitrary shell is disabled',()=>assert.equal(read(policyFile).rules.arbitrary_shell_allowed,false));
 test('network is disabled in P2',()=>assert.equal(read(policyFile).rules.network_used,false));
+test('platform-injected environment is declared separately from forwarded worker environment',()=>{const p=read(policyFile);assert.ok(Array.isArray(p.environment_allowlist));assert.ok(Array.isArray(p.platform_injected_environment_allowlist?.win32));for(const k of p.platform_injected_environment_allowlist.win32)assert.equal(p.environment_allowlist.includes(k),false,k)});
 test('supervisor process is enabled while target agent runtime remains deferred',()=>{const p=read(policyFile).rules;assert.equal(p.worker_supervisor_process_enabled,true);assert.equal(p.target_agent_runtime_binding,'DEFERRED_MASTER_VALIDATION')});
 test('handoff is mandatory for completion and worker-owned',()=>{const p=read(policyFile).rules;assert.equal(p.handoff_required_for_completion,true);assert.equal(p.handoff_owned_by_worker,true);assert.equal(p.evidence_owned_by_worker,true)});
 test('recovery is enabled but bounded',()=>{const p=read(policyFile);assert.equal(p.rules.recovery_enabled,true);assert.equal(p.max_recovery_count,1)});
