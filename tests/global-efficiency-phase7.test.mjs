@@ -197,3 +197,13 @@ test('B3 can separate runtime project from corpus project without storing absolu
   assert.match(s,/runtime_path_stored:false/);
   assert.match(s,/corpus_path_stored:false/);
 });
+
+
+test('B3 can pin model and reasoning effort for reproducible Codex comparisons',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
+  assert.match(s,/--reasoning-effort/);
+  assert.match(s,/model_reasoning_effort=/);
+  assert.match(s,/reasoning_effort:reasoningEffort/);
+  assert.match(s,/reasoning_comparability/);
+  assert.match(s,/--model/);
+});
