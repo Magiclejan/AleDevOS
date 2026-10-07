@@ -16,5 +16,7 @@
   "usage_fallback": {
     "enabled": false
   },
-  "repo_check_bypass_flag": "--skip-git-repo-check"
+  "repo_check_bypass_flag": "--skip-git-repo-check",
+  "parser_module": "runtime-parser.mjs",
+  "structured_output": true
 }
