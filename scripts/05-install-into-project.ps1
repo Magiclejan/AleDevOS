@@ -57,6 +57,9 @@ if($CanonicalAdapter -eq 'opencode'){
 $ale=Join-Path $target '.aledevos'
 Copy-SafeFile (Join-Path $root 'core\engine\aledevos.mjs') (Join-Path $ale 'runtime\aledevos.mjs')
 Copy-SafeFile (Join-Path $root 'core\engine\telemetry-bridge.mjs') (Join-Path $ale 'runtime\telemetry-bridge.mjs')
+Copy-SafeFile (Join-Path $root 'core\agent-runtime\agent-runtime.mjs') (Join-Path $ale 'agent-runtime\runtime\agent-runtime.mjs')
+Copy-SafeFile (Join-Path $root 'core\agent-runtime\windows-cli-launcher.ps1') (Join-Path $ale 'agent-runtime\runtime\windows-cli-launcher.ps1')
+Copy-SafeFile (Join-Path $adapterRoot 'runtime-profile.json') (Join-Path $ale "agent-runtime\adapters\$CanonicalAdapter.json")
 Get-ChildItem (Join-Path $root 'core\schemas') -File | ForEach-Object {Copy-SafeFile $_.FullName (Join-Path $ale "schemas\$($_.Name)")}
 
 # Quality Engineering: universal QA/regression/reuse policy enforced by the Core runtime.

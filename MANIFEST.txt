@@ -56,6 +56,7 @@ adapters/antigravity/adapter-capabilities.json
 adapters/antigravity/certification/antigravity-certifier.mjs
 adapters/antigravity/hooks/pretool-guard.mjs
 adapters/antigravity/project-template.json
+adapters/antigravity/runtime-profile.json
 adapters/antigravity/scripts/acquire-skill.ps1
 adapters/antigravity/settings/aledevos-permissions.overlay.json
 adapters/antigravity/visualqa/playwright-driver.mjs
@@ -104,6 +105,7 @@ adapters/claude-code/adapter-capabilities.json
 adapters/claude-code/certification/claude-code-certifier.mjs
 adapters/claude-code/hooks/pretool-guard.mjs
 adapters/claude-code/project-template.json
+adapters/claude-code/runtime-profile.json
 adapters/claude-code/scripts/acquire-skill.ps1
 adapters/claude-code/visualqa/playwright-driver.mjs
 adapters/codex/.agents/skills/backend-change/SKILL.md
@@ -150,6 +152,7 @@ adapters/codex/README.md
 adapters/codex/adapter-capabilities.json
 adapters/codex/certification/codex-certifier.mjs
 adapters/codex/project-template.json
+adapters/codex/runtime-profile.json
 adapters/codex/scripts/acquire-skill.ps1
 adapters/codex/visualqa/playwright-driver.mjs
 adapters/gemini/README.md
@@ -206,6 +209,7 @@ adapters/opencode/adapter-capabilities.json
 adapters/opencode/certification/opencode-certifier.mjs
 adapters/opencode/opencode.json
 adapters/opencode/project-template.json
+adapters/opencode/runtime-profile.json
 adapters/opencode/scripts/acquire-skill.ps1
 adapters/opencode/visualqa/playwright-driver.mjs
 advanced-execution/concurrency/concurrency-manager.mjs
@@ -330,6 +334,8 @@ core/design/contracts/VISUAL_QA_RUNTIME.md
 core/design/ui-reuse-policy.json
 core/engine/aledevos.mjs
 core/engine/telemetry-bridge.mjs
+core/agent-runtime/agent-runtime.mjs
+core/agent-runtime/windows-cli-launcher.ps1
 core/policies/security-policy.json
 core/policies/workflow-policy.json
 core/schemas/adapter-contract.schema.json
@@ -594,6 +600,8 @@ scripts/66-self-test-final-master-gate.ps1
 scripts/67-final-master-gate.ps1
 scripts/68-self-test-auto-telemetry-v1.ps1
 scripts/69-e2e-auto-telemetry-v1.ps1
+scripts/71-self-test-auto-telemetry-v2.ps1
+scripts/72-e2e-auto-telemetry-v2.ps1
 scripts/README.md
 security-reliability/contracts/SECURITY_RELIABILITY_ASSURANCE.md
 security-reliability/engine/reliability-registry.mjs
@@ -656,6 +664,7 @@ tests/advanced-execution-phase3.test.mjs
 tests/advanced-execution-phase4.test.mjs
 tests/advanced-execution-phase5.test.mjs
 tests/auto-telemetry-v1.test.mjs
+tests/auto-telemetry-v2.test.mjs
 tests/contextos-phase1.test.mjs
 tests/contextos-phase2.test.mjs
 tests/contextos-phase3.test.mjs

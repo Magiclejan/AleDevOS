@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "adapter": "antigravity",
+  "runtime_family": "google-antigravity",
+  "executable": "agy",
+  "base_args": [],
+  "prompt_mode": "flag",
+  "prompt_flag": "-p",
+  "agent_flag": null,
+  "model_flag": "--model",
+  "parser": "antigravity-text",
+  "default_timeout_ms": 600000,
+  "usage_fallback": {
+    "enabled": false
+  }
+}

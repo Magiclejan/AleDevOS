@@ -28,15 +28,15 @@ function loadPolicy(){
 function safeFragment(v){return String(v??'task').replace(/[^A-Za-z0-9._-]/g,'_').slice(0,100)||'task'}
 function eventId(kind){return `${String(kind).toLowerCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`}
 function makeRunId(taskId){return `run-${safeFragment(taskId)}-${Date.now()}-${crypto.randomBytes(3).toString('hex')}`}
-function source({adapter=null,agent='orchestrator',model=null,provenance='DERIVED'}={}){
-  return {runtime:'aledevos',adapter,agent,model,provenance};
+function source({runtime='aledevos',adapter=null,agent='orchestrator',model=null,provenance='DERIVED'}={}){
+  return {runtime,adapter,agent,model,provenance};
 }
 function telemetryEnabled(policy){return policy?.telemetry?.enabled!==false}
 function summaryRelativePath(policy,runId){
   const root=policy?.telemetry?.output_dir||'.aledevos/state/telemetry/contextos';
   return path.join(root,'runs',runId,'summary.json').replaceAll('\\','/');
 }
-function emit({cwd,runId,taskId,kind,adapter=null,agent='orchestrator',model=null,provenance='DERIVED',metrics={},attributes}){
+function emit({cwd,runId,taskId,kind,runtime='aledevos',adapter=null,agent='orchestrator',model=null,provenance='DERIVED',metrics={},attributes}){
   if(!runId||!taskId)return {ok:false,error:'TELEMETRY_NOT_ACTIVE'};
   try{
     const policy=loadPolicy();
@@ -48,7 +48,7 @@ function emit({cwd,runId,taskId,kind,adapter=null,agent='orchestrator',model=nul
       task_id:taskId,
       timestamp:new Date().toISOString(),
       kind,
-      source:source({adapter,agent,model,provenance}),
+      source:source({runtime,adapter,agent,model,provenance}),
       metrics
     };
     if(attributes!==undefined)event.attributes=attributes;
@@ -105,6 +105,13 @@ export function emitRepairTelemetry({cwd,runId,taskId,adapter=null,repairCount})
   return emit({
     cwd,runId,taskId,kind:'REPAIR',adapter,agent:'repairer',
     provenance:'DERIVED',metrics:{repair_count:repairCount}
+  });
+}
+
+export function emitAgentCallTelemetry({cwd,runId,taskId,runtime='aledevos',adapter=null,agent='orchestrator',model=null,metrics={},attributes={}}){
+  return emit({
+    cwd,runId,taskId,kind:'AGENT_CALL',runtime,adapter,agent,model,
+    provenance:'MEASURED',metrics,attributes
   });
 }
 

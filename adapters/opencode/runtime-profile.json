@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "adapter": "opencode",
+  "runtime_family": "opencode",
+  "executable": "opencode",
+  "base_args": [
+    "run",
+    "--standalone",
+    "--format",
+    "json"
+  ],
+  "prompt_mode": "positional",
+  "prompt_flag": null,
+  "agent_flag": "--agent",
+  "model_flag": "--model",
+  "parser": "opencode-jsonl",
+  "default_timeout_ms": 600000,
+  "usage_fallback": {
+    "enabled": true,
+    "args": [
+      "export",
+      "{session_id}",
+      "--sanitize"
+    ],
+    "timeout_ms": 30000
+  }
+}

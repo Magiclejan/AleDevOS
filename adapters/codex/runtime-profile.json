@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "adapter": "codex",
+  "runtime_family": "codex",
+  "executable": "codex",
+  "base_args": [
+    "exec",
+    "--json"
+  ],
+  "prompt_mode": "positional",
+  "prompt_flag": null,
+  "agent_flag": null,
+  "model_flag": "--model",
+  "parser": "codex-jsonl",
+  "default_timeout_ms": 600000,
+  "usage_fallback": {
+    "enabled": false
+  }
+}
