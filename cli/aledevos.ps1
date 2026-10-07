@@ -1,6 +1,6 @@
 param(
   [Parameter(Position=0)]
-  [ValidateSet('init','update','where','help')]
+  [ValidateSet('start','init','update','where','help')]
   [string]$Command = 'help',
 
   [Parameter(Position=1)]
@@ -121,6 +121,25 @@ function Select-Adapters([string]$Requested,[string[]]$Installed) {
   return @($out)
 }
 
+function Invoke-Adapter([string]$Target,[string]$SelectedAdapter) {
+  $exe = @{
+    'opencode' = 'opencode'
+    'codex' = 'codex'
+    'claude-code' = 'claude'
+    'antigravity' = 'agy'
+  }[$SelectedAdapter]
+  if (-not $exe) { throw "ADAPTER_LAUNCH_UNSUPPORTED: $SelectedAdapter" }
+  $cmd = Get-Command $exe -ErrorAction SilentlyContinue
+  if (-not $cmd) {
+    throw "ADAPTER_CLI_NOT_FOUND: $exe. AleDevOS is installed in the project, but the external runtime CLI must be installed/authenticated separately."
+  }
+  Write-Host ""
+  Write-Host "[START] $SelectedAdapter en $Target" -ForegroundColor Cyan
+  Push-Location $Target
+  try { & $cmd.Source } finally { Pop-Location }
+  return $LASTEXITCODE
+}
+
 function Invoke-Install([string]$Target,[string]$SelectedAdapter,[bool]$UseForce) {
   $cfg = Get-Config
   $root = [string]$cfg.canonical_root
@@ -160,18 +179,56 @@ function Invoke-Install([string]$Target,[string]$SelectedAdapter,[bool]$UseForce
   }
 }
 
+function Test-GitRepository([string]$Target) {
+  $git = Get-Command git -ErrorAction SilentlyContinue
+  if (-not $git) { return $false }
+  $out = & $git.Source -C $Target rev-parse --is-inside-work-tree 2>$null
+  return ($LASTEXITCODE -eq 0 -and (($out | Out-String).Trim() -eq 'true'))
+}
+
 function Show-ProjectKind([string]$Target,[string[]]$Installed) {
   $entries = @(Get-ChildItem $Target -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne '.aledevos' })
+  $git = Test-GitRepository $Target
   if ($Installed.Count -gt 0) {
     Write-Host ("Proyecto AleDevOS existente. Adapters instalados: " + ($Installed -join ', ')) -ForegroundColor Cyan
   } elseif ($entries.Count -eq 0) {
     Write-Host "Proyecto nuevo/vacio detectado." -ForegroundColor Cyan
+  } elseif ($git) {
+    Write-Host "Proyecto existente con Git detectado. AleDevOS se incorporara sin borrar tu codigo." -ForegroundColor Cyan
   } else {
-    Write-Host "Proyecto existente detectado. AleDevOS se incorporara sin borrar tu codigo." -ForegroundColor Cyan
+    Write-Host "Proyecto existente sin Git detectado. Git no es obligatorio para instalar AleDevOS." -ForegroundColor Cyan
   }
 }
 
 switch ($Command) {
+  'start' {
+    $target = Resolve-Project $ProjectPath
+    $installed = @(Get-InstalledAdapters $target)
+    Show-ProjectKind -Target $target -Installed $installed
+
+    if ($Adapter) {
+      $selected = @(Parse-Adapters $Adapter)
+      if ($selected.Count -ne 1) { throw 'START_REQUIRES_ONE_ADAPTER' }
+      $chosen = $selected[0]
+    } elseif ($installed.Count -eq 1) {
+      $chosen = $installed[0]
+    } else {
+      $selected = @(Select-Adapters -Requested $null -Installed $installed)
+      if ($selected.Count -ne 1) { throw 'START_REQUIRES_ONE_ADAPTER' }
+      $chosen = $selected[0]
+    }
+
+    if ($installed -notcontains $chosen) {
+      Write-Host "AleDevOS no estaba instalado para '$chosen'. Instalando ahora..." -ForegroundColor Yellow
+      Invoke-Install -Target $target -SelectedAdapter $chosen -UseForce:$false
+    } else {
+      Write-Host "[OK] AleDevOS ya esta instalado para '$chosen'." -ForegroundColor Green
+    }
+
+    $rc = Invoke-Adapter -Target $target -SelectedAdapter $chosen
+    exit $rc
+  }
+
   'init' {
     $target = Resolve-Project $ProjectPath
     $installed = @(Get-InstalledAdapters $target)
@@ -230,11 +287,17 @@ switch ($Command) {
   default {
     Write-Host "AleDevOS CLI"
     Write-Host ""
-    Write-Host "Primera incorporacion (proyecto nuevo O existente):"
+    Write-Host "Iniciar (instala en primer uso y abre el runtime):"
+    Write-Host "  aledevos start"
+    Write-Host "  aledevos start C:\ruta\Proyecto -Adapter codex"
+    Write-Host ""
+    Write-Host "Solo instalar/incorporar (sin abrir runtime):"
     Write-Host "  aledevos init"
     Write-Host "  aledevos init C:\ruta\Proyecto"
     Write-Host "  aledevos init -Adapter codex,opencode"
     Write-Host "  aledevos init -Adapter all"
+    Write-Host ""
+    Write-Host "Git es opcional para instalar AleDevOS. Las funciones que dependen de Git se habilitan solo cuando el proyecto dispone de Git."
     Write-Host ""
     Write-Host "Actualizar todos los adapters ya instalados:"
     Write-Host "  aledevos update"
