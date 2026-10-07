@@ -97,8 +97,51 @@ try{
     console.log(JSON.stringify(o,null,2));
   },steps);
 
-  const regression=step('2_FULL_DETERMINISTIC_REGRESSION',()=>{
-    nodeStreaming('scripts/78-release-closure-prepare.mjs',['regression'],{timeout:1800000});
+  step('2_ADAPTER_CERTIFICATES',()=>{
+    certs.push(cert({id:'opencode-portability-p2',script:'adapters/opencode/certification/opencode-certifier.mjs',out:'release/certifications/opencode-portability-p2.json'}));
+    certs.push(cert({id:'codex-portability-p3',script:'adapters/codex/certification/codex-certifier.mjs',out:'release/certifications/codex-portability-p3.json'}));
+    certs.push(cert({id:'claude-code-portability-p4',script:'adapters/claude-code/certification/claude-code-certifier.mjs',out:'release/certifications/claude-code-portability-p4.json'}));
+    certs.push(cert({id:'antigravity-portability-p5',script:'adapters/antigravity/certification/antigravity-certifier.mjs',out:'release/certifications/antigravity-portability-p5.json'}));
+    certs.push(cert({id:'cross-adapter-portability-p6',script:'portability/conformance/conformance.mjs',out:'release/certifications/cross-adapter-portability-p6.json'}));
+  },steps);
+
+  step('3_MULTIMODEL_CERTIFICATES',()=>{
+    certs.push(certNoRoot({id:'multimodel-p1',script:'multimodel/engine/multimodel.mjs',out:'release/certifications/multimodel-p1.json'}));
+    certs.push(certNoRoot({id:'multimodel-p2',script:'multimodel/router/model-router.mjs',out:'release/certifications/multimodel-p2.json'}));
+    certs.push(certNoRoot({id:'multimodel-p3',script:'multimodel/extensions/diversity/judge-diversity.mjs',out:'release/certifications/multimodel-p3.json'}));
+    certs.push(certNoRoot({id:'multimodel-p4',script:'multimodel/extensions/fallback/model-fallback.mjs',out:'release/certifications/multimodel-p4.json'}));
+  },steps);
+
+  step('4_ADVANCED_EXECUTION_CERTIFICATES',()=>{
+    certs.push(certNoRoot({id:'advanced-execution-p1',script:'advanced-execution/worktrees/worktree-manager.mjs',out:'release/certifications/advanced-execution-p1.json'}));
+    certs.push(certNoRoot({id:'advanced-execution-p2',script:'advanced-execution/workers/worker-manager.mjs',out:'release/certifications/advanced-execution-p2.json'}));
+    certs.push(certNoRoot({id:'advanced-execution-p3',script:'advanced-execution/concurrency/concurrency-manager.mjs',out:'release/certifications/advanced-execution-p3.json'}));
+    certs.push(certNoRoot({id:'advanced-execution-p4',script:'advanced-execution/dispatcher/dispatcher-manager.mjs',out:'release/certifications/advanced-execution-p4.json'}));
+    certs.push(certNoRoot({id:'advanced-execution-p5',script:'advanced-execution/multimachine/multimachine-manager.mjs',out:'release/certifications/advanced-execution-p5.json'}));
+  },steps);
+
+  if(certs.length!==14)throw new Error('RELEASE_CERTIFICATE_COUNT_UNEXPECTED:'+certs.length);
+
+  const bootstrapBaseline=step('5_BOOTSTRAP_PACKAGE_BASELINE',()=>{
+    const r=node('scripts/78-release-closure-prepare.mjs',['bootstrap-baseline']);
+    const o=parseJsonOutput(r,'bootstrap-baseline');
+    if(o.status!=='RELEASE_CLOSURE_BOOTSTRAP_BASELINE_READY'||o.package_version!==version||o.certificate_count!==14||o.bootstrap!==true)throw new Error('RELEASE_BOOTSTRAP_BASELINE_INVALID');
+    console.log(JSON.stringify(o,null,2));
+    return o;
+  },steps);
+
+  step('6_BOOTSTRAP_MASTER_P1_CERTIFICATE',()=>{
+    const out='release/certifications/master-validation-p1.json';
+    const r=node('release/engine/v1-release.mjs',['master','certify','--project-root','.','--out',out]);
+    const o=parseJsonOutput(r,'bootstrap-master-p1-certify');
+    if(o.status!=='MASTER_VALIDATION_P1_PACKAGE_CERTIFIED')throw new Error('RELEASE_BOOTSTRAP_MASTER_P1_CERTIFY_FAILED:'+String(o.status));
+    const v=node('release/engine/v1-release.mjs',['master','verify-certificate','--project-root','.','--certificate',out]);
+    const vo=parseJsonOutput(v,'bootstrap-master-p1-verify');
+    if(vo.valid!==true)throw new Error('RELEASE_BOOTSTRAP_MASTER_P1_VERIFY_FAILED:'+JSON.stringify(vo.errors||[]));
+  },steps);
+
+  const regression=step('7_FULL_DETERMINISTIC_REGRESSION',()=>{
+    nodeStreaming('scripts/78-release-closure-prepare.mjs',['regression'],{timeout:3600000});
     const summaryPath=path.join(stateDir,'deterministic-regression-summary.json');
     if(!fs.existsSync(summaryPath))throw new Error('RELEASE_REGRESSION_SUMMARY_MISSING_AFTER_RUN');
     const summary=JSON.parse(fs.readFileSync(summaryPath,'utf8').replace(/^\uFEFF/,''));
@@ -110,47 +153,22 @@ try{
     return o;
   },steps);
 
-  step('3_ADAPTER_CERTIFICATES',()=>{
-    certs.push(cert({id:'opencode-portability-p2',script:'adapters/opencode/certification/opencode-certifier.mjs',out:'release/certifications/opencode-portability-p2.json'}));
-    certs.push(cert({id:'codex-portability-p3',script:'adapters/codex/certification/codex-certifier.mjs',out:'release/certifications/codex-portability-p3.json'}));
-    certs.push(cert({id:'claude-code-portability-p4',script:'adapters/claude-code/certification/claude-code-certifier.mjs',out:'release/certifications/claude-code-portability-p4.json'}));
-    certs.push(cert({id:'antigravity-portability-p5',script:'adapters/antigravity/certification/antigravity-certifier.mjs',out:'release/certifications/antigravity-portability-p5.json'}));
-    certs.push(cert({id:'cross-adapter-portability-p6',script:'portability/conformance/conformance.mjs',out:'release/certifications/cross-adapter-portability-p6.json'}));
-  },steps);
-
-  step('4_MULTIMODEL_CERTIFICATES',()=>{
-    certs.push(certNoRoot({id:'multimodel-p1',script:'multimodel/engine/multimodel.mjs',out:'release/certifications/multimodel-p1.json'}));
-    certs.push(certNoRoot({id:'multimodel-p2',script:'multimodel/router/model-router.mjs',out:'release/certifications/multimodel-p2.json'}));
-    certs.push(certNoRoot({id:'multimodel-p3',script:'multimodel/extensions/diversity/judge-diversity.mjs',out:'release/certifications/multimodel-p3.json'}));
-    certs.push(certNoRoot({id:'multimodel-p4',script:'multimodel/extensions/fallback/model-fallback.mjs',out:'release/certifications/multimodel-p4.json'}));
-  },steps);
-
-  step('5_ADVANCED_EXECUTION_CERTIFICATES',()=>{
-    certs.push(certNoRoot({id:'advanced-execution-p1',script:'advanced-execution/worktrees/worktree-manager.mjs',out:'release/certifications/advanced-execution-p1.json'}));
-    certs.push(certNoRoot({id:'advanced-execution-p2',script:'advanced-execution/workers/worker-manager.mjs',out:'release/certifications/advanced-execution-p2.json'}));
-    certs.push(certNoRoot({id:'advanced-execution-p3',script:'advanced-execution/concurrency/concurrency-manager.mjs',out:'release/certifications/advanced-execution-p3.json'}));
-    certs.push(certNoRoot({id:'advanced-execution-p4',script:'advanced-execution/dispatcher/dispatcher-manager.mjs',out:'release/certifications/advanced-execution-p4.json'}));
-    certs.push(certNoRoot({id:'advanced-execution-p5',script:'advanced-execution/multimachine/multimachine-manager.mjs',out:'release/certifications/advanced-execution-p5.json'}));
-  },steps);
-
-  if(certs.length!==14)throw new Error('RELEASE_CERTIFICATE_COUNT_UNEXPECTED:'+certs.length);
-
-  const baseline=step('6_REBUILD_PACKAGE_BASELINE',()=>{
+  const baseline=step('8_REBUILD_FINAL_PACKAGE_BASELINE',()=>{
     const r=node('scripts/78-release-closure-prepare.mjs',['baseline']);
     const o=parseJsonOutput(r,'baseline');
-    if(o.status!=='RELEASE_CLOSURE_BASELINE_REBUILT'||o.package_version!==version||o.certificate_count!==14)throw new Error('RELEASE_BASELINE_REBUILD_INVALID');
+    if(o.status!=='RELEASE_CLOSURE_BASELINE_REBUILT'||o.package_version!==version||o.certificate_count!==14||o.bootstrap!==false||!o.measured_regression)throw new Error('RELEASE_BASELINE_REBUILD_INVALID');
     console.log(JSON.stringify(o,null,2));
     return o;
   },steps);
 
-  step('7_VERIFY_PACKAGE_BASELINE',()=>{
+  step('9_VERIFY_PACKAGE_BASELINE',()=>{
     const r=node('release/engine/v1-release.mjs',['master','package','--project-root','.']);
     const o=parseJsonOutput(r,'master-package');
     if(o.valid!==true||o.package_version!==version)throw new Error('RELEASE_MASTER_PACKAGE_INVALID:'+JSON.stringify(o.errors||[]));
     console.log(JSON.stringify({status:o.status,valid:o.valid,package_version:o.package_version},null,2));
   },steps);
 
-  const masterP1=step('8_REISSUE_MASTER_P1_CERTIFICATE',()=>{
+  const masterP1=step('10_REISSUE_FINAL_MASTER_P1_CERTIFICATE',()=>{
     const out='release/certifications/master-validation-p1.json';
     const r=node('release/engine/v1-release.mjs',['master','certify','--project-root','.','--out',out]);
     const o=parseJsonOutput(r,'master-p1-certify');
@@ -176,6 +194,7 @@ try{
       toml_parse_passed:regression.toml_parse_passed
     },
     package_certificates:certs,
+    bootstrap_baseline:bootstrapBaseline,
     baseline,
     master_p1:masterP1,
     steps,
