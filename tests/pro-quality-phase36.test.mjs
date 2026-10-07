@@ -34,7 +34,8 @@ test('current 13 bundled Skills are honestly inventoried without issuing PRO cer
   assert.ok(r.summary.agents_inventoried>=40);
   assert.equal(r.summary.pro_certified,0);
   assert.equal(r.status,'P36_NEEDS_WORK');
-  assert.ok(r.skills.some(s=>s.status==='NEEDS_PRO_EXPANSION'));
+  assert.equal(r.summary.skill_docs_needing_work+r.summary.skill_doc_candidates,13);
+  assert.ok(r.skills.every(s=>['NEEDS_PRO_EXPANSION','DOCUMENTATION_CANDIDATE'].includes(s.status)));
   assert.ok(r.skills.every(s=>s.certification==='NOT_CERTIFIED'));
 });
 
