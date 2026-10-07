@@ -160,7 +160,7 @@ test('B2 can reuse a verified prior receipt instead of wasting a valid pair',()=
 test('B3 real-project benchmark uses actual repository corpus and no synthetic fixture',()=>{
   const s=fs.readFileSync(path.resolve('scripts/76-benchmark-token-efficiency-b3.mjs'),'utf8');
   assert.match(s,/B3_REAL_PROJECT_RETRIEVAL/);
-  assert.match(s,/walk\(project\)/);
+  assert.match(s,/walk\(corpusProject\)/);
   assert.match(s,/B3_INSUFFICIENT_REAL_PROJECT_CORPUS/);
   assert.doesNotMatch(s,/fixtureContext/);
   assert.match(s,/corpus_digest/);
