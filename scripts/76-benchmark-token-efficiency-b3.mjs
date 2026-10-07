@@ -13,6 +13,8 @@ const take=(f,d=null)=>{const i=a.indexOf(f);return i>=0&&i+1<a.length?a[i+1]:d}
 const project=path.resolve(take('--project',''));
 const corpusProject=path.resolve(take('--corpus-project',project));
 const timeoutMs=Math.max(10000,Number(take('--timeout-ms','180000'))||180000);
+const runs=Math.max(1,Math.min(5,Number(take('--runs','1'))||1));
+const priorReceiptArg=take('--prior-receipt',null);
 const model=take('--model',null);
 if(!project||!fs.existsSync(path.join(project,'.aledevos','project.json')))throw new Error('B3_ALEDEVOS_PROJECT_REQUIRED');
 if(!fs.existsSync(path.join(project,'.codex','config.toml')))throw new Error('B3_CODEX_ADAPTER_NOT_INSTALLED');
@@ -33,6 +35,7 @@ const norm=p=>p.replaceAll('\\','/');
 const safeNum=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null;
 const ratio=(b,c)=>typeof b==='number'&&typeof c==='number'&&b>0?(b-c)/b:null;
 const pct=v=>v===null?'n/a':(Math.round(v*10000)/100)+'%';
+const median=xs=>{const a=[...xs].sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2};
 const write=(p,v)=>{fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n','utf8')};
 
 function walk(dir,out=[]){
@@ -70,6 +73,22 @@ function corpus(){
   if(!pick)throw Object.assign(new Error('B3_NO_SAFE_UNIQUE_REAL_MARKER'),{blocked:true});
   const snippet=pick.lines.slice(Math.max(0,pick.n-3),Math.min(pick.lines.length,pick.n+2)).join('\n');
   return {eligible,files,pick,snippet,digest:sha(Buffer.from(files.map(f=>f.rel+'\0'+f.hash).join('\n'),'utf8'))};
+}
+function priorPairs(c,targetHash){
+  if(!priorReceiptArg)return [];
+  const base=path.resolve(project),rp=path.resolve(project,priorReceiptArg);
+  if(rp!==base&&!rp.startsWith(base+path.sep))throw new Error('B3_PRIOR_RECEIPT_OUTSIDE_RUNTIME_PROJECT');
+  if(!fs.existsSync(rp))throw new Error('B3_PRIOR_RECEIPT_NOT_FOUND:'+rp);
+  const q=JSON.parse(fs.readFileSync(rp,'utf8'));
+  if(q?.schema_version!=='1.0'||q?.benchmark!=='B3_REAL_PROJECT_RETRIEVAL'||q?.benchmark_key!==KEY)throw new Error('B3_PRIOR_RECEIPT_INCOMPATIBLE');
+  const copy=structuredClone(q),h=copy?.integrity?.payload_sha256??null;delete copy.integrity;
+  if(!h||sha(Buffer.from(JSON.stringify(copy),'utf8'))!==h)throw new Error('B3_PRIOR_RECEIPT_INTEGRITY_INVALID');
+  if(q?.project?.corpus_digest!==c.digest)throw new Error('B3_PRIOR_RECEIPT_CORPUS_DRIFT');
+  if(q?.target?.file!==c.pick.f.rel||q?.target?.line_sha256!==targetHash)throw new Error('B3_PRIOR_RECEIPT_TARGET_DRIFT');
+  if(q.status==='B3_FAIL'||q.status==='B3_INCOMPARABLE')throw new Error('B3_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
+  const xs=Array.isArray(q.pairs)?q.pairs:(q.pair?[q.pair]:[]);
+  if(!xs.length)throw new Error('B3_PRIOR_RECEIPT_HAS_NO_PAIR');
+  return xs.map((x,i)=>({...x,run:x.run??(i+1),reused:true}));
 }
 function launch(prompt){
   const args=['exec','--json','--skip-git-repo-check'];if(model)args.push('--model',model);args.push('-');
@@ -141,26 +160,57 @@ console.log('  corpus digest       : '+c.digest.slice(0,16)+'...');
 console.log('  target file         : '+c.pick.f.rel);
 console.log('  target line content : NOT STORED');
 
-const base=runLeg('REAL_PROJECT_BROAD_CONTEXT',prompt('REAL_PROJECT_BROAD_CONTEXT',broad,c.files.length),expected,c.files.length,bbytes);
-const cand=runLeg('ALEDEVOS_TARGETED_RETRIEVAL',prompt('ALEDEVOS_TARGETED_RETRIEVAL',targeted,1),expected,1,cbytes);
-const bin=safeNum(base.summary?.totals?.input_tokens),bout=safeNum(base.summary?.totals?.output_tokens);
-const cin=safeNum(cand.summary?.totals?.input_tokens),cout=safeNum(cand.summary?.totals?.output_tokens);
-const bt=bin!==null&&bout!==null?bin+bout:null,ct=cin!==null&&cout!==null?cin+cout:null;
-const rin=ratio(bin,cin),rt=ratio(bt,ct),rf=ratio(c.files.length,1),rb=ratio(bbytes,cbytes);
-const quality=base.ok&&cand.ok,telemetry=base.verified&&cand.verified;
+const reused=priorPairs(c,targetHash);
+const pairs=[...reused];
+for(let i=1;i<=runs;i++){
+  const pairNumber=reused.length+i,totalTargetRuns=reused.length+runs;
+  console.log('\n[B3 '+pairNumber+'/'+totalTargetRuns+'] real repository pair');
+  let base,cand;
+  if(pairNumber%2===1){
+    base=runLeg('REAL_PROJECT_BROAD_CONTEXT',prompt('REAL_PROJECT_BROAD_CONTEXT',broad,c.files.length),expected,c.files.length,bbytes);
+    cand=runLeg('ALEDEVOS_TARGETED_RETRIEVAL',prompt('ALEDEVOS_TARGETED_RETRIEVAL',targeted,1),expected,1,cbytes);
+  }else{
+    console.log('  Candidate first (order balancing)');
+    cand=runLeg('ALEDEVOS_TARGETED_RETRIEVAL',prompt('ALEDEVOS_TARGETED_RETRIEVAL',targeted,1),expected,1,cbytes);
+    base=runLeg('REAL_PROJECT_BROAD_CONTEXT',prompt('REAL_PROJECT_BROAD_CONTEXT',broad,c.files.length),expected,c.files.length,bbytes);
+  }
+  const bin=safeNum(base.summary?.totals?.input_tokens),bout=safeNum(base.summary?.totals?.output_tokens);
+  const cin=safeNum(cand.summary?.totals?.input_tokens),cout=safeNum(cand.summary?.totals?.output_tokens);
+  const bt=bin!==null&&bout!==null?bin+bout:null,ct=cin!==null&&cout!==null?cin+cout:null;
+  const rin=ratio(bin,cin),rt=ratio(bt,ct),rf=ratio(c.files.length,1),rb=ratio(bbytes,cbytes);
+  const quality=base.ok&&cand.ok,telemetry=base.verified&&cand.verified;
+  const pair={
+    run:pairNumber,
+    baseline:{run_id:base.run,input_tokens:bin,total_tokens:bt,files_supplied:c.files.length,context_bytes:bbytes,quality:base.ok,telemetry_verified:base.verified},
+    candidate:{run_id:cand.run,input_tokens:cin,total_tokens:ct,files_supplied:1,context_bytes:cbytes,quality:cand.ok,telemetry_verified:cand.verified},
+    input_reduction_ratio:rin,total_reduction_ratio:rt,file_reduction_ratio:rf,context_byte_reduction_ratio:rb,
+    quality_preserved:quality,telemetry_verified:telemetry,reused:false
+  };
+  pairs.push(pair);
+  console.log('  input saving='+pct(rin)+' | total saving='+pct(rt)+' | file-context saving='+pct(rf)+' | byte saving='+pct(rb));
+}
+const inputRatios=pairs.map(x=>x.input_reduction_ratio??ratio(x.baseline?.input_tokens,x.candidate?.input_tokens)).filter(Number.isFinite);
+const totalRatios=pairs.map(x=>x.total_reduction_ratio??ratio(x.baseline?.total_tokens,x.candidate?.total_tokens)).filter(Number.isFinite);
+const fileRatios=pairs.map(x=>x.file_reduction_ratio??ratio(x.baseline?.files_supplied,x.candidate?.files_supplied)).filter(Number.isFinite);
+const byteRatios=pairs.map(x=>x.context_byte_reduction_ratio??ratio(x.baseline?.context_bytes,x.candidate?.context_bytes)).filter(Number.isFinite);
+const rin=median(inputRatios),rt=median(totalRatios),rf=median(fileRatios),rb=median(byteRatios);
+const quality=pairs.every(x=>(x.quality_preserved??(x.baseline?.quality&&x.candidate?.quality))===true);
+const telemetry=pairs.every(x=>(x.telemetry_verified??(x.baseline?.telemetry_verified&&x.candidate?.telemetry_verified))!==false);
+const measured=inputRatios.length===pairs.length&&totalRatios.length===pairs.length;
 let status='B3_PASS',reasons=[];
-if(base.exit!==0||cand.exit!==0){status='B3_INCOMPARABLE';reasons.push('RUNTIME_CALL_NOT_COMPLETED')}
-else if(!telemetry||rin===null||rt===null){status='B3_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
+if(!telemetry||!measured){status='B3_INCOMPARABLE';reasons.push('MEASUREMENT_INCOMPLETE')}
 else if(!quality){status='B3_FAIL';reasons.push('QUALITY_NOT_PRESERVED')}
 else if(rin<targetIn||rt<targetTotal){status='B3_BELOW_TARGET';if(rin<targetIn)reasons.push('INPUT_TARGET');if(rt<targetTotal)reasons.push('TOTAL_TARGET')}
+const validationLevel=pairs.length>=3&&status==='B3_PASS'?'VALIDATED':'PRELIMINARY';
 
-const receipt={schema_version:'1.0',benchmark:'B3_REAL_PROJECT_RETRIEVAL',benchmark_key:KEY,status,validation_level:'PRELIMINARY',scope:'REAL_PROJECT_READ_ONLY_RETRIEVAL',
+const receipt={schema_version:'1.0',benchmark:'B3_REAL_PROJECT_RETRIEVAL',benchmark_key:KEY,status,validation_level:validationLevel,scope:'REAL_PROJECT_READ_ONLY_RETRIEVAL',
   claim_boundary:'Measures broad real-project context versus deterministic targeted retrieval on one frozen safe corpus. Setup scanning is excluded from agent file-read metrics. Does not measure code-edit quality or establish a universal savings percentage.',
   runtime:'codex',model:model||null,model_comparability:model?'EXPLICIT_SAME_MODEL':'SAME_CODEX_RUNTIME_DEFAULT_MODEL_UNREPORTED',
   project:{runtime_path_stored:false,corpus_path_stored:false,runtime_equals_corpus:path.resolve(project)===path.resolve(corpusProject),eligible_safe_files:c.eligible.length,baseline_files:c.files.length,corpus_digest:c.digest,baseline_context_bytes:bbytes,candidate_context_bytes:cbytes},
   target:{file:c.pick.f.rel,line_number:c.pick.n,line_sha256:targetHash,line_content_stored:false},
-  result:{input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,file_reduction_pct:Math.round(rf*10000)/100,context_byte_reduction_pct:Math.round(rb*10000)/100,quality_preserved:quality,telemetry_verified:telemetry,target_pass:status==='B3_PASS'},
-  pair:{baseline:{run_id:base.run,input_tokens:bin,total_tokens:bt,files_supplied:c.files.length,context_bytes:bbytes,quality:base.ok},candidate:{run_id:cand.run,input_tokens:cin,total_tokens:ct,files_supplied:1,context_bytes:cbytes,quality:cand.ok}},
+  runs:pairs.length,reused_prior_pairs:reused.length,newly_executed_pairs:runs,
+  result:{median_input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,median_total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,median_file_reduction_pct:rf===null?null:Math.round(rf*10000)/100,median_context_byte_reduction_pct:rb===null?null:Math.round(rb*10000)/100,quality_preserved:quality,telemetry_verified:telemetry,target_pass:status==='B3_PASS'},
+  pairs,
   reasons};
 receipt.integrity={algorithm:'sha256',payload_sha256:sha(Buffer.from(JSON.stringify(receipt),'utf8'))};
 const stamp=new Date().toISOString().replace(/[:.]/g,'-');
@@ -170,11 +220,14 @@ console.log('\n============================================================');
 console.log(' ALEDEVOS B3 - REAL PROJECT REPOSITORY EFFICIENCY');
 console.log('============================================================');
 console.log('Status                    : '+status);
-console.log('Validation                : PRELIMINARY');
+console.log('Validation                : '+validationLevel);
+console.log('Runs total                : '+pairs.length);
+console.log('Prior pairs reused        : '+reused.length);
+console.log('New pairs executed        : '+runs);
 console.log('Baseline real files       : '+c.files.length);
 console.log('Candidate relevant files  : 1');
-console.log('Input saving              : '+pct(rin));
-console.log('Total saving              : '+pct(rt));
+console.log('Input saving median       : '+pct(rin));
+console.log('Total saving median       : '+pct(rt));
 console.log('File-context reduction    : '+pct(rf));
 console.log('Context-byte reduction    : '+pct(rb));
 console.log('Quality preserved         : '+quality);
