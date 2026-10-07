@@ -142,7 +142,7 @@ function projectionVerify(installedBase=null){
 }
 function evidenceInputs(){
  const files=['portability/conformance/conformance.mjs','portability/conformance/conformance-policy.json','portability/conformance/conformance-scenarios.json','skillsystem/portable/portable-skill-pack.json','core/policies/security-policy.json'];
- for(const a of policy().canonical_adapters){files.push(`adapters/${a}/adapter-capabilities.json`,bindingPaths[a],`adapters/${a}/${policy().provider_path}`,policy().package_certificates[a].certificate)}
+ for(const a of policy().canonical_adapters){files.push(`adapters/${a}/adapter-capabilities.json`,`adapters/${a}/runtime-profile.json`,`adapters/${a}/runtime-parser.mjs`,bindingPaths[a],`adapters/${a}/${policy().provider_path}`,policy().package_certificates[a].certificate)}
  files.push('adapters/gemini/adapter-capabilities.json');
  return [...new Set(files)].sort().map(p=>({path:p,sha256:shaFile(path.join(root,p))}));
 }
