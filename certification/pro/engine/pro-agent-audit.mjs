@@ -28,7 +28,7 @@ function fm(s){
  const m=/^---\n([\s\S]*?)\n---(?:\n|$)/.exec(canonical(s));
  return m?m[1]:null;
 }
-function opencodeEditPermissions(front){
+function opencodePermissions(front){
  const lines=front.split('\n'),out=[];
  for(let i=0;i<lines.length;i++){
   const m=/^\s*-\s*action:\s*(\S+)\s*$/.exec(lines[i]);
@@ -40,7 +40,7 @@ function opencodeEditPermissions(front){
    if(r)resource=r[1].replace(/^["']|["']$/g,'');
    if(e)effect=e[1];
   }
-  if(m[1]==='edit')out.push({resource,effect});
+  out.push({action:m[1],resource,effect});
  }
  return out;
 }
@@ -68,7 +68,9 @@ function checkProjection(adapter,role,s){
   }else if(adapter==='opencode'){
    if(!/^mode:\s*(subagent|primary)$/m.test(front||''))errors.push('OPENCODE_MODE_MISSING');
    if(!/^permissions:/m.test(front||''))errors.push('OPENCODE_PERMISSIONS_MISSING');
-   const edits=opencodeEditPermissions(front||'');
+   const perms=opencodePermissions(front||'');
+   const edits=perms.filter(e=>e.action==='edit');
+   const subagents=perms.filter(e=>e.action==='subagent');
    const hasAllow=edits.some(e=>e.effect==='allow');
    const denyWildcard=edits.some(e=>e.resource==='*'&&e.effect==='deny');
    if(alwaysReadOnly.has(role)){
@@ -79,20 +81,29 @@ function checkProjection(adapter,role,s){
     }
    }else{
     if(!hasAllow)errors.push('WRITER_NO_PRODUCT_EDIT_CAPABILITY');
-    for(const protectedPath of ['.aledevos/**','.opencode/**']){
-     if(!edits.some(e=>e.resource===protectedPath&&e.effect==='deny'))errors.push('WRITER_CONTROL_PLANE_CARVEOUT_MISSING:'+protectedPath);
+    if(role==='editor-config'){
+     if(!denyWildcard)errors.push('CONFIG_WRITER_DEFAULT_DENY_MISSING');
+     for(const x of edits.filter(e=>e.effect==='allow')){
+      if(x.resource==='*'||x.resource.startsWith('.aledevos')||x.resource.startsWith('.opencode'))errors.push('CONFIG_WRITER_UNSCOPED_ALLOW:'+x.resource);
+     }
+    }else{
+     for(const protectedPath of ['.aledevos/**','.opencode/**']){
+      if(!edits.some(e=>e.resource===protectedPath&&e.effect==='deny'))errors.push('WRITER_CONTROL_PLANE_CARVEOUT_MISSING:'+protectedPath);
+     }
     }
    }
    if(role==='orchestrator'){
     if(!/^mode:\s*primary$/m.test(front||''))errors.push('ORCHESTRATOR_NOT_PRIMARY');
-    if(!/action:\s*subagent[\s\S]*?resource:\s*["']?\*["']?[\s\S]*?effect:\s*deny/.test(front||''))errors.push('ORCHESTRATOR_SUBAGENT_DENY_MISSING');
-   }else if(/- action:\s*subagent[\s\S]*?resource:\s*["']?\*["']?[\s\S]*?effect:\s*allow/.test(front||''))errors.push('UNAUTHORIZED_SUBAGENT_DELEGATION');
+    if(!subagents.some(e=>e.resource==='*'&&e.effect==='deny'))errors.push('ORCHESTRATOR_SUBAGENT_DENY_MISSING');
+   }else if(subagents.some(e=>e.effect==='allow'))errors.push('UNAUTHORIZED_SUBAGENT_DELEGATION');
   }else if(adapter==='claude-code'){
    if(!new RegExp('^name:\\s*'+role+'\\s*$','m').test(front||''))errors.push('CLAUDE_ROLE_ID_MISMATCH');
-   if(!/^permissionMode:\s*dontAsk$/m.test(front||''))errors.push('CLAUDE_PERMISSION_MODE_MISMATCH');
+   const mode=/^permissionMode:\s*(dontAsk|acceptEdits)$/m.exec(front||'')?.[1]||null;
+   const writer=['builder','repairer'].includes(role)||role.startsWith('editor-');
+   if(mode!==(writer?'acceptEdits':'dontAsk'))errors.push('CLAUDE_PERMISSION_MODE_MISMATCH');
   }else if(adapter==='antigravity'){
    if(!new RegExp('^name:\\s*'+role+'\\s*$','m').test(front||''))errors.push('ANTIGRAVITY_ROLE_ID_MISMATCH');
-   if(!/^commandExecutionPolicy:\s*sandbox$/m.test(front||''))errors.push('ANTIGRAVITY_SANDBOX_POLICY_MISSING');
+   if(!/^commandExecutionPolicy:\s*(off|sandbox)$/m.test(front||''))errors.push('ANTIGRAVITY_COMMAND_POLICY_UNBOUNDED');
   }
  }
  if(adapter==='core'||adapter==='opencode'){
@@ -102,7 +113,7 @@ function checkProjection(adapter,role,s){
  }
  if(role==='visual-judge'&&!/native.image/i.test(s))errors.push('NATIVE_IMAGE_JUDGE_BOUNDARY_MISSING');
  if(role==='visual-repair-controller'&&!/repair/i.test(s))errors.push('VISUAL_REPAIR_CONTROL_BOUNDARY_MISSING');
- if(role==='orchestrator'&&!/one subagent at a time|one (?:specialist|writer) at a time/i.test(s))errors.push('SEQUENTIAL_DELEGATION_BOUNDARY_MISSING');
+ if(role==='orchestrator'&&!/route sequentially|one subagent at a time|one (?:specialist|writer) at a time/i.test(s))errors.push('SEQUENTIAL_DELEGATION_BOUNDARY_MISSING');
  return errors;
 }
 export function auditAgents(root=defaultRoot,contract=null){
