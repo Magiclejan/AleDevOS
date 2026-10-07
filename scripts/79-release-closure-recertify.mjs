@@ -24,6 +24,18 @@ function run(exe,args,{allow=false,timeout=300000}={}){
 function node(rel,args=[],opts={}){
   return run(process.execPath,[rel,...args],opts);
 }
+function nodeStreaming(rel,args=[],{timeout=300000}={}){
+  const r=spawnSync(process.execPath,[rel,...args],{
+    cwd:root,
+    stdio:'inherit',
+    windowsHide:true,
+    timeout
+  });
+  if(r.status!==0){
+    throw new Error('RELEASE_CLOSURE_STREAMED_COMMAND_FAILED:'+rel+' '+args.join(' '));
+  }
+  return r;
+}
 function parseJsonOutput(r,label){
   const text=String(r.stdout||'').trim();
   const start=text.lastIndexOf('\n{')>=0?text.lastIndexOf('\n{')+1:text.indexOf('{');
@@ -86,9 +98,14 @@ try{
   },steps);
 
   const regression=step('2_FULL_DETERMINISTIC_REGRESSION',()=>{
-    const r=node('scripts/78-release-closure-prepare.mjs',['regression'],{timeout:1800000});
-    const o=parseJsonOutput(r,'regression');
-    if(o.status!=='RELEASE_CLOSURE_REGRESSION_PASS')throw new Error('RELEASE_REGRESSION_NOT_PASS');
+    nodeStreaming('scripts/78-release-closure-prepare.mjs',['regression'],{timeout:1800000});
+    const summaryPath=path.join(stateDir,'deterministic-regression-summary.json');
+    if(!fs.existsSync(summaryPath))throw new Error('RELEASE_REGRESSION_SUMMARY_MISSING_AFTER_RUN');
+    const summary=JSON.parse(fs.readFileSync(summaryPath,'utf8').replace(/^\uFEFF/,''));
+    if(summary.release_candidate!==version||summary.failures!==0||summary.skipped!==0||summary.tests_passed!==summary.tests_total){
+      throw new Error('RELEASE_REGRESSION_NOT_PASS');
+    }
+    const o={status:'RELEASE_CLOSURE_REGRESSION_PASS',...summary,path:path.relative(root,summaryPath).replaceAll('\\','/')};
     console.log(JSON.stringify(o,null,2));
     return o;
   },steps);
