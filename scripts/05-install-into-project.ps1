@@ -6,7 +6,36 @@ param(
 )
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
-$target=(Resolve-Path $ProjectPath).Path
+
+# Product onboarding contract:
+# - a missing target path is a valid NEW_EMPTY project and is created;
+# - an existing folder is valid with or without Git;
+# - AleDevOS never runs git init implicitly.
+$targetInput=[IO.Path]::GetFullPath($ProjectPath)
+$projectExisted=Test-Path -LiteralPath $targetInput
+if(-not $projectExisted){
+  New-Item -ItemType Directory -Force -Path $targetInput | Out-Null
+}elseif(-not (Test-Path -LiteralPath $targetInput -PathType Container)){
+  throw "PROJECT_PATH_NOT_DIRECTORY: $targetInput"
+}
+$target=(Resolve-Path -LiteralPath $targetInput).Path
+$initialEntries=@(Get-ChildItem -LiteralPath $target -Force -ErrorAction SilentlyContinue)
+
+$gitRepository=$false
+$gitCmd=Get-Command git -ErrorAction SilentlyContinue
+if($gitCmd){
+  $gitProbe=& $gitCmd.Source -C $target rev-parse --is-inside-work-tree 2>$null
+  if($LASTEXITCODE -eq 0 -and (($gitProbe | Out-String).Trim() -eq 'true')){$gitRepository=$true}
+}
+$projectEnvironment=if((-not $projectExisted) -or $initialEntries.Count -eq 0){
+  'NEW_EMPTY'
+}elseif($gitRepository){
+  'EXISTING_GIT'
+}else{
+  'EXISTING_NO_GIT'
+}
+Write-Host "Project environment: $projectEnvironment (git=$gitRepository)" -ForegroundColor Cyan
+
 $RequestedAdapter=$Adapter
 $CanonicalAdapter=if($Adapter -eq 'gemini'){'antigravity'}else{$Adapter}
 if($Adapter -eq 'gemini'){Write-Host 'Gemini is a compatibility alias; installing canonical Google Antigravity adapter.' -ForegroundColor Yellow}
@@ -199,6 +228,8 @@ $proj=Join-Path $ale 'project.json'
 if(-not (Test-Path $proj)){
   $cfg=Get-Content (Join-Path $adapterRoot 'project-template.json') -Raw | ConvertFrom-Json
   $cfg.project_name=Split-Path $target -Leaf
+  $cfg | Add-Member -NotePropertyName project_environment -NotePropertyValue $projectEnvironment -Force
+  $cfg | Add-Member -NotePropertyName git_repository -NotePropertyValue ([bool]$gitRepository) -Force
   # Adapter registration is transactional. Do not claim installation until
   # every projection and validation step below succeeds.
   $cfg.adapter=$null
@@ -249,6 +280,8 @@ if(-not (Test-Path $proj)){
   Write-Host "Created: $proj (configured=$($cfg.configured))" -ForegroundColor Cyan
 }else{
   $cfg=Get-Content $proj -Raw | ConvertFrom-Json
+  $cfg | Add-Member -NotePropertyName project_environment -NotePropertyValue $projectEnvironment -Force
+  $cfg | Add-Member -NotePropertyName git_repository -NotePropertyValue ([bool]$gitRepository) -Force
   $existingAdapters=@()
   if($cfg.adapters){$existingAdapters=@($cfg.adapters | ForEach-Object {[string]$_})}
   elseif($cfg.adapter){$existingAdapters=@([string]$cfg.adapter)}
@@ -443,6 +476,11 @@ Write-Utf8NoBom $proj ($cfg | ConvertTo-Json -Depth 10)
 
 Write-Host "`nAleDevOS adapter '$RequestedAdapter' (canonical '$CanonicalAdapter') installed into: $target" -ForegroundColor Green
 Write-Host ("AleDevOS adapters installed: " + ($installedAdapters -join ', ')) -ForegroundColor Green
+if($gitRepository){
+  Write-Host "Git integration: AVAILABLE." -ForegroundColor Green
+}else{
+  Write-Host "Git integration: OPTIONAL / NOT PRESENT. AleDevOS core remains usable; Git-dependent worktree features stay unavailable until the project uses Git." -ForegroundColor Yellow
+}
 $runtimeHint=if($CanonicalAdapter -eq 'codex'){'Restart Codex before runtime validation.'}elseif($CanonicalAdapter -eq 'claude-code'){'Restart Claude Code before runtime validation. On native Windows, target validation must report OS sandbox unavailable; use WSL2 for OS-level sandboxing.'}elseif($CanonicalAdapter -eq 'antigravity'){'Restart Google Antigravity before runtime validation. Target validation must actively probe workspace hooks and effective permissions for this OS/auth/version.'}else{'Restart OpenCode before runtime validation.'}
 Write-Host "Review .aledevos\project.json. Runtime-generated knowledge, telemetry and reliability evidence live under .aledevos\state\**. Bootstrap maps with: node .aledevos\contextos\runtime\contextos.mjs knowledge build`nCheck freshness with: node .aledevos\contextos\runtime\contextos.mjs knowledge freshness`nRefresh incrementally with: node .aledevos\contextos\runtime\contextos.mjs knowledge refresh`nTelemetry: node .aledevos\contextos\runtime\contextos.mjs telemetry start --run-id <id> --task-id <task>`nEfficiency P7: node .aledevos\efficiency\runtime\efficiency-governor.mjs inventory --root .`nSecurity P8: node .aledevos\security-reliability\runtime\security-assurance.mjs inventory --root .`n$runtimeHint"
 Write-Host 'If a reviewed task legitimately changes gate scripts/config, refresh integrity manually with scripts\11-refresh-gate-integrity.ps1.' -ForegroundColor Yellow
