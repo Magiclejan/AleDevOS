@@ -77,7 +77,9 @@ try {
   Write-Host '[4/7] Executing one REAL agent/model call...' -ForegroundColor Yellow
   $probe='Reply exactly: ALEDEVOS TELEMETRY V2 OK. Do not use tools. Do not modify files.'
   $timeoutMs=$CallTimeoutSeconds*1000
-  & node $agentRuntime call --adapter $adapter --agent orchestrator --prompt $probe --state $stateRel --timeout-ms $timeoutMs --quiet
+  $callArgs=@('call','--adapter',$adapter,'--agent','orchestrator','--prompt',$probe,'--state',$stateRel,'--timeout-ms',"$timeoutMs",'--quiet')
+  if($adapter -eq 'codex'){$callArgs+=@('--skip-repo-check')}
+  & node $agentRuntime @callArgs
   $callExit=$LASTEXITCODE
 
   Write-Host ''
