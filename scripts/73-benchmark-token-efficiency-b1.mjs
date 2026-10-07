@@ -209,6 +209,7 @@ try{
   const inputRatios=pairs.map(x=>x.input_reduction_ratio).filter(x=>typeof x==='number');
   const totalRatios=pairs.map(x=>x.total_reduction_ratio).filter(x=>typeof x==='number');
   const medInput=median(inputRatios),medTotal=median(totalRatios);
+  const runtimePass=pairs.every(x=>x.baseline.exit_code===0&&x.candidate.exit_code===0);
   const qualityPass=pairs.every(x=>x.baseline.quality&&x.candidate.quality);
   const telemetryPass=pairs.every(x=>x.baseline.telemetry_verified&&x.candidate.telemetry_verified&&x.telemetry_comparable);
   const measured=inputRatios.length===runs&&totalRatios.length===runs;
@@ -216,8 +217,9 @@ try{
 
   let status='B1_PASS';
   const reasons=[];
-  if(!qualityPass){status='B1_FAIL';reasons.push('QUALITY_NOT_PRESERVED')}
+  if(!runtimePass){status='B1_INCOMPARABLE';reasons.push('RUNTIME_CALL_NOT_COMPLETED')}
   else if(!telemetryPass||!measured){status='B1_INCOMPARABLE';reasons.push('TELEMETRY_OR_TOKEN_MEASUREMENT_INCOMPLETE')}
+  else if(!qualityPass){status='B1_FAIL';reasons.push('QUALITY_NOT_PRESERVED')}
   else if(!targetPass){status='B1_BELOW_TARGET';if(medInput<inputTarget)reasons.push('INPUT_TOKEN_REDUCTION_BELOW_MICRO_TARGET');if(medTotal<totalTarget)reasons.push('TOTAL_TOKEN_REDUCTION_BELOW_MICRO_TARGET')}
 
   const modelValues=[...new Set(pairs.flatMap(x=>[x.baseline.model,x.candidate.model]).filter(Boolean))];
