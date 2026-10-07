@@ -129,7 +129,43 @@ function Find-NearbyProjects {
   return @($found | Sort-Object -Unique)
 }
 
-function Sync-ProjectRegistry {
+function function Show-AdvancedMenu {
+  while ($true) {
+    Clear-Host
+    Write-Host '============================================================'
+    Write-Host '             AleDevOS - AVANZADO'
+    Write-Host '============================================================'
+    Write-Host '  1. Comprobar runtimes reales del equipo'
+    Write-Host '  2. Instalar / actualizar manualmente un proyecto'
+    Write-Host '  3. Preparar P3-P8 + campana FINAL'
+    Write-Host '  4. Ejecutar campana FINAL'
+    Write-Host '  5. Gestionar proyectos conocidos'
+    Write-Host '  6. Estado interno del paquete'
+    Write-Host '  7. Volver'
+    Write-Host ''
+    $c = Read-Host 'Elige una opcion [1-7]'
+    try {
+      switch ($c) {
+        '1' { Check-Runtimes }
+        '2' { Install-OrUpdate }
+        '3' { [void](Prepare-FinalCampaign) }
+        '4' { Execute-FinalCampaign }
+        '5' { Manage-KnownProjects }
+        '6' { Show-PackageStatus }
+        '7' { return }
+        default { Write-Host 'Opcion invalida.' -ForegroundColor Yellow }
+      }
+    } catch {
+      Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
+    }
+    if ($c -ne '7') {
+      Write-Host ''
+      Read-Host 'Pulsa ENTER para continuar' | Out-Null
+    }
+  }
+}
+
+Sync-ProjectRegistry {
   if (Test-Path -LiteralPath $LegacyLauncherStateFile -PathType Leaf) {
     try {
       $legacy = Get-Content -LiteralPath $LegacyLauncherStateFile -Raw | ConvertFrom-Json
@@ -850,14 +886,37 @@ function Check-Runtimes {
   & $script
 }
 
+function Resolve-OrCreateProjectPath([string]$PathValue) {
+  $raw = ([string]$PathValue).Trim().Trim('"')
+  if ([string]::IsNullOrWhiteSpace($raw)) { throw 'No se indico una ruta de proyecto.' }
+  $full = [IO.Path]::GetFullPath($raw)
+  if (-not (Test-Path -LiteralPath $full)) {
+    New-Item -ItemType Directory -Force -Path $full | Out-Null
+    Write-Host "[OK] Proyecto nuevo creado: $full" -ForegroundColor Green
+  } elseif (-not (Test-Path -LiteralPath $full -PathType Container)) {
+    throw "La ruta no es una carpeta: $full"
+  }
+  return (Resolve-Path -LiteralPath $full).Path
+}
+
+function Select-ProjectAdapter {
+  Write-Host 'Adapter: 1 Codex | 2 Claude Code | 3 OpenCode | 4 Antigravity | 5 Gemini(alias Antigravity)'
+  $a = Read-Host 'Adapter [1-5]'
+  return switch ($a) {
+    '1' {'codex'}
+    '2' {'claude-code'}
+    '3' {'opencode'}
+    '4' {'antigravity'}
+    '5' {'gemini'}
+    default { throw 'Adapter invalido.' }
+  }
+}
+
 function Install-OrUpdate {
   $installer = Join-Path $ScriptDir '05-install-into-project.ps1'
   if (-not (Test-Path -LiteralPath $installer -PathType Leaf)) { throw "Falta instalador: $installer" }
-  $p = Read-Host 'Ruta completa del proyecto a instalar/actualizar'
-  if (-not (Test-Path -LiteralPath $p -PathType Container)) { throw "La carpeta no existe: $p" }
-  Write-Host 'Adapter: 1 Codex | 2 Claude Code | 3 OpenCode | 4 Antigravity | 5 Gemini(alias Antigravity)'
-  $a = Read-Host 'Adapter [1-5]'
-  $adapter = switch ($a) { '1' {'codex'} '2' {'claude-code'} '3' {'opencode'} '4' {'antigravity'} '5' {'gemini'} default { throw 'Adapter invalido.' } }
+  $p = Resolve-OrCreateProjectPath (Read-Host 'Ruta completa del proyecto')
+  $adapter = Select-ProjectAdapter
   $force = (Read-Host 'Permitir backup/reemplazo si ya existe [S/N]') -match '^[sS]$'
   if ($force) { & $installer -ProjectPath $p -Adapter $adapter -Force }
   else { & $installer -ProjectPath $p -Adapter $adapter }
@@ -866,6 +925,47 @@ function Install-OrUpdate {
     $script:SessionProject = $saved
     Write-Host "[OK] Proyecto registrado y seleccionado para ESTA sesion: $saved" -ForegroundColor Green
   }
+}
+
+function Start-AleDevOSProject {
+  $installer = Join-Path $ScriptDir '05-install-into-project.ps1'
+  $launcher = Join-Path $ScriptDir '06-start-ai-dev.ps1'
+  if (-not (Test-Path -LiteralPath $installer -PathType Leaf)) { throw "Falta instalador: $installer" }
+  if (-not (Test-Path -LiteralPath $launcher -PathType Leaf)) { throw "Falta launcher: $launcher" }
+
+  $defaultProject = $null
+  if ($script:SessionProject -and (Test-AleDevOSProject $script:SessionProject)) {
+    $defaultProject = $script:SessionProject
+  } elseif ($script:LaunchCwd -and -not $script:LaunchCwd.Equals($Root,[StringComparison]::OrdinalIgnoreCase)) {
+    $defaultProject = $script:LaunchCwd
+  }
+
+  $prompt = if ($defaultProject) { "Ruta del proyecto [ENTER = $defaultProject]" } else { 'Ruta completa del proyecto' }
+  $entered = Read-Host $prompt
+  if ([string]::IsNullOrWhiteSpace($entered)) {
+    if (-not $defaultProject) { throw 'No se indico una ruta de proyecto.' }
+    $entered = $defaultProject
+  }
+  $p = Resolve-OrCreateProjectPath $entered
+  $adapter = Select-ProjectAdapter
+  $canonicalAdapter = if ($adapter -eq 'gemini') { 'antigravity' } else { $adapter }
+
+  $pj = Get-ProjectJson $p
+  $installed = @(Get-InstalledProjectAdapters $pj)
+  if ($installed -notcontains $canonicalAdapter) {
+    Write-Host "[AUTO] AleDevOS no estaba instalado para $canonicalAdapter. Instalando..." -ForegroundColor Cyan
+    & $installer -ProjectPath $p -Adapter $adapter
+    if ($LASTEXITCODE -ne 0) { throw "Instalacion AleDevOS fallida: exit=$LASTEXITCODE" }
+  } else {
+    Write-Host "[OK] AleDevOS ya esta instalado para $canonicalAdapter." -ForegroundColor Green
+  }
+
+  if (-not (Test-AleDevOSProject $p)) { throw 'La instalacion no produjo .aledevos\project.json.' }
+  $saved = Register-Project $p -TouchLastUsed
+  $script:SessionProject = $saved
+
+  Write-Host "[START] Abriendo $canonicalAdapter..." -ForegroundColor Cyan
+  & $launcher -ProjectPath $p -Adapter $canonicalAdapter
 }
 
 function Show-PackageStatus {
@@ -881,43 +981,35 @@ while ($true) {
   Clear-Host
   $known = @(Get-KnownProjects)
   Write-Host '============================================================'
-  Write-Host '          AleDevOS V1.51 - MULTI-PROJECT CONTROL'
+  Write-Host '                    AleDevOS'
   Write-Host '============================================================'
   if ($script:SessionProject -and (Test-AleDevOSProject $script:SessionProject)) {
-    Write-Host "Proyecto de esta sesion: $script:SessionProject" -ForegroundColor Green
+    Write-Host "Proyecto: $script:SessionProject" -ForegroundColor Green
   } else {
-    Write-Host "Proyecto de esta sesion: NO SELECCIONADO  ($($known.Count) conocidos)" -ForegroundColor Yellow
+    Write-Host "Proyecto: NO SELECCIONADO  ($($known.Count) conocidos)" -ForegroundColor Yellow
   }
-  Write-Host 'Registro persistente: lista de proyectos, NO proyecto activo global.' -ForegroundColor DarkGray
   Write-Host ''
-  Write-Host '  1. Estado del proyecto de esta sesion'
-  Write-Host '  2. Comprobar runtimes reales del equipo'
-  Write-Host '  3. Instalar / actualizar AleDevOS en un proyecto'
-  Write-Host '  4. Preparar P3-P8 + campana FINAL automaticamente'
-  Write-Host '  5. Ejecutar campana FINAL'
-  Write-Host '  6. Elegir/cambiar proyecto de ESTA SESION'
-  Write-Host '  7. Gestionar proyectos conocidos'
-  Write-Host '  8. Estado interno del PAQUETE AleDevOS'
-  Write-Host '  9. Salir'
+  Write-Host '  1. INICIAR ALEDEVOS'
+  Write-Host '     Instala en primer uso y abre el runtime elegido.'
+  Write-Host '  2. Estado del proyecto'
+  Write-Host '  3. Elegir / cambiar proyecto'
+  Write-Host '  4. Avanzado'
+  Write-Host '  5. Salir'
   Write-Host ''
-  $choice = Read-Host 'Elige una opcion [1-9]'
+  $choice = Read-Host 'Elige una opcion [1-5]'
   try {
     switch ($choice) {
-      '1' { Show-ProjectStatus }
-      '2' { Check-Runtimes }
-      '3' { Install-OrUpdate }
-      '4' { [void](Prepare-FinalCampaign) }
-      '5' { Execute-FinalCampaign }
-      '6' { Change-SessionProject }
-      '7' { Manage-KnownProjects }
-      '8' { Show-PackageStatus }
-      '9' { break }
+      '1' { Start-AleDevOSProject }
+      '2' { Show-ProjectStatus }
+      '3' { Change-SessionProject }
+      '4' { Show-AdvancedMenu }
+      '5' { break }
       default { Write-Host 'Opcion invalida.' -ForegroundColor Yellow }
     }
   } catch {
     Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
   }
-  if ($choice -eq '9') { break }
+  if ($choice -eq '5') { break }
   Write-Host ''
   Read-Host 'Pulsa ENTER para continuar' | Out-Null
 }
