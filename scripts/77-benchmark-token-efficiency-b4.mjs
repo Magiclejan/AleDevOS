@@ -11,14 +11,15 @@ import {startTaskTelemetry,emitAgentCallTelemetry,finishTaskTelemetry} from '../
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const argv=process.argv.slice(2);
 const take=(f,d=null)=>{const i=argv.indexOf(f);return i>=0&&i+1<argv.length?argv[i+1]:d};
+const takeAll=f=>argv.flatMap((x,i)=>x===f&&i+1<argv.length?[argv[i+1]]:[]);
 const runtimeProject=path.resolve(take('--project',''));
 const repoProject=path.resolve(take('--repo-project',''));
 const targetRel=String(take('--target-file','')).replaceAll('\\','/');
 const model=take('--model',null);
 const reasoningEffort=take('--reasoning-effort',null);
 const timeoutMs=Math.max(10000,Math.min(900000,Number(take('--timeout-ms','180000'))||180000));
-const runs=Math.max(1,Math.min(5,Number(take('--runs','1'))||1));
-const priorReceiptArg=take('--prior-receipt',null);
+const runs=Math.max(0,Math.min(5,Number(take('--runs','1'))||0));
+const priorReceiptArgs=takeAll('--prior-receipt');
 const allowedReasoning=new Set(['none','minimal','low','medium','high','xhigh','max']);
 if(reasoningEffort&&!allowedReasoning.has(reasoningEffort))throw new Error('B4_REASONING_EFFORT_INVALID:'+reasoningEffort);
 if(!runtimeProject||!fs.existsSync(path.join(runtimeProject,'.aledevos','project.json')))throw new Error('B4_ALEDEVOS_RUNTIME_PROJECT_REQUIRED');
@@ -234,25 +235,73 @@ function telemetry(label,raw,verification,prompt){
 }
 
 function loadPriorPairs({corpus,anchor}){
-  if(!priorReceiptArg)return [];
-  const base=path.resolve(runtimeProject),rp=path.resolve(runtimeProject,priorReceiptArg);
-  if(rp!==base&&!rp.startsWith(base+path.sep))throw new Error('B4_PRIOR_RECEIPT_OUTSIDE_RUNTIME_PROJECT');
-  if(!fs.existsSync(rp))throw new Error('B4_PRIOR_RECEIPT_NOT_FOUND:'+rp);
-  const q=JSON.parse(fs.readFileSync(rp,'utf8'));
-  if(q?.schema_version!=='1.0'||q?.benchmark!=='B4_REAL_SOFTWARE_ENGINEERING_E2E'||q?.benchmark_key!==KEY)throw new Error('B4_PRIOR_RECEIPT_INCOMPATIBLE');
-  const copy=structuredClone(q),h=copy?.integrity?.payload_sha256??null;delete copy.integrity;
-  if(!h||sha(Buffer.from(JSON.stringify(copy),'utf8'))!==h)throw new Error('B4_PRIOR_RECEIPT_INTEGRITY_INVALID');
-  if((q?.model??null)!==(model??null))throw new Error('B4_PRIOR_RECEIPT_MODEL_MISMATCH');
-  if((q?.reasoning_effort??null)!==(reasoningEffort??null))throw new Error('B4_PRIOR_RECEIPT_REASONING_MISMATCH');
-  if(q?.repository?.source_digest!==corpus.source_digest||q?.repository?.corpus_digest!==corpus.digest)throw new Error('B4_PRIOR_RECEIPT_SOURCE_DRIFT');
-  if(q?.task?.target_file_sha256!==corpus.target.hash||q?.task?.anchor_sha256!==sha(Buffer.from(anchor.line,'utf8')))throw new Error('B4_PRIOR_RECEIPT_TARGET_DRIFT');
-  if(q?.sandbox!=='workspace-write'||q?.approval_policy!=='never')throw new Error('B4_PRIOR_RECEIPT_RUNTIME_POLICY_MISMATCH');
-  if(q.status==='B4_FAIL'||q.status==='B4_INCOMPARABLE')throw new Error('B4_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
-  const xs=Array.isArray(q.pairs)?q.pairs:(q.pair?[q.pair]:[]);
-  if(!xs.length)throw new Error('B4_PRIOR_RECEIPT_HAS_NO_PAIR');
-  return xs.map((x,i)=>({...x,run:x.run??(i+1),reused:true}));
+  if(!priorReceiptArgs.length)return [];
+  const accepted=[],seen=new Set();
+
+  for(const priorReceiptArg of priorReceiptArgs){
+    const base=path.resolve(runtimeProject),rp=path.resolve(runtimeProject,priorReceiptArg);
+    if(rp!==base&&!rp.startsWith(base+path.sep))throw new Error('B4_PRIOR_RECEIPT_OUTSIDE_RUNTIME_PROJECT');
+    if(!fs.existsSync(rp))throw new Error('B4_PRIOR_RECEIPT_NOT_FOUND:'+rp);
+    const q=JSON.parse(fs.readFileSync(rp,'utf8'));
+    if(q?.schema_version!=='1.0'||q?.benchmark!=='B4_REAL_SOFTWARE_ENGINEERING_E2E'||q?.benchmark_key!==KEY)throw new Error('B4_PRIOR_RECEIPT_INCOMPATIBLE');
+
+    const copy=structuredClone(q),h=copy?.integrity?.payload_sha256??null;
+    delete copy.integrity;
+    if(!h||sha(Buffer.from(JSON.stringify(copy),'utf8'))!==h)throw new Error('B4_PRIOR_RECEIPT_INTEGRITY_INVALID');
+    if((q?.model??null)!==(model??null))throw new Error('B4_PRIOR_RECEIPT_MODEL_MISMATCH');
+    if((q?.reasoning_effort??null)!==(reasoningEffort??null))throw new Error('B4_PRIOR_RECEIPT_REASONING_MISMATCH');
+    if(q?.repository?.source_digest!==corpus.source_digest||q?.repository?.corpus_digest!==corpus.digest)throw new Error('B4_PRIOR_RECEIPT_SOURCE_DRIFT');
+    if(q?.task?.target_file_sha256!==corpus.target.hash||q?.task?.anchor_sha256!==sha(Buffer.from(anchor.line,'utf8')))throw new Error('B4_PRIOR_RECEIPT_TARGET_DRIFT');
+    if(q?.sandbox!=='workspace-write'||q?.approval_policy!=='never')throw new Error('B4_PRIOR_RECEIPT_RUNTIME_POLICY_MISMATCH');
+    if(q.status==='B4_FAIL')throw new Error('B4_PRIOR_RECEIPT_NOT_REUSABLE:'+q.status);
+
+    const legacySingle=!Array.isArray(q.pairs)&&q.pair;
+    const xs=Array.isArray(q.pairs)?q.pairs:(q.pair?[q.pair]:[]);
+    if(!xs.length)throw new Error('B4_PRIOR_RECEIPT_HAS_NO_PAIR');
+
+    for(let i=0;i<xs.length;i++){
+      const x=structuredClone(xs[i]);
+      const bin=safeNum(x?.baseline?.input_tokens),bt=safeNum(x?.baseline?.total_tokens);
+      const cin=safeNum(x?.candidate?.input_tokens),ct=safeNum(x?.candidate?.total_tokens);
+      const inputReduction=Number.isFinite(x?.input_reduction_ratio)?x.input_reduction_ratio:ratio(bin,cin);
+      const totalReduction=Number.isFinite(x?.total_reduction_ratio)?x.total_reduction_ratio:ratio(bt,ct);
+
+      let quality=typeof x?.quality_preserved==='boolean'?x.quality_preserved:null;
+      if(quality===null&&typeof x?.baseline?.quality==='boolean'&&typeof x?.candidate?.quality==='boolean')quality=x.baseline.quality&&x.candidate.quality;
+      if(quality===null&&legacySingle&&typeof q?.result?.quality_preserved==='boolean')quality=q.result.quality_preserved;
+
+      let telemetry=typeof x?.telemetry_verified==='boolean'?x.telemetry_verified:null;
+      if(telemetry===null&&typeof x?.baseline?.telemetry_verified==='boolean'&&typeof x?.candidate?.telemetry_verified==='boolean')telemetry=x.baseline.telemetry_verified&&x.candidate.telemetry_verified;
+      if(telemetry===null&&legacySingle&&typeof q?.result?.telemetry_verified==='boolean')telemetry=q.result.telemetry_verified;
+
+      let identical=typeof x?.identical_diff==='boolean'?x.identical_diff:null;
+      const bd=x?.baseline?.edit?.diff_sha256,cd=x?.candidate?.edit?.diff_sha256;
+      if(identical===null&&bd&&cd)identical=bd===cd;
+      if(identical===null&&legacySingle&&typeof q?.result?.identical_diff==='boolean')identical=q.result.identical_diff;
+
+      const key=[x?.baseline?.run_id??'',x?.candidate?.run_id??''].join('|');
+      const reusable=key!=='|'&&inputReduction!==null&&totalReduction!==null&&quality===true&&telemetry===true&&identical===true;
+      if(!reusable)continue;
+      if(seen.has(key))continue;
+      seen.add(key);
+      accepted.push({
+        ...x,
+        run:accepted.length+1,
+        input_reduction_ratio:inputReduction,
+        total_reduction_ratio:totalReduction,
+        quality_preserved:true,
+        telemetry_verified:true,
+        identical_diff:true,
+        reused:true
+      });
+    }
+  }
+
+  if(!accepted.length)throw new Error('B4_PRIOR_RECEIPTS_HAVE_NO_REUSABLE_PAIRS');
+  return accepted;
 }
 
+if(runs===0&&!priorReceiptArgs.length)throw new Error('B4_RUNS_ZERO_REQUIRES_PRIOR_RECEIPT');
 const corpus=selectCorpus();
 const anchor=anchorFor(corpus.target.text);
 const broad=corpus.files.map(f=>'FILE: '+f.rel+'\n'+f.text).join('\n\n---\n\n');
@@ -261,8 +310,6 @@ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-b4-e2e-'));
 let baselineWt=null,candidateWt=null,source=null;
 try{
   source=prepareExecutionRepository(temp,corpus);
-  baselineWt=addWorktree(temp,'baseline',source.head);
-  candidateWt=addWorktree(temp,'candidate',source.head);
 
   console.log('\nB4 real software-engineering task');
   console.log('  source mode          : '+source.mode);
@@ -282,10 +329,6 @@ try{
   const cp=promptFor('ALEDEVOS_TARGETED_CONTEXT',targeted,anchor);
   const reused=loadPriorPairs({corpus,anchor});
   const pairs=[...reused];
-
-  // Worktrees are recreated for every new pair from the same frozen snapshot.
-  cleanupWorktree(baselineWt); baselineWt=null;
-  cleanupWorktree(candidateWt); candidateWt=null;
 
   for(let i=1;i<=runs;i++){
     const pairNumber=reused.length+i,totalRuns=reused.length+runs;
@@ -348,7 +391,7 @@ try{
     runtime:'codex',model:model||null,reasoning_effort:reasoningEffort||null,sandbox:'workspace-write',approval_policy:'never',model_comparability:model?'EXPLICIT_SAME_MODEL':'DEFAULT_MODEL_UNREPORTED',reasoning_comparability:reasoningEffort?'EXPLICIT_SAME_REASONING_EFFORT':'DEFAULT_REASONING_UNREPORTED',
     repository:{absolute_path_stored:false,source_mode:source.mode,execution_head:source.head,source_untouched:sourceUntouched,source_digest:source.source_digest,corpus_digest:corpus.digest,safe_eligible_files:corpus.all.length,baseline_files:corpus.files.length,candidate_files:1},
     task:{target_file_sha256:corpus.target.hash,target_path_stored:false,anchor_sha256:sha(Buffer.from(anchor.line,'utf8')),anchor_content_stored:false,marker:MARKER,expected_diff_added_lines:1,expected_diff_deleted_lines:0},
-    runs:pairs.length,reused_prior_pairs:reused.length,newly_executed_pairs:runs,
+    runs:pairs.length,reused_prior_pairs:reused.length,prior_receipts_merged:priorReceiptArgs.length,newly_executed_pairs:runs,
     result:{median_input_reduction_pct:rin===null?null:Math.round(rin*10000)/100,median_total_reduction_pct:rt===null?null:Math.round(rt*10000)/100,quality_preserved:quality,identical_diff:sameDiff,telemetry_verified:telem,source_repository_untouched:sourceUntouched},
     pairs,
     reasons};
@@ -364,6 +407,7 @@ try{
   console.log('Validation                : '+validationLevel);
   console.log('Runs total                : '+pairs.length);
   console.log('Prior pairs reused        : '+reused.length);
+  console.log('Prior receipts merged     : '+priorReceiptArgs.length);
   console.log('New pairs executed        : '+runs);
   console.log('Input saving median       : '+pct(rin));
   console.log('Total saving median       : '+pct(rt));
