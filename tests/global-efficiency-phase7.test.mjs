@@ -284,3 +284,21 @@ test('B4 reports sanitized startup diagnostics when Codex exits before telemetry
   assert.match(s,/diagnostic:bt\.diagnostic/);
   assert.match(s,/diagnostic:ct\.diagnostic/);
 });
+
+
+test('B4 prior evidence is bound to source model reasoning and runtime policy',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/--prior-receipt/);
+  assert.match(s,/B4_PRIOR_RECEIPT_SOURCE_DRIFT/);
+  assert.match(s,/B4_PRIOR_RECEIPT_MODEL_MISMATCH/);
+  assert.match(s,/B4_PRIOR_RECEIPT_REASONING_MISMATCH/);
+  assert.match(s,/B4_PRIOR_RECEIPT_RUNTIME_POLICY_MISMATCH/);
+  assert.match(s,/reused_prior_pairs/);
+});
+
+test('B4 successful runs do not persist noisy startup diagnostics',()=>{
+  const s=fs.readFileSync(path.resolve('scripts/77-benchmark-token-efficiency-b4.mjs'),'utf8');
+  assert.match(s,/exit!==0\|\|!responseOk\|\|!verification\.pass/);
+  assert.match(s,/replace\(\/\[A-Za-z\]:/);
+  assert.match(s,/diagnostic=null|diagnostic=\(/);
+});
