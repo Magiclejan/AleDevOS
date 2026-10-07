@@ -86,10 +86,19 @@ function launcherArgs(executable,args){
 function runCodex(cwd,prompt){
   const args=['exec','--json','--skip-git-repo-check'];
   if(explicitModel)args.push('--model',explicitModel);
-  args.push(prompt);
+  // Codex supports "-" as the prompt source. Keep large benchmark context off
+  // argv so Windows/Base64 transport limits cannot invalidate the comparison.
+  args.push('-');
   const [exe,finalArgs]=process.platform==='win32'?launcherArgs('codex',args):['codex',args];
   const started=Date.now();
-  const result=spawnSync(exe,finalArgs,{cwd,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout:timeoutMs});
+  const result=spawnSync(exe,finalArgs,{
+    cwd,
+    encoding:'utf8',
+    windowsHide:true,
+    maxBuffer:32*1024*1024,
+    timeout:timeoutMs,
+    input:prompt
+  });
   result.aledevos_duration_ms=Math.max(0,Date.now()-started);
   return result;
 }
@@ -231,6 +240,7 @@ try{
       candidate_files:1,
       baseline_context_sha256:sha(fixture.full),
       candidate_context_sha256:sha(fixture.relevant),
+      prompt_transport:'STDIN',
       prompts_persisted:false,
       completions_persisted:false
     },
