@@ -71,7 +71,7 @@ try {
       $agentFile=Join-Path $agentRoot ($name+$ext)
       if(-not (Test-Path -LiteralPath $agentFile)){throw "P36_3_CRITICAL_ROLE_MISSING:$id/$name"}
     }
-    $regFile=Join-Path $project '.aledevos\skills\registry.json'
+    $regFile=Join-Path $project ('.aledevos\skills\registries\'+$id+'.json')
     if(-not (Test-Path -LiteralPath $regFile)){throw "P36_3_REGISTRY_MISSING:$id"}
     $registry=Get-Content -LiteralPath $regFile -Raw | ConvertFrom-Json
     $usable=@($registry.skills | Where-Object {$_.runtime.usable -eq $true})
