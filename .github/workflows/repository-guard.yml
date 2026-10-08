@@ -588,3 +588,46 @@ jobs:
           if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
             throw "P36_3_INSTALLATION_FAILED"
           }
+
+
+  p37-operational-evidence-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: P37.0 evidence validator adversarial tests and source-pinned coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/pro-operational-phase37-0.test.mjs
+          node certification/pro/engine/p37-operational.mjs plan --root . > /tmp/p37-plan.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const p=JSON.parse(fs.readFileSync('/tmp/p37-plan.json','utf8'));
+          if(p.status!=='PLAN_ONLY_NOT_EXECUTED'||p.required_total!==156||
+             p.breakdown.skills!==52||p.breakdown.agents!==100||
+             p.breakdown.workflows!==4||p.pro_certified!==0||
+             p.targets.some(x=>x.status!=='BLOCKED'))process.exit(1);
+          console.log('P37.0 structural plan PASS 156 targets; PRO_CERTIFIED=0');
+          NODE
+
+  p37-windows-preflight:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Real Windows source-pinned preflight without model claim
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\37-0-pro-operational-preflight.ps1
+          if ($LASTEXITCODE -ne 0) { throw "P37_0_PREFLIGHT_FAILED" }
+          $p = Get-Content '.aledevos\state\certification\p37\preflight.json' -Raw | ConvertFrom-Json
+          if ($p.targets_planned -ne 156 -or $p.pro_certified -ne 0 -or $p.operational_executions_observed -ne 0) {
+            throw "P37_0_FALSE_OPERATIONAL_CLAIM"
+          }
