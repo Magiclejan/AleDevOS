@@ -66,3 +66,16 @@ For a CLI-only inventory and post-run totals:
 A generated EVIDENCE_REVIEW_REQUIRED means only that the invocation and basic artifacts have no detected blocker: it does not prove automatic Skill activation, correct denial, scope compliance beyond filesystem differences, or independent validation. These are separate human/provider and deterministic review gates. The P37.0 assess contract still requires reviewed, scenario-complete receipts; the P37.1 raw observational files are not automatically promoted to P37.0 receipts.
 
 **Acceptance to close P37.1:** For each available adapter, preserve six scenario-level observations for each of 13 Skill targets; confirm installation hash and provider identity out of band; inspect activation/routing, refusal, task outcome, protected-path effects, failure/recovery and verifier independence using actual workspace bytes. Explicitly record unavailable/unsupported adapters as BLOCKED. A P37.1 closure may report only observed/blocked/failed/review-needed targets; PRO_CERTIFIED remains zero until P37.3, and no V1 Master Gate is waived.
+
+
+### P37.1A — Codex diagnostic hardening
+
+A Codex CLI exit code 1 by itself cannot distinguish invalid model, missing login, unsupported config, argument incompatibility or actual failed execution. The P37.1 runner now adds a bounded error category, CLI version/login status exit codes (not raw output), and a focused node test read-back for the safe-edit executed_real_task pilot. Output/hints contain only enum codes and numeric exit statuses, never raw provider prompts, stderr, stdout, credentials or transcripts. A reported login status is a local CLI observation, not authorization to expand permissions.
+
+Preflight rejects example placeholders such as TU_MODELO_REAL and TU_PROVEEDOR_REAL before the external provider is invoked. Operators must supply the actual model identifier configured in their own authenticated CLI. For Codex, inspect the local codex version, codex login status, and codex exec help before the pilot. Do not paste auth files, tokens, raw prompts or entire provider logs into tickets.
+
+Examples of safe result codes: CLI_NOT_FOUND, AUTHENTICATION_REQUIRED, MODEL_REJECTED, CONFIGURATION_REJECTED, CLI_ARGUMENT_REJECTED, RUNTIME_PERMISSION_DENIED, NETWORK_OR_CONNECTIVITY, RATE_LIMITED, RUNTIME_TIMEOUT, or UNCLASSIFIED_RUNTIME_FAILURE. The last state requires local diagnosis without inventing a root cause. Login-status failure is noted separately because a CLI may have alternative credential modes.
+
+For previously collected P37.1 receipts, extract only runtime.provider_declared, runtime.model_declared, runtime.exit_code, runtime.error_code, runtime.stdout_bytes, and runtime.stderr_bytes. The original raw stderr was intentionally not stored, so a specific failed attempt cannot be retrospectively classified unless the operator supplies additional safe observations or performs a new authorized run.
+
+MODEL_ID_NOT_OBSERVED_IN_STRUCTURED_RUNTIME remains a provenance gate: Codex JSON events do not necessarily report the model even when exit code is zero; never substitute a declared model for observed provider provenance or call a launch successful merely because JSON was emitted. Successful focused test plus no protected file mutations is still only execution evidence awaiting independent verification and the P37.3 signoff.
