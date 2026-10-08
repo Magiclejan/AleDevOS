@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
+ classifyRuntimeFailure,validateRuntimeIdentity,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -112,4 +113,41 @@ test('runtime profiles are adapter-owned; fake model/provider, mock-only and mis
  assert.equal(summary.pro_certified,0);
  assert.equal(summary.skill_adapter_targets,52);
  assert.equal(summary.skill_case_targets,312);
+});
+
+
+test('P37.1 runtime diagnostics classify only safe categories without leaking raw provider messages',()=>{
+ const attempts=[
+  {stderr:"Error: Model 'gpt-does-not-exist' not found",exitCode:1,expected:'MODEL_REJECTED'},
+  {stderr:'Not logged in, please run codex login',exitCode:1,expected:'AUTHENTICATION_REQUIRED'},
+  {stderr:'Get-Command: The term codex is not recognized',exitCode:1,expected:'CLI_NOT_FOUND'},
+  {stderr:'error parsing config.toml: unrecognized field',exitCode:1,expected:'CONFIGURATION_REJECTED'},
+  {stderr:'unexpected argument --custom-option',exitCode:1,expected:'CLI_ARGUMENT_REJECTED'},
+  {stderr:'rate limit exceeded (429)',exitCode:1,expected:'RATE_LIMITED'},
+  {stderr:'connection refused',exitCode:1,expected:'NETWORK_OR_CONNECTIVITY'},
+  {stderr:'Permission denied while writing target',exitCode:1,expected:'RUNTIME_PERMISSION_DENIED'},
+  {stderr:'arbitrary detail containing user data',exitCode:1,expected:'UNCLASSIFIED_RUNTIME_FAILURE'}
+ ];
+ for(const {stderr,exitCode,expected} of attempts){
+  const category=classifyRuntimeFailure({stderr,exitCode});
+  assert.equal(category,expected);
+  assert.ok(!category.includes('arbitrary detail'));
+ }
+ assert.equal(classifyRuntimeFailure({stderr:'invalid model',exitCode:0}),'NONE');
+ assert.equal(classifyRuntimeFailure({errorCode:'ETIMEDOUT',exitCode:null}),'RUNTIME_TIMEOUT');
+});
+
+test('P37.1 rejects documentation placeholders before any paid provider invocation',()=>{
+ for(const [provider,model] of [
+  ['TU_PROVEEDOR_REAL','gpt-6'],['openai','TU_MODELO_REAL'],
+  ['REAL_PROVIDER','gpt-6'],['openai','REAL_MODEL'],
+  ['mock','gpt-6'],['openai','unknown'],
+  ['openai','not a real model']
+ ])assert.throws(()=>validateRuntimeIdentity(provider,model),/P37_1_(PROVIDER|MODEL)_/);
+ assert.doesNotThrow(()=>validateRuntimeIdentity('openai','gpt-6'));
+});
+
+test('Codex role requires independent real provider evidence; parser missing model cannot be patched by a string claim',()=>{
+ assert.equal(classifyRuntimeFailure({stderr:'network disconnected',exitCode:1}),'UNCLASSIFIED_RUNTIME_FAILURE');
+ assert.equal(classifyRuntimeFailure({stdout:'{"type":"turn.completed"}',exitCode:0}),'NONE');
 });

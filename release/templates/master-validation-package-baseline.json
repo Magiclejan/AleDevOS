@@ -98,6 +98,6 @@
     }
   ],
   "source_attestation": "Package-only source certificates were reissued through their canonical certifier run/verify commands after approved AleDevOS changes. Target execution, native-image observation and V1 freeze remain independent and unverified.",
-  "baseline_sha256": "d2eae71432a958acee309ccb22184c5eee381cd8b6662879ccb71215e02eb660",
-  "package_tree_manifest_sha256": "27e30f8247faf117cd2147cd5689c5c9094d7d68429b8cfbb52216616bc82f5d"
+  "baseline_sha256": "4fa5292d3ee0d75fd7ca21b79c9e878f83bbb47432b7a1c8e1fc2131b3d046d3",
+  "package_tree_manifest_sha256": "0138ddb98664df34d2f62b0ef21d41878fa2f80b5ce3653778d530345200c163"
 }
