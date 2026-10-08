@@ -75,7 +75,7 @@ function temporaryCodexProjectTrust(project){
  if(!home)return()=>{};
  const config=path.join(home,'.codex','config.toml');
  if(!fs.existsSync(config))return()=>{};
- const normalized=path.resolve(project).replace(/\\/g,'/').toLowerCase();
+ const normalized=path.resolve(project).toLowerCase();
  const marker=`\n# AleDevOS P37 temporary trust BEGIN ${normalized}\n[projects.'${normalized}']\ntrust_level = "trusted"\n# AleDevOS P37 temporary trust END ${normalized}\n`;
  let original=fs.readFileSync(config,'utf8');
  const escaped=normalized.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
