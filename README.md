@@ -1,5 +1,7 @@
 # AleDevOS
 
+**Visual QA Phase 4: Rendered Layout/A11y Runtime Checks COMPLETE / FROZEN** — deterministic checks cover rendered layout, focus, contrast and accessibility measurements; this does not certify aesthetics, native-image judgment or full WCAG compliance.
+
 > **A portable AI macro-skill for software engineering.**
 
 AleDevOS is a reusable operating layer for AI-assisted software engineering. It provides orchestration, relevant-context selection, specialized agents, reusable Skills, deterministic gates, bounded repair, security/reliability controls and real efficiency telemetry without coupling its Core to a specific model or provider.
