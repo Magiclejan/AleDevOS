@@ -104,7 +104,7 @@ test('knowledge summary is compact and does not embed source file bodies',()=>{
 
 test('installer keeps knowledge maps under the protected runtime state plane',()=>{
   const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/state\\knowledge\\domains/);assert.match(s,/ContextOS Phase 1\+2\+3\+4\+5/);
-  const gi=fs.readFileSync(path.resolve('.gitignore.append.txt'),'utf8');assert.match(gi,/\.aledevos\/state\//);assert.equal(gi.split(/\r?\n/).some(line=>line.trim()==='.aledevos/knowledge/'),false); // no legacy unprotected knowledge root
+  const gi=fs.readFileSync(path.resolve('.gitignore'),'utf8');assert.match(gi,/\.aledevos\/state\//);assert.equal(gi.split(/\r?\n/).some(line=>line.trim()==='.aledevos/knowledge/'),false); // no legacy unprotected knowledge root
 });
 
 test('all Core and OpenCode agents carry a concise Phase 4 map-first discipline',()=>{
