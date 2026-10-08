@@ -6,6 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
+ summarizeCodexEvents,inspectWorkspaceExecutionEvidence,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -150,4 +151,47 @@ test('P37.1 rejects documentation placeholders before any paid provider invocati
 test('Codex role requires independent real provider evidence; parser missing model cannot be patched by a string claim',()=>{
  assert.equal(classifyRuntimeFailure({stderr:'network disconnected',exitCode:1}),'UNCLASSIFIED_RUNTIME_FAILURE');
  assert.equal(classifyRuntimeFailure({stdout:'{"type":"turn.completed"}',exitCode:0}),'NONE');
+});
+
+
+test('Codex JSON events only reveal bounded metadata and blocked marker, not model text',()=>{
+ const stream=[
+  {type:'thread.started',thread_id:'private-thread'},
+  {type:'turn.started'},
+  {type:'item.started',item:{id:'step1',type:'command_execution',command:'SECRET COMMAND'}},
+  {type:'item.completed',item:{id:'step1',type:'command_execution',command:'SECRET COMMAND'}},
+  {type:'item.completed',item:{id:'step2',type:'agent_message',text:'BLOCKED: private details must not persist'}},
+  {type:'turn.completed',usage:{input_tokens:4,output_tokens:7}}
+ ].map(JSON.stringify).join('\n');
+ const events=summarizeCodexEvents(stream);
+ assert.equal(events.structured_events,6);
+ assert.equal(events.threads_started,1);
+ assert.equal(events.turns_completed,1);
+ assert.equal(events.tool_events,2);
+ assert.equal(events.agent_messages,1);
+ assert.equal(events.agent_message_blocked_marker,true);
+ assert.equal(JSON.stringify(events).includes('SECRET'),false);
+ assert.equal(JSON.stringify(events).includes('private-thread'),false);
+ assert.equal(summarizeCodexEvents('not json').structured_events,0);
+});
+
+test('P37.1 requires actual task state and Skill routing; mere installed Skill is not evidence',()=>{
+ const dir=tmp(),a=inspectWorkspaceExecutionEvidence(dir);
+ assert.deepEqual(a,{task_directories:0,task_contracts:0,task_states:0,route_receipts:0});
+ const task=path.join(dir,'.aledevos/state/tasks/real-task');
+ const routes=path.join(dir,'.aledevos/state/skills/routes');
+ fs.mkdirSync(task,{recursive:true});fs.mkdirSync(routes,{recursive:true});
+ fs.writeFileSync(path.join(task,'task-contract.json'),'{}\n');
+ fs.writeFileSync(path.join(task,'state.json'),'{}\n');
+ fs.writeFileSync(path.join(routes,'real-task.json'),'{}\n');
+ assert.deepEqual(inspectWorkspaceExecutionEvidence(dir),{task_directories:1,task_contracts:1,task_states:1,route_receipts:1});
+});
+
+test('Optional Codex writable sandbox can only target the owned disposable fixture',()=>{
+ const dir=tmp();
+ assert.throws(()=>validateCodexWorkspaceWriteOptIn({adapter:'codex',confirmed:true,workspace:dir}),/CODEX_WRITE_ONLY/);
+ fs.writeFileSync(path.join(dir,'.p37-owned-disposable.json'),JSON.stringify({phase:'P37.1'}));
+ assert.deepEqual(validateCodexWorkspaceWriteOptIn({adapter:'codex',confirmed:true,workspace:dir}),['--sandbox','workspace-write']);
+ assert.throws(()=>validateCodexWorkspaceWriteOptIn({adapter:'opencode',confirmed:true,workspace:dir}),/CODEX_WRITE_ONLY/);
+ assert.throws(()=>validateCodexWorkspaceWriteOptIn({adapter:'codex',confirmed:false,workspace:dir}),/CODEX_WRITE_ONLY/);
 });
