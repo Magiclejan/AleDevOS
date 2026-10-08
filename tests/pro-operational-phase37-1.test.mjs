@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
- summarizeCodexEvents,inspectWorkspaceExecutionEvidence,validateCodexWorkspaceWriteOptIn,
+ summarizeCodexEvents,inspectWorkspaceExecutionEvidence,inspectRouteProgress,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -194,4 +194,60 @@ test('Optional Codex writable sandbox can only target the owned disposable fixtu
  assert.deepEqual(validateCodexWorkspaceWriteOptIn({adapter:'codex',confirmed:true,workspace:dir}),['--sandbox','workspace-write']);
  assert.throws(()=>validateCodexWorkspaceWriteOptIn({adapter:'opencode',confirmed:true,workspace:dir}),/CODEX_WRITE_ONLY/);
  assert.throws(()=>validateCodexWorkspaceWriteOptIn({adapter:'codex',confirmed:false,workspace:dir}),/CODEX_WRITE_ONLY/);
+});
+
+
+test('P37.1 timeout is explicit, bounded and rejects silent invalid overrides',()=>{
+ assert.equal(validatePilotTimeoutMs(30000),30000);
+ assert.equal(validatePilotTimeoutMs('600000'),600000);
+ assert.equal(validatePilotTimeoutMs(120000),120000);
+ for(const bad of [null,0,-1,29999,600001,'900000','not-number',1234.5,Infinity]){
+  assert.throws(()=>validatePilotTimeoutMs(bad),/TIMEOUT_OUTSIDE_30_TO_600_SECONDS/);
+ }
+});
+
+test('P37.1 route evidence distinguishes receipt presence, skill selection and native verification',()=>{
+ const dir=tmp();
+ assert.deepEqual(inspectRouteProgress(dir,'safe-edit'),{
+  task_count:0,task_state_present:false,task_final_state:'UNOBSERVED',task_blocked:false,
+  agent_roles_observed:[],route_status:'NOT_OBSERVED',route_selected_expected:false,
+  route_integrity_verified:false,route_verify_exit_code:null
+ });
+ const task=path.join(dir,'.aledevos/state/tasks/task-pilot-1');
+ const route=path.join(dir,'.aledevos/state/skills/routes/task-pilot-1.json');
+ fs.mkdirSync(task,{recursive:true});fs.mkdirSync(path.dirname(route),{recursive:true});
+ fs.writeFileSync(path.join(task,'state.json'),JSON.stringify({
+  task_id:'task-pilot-1',final_state:null,blocked_reason:null,
+  agent_trace:[{agent:'orchestrator',status:'STARTED'},{agent:'builder',status:'STARTED'}],
+  private_content:'NEVER EXPOSE THIS'
+ }));
+ fs.writeFileSync(route,JSON.stringify({
+  task_id:'task-pilot-1',status:'ROUTE_READY',
+  selected:[{id:'safe-edit',runtime_status:'AVAILABLE'}],
+  integrity:{payload_sha256:'not-a-real-seal'}
+ }));
+ const progress=inspectRouteProgress(dir,'safe-edit');
+ assert.equal(progress.task_count,1);
+ assert.equal(progress.task_state_present,true);
+ assert.equal(progress.task_final_state,'UNFINISHED');
+ assert.deepEqual(progress.agent_roles_observed,['orchestrator','builder']);
+ assert.equal(progress.route_status,'ROUTE_READY');
+ assert.equal(progress.route_selected_expected,true);
+ assert.equal(progress.route_integrity_verified,false);
+ assert.equal(progress.route_verify_exit_code,null);
+ assert.equal(JSON.stringify(progress).includes('NEVER EXPOSE'),false);
+ const other=inspectRouteProgress(dir,'backend-change');
+ assert.equal(other.route_selected_expected,false);
+});
+
+test('P37.1 reports blocked task status but never persists raw blocked reason',()=>{
+ const dir=tmp(),task=path.join(dir,'.aledevos/state/tasks/task-safe-1');
+ fs.mkdirSync(task,{recursive:true});
+ fs.writeFileSync(path.join(task,'state.json'),JSON.stringify({
+  task_id:'task-safe-1',blocked_reason:'secret user data',final_state:'BLOCKED',agent_trace:[]
+ }));
+ const p=inspectRouteProgress(dir,'safe-edit');
+ assert.equal(p.task_blocked,true);
+ assert.equal(p.task_final_state,'BLOCKED');
+ assert.equal(JSON.stringify(p).includes('secret user data'),false);
 });
