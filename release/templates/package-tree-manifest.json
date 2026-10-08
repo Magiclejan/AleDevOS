@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 806,
+  "file_count": 809,
   "entries": [
     {
       "path": ".gitattributes",
@@ -1255,6 +1255,11 @@
       "size": 12381
     },
     {
+      "path": "certification/pro/engine/p37-skills.mjs",
+      "sha256": "d3ba5c3db9b002887737410fe2a1b053e8b958e9e331136a55d74f2c51c4139a",
+      "size": 20809
+    },
+    {
       "path": "certification/pro/engine/pro-agent-audit.mjs",
       "sha256": "0991515bd7ea28a4e5b591128a861b40d0e51de1429ed729c1daae63933d3083",
       "size": 10093
@@ -2041,8 +2046,8 @@
     },
     {
       "path": "docs/P37_OPERATIONAL_CERTIFICATION.md",
-      "sha256": "a260bb108d73da72c3ac73070254e5ce89c253ce1c139554c4f9b1396040c5fe",
-      "size": 3457
+      "sha256": "79c2fdffa04d4877b7f894f4d5978be78e4d206af8bdb42c4d3f0ba6905f6c8b",
+      "size": 7483
     },
     {
       "path": "docs/PORTABILITY_PHASE1_VALIDATION.md",
@@ -2860,6 +2865,11 @@
       "size": 2119
     },
     {
+      "path": "scripts/37-1-real-skills-execution.ps1",
+      "sha256": "ff3b68a40b317be3b5a4859aaa1340759df149951d0eaf5604c75b0ccebc309d",
+      "size": 3223
+    },
+    {
       "path": "scripts/37-self-test-portability-phase2.ps1",
       "sha256": "a2d4ba81e16fcc12f13905528e326408ed12afc3ed48fd0280d9fde52776e249",
       "size": 1295
@@ -3565,6 +3575,11 @@
       "size": 7232
     },
     {
+      "path": "tests/pro-operational-phase37-1.test.mjs",
+      "sha256": "d62429ee770beb4959c58b143f2aacdd27364cb3e3b5d67075d78c4d1c67b023",
+      "size": 6383
+    },
+    {
       "path": "tests/pro-quality-phase36-1.test.mjs",
       "sha256": "dd3c8bdb177b47fa6589657c6f68694616f52eacab982fb2736f0f82b9fd230d",
       "size": 3987
@@ -4045,6 +4060,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "9ce8c542197645e7a4aa1f878ad744689ae3186f0904d764728073373bd3cceb",
-  "manifest_sha256": "dabb9b52fbad293c16dda82b2f3a0d391f89f63fa4b141d6a509936a4030434a"
+  "tree_sha256": "8649800ed652d7958440cea9aad2a86173d6477d722c3530e8a26b4e07d8a51b",
+  "manifest_sha256": "7f0242be284357fe0dc75d8e322b0182151d1cd652fb1b9366e269ab886d9c0f"
 }
