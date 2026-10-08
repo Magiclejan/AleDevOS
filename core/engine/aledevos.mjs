@@ -136,6 +136,11 @@ if(group==='state'&&cmd==='criterion'){
 if(group==='state'&&cmd==='judge'){
  const[p,s]=loadState(),judge=take('--judge'),score=Number(take('--score')),blockers=Number(take('--blockers','0')),unverified=Number(take('--unverified','0'));
  if(!['requirements','regression','quality'].includes(judge))fail('Invalid judge');if(!Number.isFinite(score)||score<0||score>100)fail('Invalid score');if(!Number.isInteger(blockers)||blockers<0||!Number.isInteger(unverified)||unverified<0)fail('Invalid blocker/unverified count');
+ if(s.runtime_adapter==='codex'){
+  const role=`judge-${judge}`,trace=s.agent_trace||[];
+  if(!trace.some(x=>x.agent===role&&x.status==='STARTED'))fail(`CODEX_JUDGE_ROLE_NOT_STARTED: ${role}`,48);
+  if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('CODEX_JUDGE_GATES_NOT_PASS',49);
+ }
  s.judges[judge]={score,blockers,unverified,at:new Date().toISOString()};
  event(s,'JUDGE',{judge,score,blockers,unverified});persistState(p,s);
  emitJudgeTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,judge,score,blockers,unverified});
@@ -144,6 +149,21 @@ if(group==='state'&&cmd==='judge'){
 if(group==='state'&&cmd==='agent'){
  const[p,s]=loadState(),name=take('--name'),status=take('--status'),threadId=take('--thread-id',null);
  if(!name)fail('Missing --name');if(!['STARTED','COMPLETED','BLOCKED','FAILED'].includes(status))fail('Invalid --status');
+ if(s.runtime_adapter==='codex'){
+  const governed=new Set(['orchestrator','architect','auditor','builder','design-system-guardian','editor-backend','editor-config','editor-database','editor-frontend','editor-tests','judge-quality','judge-regression','judge-requirements','judge-uxui','motion-director','repairer','researcher','security-reviewer','v1-release-validator','verifier','visual-capture-runner','visual-judge','visual-regression-runner','visual-repair-controller','visual-runtime-audit-runner']);
+  if(!governed.has(name))fail(`CODEX_AGENT_UNKNOWN: ${name}`,42);
+  const trace=s.agent_trace||[],has=(agent,st)=>trace.some(x=>x.agent===agent&&x.status===st);
+  const judgeNames=new Set(['judge-requirements','judge-regression','judge-quality']);
+  if(status==='STARTED'){
+   if(name==='builder'&&!s.approved_scope?.length)fail('CODEX_BUILDER_SCOPE_REQUIRED',43);
+   if(name==='verifier'&&!has('builder','COMPLETED'))fail('CODEX_VERIFIER_REQUIRES_BUILDER',44);
+   if(judgeNames.has(name)){
+    if(!has('verifier','COMPLETED'))fail('CODEX_JUDGES_REQUIRE_VERIFIER',45);
+    if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('CODEX_JUDGES_REQUIRE_ALL_GATES_PASS',46);
+   }
+  }
+  if(status==='COMPLETED'&&!has(name,'STARTED'))fail(`CODEX_AGENT_COMPLETION_WITHOUT_START: ${name}`,47);
+ }
  s.agent_trace??=[];const rec={agent:name,status,thread_id:threadId,at:new Date().toISOString()};s.agent_trace.push(rec);event(s,'AGENT',rec);persistState(p,s);console.log('AGENT_RECORDED');process.exit(0)
 }
 if(group==='state'&&cmd==='block'){
