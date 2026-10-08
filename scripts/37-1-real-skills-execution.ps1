@@ -17,7 +17,8 @@ $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 if (-not $ConfirmReal) { throw 'P37_1_EXPLICIT_CONFIRM_REAL_REQUIRED' }
 if ($CodexWorkspaceWrite -and $Adapter -ne 'codex') { throw 'P37_1_CODEX_WRITE_ONLY_CODEX_ADAPTER' }
-if ($CodexWorkspaceWrite -and $Case -eq 'rejected_out_of_scope_request' -and -not $FullCampaign) {
+if ($CodexWorkspaceWrite -and -not $FullCampaign -and
+    $Case -in @('rejected_out_of_scope_request','scoped_permissions_enforced','independent_verification')) {
   throw 'P37_1_NEGATIVE_READONLY_CASE_FORBIDS_WRITE_OPT_IN'
 }
 $root=Split-Path -Parent $PSScriptRoot
