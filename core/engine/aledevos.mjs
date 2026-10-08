@@ -128,7 +128,13 @@ if(group==='state'&&cmd==='init'){
 }
 if(group==='state'&&cmd==='show'){const[,s]=loadState();console.log(JSON.stringify(s,null,2));process.exit(0)}
 if(group==='state'&&cmd==='scope-approve'){
- const[p,s]=loadState(),add=takes('--add').map(norm);if(!add.length)fail('Missing --add');for(const f of add)if(!s.approved_scope.includes(f))s.approved_scope.push(f);s.scope_version+=1;event(s,'SCOPE_APPROVED',{added:add,scope_version:s.scope_version});persistState(p,s);console.log('SCOPE_APPROVED');process.exit(0)
+ const[p,s]=loadState(),add=takes('--add').map(norm);if(!add.length)fail('Missing --add');for(const f of add)if(!s.approved_scope.includes(f))s.approved_scope.push(f);s.scope_version+=1;
+ const contractPath=path.join(cwd,s.task_contract_path||'');
+ if(fs.existsSync(contractPath)){
+  const contract=readJson(contractPath),next={...contract,approved_scope:[...s.approved_scope],integrity:{algorithm:'sha256',payload_sha256:''}};
+  next.integrity.payload_sha256=sha256Json({...next,integrity:undefined});writeJson(contractPath,next);
+ }
+ event(s,'SCOPE_APPROVED',{added:add,scope_version:s.scope_version});persistState(p,s);console.log('SCOPE_APPROVED');process.exit(0)
 }
 if(group==='state'&&cmd==='criterion'){
  const[p,s]=loadState(),id=take('--id'),status=take('--status');if(!['UNVERIFIED','VERIFIED','FAILED'].includes(status))fail('Invalid --status');const c=s.acceptance_criteria.find(x=>x.id===id);if(!c)fail(`Unknown criterion: ${id}`);c.status=status;event(s,'CRITERION',{id,status});persistState(p,s);console.log('CRITERION_RECORDED');process.exit(0)
@@ -163,6 +169,7 @@ if(group==='state'&&cmd==='agent'){
   const trace=s.agent_trace||[],has=(agent,st)=>trace.some(x=>x.agent===agent&&x.status===st);
   const judgeNames=new Set(['judge-requirements','judge-regression','judge-quality']);
   if(status==='STARTED'){
+   if(has(name,'COMPLETED'))fail(`CODEX_AGENT_ALREADY_COMPLETED: ${name}`,50);
    if(name==='builder'&&!s.approved_scope?.length)fail('CODEX_BUILDER_SCOPE_REQUIRED',43);
    if(name==='verifier'&&!has('builder','COMPLETED'))fail('CODEX_VERIFIER_REQUIRES_BUILDER',44);
    if(judgeNames.has(name)){
