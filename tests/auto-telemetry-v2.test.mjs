@@ -107,7 +107,9 @@ test('Windows runtime uses a Base64 argv transport without shell:true',()=>{
   assert.equal(cliLaunchStrategy('win32'),'powershell-base64-argv');
   assert.equal(cliLaunchStrategy('linux'),'direct');
   assert.equal(Buffer.from(encodeWindowsTransportArg('hello world'),'base64').toString('utf8'),'hello world');
-  const src=fs.readFileSync(path.resolve('core/agent-runtime/agent-runtime.mjs'),'utf8');
+  const entry=fs.readFileSync(path.resolve('core/agent-runtime/agent-runtime.mjs'),'utf8');
+  const src=fs.readFileSync(path.resolve('runtime-bridges/agent-runtime.mjs'),'utf8');
+  assert.match(entry,/runtime-bridges\/agent-runtime\.mjs/);
   assert.match(src,/windows-cli-launcher\.ps1/);
   assert.doesNotMatch(src,/shell\s*:\s*true/);
 });
@@ -170,7 +172,9 @@ test('E2E exposes explicit adapter selection and bounded call timeout',()=>{
 });
 
 test('agent runtime accepts an explicit per-call timeout override',()=>{
-  const s=fs.readFileSync(path.resolve('core/agent-runtime/agent-runtime.mjs'),'utf8');
+  const entry=fs.readFileSync(path.resolve('core/agent-runtime/agent-runtime.mjs'),'utf8');
+  const s=fs.readFileSync(path.resolve('runtime-bridges/agent-runtime.mjs'),'utf8');
+  assert.match(entry,/runtime-bridges\/agent-runtime\.mjs/);
   assert.match(s,/timeoutMs=null/);
   assert.match(s,/effectiveTimeout/);
   assert.match(s,/--timeout-ms <ms>/);
