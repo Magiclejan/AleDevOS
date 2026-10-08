@@ -571,3 +571,20 @@ jobs:
           for(const row of d.role_sources.filter(x=>x.issues.length))
             console.log('P36_2_FINDING '+row.adapter+'/'+row.id+' '+row.issues.join(','));
           NODE
+
+  p36-3-windows-installation-integrity:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Verify four real adapter installations in controlled projects
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & .\scripts\36-3-verify-pro-installation.ps1
+          if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
+            throw "P36_3_INSTALLATION_FAILED"
+          }
