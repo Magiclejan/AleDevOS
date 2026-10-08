@@ -170,7 +170,10 @@ export function classifyCodexFinalVerdict(text){
 export function summarizeCodexEvents(raw){
  const result={structured_events:0,threads_started:0,turns_completed:0,tool_events:0,
   agent_messages:0,agent_message_blocked_marker:false,
-  final_message_verdict:'NO_EXPLICIT_VERDICT',final_message_blocked:false};
+  final_message_verdict:'NO_EXPLICIT_VERDICT',final_message_blocked:false,
+  native_tool_kinds:{command_execution:0,file_change:0,mcp_tool_call:0,collab:0,web_search:0,other_tool:0},
+  last_completed_tool_kind:null,last_completed_tool_exit_code:null,
+  failed_completed_tool_count:0,native_subagent_execution_independently_verified:false};
  for(const line of String(raw||'').split(/\r?\n/)){
   let event;try{event=JSON.parse(line)}catch{continue}
   if(!event||typeof event!=='object'||Array.isArray(event))continue;
@@ -182,6 +185,19 @@ export function summarizeCodexEvents(raw){
    if((event.type==='item.started'||event.type==='item.completed')&&
       /(?:command|tool|mcp|web_search|file_change|collab)/i.test(String(item.type||''))){
     result.tool_events++;
+    const rawKind=String(item.type||'');
+    const kind=/^command_execution$/.test(rawKind)?'command_execution':
+      /^file_change$/.test(rawKind)?'file_change':
+      /^mcp_tool_call$/.test(rawKind)?'mcp_tool_call':
+      /collab/i.test(rawKind)?'collab':
+      /^web_search$/.test(rawKind)?'web_search':'other_tool';
+    result.native_tool_kinds[kind]++;
+    if(event.type==='item.completed'){
+     result.last_completed_tool_kind=kind;
+     const exit=Number.isInteger(item.exit_code)?item.exit_code:null;
+     result.last_completed_tool_exit_code=exit;
+     if(exit!==null&&exit!==0)result.failed_completed_tool_count++;
+    }
    }
    if(event.type==='item.completed'&&item.type==='agent_message'){
     result.agent_messages++;
@@ -206,6 +222,85 @@ export function inspectWorkspaceExecutionEvidence(workspace){
  const routeReceipts=fs.existsSync(routesRoot)?fs.readdirSync(routesRoot,{withFileTypes:true})
   .filter(e=>e.isFile()&&e.name.endsWith('.json')).length:0;
  return {task_directories:tasks.length,task_contracts:taskContracts,task_states:taskStates,route_receipts:routeReceipts};
+}
+export function inspectAgentHandoff(workspace){
+ const empty={
+  task_count:0,core_final_state:'UNOBSERVED',core_blocked:false,
+  last_history_type:null,last_history_at:null,
+  last_agent_role:null,last_agent_status:null,last_agent_at:null,
+  active_specialist_roles:[],last_active_specialist:null,
+  builder_completed:false,verifier_started:false,verifier_completed:false,
+  post_builder_auditor_started:false,
+  criteria_total:0,criteria_verified:0,unverified_criteria:0,
+  thread_ids_recorded:0,
+  native_role_delegation_independently_verified:false,
+  handoff_stage:'NOT_OBSERVED'
+ };
+ const base=path.join(workspace,'.aledevos','state','tasks');
+ if(!fs.existsSync(base))return empty;
+ const tasks=fs.readdirSync(base,{withFileTypes:true})
+  .filter(e=>e.isDirectory()&&/^[A-Za-z0-9._-]{1,120}$/.test(e.name));
+ const out={...empty,task_count:tasks.length};
+ if(tasks.length!==1)return out;
+ const file=path.join(base,tasks[0].name,'state.json');
+ if(!fs.existsSync(file)||!fs.lstatSync(file).isFile()||fs.statSync(file).size>131072)return out;
+ let state;try{state=read(file)}catch{return out}
+ if(state?.task_id!==tasks[0].name)return out;
+ const allowedRoles=new Set(['orchestrator','researcher','auditor','architect','builder','verifier',
+  'repairer','security-reviewer','judge-requirements','judge-regression','judge-quality',
+  'editor-tests','editor-config','editor-frontend','editor-backend']);
+ const allowedStatuses=new Set(['STARTED','COMPLETED','BLOCKED','FAILED']);
+ const counts=new Map();
+ const startedAt=new Map();
+ let builderCompleteIndex=-1;
+ let auditorStartedAfterBuilder=false;
+ const trace=Array.isArray(state.agent_trace)?state.agent_trace.slice(0,500):[];
+ trace.forEach((event,i)=>{
+  const role=String(event?.agent||''),status=event?.status;
+  if(!allowedRoles.has(role)||!allowedStatuses.has(status))return;
+  out.last_agent_role=role;out.last_agent_status=status;
+  const at=String(event.at||'');
+  out.last_agent_at=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(at)?at:null;
+  if(event?.thread_id&&typeof event.thread_id==='string')out.thread_ids_recorded++;
+  if(role==='builder'&&status==='COMPLETED'){builderCompleteIndex=i;out.builder_completed=true}
+  if(role==='auditor'&&status==='STARTED'&&builderCompleteIndex>=0&&i>builderCompleteIndex)
+   auditorStartedAfterBuilder=true;
+  if(role==='verifier'&&status==='STARTED')out.verifier_started=true;
+  if(role==='verifier'&&status==='COMPLETED')out.verifier_completed=true;
+  if(status==='STARTED'){counts.set(role,(counts.get(role)||0)+1);startedAt.set(role,i)}
+  else if((counts.get(role)||0)>0)counts.set(role,counts.get(role)-1);
+ });
+ const outstanding=[...counts.entries()].filter(([role,count])=>role!=='orchestrator'&&count>0)
+  .sort((a,b)=>(startedAt.get(a[0])||0)-(startedAt.get(b[0])||0));
+ out.active_specialist_roles=outstanding.map(([role])=>role);
+ out.last_active_specialist=outstanding.length?outstanding[outstanding.length-1][0]:null;
+ out.post_builder_auditor_started=auditorStartedAfterBuilder;
+ const history=Array.isArray(state.history)?state.history:[];
+ if(history.length){
+  const last=history[history.length-1];
+  const eventType=String(last?.type||'');
+  const allowedTypes=new Set(['STATE_INIT','SCOPE_APPROVED','QUALITY_PLAN','AGENT',
+   'QUALITY_EVIDENCE','QUALITY_REUSE','QUALITY_VERIFY','GATE','JUDGE',
+   'CRITERION','BLOCKED','FINAL','REPAIR_START']);
+  out.last_history_type=allowedTypes.has(eventType)?eventType:'UNRECOGNIZED';
+  const at=String(last?.at||'');
+  out.last_history_at=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(at)?at:null;
+ }
+ out.core_final_state=['PASS','BLOCKED','FAILED'].includes(state.final_state)?state.final_state:'UNFINISHED';
+ out.core_blocked=Boolean(state.blocked_reason);
+ const criteria=Array.isArray(state.acceptance_criteria)?state.acceptance_criteria:[];
+ out.criteria_total=criteria.length;
+ out.criteria_verified=criteria.filter(c=>c?.status==='VERIFIED').length;
+ out.unverified_criteria=out.criteria_total-out.criteria_verified;
+ if(out.core_final_state==='PASS')out.handoff_stage='FINALIZED';
+ else if(out.post_builder_auditor_started&&out.last_active_specialist==='auditor')
+  out.handoff_stage='POST_BUILD_AUDIT_UNCLOSED';
+ else if(out.last_active_specialist)out.handoff_stage='SPECIALIST_UNCLOSED';
+ else if(out.builder_completed&&!out.verifier_started)out.handoff_stage='VERIFIER_NOT_STARTED';
+ else if(out.verifier_started&&!out.verifier_completed)out.handoff_stage='VERIFIER_NOT_COMPLETED';
+ else if(out.verifier_completed)out.handoff_stage='AWAITING_GATES_OR_JUDGES';
+ else out.handoff_stage='EARLY_OR_UNKNOWN';
+ return out;
 }
 export function validatePilotTimeoutMs(value){
  const n=Number(value);
@@ -478,6 +573,7 @@ function executeCase(root,opts){
  const after=snapshot(caseWorkspace),changes=compareSnapshots(before,after),parsed=parseRuntimeOutput(profile.parser,run.stdout||'');
  const afterGitStage=gitStageContentHash(caseWorkspace);
  const qualityProgress=inspectQualityProgress(caseWorkspace);
+ const agentHandoff=inspectAgentHandoff(caseWorkspace);
  const nativeEvents=adapter==='codex'?summarizeCodexEvents(run.stdout||''):null;
  const executionEvidence=inspectWorkspaceExecutionEvidence(caseWorkspace);
  const routeProgress=inspectRouteProgress(caseWorkspace,skill);
@@ -515,6 +611,10 @@ function executeCase(root,opts){
   }
  }
  if(nativeEvents?.final_message_blocked)issues.push('CODEX_EXPLICIT_FINAL_BLOCKED');
+ if(nativeEvents?.final_message_blocked&&agentHandoff.core_final_state==='UNFINISHED')
+  issues.push('PROVIDER_BLOCKED_WITH_UNFINISHED_TASK');
+ if(caseId==='executed_real_task'&&agentHandoff.last_active_specialist)
+  issues.push('AGENT_HANDOFF_INCOMPLETE');
  const taskIssue=taskFinalizationIssue(routeProgress,caseId);
  if(taskIssue)issues.push(taskIssue);
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
@@ -545,7 +645,7 @@ function executeCase(root,opts){
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
   native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,
-  quality_progress:qualityProgress,
+  quality_progress:qualityProgress,agent_handoff:agentHandoff,
   git_integrity:{baseline_present:true,index_staged_entries_unchanged:beforeGitStage===afterGitStage},
   model_provenance:{declared_model:model,
    structured_runtime_model_observed:Boolean(modelObserved),
@@ -563,7 +663,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,quality_progress:qualityProgress,git_integrity:event.git_integrity,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,quality_progress:qualityProgress,agent_handoff:agentHandoff,git_integrity:event.git_integrity,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){
@@ -580,10 +680,24 @@ export async function main(args=process.argv.slice(2),root=defaultRoot){
    provider:flag(args,'--provider'),model:flag(args,'--model'),reviewer:flag(args,'--reviewer'),
    timeoutMs:validatePilotTimeoutMs(flag(args,'--timeout-ms',120000)),codexWorkspaceWrite:has(args,'--codex-workspace-write')});
  }
+ if(command==='diagnose'){
+  const workspace=abs(flag(args,'--workspace')||'.');
+  if(!fs.existsSync(workspace)||!inTmp(workspace))throw Error('P37_1_DIAGNOSE_DISPOSABLE_TEMP_ONLY');
+  const marker=path.join(workspace,'.p37-owned-disposable.json');
+  if(!fs.existsSync(marker)||fs.lstatSync(marker).isSymbolicLink())
+   throw Error('P37_1_DIAGNOSE_MARKER_MISSING');
+  const m=read(marker);
+  if(m.phase!=='P37.1'||m.kind!=='DISPOSABLE_INSTALLED_FIXTURE'||abs(m.source_root)!==abs(root))
+   throw Error('P37_1_DIAGNOSE_SOURCE_OWNERSHIP_MISMATCH');
+  return {phase:'P37.1',status:'READ_ONLY_HISTORICAL_DIAGNOSTIC',
+   agent_handoff:inspectAgentHandoff(workspace),
+   quality_progress:inspectQualityProgress(workspace),
+   pro_certified:0};
+ }
  if(command==='summary')return summarizeObservations(root);
  if(command==='cases')return {phase:'P37.1',skill_ids:skillIds,required_cases:SKILL_CASES,
   canonical_adapters:Object.keys(adapterSkillRoot),pro_certified:0};
- throw Error('P37_1_USAGE: prepare --adapter <id> --confirm-disposable-install | run --adapter <id> --project <fixture> --skill <id> --case <id> --provider <id> --model <id> --execute-real [--reviewer <independent>] | summary | cases');
+ throw Error('P37_1_USAGE: prepare --adapter <id> --confirm-disposable-install | run --adapter <id> --project <fixture> --skill <id> --case <id> --provider <id> --model <id> --execute-real [--reviewer <independent>] | diagnose --workspace <owned-temporary-fixture> | summary | cases');
 }
 if(process.argv[1]&&abs(process.argv[1])===fileURLToPath(import.meta.url)){
  try{const v=await main();console.log(JSON.stringify(v,null,2));if(v.status==='BLOCKED')process.exitCode=4;}
