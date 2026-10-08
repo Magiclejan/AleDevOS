@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: visual-runtime-audit-runner
+name = "visual-runtime-audit-runner"
+description = "Narrow Visual QA Phase 4 rendered runtime audit executor; no product edits."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
