@@ -18,6 +18,7 @@ function project(){
   copyDir(path.resolve('skillsystem/policies'),path.join(p,'.aledevos/skillsystem/policies'));
   copyDir(path.resolve('skillsystem/bindings'),path.join(p,'.aledevos/skillsystem/bindings'));
   copyDir(path.resolve('adapters/opencode/.opencode/skills'),path.join(p,'.opencode/skills'));
+  fs.writeFileSync(path.join(p,'.aledevos/project.json'),JSON.stringify({adapter:'opencode'}));
   return p;
 }
 function build(p){return run(p,'registry','build','--project-root',p,'--adapter','opencode')}
@@ -60,7 +61,7 @@ test('registry build creates 31 metadata records but only 13 usable skills',()=>
 });
 
 test('registry never embeds skill instruction bodies',()=>{
-  const p=project();assert.equal(build(p).status,0);const raw=fs.readFileSync(path.join(p,'.aledevos/skills/registry.json'),'utf8');assert.doesNotMatch(raw,/# Task Contract/);assert.doesNotMatch(raw,/Produce:\s*- Objective/);
+  const p=project();assert.equal(build(p).status,0);const raw=fs.readFileSync(path.join(p,'.aledevos/skills/registries/opencode.json'),'utf8');assert.doesNotMatch(raw,/# Task Contract/);assert.doesNotMatch(raw,/Produce:\s*- Objective/);
 });
 
 test('registry verify succeeds on an intact build',()=>{
@@ -68,7 +69,7 @@ test('registry verify succeeds on an intact build',()=>{
 });
 
 test('registry integrity tampering is detected',()=>{
-  const p=project();assert.equal(build(p).status,0);const rp=path.join(p,'.aledevos/skills/registry.json');const r=JSON.parse(fs.readFileSync(rp,'utf8'));r.skills[0].domain='tampered';fs.writeFileSync(rp,JSON.stringify(r,null,2));const v=run(p,'registry','verify','--project-root',p);assert.notEqual(v.status,0);assert.equal(jsonOut(v).valid,false);assert.ok(jsonOut(v).errors.includes('registry_integrity_mismatch'));
+  const p=project();assert.equal(build(p).status,0);const rp=path.join(p,'.aledevos/skills/registries/opencode.json');const r=JSON.parse(fs.readFileSync(rp,'utf8'));r.skills[0].domain='tampered';fs.writeFileSync(rp,JSON.stringify(r,null,2));const v=run(p,'registry','verify','--project-root',p);assert.notEqual(v.status,0);assert.equal(jsonOut(v).valid,false);assert.ok(jsonOut(v).errors.includes('registry_integrity_mismatch'));
 });
 
 test('runtime binding drift fails closed for bundled skills',()=>{
@@ -104,3 +105,5 @@ test('installer packages the Skill System runtime and builds/verifies the regist
 test('registry schemas and catalog JSON all parse cleanly',()=>{
   for(const d of ['skillsystem/schemas','skillsystem/catalogs','skillsystem/policies','skillsystem/bindings'])for(const f of fs.readdirSync(d).filter(x=>x.endsWith('.json')))assert.doesNotThrow(()=>JSON.parse(fs.readFileSync(path.join(d,f),'utf8')),`${d}/${f}`);
 });
+
+test('P1 missing adapter configuration still fails closed rather than guessing a provider',()=>{const d=dir();const r=run(d,'registry','verify','--project-root',d);assert.equal(r.status,30);assert.match(r.stderr,/SKILL_ADAPTER_NOT_CONFIGURED/)});
