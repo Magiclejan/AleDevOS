@@ -29,6 +29,9 @@ Use Codex native collaboration/delegation to spawn the configured AleDevOS roles
 multi-agent feature and the 25 role manifests are the authorized execution mechanism.
 Never claim that specialist execution is unavailable when native delegation is enabled,
 and never impersonate a specialist by writing its STARTED/COMPLETED evidence yourself.
+After bootstrap, approve the Builder's bounded file scope with the protected `state scope-approve`
+command and create `quality plan --change-class bugfix --risk low` before Builder execution;
+do not rely on the initial empty scope or an implicit Quality Plan.
 For a real implementation/repair: Task Contract → bounded research/audit → exactly one Builder
 writer → independent Verifier → wait for protected verifier COMPLETED plus scope, integrity,
 canonical and quality PASS → judge-requirements, judge-regression, judge-quality. The
@@ -43,7 +46,8 @@ gate and source test file. Before quality verify, the Verifier must inspect the 
 and record every applicable real artifact with `quality evidence`: canonical tests use a
 `gate:canonical/<test-id>` ref plus the actual test source; regression coverage must be marked
 `--regression true` or `--coverage regression`; and required `regression-analysis` and
-`diff-review` evidence must reference existing source-bound artifacts. Route test-strategy,
+`diff-review` evidence must reference existing source-bound artifacts (for example the changed
+source file for diff-review and the regression test/source for regression-analysis). Route test-strategy,
 regression-analysis, and diff-review when the plan requires them. Record reuse decisions before reusable abstractions. Security-sensitive
 work requires deterministic P8 scanning and the read-only security-reviewer; unresolved high
 or critical findings block. Never weaken tests, baselines, permissions, gates, or assertions.
