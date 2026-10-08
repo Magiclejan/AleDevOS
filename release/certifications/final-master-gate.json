@@ -52,7 +52,7 @@
     },
     {
       "path": "release/templates/master-validation-package-baseline.json",
-      "sha256": "ab9aacc19f90b6600263d85efd487590284d737a144f1094ecc455ef8ab062d7"
+      "sha256": "09879372be1a87482639bd619241a3033241da3c499bd2fe52d209cfe8b765ff"
     },
     {
       "path": "release/templates/package-tree-manifest.mjs",
@@ -60,7 +60,7 @@
     },
     {
       "path": "release/templates/package-tree-manifest.json",
-      "sha256": "b6bee3ef965b7fb84d4b0e4a1971ff61d95daa3cbf145beb92c16c833d99f138"
+      "sha256": "27e30f8247faf117cd2147cd5689c5c9094d7d68429b8cfbb52216616bc82f5d"
     },
     {
       "path": "release/certifications/master-validation-p8.json",
@@ -79,5 +79,5 @@
       "sha256": "f4ad6bc55f4afb174cf553b195c0ed720868d12921039cfcc9046aa1656d7ad5"
     }
   ],
-  "final_master_gate_certificate_sha256": "457dd22ad7b92d1cb3be8f139cde45a9f5ce6d589c04a26c97fe699033a4366a"
+  "final_master_gate_certificate_sha256": "be06e2a15d8c83d296aa7fff8f753433a20eb0c93d2ed8dbf46ced111f8c0ede"
 }
