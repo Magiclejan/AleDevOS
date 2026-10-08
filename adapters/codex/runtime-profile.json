@@ -7,6 +7,9 @@
     "exec",
     "--json"
   ],
+  "config_overrides": [
+    "model_reasoning_effort=low"
+  ],
   "prompt_mode": "positional",
   "prompt_flag": null,
   "agent_flag": null,
