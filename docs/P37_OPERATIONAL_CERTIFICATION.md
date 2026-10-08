@@ -79,3 +79,18 @@ Examples of safe result codes: CLI_NOT_FOUND, AUTHENTICATION_REQUIRED, MODEL_REJ
 For previously collected P37.1 receipts, extract only runtime.provider_declared, runtime.model_declared, runtime.exit_code, runtime.error_code, runtime.stdout_bytes, and runtime.stderr_bytes. The original raw stderr was intentionally not stored, so a specific failed attempt cannot be retrospectively classified unless the operator supplies additional safe observations or performs a new authorized run.
 
 MODEL_ID_NOT_OBSERVED_IN_STRUCTURED_RUNTIME remains a provenance gate: Codex JSON events do not necessarily report the model even when exit code is zero; never substitute a declared model for observed provider provenance or call a launch successful merely because JSON was emitted. Successful focused test plus no protected file mutations is still only execution evidence awaiting independent verification and the P37.3 signoff.
+
+
+### P37.1B — Codex result-zero / no-execution gate (2026-10-08)
+
+A real Windows Codex pilot produced CLI exit 0 but zero modified source paths, zero Orchestrator task directories, zero Skill routes and a failing focused addition test. All 13 native Skill files were present. This proves **installation only**, not runtime routing or Skill execution. Do not call this PASS.
+
+P37.1 now records privacy-safe metadata from structured Codex JSONL: event counts, tool event count, final-message count and presence of the exact BLOCKED marker (never the model's message), plus actual counts of per-task contracts/states and Skill route receipts. For actionable cases, missing task contracts, states or routing artifacts block independently of the CLI exit code; safe-edit must change only src/utils.mjs and pass its focused test. P37.3 independent signoff and model provenance remain mandatory.
+
+The Windows installer deliberately supports no-Git targets. Codex documentation specifies that project-local .codex/config.toml settings only load for *trusted projects*. The P37.1 disposable fixture is normally a no-Git temporary project; the existence of local config, agent definitions or Skills alone therefore does not verify Codex actually loaded them. Record project_config_effectiveness as UNVERIFIED rather than inferring trust.
+
+For explicitly authorized positive Codex pilot cases only, use -CodexWorkspaceWrite with -ConfirmReal to request Codex's native workspace-write sandbox **within the already-validated disposable fixture**. This does not bypass the operating-system boundary, grant full filesystem/network access, establish project trust or prove control-plane protections. Read-only, negative permission and independent-verification cases do not receive this switch. P37.1 remains a diagnostic harness and does not authorize changing global Codex trust settings.
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\37-1-real-skills-execution.ps1 -Adapter codex -Provider openai -Model gpt-5.6-luna -Skill safe-edit -Case executed_real_task -CodexWorkspaceWrite -ConfirmReal
+
+Interpret together: native_events, execution_evidence, workspace_runtime, focused_check, workspace.changed_paths and issues. No raw model answer or secrets should be copied into certification evidence. If task/routing evidence remains missing after Codex receives workspace-write, investigate project trust and actual agent delegation before attempting a full campaign.
