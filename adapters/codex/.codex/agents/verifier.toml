@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: verifier
+name = "verifier"
+description = "Read-only deterministic verifier; canonical gate only."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
