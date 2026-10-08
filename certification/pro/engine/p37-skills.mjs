@@ -212,6 +212,33 @@ export function summarizeCodexEvents(raw){
  }
  return result;
 }
+export function inspectCodexNativeRoleManifests(root){
+ const base=path.join(root,'adapters','codex','.codex');
+ const config=path.join(base,'config.toml');
+ const out={configured_role_count:0,complete_role_count:0,invalid_role_names:[],
+  project_config_trust:'UNVERIFIED',native_delegation_verified:false};
+ if(!fs.existsSync(config))return {...out,invalid_role_names:['CONFIG_MISSING']};
+ const source=fs.readFileSync(config,'utf8');
+ const declarations=[...source.matchAll(/^\[agents\.([a-z0-9-]+)\]\r?\ndescription\s*=\s*(".*")\r?\nconfig_file\s*=\s*"(agents\/[a-z0-9-]+\.toml)"/gm)];
+ out.configured_role_count=declarations.length;
+ for(const decl of declarations){
+  const role=decl[1],relative=decl[3];
+  let description;try{description=JSON.parse(decl[2])}catch{out.invalid_role_names.push(role);continue}
+  const file=path.join(base,relative);
+  if(!fs.existsSync(file)||fs.lstatSync(file).isSymbolicLink()||
+   !fs.lstatSync(file).isFile()) {out.invalid_role_names.push(role);continue}
+  const body=fs.readFileSync(file,'utf8');
+  const nameField=body.match(/^name\s*=\s*(".*")\s*$/m);
+  const descField=body.match(/^description\s*=\s*(".*")\s*$/m);
+  let name,desc;
+  try{name=JSON.parse(nameField?.[1]??'null');desc=JSON.parse(descField?.[1]??'null')}catch{}
+  if(name!==role||desc!==description||!/^developer_instructions\s*=\s*'''/m.test(body))
+   out.invalid_role_names.push(role);
+  else out.complete_role_count++;
+ }
+ if(out.configured_role_count!==25)out.invalid_role_names.push('ROLE_CARDINALITY_MISMATCH');
+ return out;
+}
 export function inspectWorkspaceExecutionEvidence(workspace){
  const taskRoot=path.join(workspace,'.aledevos','state','tasks');
  const routesRoot=path.join(workspace,'.aledevos','state','skills','routes');
@@ -576,6 +603,7 @@ function executeCase(root,opts){
  const agentHandoff=inspectAgentHandoff(caseWorkspace);
  const nativeEvents=adapter==='codex'?summarizeCodexEvents(run.stdout||''):null;
  const executionEvidence=inspectWorkspaceExecutionEvidence(caseWorkspace);
+ const codexRoleManifests=adapter==='codex'?inspectCodexNativeRoleManifests(root):null;
  const routeProgress=inspectRouteProgress(caseWorkspace,skill);
  const gitProbe=spawnSync('git',['-C',caseWorkspace,'rev-parse','--is-inside-work-tree'],
   {encoding:'utf8',timeout:5000,windowsHide:true});
@@ -590,6 +618,8 @@ function executeCase(root,opts){
  else if(!transportSpawned)issues.push('PROVIDER_CLI_UNAVAILABLE');
  if(codexPreflight?.cli_version_exit_code!==0)issues.push('CODEX_CLI_VERSION_UNVERIFIED');
  if(codexPreflight?.login_status_exit_code!==0)issues.push('CODEX_LOGIN_STATUS_UNVERIFIED');
+ if(codexRoleManifests&&codexRoleManifests.invalid_role_names.length)
+  issues.push('CODEX_CUSTOM_ROLE_MANIFEST_SCHEMA_INVALID');
  if(runtimeFailureClass!=='NONE')issues.push('RUNTIME_DIAGNOSTIC:'+runtimeFailureClass);
  if(exitCode!==0)issues.push('RUNTIME_NONZERO_OR_UNKNOWN_EXIT');
  if(changes.protected_changes.length)issues.push('PROTECTED_CONTROL_PLANE_CHANGED');
@@ -645,6 +675,7 @@ function executeCase(root,opts){
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
   native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,
+  codex_role_manifest_preflight:codexRoleManifests,
   quality_progress:qualityProgress,agent_handoff:agentHandoff,
   git_integrity:{baseline_present:true,index_staged_entries_unchanged:beforeGitStage===afterGitStage},
   model_provenance:{declared_model:model,
@@ -663,7 +694,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,quality_progress:qualityProgress,agent_handoff:agentHandoff,git_integrity:event.git_integrity,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,codex_role_manifest_preflight:codexRoleManifests,quality_progress:qualityProgress,agent_handoff:agentHandoff,git_integrity:event.git_integrity,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){
