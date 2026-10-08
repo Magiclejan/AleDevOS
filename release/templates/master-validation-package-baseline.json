@@ -57,13 +57,13 @@
       "id": "codex-portability-p3",
       "path": "release/certifications/codex-portability-p3.json",
       "status": "CODEX_ADAPTER_CERTIFIED",
-      "evidence_sha256": "c64490f67bdfb76062244ff72fe5f4e9b0d9fb1598b4feb5ca517dcfcf3e2835"
+      "evidence_sha256": "452c1eb4f31f1a810f5f8604d1e0feaf30e32331e717efa6e8a565d3a74fa8e5"
     },
     {
       "id": "cross-adapter-portability-p6",
       "path": "release/certifications/cross-adapter-portability-p6.json",
       "status": "CROSS_ADAPTER_CONFORMANCE_CERTIFIED",
-      "evidence_sha256": "6588085f112a22873e332c5c4648b3102acb12c502f693d984469145a9277c9e"
+      "evidence_sha256": "3c16c6d0c00a3ed6a6c907cf6940834b85961f7374dda00ee2dba855c035dea5"
     },
     {
       "id": "multimodel-p1",
@@ -98,6 +98,6 @@
     }
   ],
   "source_attestation": "Package-only source certificates were reissued through their canonical certifier run/verify commands after approved AleDevOS changes. Target execution, native-image observation and V1 freeze remain independent and unverified.",
-  "baseline_sha256": "02b6cec7477b27a841ddbf085764c775e5431a198b167386e8c9eb661a367347",
+  "baseline_sha256": "4596638805523d1e69e7e45161e54b3cceec9fd50dcffbb407f78dc3f8c8cb47",
   "package_tree_manifest_sha256": "bc33a8727a659166f97d7221b96a5091e8b442fe8d45799721e710f51d1d1bb0"
 }
