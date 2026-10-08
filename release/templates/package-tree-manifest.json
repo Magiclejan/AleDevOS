@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 801,
+  "file_count": 800,
   "entries": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,6 @@
       "path": ".gitignore",
       "sha256": "f66698d5fa0783da35dc12f3c77475daa5d4f67480a0b76912fa7e4abd515f9e",
       "size": 345
-    },
-    {
-      "path": "2_COMPROBAR_RUNTIMES.bat",
-      "sha256": "9ba32ac752805fb56fbd6b59cd85ba8bb32e047b17d7656875a3bab27fa712fd",
-      "size": 305
     },
     {
       "path": "adapters/antigravity/.agents/agents/architect.md",
@@ -2391,8 +2386,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "5827d26b3e6f8f2803339a9598c3227df37170092ba9fae5d84612baa870a2f8",
-      "size": 6663
+      "sha256": "addedc567c09c33881e485e7253592685990e61db72319666931ec957669b5f8",
+      "size": 6918
     },
     {
       "path": "release/engine/v1-release.mjs",
@@ -3386,8 +3381,8 @@
     },
     {
       "path": "tests/auto-telemetry-v2.test.mjs",
-      "sha256": "b7e237c0fb34d14112f44cfe604a21534680b457b70acfcf3efa04e8f1827c30",
-      "size": 9803
+      "sha256": "d81ba086932ec867a143f6bda83e755ef933e61d00e9b95739fadb6d238216bf",
+      "size": 10103
     },
     {
       "path": "tests/contextos-phase1.test.mjs",
@@ -3426,8 +3421,8 @@
     },
     {
       "path": "tests/final-master-gate.test.mjs",
-      "sha256": "3a46d01e55f3cb08de53b1188290af608705e0200727a73730f7dcec6b6770e8",
-      "size": 9178
+      "sha256": "f4ad6bc55f4afb174cf553b195c0ed720868d12921039cfcc9046aa1656d7ad5",
+      "size": 9189
     },
     {
       "path": "tests/fixtures/p8-scanner-fail.mjs",
@@ -3521,8 +3516,8 @@
     },
     {
       "path": "tests/portability-phase3.test.mjs",
-      "sha256": "64ff8813d041fb492c532419d8e1cdecc91e73bc84408719cbb086cfcc672e7b",
-      "size": 17837
+      "sha256": "4352c17ab32d6672931912f209968b3e85d9c4c16da58f6fc32c57e68b09570d",
+      "size": 18051
     },
     {
       "path": "tests/portability-phase4.test.mjs",
@@ -4020,6 +4015,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "210fd99162713a3c06b3d107b507281d374d9951bb43e5b8edec12f8d206041a",
-  "manifest_sha256": "6b8e2733f2359ba6a1c7e5e88de07e356531ec1afdc13c35073d4096580dfed9"
+  "tree_sha256": "b61dc0edc9d1b4e0f737149f02fbaed8ce8d947c748ef43832dbefce235ae50e",
+  "manifest_sha256": "210a4d509486c3661475d02b7fb716da92a3491416e606ad07fb848df4cefd1d"
 }

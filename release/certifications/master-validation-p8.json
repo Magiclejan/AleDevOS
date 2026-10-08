@@ -84,7 +84,7 @@
     },
     {
       "path": "release/certifications/master-validation-p7.json",
-      "sha256": "6699b011787536e52c23786e4bfc89bd4886ac757180e80ecc57d0fa1d2b00a7"
+      "sha256": "2f3ef28aa4745eadc7120c23ab5f723d110d35811d31c44b8fb5dc32c8cc9e1d"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
@@ -143,5 +143,5 @@
       "sha256": "fbc28e710a32a45ddfdb2a6722b1823330ee565632d3632269afee2bf86e3cc8"
     }
   ],
-  "master_p8_certificate_sha256": "3ead3f3a25ae57f254455cbb8674854e866a612cbae9ec48a6e574426d87413c"
+  "master_p8_certificate_sha256": "68eb5d2748c7aef1c9704948e62055fecedf0e0c98d02b32ff33731f52527a72"
 }

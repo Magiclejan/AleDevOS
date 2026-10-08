@@ -77,7 +77,7 @@
     },
     {
       "path": "release/certifications/advanced-execution-p1.json",
-      "sha256": "c24d5065f7b44459917b0a316ef9ccc33eb10fb848cf597b063d684a6f103e90"
+      "sha256": "74d24835d54405082aeb9d52532f1d16098bff2f4edf01763cb0fa27fe381843"
     },
     {
       "path": "core/schemas/task-contract.schema.json",
@@ -88,6 +88,6 @@
       "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T00:46:46.904Z",
-  "evidence_sha256": "7a72ea075203fb57c0c50c51252881475f2b383f9ce0cfe36792f36b8f0982e8"
+  "created_at": "2026-10-08T07:10:55.517Z",
+  "evidence_sha256": "6ec8b2f1b870c3dc67f8bb7264996f7c435d6ccb1b3c38421dec9d126112b6fd"
 }

@@ -61,21 +61,21 @@
     },
     {
       "path": "release/certifications/advanced-execution-p1.json",
-      "sha256": "c24d5065f7b44459917b0a316ef9ccc33eb10fb848cf597b063d684a6f103e90"
+      "sha256": "74d24835d54405082aeb9d52532f1d16098bff2f4edf01763cb0fa27fe381843"
     },
     {
       "path": "release/certifications/advanced-execution-p2.json",
-      "sha256": "916f2366249610c4283ce9e3a5f39b14ad55e7d847a5917a2d822dc90e1c9661"
+      "sha256": "29d6d981c1465a9a8ca8e208d6e18ea1516105cf889a45a2b4b4954cd0b3fe7e"
     },
     {
       "path": "release/certifications/advanced-execution-p3.json",
-      "sha256": "916d3a103341b4e35813081d1af4abca48e7a1861f16f8446a822ae10f83cd6e"
+      "sha256": "97ce2b91c2a2f2850a35f4554031a739e16489b7eb1397ed963076d2ecc57a51"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
       "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T00:46:47.370Z",
-  "evidence_sha256": "b5474aec50bb8cf394f7106456deb12ac1d72369110f81213d14d6256ed236fb"
+  "created_at": "2026-10-08T07:10:55.878Z",
+  "evidence_sha256": "88d362e55a7cb9abc5f4b44ca996036f509fb9f02fbc3abb3672366970088cb3"
 }
