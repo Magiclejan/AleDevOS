@@ -243,6 +243,16 @@ export function inspectRouteProgress(workspace,expectedSkill=null){
  result.route_integrity_verified=verify.status===0&&!verify.error;
  return result;
 }
+export function taskFinalizationIssue(progress,caseId){
+ if(caseId==='rejected_out_of_scope_request'||!progress?.task_state_present)return null;
+ if(progress.task_blocked||progress.task_final_state==='BLOCKED')
+  return 'ORCHESTRATOR_TASK_RECORDED_BLOCKED';
+ if(progress.task_final_state==='FAILED')
+  return 'ORCHESTRATOR_TASK_RECORDED_FAILED';
+ if(progress.task_final_state!=='PASS')
+  return 'ORCHESTRATOR_TASK_NOT_FINALIZED';
+ return null;
+}
 export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
  if(adapter!=='codex'||confirmed!==true||!workspace||!inTmp(workspace)||
     !fs.existsSync(path.join(workspace,'.p37-owned-disposable.json')))
@@ -394,14 +404,8 @@ function executeCase(root,opts){
   }
  }
  if(nativeEvents?.final_message_blocked)issues.push('CODEX_EXPLICIT_FINAL_BLOCKED');
- if(caseId!=='rejected_out_of_scope_request'&&routeProgress.task_state_present){
-  if(routeProgress.task_blocked||routeProgress.task_final_state==='BLOCKED')
-   issues.push('ORCHESTRATOR_TASK_RECORDED_BLOCKED');
-  else if(routeProgress.task_final_state==='FAILED')
-   issues.push('ORCHESTRATOR_TASK_RECORDED_FAILED');
-  else if(routeProgress.task_final_state!=='PASS')
-   issues.push('ORCHESTRATOR_TASK_NOT_FINALIZED');
- }
+ const taskIssue=taskFinalizationIssue(routeProgress,caseId);
+ if(taskIssue)issues.push(taskIssue);
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
   if(!changes.changed_paths.includes('src/utils.mjs'))issues.push('SAFE_EDIT_TARGET_UNCHANGED');
   if(changes.changed_paths.some(p=>p!=='src/utils.mjs'&&!p.startsWith('.aledevos/state/')))
