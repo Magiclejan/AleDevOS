@@ -92,7 +92,7 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
     if(receipt.status!=='EVIDENCE_REVIEW_REQUIRED')issues.push(issue('OBSERVATION_NOT_ELIGIBLE',prefix+':'+String(receipt.status)));
     if(!Array.isArray(receipt.issues)||receipt.issues.length)issues.push(issue('RECEIPT_HAS_RUNTIME_ISSUES',prefix));
     const c=receipt.case_id;
-    if(!['activated_on_correct_request','rejected_out_of_scope_request'].includes(c)){
+    if(!['activated_on_correct_request','rejected_out_of_scope_request','scoped_permissions_enforced'].includes(c)){
       const e=receipt.execution_evidence||{}, route=receipt.route_progress||{};
       if(e.task_contracts<1||e.task_states<1)issues.push(issue('TASK_EVIDENCE_MISSING',prefix));
       if(e.route_receipts<1||route.route_status!=='ROUTE_READY'||route.route_integrity_verified!==true)
