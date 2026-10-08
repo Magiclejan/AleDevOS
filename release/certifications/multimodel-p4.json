@@ -55,17 +55,17 @@
     },
     {
       "path": "release/certifications/multimodel-p1.json",
-      "sha256": "3a2af429e0c9b1778f5c497003dd4293b75699757fc930c63894c59cb584b8d4"
+      "sha256": "2288ae634507dc244f30c38cd25c69932d7af19cfedc000ce643809b96986ec0"
     },
     {
       "path": "release/certifications/multimodel-p2.json",
-      "sha256": "c2bbcfa2c776e7f2f97c430d01965a2ca2f0e8d66362438c3e4cae1c1f5664bd"
+      "sha256": "7d5e973a92a547363ed4ff08d776ebef8009751e6d662d464e1aba1229f09d3f"
     },
     {
       "path": "release/certifications/multimodel-p3.json",
-      "sha256": "3d5decbd19ce42923d61d199d22c259a1f6067f1ed11ce61dddb6ec9f8aa3fcb"
+      "sha256": "9eb62a161628b85c3c41720f949849e57f370f081ad41d54908f46c253397561"
     }
   ],
-  "created_at": "2026-10-08T08:09:58.602Z",
-  "evidence_sha256": "606d715572be77b0ea0733453e43375f865856ed9f7845921ea405bbf0b30e63"
+  "created_at": "2026-10-08T08:34:04.592Z",
+  "evidence_sha256": "e589263fb8400970162428b1eaa39dc973f9a41ccb0c8b798d59a04cda054ca8"
 }

@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 801,
+  "file_count": 806,
   "entries": [
     {
       "path": ".gitattributes",
@@ -26,8 +26,8 @@
     },
     {
       "path": ".github/workflows/repository-guard.yml",
-      "sha256": "42831829fc97d803c1f664cb0a9c1d4b89074bae4a70642245f1c8f4bb72e5f7",
-      "size": 26960
+      "sha256": "40ff6d4b56946b1418251b09404bc3aad03a4ee55078ac781461ad00bb7bb69d",
+      "size": 28791
     },
     {
       "path": ".gitignore",
@@ -1250,6 +1250,11 @@
       "size": 48421
     },
     {
+      "path": "certification/pro/engine/p37-operational.mjs",
+      "sha256": "f8f916c1fd2cd1c0ef4d5c8e6afb93debcf142d016855b7c419adc42baf05add",
+      "size": 12381
+    },
+    {
       "path": "certification/pro/engine/pro-agent-audit.mjs",
       "sha256": "0991515bd7ea28a4e5b591128a861b40d0e51de1429ed729c1daae63933d3083",
       "size": 10093
@@ -1273,6 +1278,11 @@
       "path": "certification/pro/policies/p36-quality.json",
       "sha256": "3b3a67d0922781ac0a2f315713746207b78e287b56d90fb2b1506771ee314075",
       "size": 2485
+    },
+    {
+      "path": "certification/pro/policies/p37-operational.json",
+      "sha256": "be3f15e1880dc94f92fa8f7c658b2024b47b0c84fed5dac152c0693d478f7983",
+      "size": 3062
     },
     {
       "path": "certification/pro/roles/p36-2-role-contracts.json",
@@ -2028,6 +2038,11 @@
       "path": "docs/NEXT_VALIDATION.md",
       "sha256": "4586358101a3279a3dc7734d464b0db704419f65fbee93d63016e3a6ab4e2086",
       "size": 2404
+    },
+    {
+      "path": "docs/P37_OPERATIONAL_CERTIFICATION.md",
+      "sha256": "a260bb108d73da72c3ac73070254e5ce89c253ce1c139554c4f9b1396040c5fe",
+      "size": 3457
     },
     {
       "path": "docs/PORTABILITY_PHASE1_VALIDATION.md",
@@ -2840,6 +2855,11 @@
       "size": 5951
     },
     {
+      "path": "scripts/37-0-pro-operational-preflight.ps1",
+      "sha256": "71f87149b35df1404ba29f3df0cecdf68dd6e0a9acdcaad306ce227bdcf5baf1",
+      "size": 2119
+    },
+    {
       "path": "scripts/37-self-test-portability-phase2.ps1",
       "sha256": "a2d4ba81e16fcc12f13905528e326408ed12afc3ed48fd0280d9fde52776e249",
       "size": 1295
@@ -3540,6 +3560,11 @@
       "size": 12109
     },
     {
+      "path": "tests/pro-operational-phase37-0.test.mjs",
+      "sha256": "ff250625fd85748f37da3000282fedf74d9c7958e9d617f3e9970f47ea458252",
+      "size": 7232
+    },
+    {
       "path": "tests/pro-quality-phase36-1.test.mjs",
       "sha256": "dd3c8bdb177b47fa6589657c6f68694616f52eacab982fb2736f0f82b9fd230d",
       "size": 3987
@@ -4020,6 +4045,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "fc638e8b98f38b59e0e622bb690867a5058a17661cb765e95264cb0dd04cf861",
-  "manifest_sha256": "b7925d22fb2048fc038a997f9e7f0327fdf18ba77bb7b00b966986dcf88273d2"
+  "tree_sha256": "9ce8c542197645e7a4aa1f878ad744689ae3186f0904d764728073373bd3cceb",
+  "manifest_sha256": "dabb9b52fbad293c16dda82b2f3a0d391f89f63fa4b141d6a509936a4030434a"
 }

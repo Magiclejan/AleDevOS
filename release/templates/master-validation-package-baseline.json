@@ -15,31 +15,31 @@
       "id": "advanced-execution-p1",
       "path": "release/certifications/advanced-execution-p1.json",
       "status": "ADVANCED_EXECUTION_P1_PACKAGE_CERTIFIED",
-      "evidence_sha256": "cedf57ab10e6074180e10e23e31b3b7796dac392f996a60f14d1211e21e76e88"
+      "evidence_sha256": "828754211539f3406603a0b71216851e083522c1da49ec64e2c09ee2e82b487d"
     },
     {
       "id": "advanced-execution-p2",
       "path": "release/certifications/advanced-execution-p2.json",
       "status": "ADVANCED_EXECUTION_P2_PACKAGE_CERTIFIED",
-      "evidence_sha256": "ac0c35ce360e65fd0512e3320c0ede425734d671614d34f5b08893972ccfc5aa"
+      "evidence_sha256": "d51769e5cb4a82feb7ae0b9a648d0e46937065a3a7019e7779ec9400032cd25a"
     },
     {
       "id": "advanced-execution-p3",
       "path": "release/certifications/advanced-execution-p3.json",
       "status": "ADVANCED_EXECUTION_P3_PACKAGE_CERTIFIED",
-      "evidence_sha256": "89758451f98b56d5ae844b557190a6fe4727290c7c702d3d1a2e438b4cc934f1"
+      "evidence_sha256": "5d4816d663064cb457f63fb85b3a5de0c088d642bdc4109e7e4e42b442917dff"
     },
     {
       "id": "advanced-execution-p4",
       "path": "release/certifications/advanced-execution-p4.json",
       "status": "ADVANCED_EXECUTION_P4_PACKAGE_CERTIFIED",
-      "evidence_sha256": "82ba81e28f95bbfe80e4cde2be9b8253b9c6e3f3d12cbbe1e49e55731efd7128"
+      "evidence_sha256": "58da4ca7a7c6a5c721e559cd8261ff0346fed69bdab75b0464fe3b918e4ccd1a"
     },
     {
       "id": "advanced-execution-p5",
       "path": "release/certifications/advanced-execution-p5.json",
       "status": "ADVANCED_EXECUTION_P5_PACKAGE_CERTIFIED",
-      "evidence_sha256": "ff5c0297de192bed8fb763a9da15d4b15183ca1b0016a471182d3713a7ea9b85"
+      "evidence_sha256": "76067e79ae880a0d66e8a38318d0433f1ff18856ea2145f83f62045c38827e0a"
     },
     {
       "id": "antigravity-portability-p5",
@@ -69,26 +69,26 @@
       "id": "multimodel-p1",
       "path": "release/certifications/multimodel-p1.json",
       "status": "MULTIMODEL_P1_PACKAGE_CERTIFIED",
-      "evidence_sha256": "604b97fb11de586a14145a011e890430f4d0e4f066219447a2351760531836f5",
+      "evidence_sha256": "2c4609500e7cceb0fe80586d1709fa85ff2f95773669ef977196fc16d5e61e26",
       "input_base": "multimodel"
     },
     {
       "id": "multimodel-p2",
       "path": "release/certifications/multimodel-p2.json",
       "status": "MULTIMODEL_P2_PACKAGE_CERTIFIED",
-      "evidence_sha256": "e6a16535c20848e78ad6a82aa9155e92f50a9d0f8ca82c9d07c1703993c01c30"
+      "evidence_sha256": "26b5312ff4d2fc2ea9a6132abde56e1024217760e7a2a3f777bf5b79ca174034"
     },
     {
       "id": "multimodel-p3",
       "path": "release/certifications/multimodel-p3.json",
       "status": "MULTIMODEL_P3_PACKAGE_CERTIFIED",
-      "evidence_sha256": "4eb16d57bbf12df18c2037edfcf33565823673854e632a308e0b0358d51493e0"
+      "evidence_sha256": "126b4ac9c0a3be7ac3d3a5420fcb31bcf656eb91fa52793e658c301990a94506"
     },
     {
       "id": "multimodel-p4",
       "path": "release/certifications/multimodel-p4.json",
       "status": "MULTIMODEL_P4_PACKAGE_CERTIFIED",
-      "evidence_sha256": "606d715572be77b0ea0733453e43375f865856ed9f7845921ea405bbf0b30e63"
+      "evidence_sha256": "e589263fb8400970162428b1eaa39dc973f9a41ccb0c8b798d59a04cda054ca8"
     },
     {
       "id": "opencode-portability-p2",
@@ -98,6 +98,6 @@
     }
   ],
   "source_attestation": "Package-only source certificates were reissued through their canonical certifier run/verify commands after approved AleDevOS changes. Target execution, native-image observation and V1 freeze remain independent and unverified.",
-  "baseline_sha256": "d249b81d031efcd66ee7040c402ab80c94038781316dcd523ff727dc6e73371a",
-  "package_tree_manifest_sha256": "a20edd3557c0282c74a9e3b1478dfb45b4b186648834b7bc7bcc0c6f802973ed"
+  "baseline_sha256": "3aebca0dcc303e0cc960a911f1b54882123e17df8bc2a9c4105e7de35c02a87b",
+  "package_tree_manifest_sha256": "b6bee3ef965b7fb84d4b0e4a1971ff61d95daa3cbf145beb92c16c833d99f138"
 }
