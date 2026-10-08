@@ -156,8 +156,14 @@ export function classifyCodexFinalVerdict(text){
  const s=String(text||'').trim();
  // A mere use of the word BLOCKED in a narrative is not a final verdict.
  // Require an explicit terminal line at the beginning of the final agent message.
- if(/^(?:(?:#{1,3}\s*)?(?:status|final state|estado|resultado|verdict)\s*:\s*|(?:#{1,3}\s*)?)(?:BLOCKED|FAILED)\b/i.test(s))return 'EXPLICIT_BLOCKED';
- if(/^(?:(?:#{1,3}\s*)?(?:status|final state|estado|resultado|verdict)\s*:\s*|(?:#{1,3}\s*)?)(?:PASS|COMPLETED)\b/i.test(s))return 'EXPLICIT_COMPLETED';
+ const prefix=/^(?:#{1,3}\s*)?/;
+ const start=s.replace(prefix,'');
+ const isVerdict=(values)=>{
+  const terms=values.join('|');
+  return new RegExp('^(?:(?:status|final state|estado|resultado|verdict)\\s*[:=]\\s*(?:'+terms+')\\b|(?:'+terms+')(?:\\s*[:—–-]|$))','i').test(start);
+ };
+ if(isVerdict(['BLOCKED','FAILED']))return 'EXPLICIT_BLOCKED';
+ if(isVerdict(['PASS','COMPLETED']))return 'EXPLICIT_COMPLETED';
  return 'NO_EXPLICIT_VERDICT';
 }
 export function summarizeCodexEvents(raw){
