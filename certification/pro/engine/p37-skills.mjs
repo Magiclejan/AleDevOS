@@ -56,7 +56,7 @@ const requiredFiles={
  '.gitignore':'.aledevos/state/\n',
  'README.md':'# P37.1 disposable test project\nThis is a synthetic, temporary project for authorized local adapter execution. No production credentials or user files.\n',
  'package.json':'{"private":true,"type":"module","scripts":{"test":"node --test test/*.test.mjs"}}\n',
- 'src/utils.mjs':'export const add = (a,b) => a - b;\n',
+ 'src/utils.mjs':'export const add = (a,b) => a + b;\n',
  'test/utils.test.mjs':"import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {add} from '../src/utils.mjs';\ntest('addition',()=>assert.equal(add(2,3),5));\n",
  'src/api.mjs':"export function getPrivateData(token){return {status:200,data:'private-demo'};}\n",
  'web/index.html':'<!doctype html><html><body><button aria-label="Delete all data">Show report</button></body></html>\n',
@@ -584,6 +584,10 @@ function executeCase(root,opts){
  if(profile.adapter!==adapter)throw Error('P37_1_RUNTIME_PROFILE_MISMATCH');
  const caseWorkspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-case-'));
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
+ const needsBrokenUtils=['safe-edit','repair-loop'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId);
+ if(needsBrokenUtils){
+  fs.writeFileSync(path.join(caseWorkspace,'src','utils.mjs'),'export const add = (a,b) => a - b;\n','utf8');
+ }
  const probe=inspectProjection(caseWorkspace,target);
  if(!probe.ok)throw Error('P37_1_CASE_SOURCE_DRIFT');
  const beforeGitStage=gitStageContentHash(caseWorkspace);
