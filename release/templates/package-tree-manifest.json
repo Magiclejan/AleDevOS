@@ -1256,8 +1256,8 @@
     },
     {
       "path": "certification/pro/engine/p37-skills.mjs",
-      "sha256": "d3ba5c3db9b002887737410fe2a1b053e8b958e9e331136a55d74f2c51c4139a",
-      "size": 20809
+      "sha256": "4d95ab93689a4da0b8ae63db7868e69ac5eeedbc4a13670ddf98e480adbeff8a",
+      "size": 24490
     },
     {
       "path": "certification/pro/engine/pro-agent-audit.mjs",
@@ -2046,8 +2046,8 @@
     },
     {
       "path": "docs/P37_OPERATIONAL_CERTIFICATION.md",
-      "sha256": "79c2fdffa04d4877b7f894f4d5978be78e4d206af8bdb42c4d3f0ba6905f6c8b",
-      "size": 7483
+      "sha256": "becffbfd5341848615071c129032a0d5fe3bbdeaf91c0a37923e9d20c2e46f02",
+      "size": 9753
     },
     {
       "path": "docs/PORTABILITY_PHASE1_VALIDATION.md",
@@ -3576,8 +3576,8 @@
     },
     {
       "path": "tests/pro-operational-phase37-1.test.mjs",
-      "sha256": "d62429ee770beb4959c58b143f2aacdd27364cb3e3b5d67075d78c4d1c67b023",
-      "size": 6383
+      "sha256": "4bc97d1b1cb229b3323b73f0d28ed667c06fbe57644cd4de29eadce8c834b97a",
+      "size": 8607
     },
     {
       "path": "tests/pro-quality-phase36-1.test.mjs",
@@ -4060,6 +4060,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "8649800ed652d7958440cea9aad2a86173d6477d722c3530e8a26b4e07d8a51b",
-  "manifest_sha256": "7f0242be284357fe0dc75d8e322b0182151d1cd652fb1b9366e269ab886d9c0f"
+  "tree_sha256": "5218d8ecb799f2c74ed68ec27376c10aaac31148c09621b687c004ece67732a8",
+  "manifest_sha256": "18a4a591000ace13804d842746782745c306fc477f558e8feb82a5b836c36a26"
 }
