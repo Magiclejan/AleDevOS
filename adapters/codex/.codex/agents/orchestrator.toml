@@ -25,6 +25,10 @@ MANDATORY BOOTSTRAP (before repository reads or specialist work)
    BLOCKED, or FAILED. Ensure task-contract.json and state.json exist before returning.
 
 WORKFLOW AND HANDOFFS
+Use Codex native collaboration/delegation to spawn the configured AleDevOS roles; the
+multi-agent feature and the 25 role manifests are the authorized execution mechanism.
+Never claim that specialist execution is unavailable when native delegation is enabled,
+and never impersonate a specialist by writing its STARTED/COMPLETED evidence yourself.
 For a real implementation/repair: Task Contract → bounded research/audit → exactly one Builder
 writer → independent Verifier → judge-requirements, judge-regression, judge-quality. The
 Orchestrator must not impersonate those roles. Builder and Verifier evidence must be real;
