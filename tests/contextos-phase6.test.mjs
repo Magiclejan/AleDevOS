@@ -97,7 +97,7 @@ test('CLI comparison returns non-zero when benchmark keys are not comparable',()
 });
 
 test('installer packages telemetry runtime and persistent telemetry directory',()=>{
-  const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/ContextOS Phase 1\+2\+3\+4\+5\+6/);assert.match(s,/telemetry\.mjs/);assert.match(s,/telemetry\\runs/);
+  const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/ContextOS Phase 1\+2\+3\+4\+5\+6/);assert.match(s,/telemetry\.mjs/);assert.match(s,/state\\telemetry\\contextos\\runs/);
 });
 
 test('all core and OpenCode agents carry Phase 6 truthful telemetry discipline',()=>{
