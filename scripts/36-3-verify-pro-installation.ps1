@@ -42,7 +42,20 @@ try {
       if($expected.Count -ne 1){throw "P36_3_UNIQUE_BINDING_MISSING:$id/$key"}
       $srcHash=(Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
       $dstHash=(Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash.ToLowerInvariant()
-      if($srcHash -ne $dstHash -or $dstHash -ne $expected[0].expected_sha256){
+      # Git can check out text with CRLF on Windows; AleDevOS portable Skill
+      # integrity is defined on LF canonical text. Require source/target bytes
+      # identical, then compare their normalized content with the sealed binding.
+      $originalText=[System.IO.File]::ReadAllText($dst)
+      $normalized=$originalText.Replace("`r`n","`n").Replace("`r","`n")
+      $bytes=[System.Text.Encoding]::UTF8.GetBytes($normalized)
+      $algorithm=[System.Security.Cryptography.SHA256]::Create()
+      try {
+        $normalizedHash=([BitConverter]::ToString($algorithm.ComputeHash($bytes))).Replace('-','').ToLowerInvariant()
+      } finally {
+        $algorithm.Dispose()
+      }
+      if($srcHash -ne $dstHash -or $normalizedHash -ne $expected[0].expected_sha256){
+        Write-Host ("P36_3_HASH_DIAG raw_source="+$srcHash+" raw_installed="+$dstHash+" LF="+$normalizedHash+" expected="+$expected[0].expected_sha256)
         throw "P36_3_SKILL_HASH_MISMATCH:$id/$key"
       }
       if(-not ((Get-Content -LiteralPath $dst -Raw) -match '## Procedure')){
