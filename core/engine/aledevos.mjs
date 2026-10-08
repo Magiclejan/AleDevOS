@@ -163,11 +163,14 @@ if(group==='state'&&cmd==='finalize'){
   const gatePass=requiredGates.every(k=>s.gates[k]?.status==='PASS');
   const req=['requirements','regression','quality'];
   const judgesReady=req.every(k=>s.judges[k]&&s.judges[k].score>=90&&s.judges[k].blockers===0&&s.judges[k].unverified===0);
+  const requiredCodexAgents=['builder','verifier','judge-requirements','judge-regression','judge-quality'];
+  const completedAgents=new Set((s.agent_trace||[]).filter(x=>x.status==='COMPLETED').map(x=>x.agent));
+  const missingCodexAgents=s.runtime_adapter==='codex'?requiredCodexAgents.filter(x=>!completedAgents.has(x)):[];
   const criteriaUnverified=s.acceptance_criteria.filter(c=>c.status!=='VERIFIED').length;
   const blockers=req.reduce((n,k)=>n+(s.judges[k]?.blockers||0),0)+(s.blockers||[]).length;
-  if(gatePass&&judgesReady&&criteriaUnverified===0&&blockers===0)s.final_state='PASS';
+  if(gatePass&&judgesReady&&criteriaUnverified===0&&blockers===0&&missingCodexAgents.length===0)s.final_state='PASS';
   else if(s.repair_count>=s.max_repairs)s.final_state='FAILED';
-  else{console.log('NOT_FINAL');process.exit(5)}
+  else{if(missingCodexAgents.length)console.error(`NOT_FINAL_REQUIRED_AGENT_EVIDENCE:${missingCodexAgents.join(',')}`);else console.log('NOT_FINAL');process.exit(5)}
  }
  event(s,'FINAL',{state:s.final_state});persistState(p,s);
  const telemetry=finishTaskTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,finalState:s.final_state});
