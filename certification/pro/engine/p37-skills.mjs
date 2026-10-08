@@ -284,6 +284,8 @@ function executeCase(root,opts){
  const agent=caseId==='independent_verification'?'verifier':'orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
  if(opts.codexWorkspaceWrite){
+  if(['rejected_out_of_scope_request','scoped_permissions_enforced','independent_verification'].includes(caseId))
+   throw Error('P37_1_READONLY_OR_NEGATIVE_CASE_FORBIDS_WRITABLE_SANDBOX');
   const extra=validateCodexWorkspaceWriteOptIn({adapter,confirmed:true,workspace:caseWorkspace});
   invocation.args.splice(2,0,...extra);
  }
