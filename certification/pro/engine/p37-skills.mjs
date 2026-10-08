@@ -453,7 +453,8 @@ function executeCase(root,opts){
  if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const prompt=makeCasePrompt(skill,caseId);
+ const prompt=makeCasePrompt(skill,caseId)+(skill==='safe-edit'&&caseId==='executed_real_task'?
+  ' This is a governed bugfix, not an isolated file-edit test. After the authorized fix, the real Verifier must use the protected Core commands in strict order: scope check, integrity scan, gate run, then quality verify. The canonical tests gate must run and PASS before any quality test evidence is accepted. Record actual regression-analysis and diff-review artifacts and bind quality evidence to genuine canonical gate result and test source. Then have independent Judges evaluate and attempt state finalize only if all protected gates and acceptance criteria are truly satisfied. If any step is blocked, record the actual missing evidence without inventing scores, test results or PASS.':'');
  const agent=caseId==='independent_verification'?'verifier':'orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
  if(opts.codexWorkspaceWrite){
