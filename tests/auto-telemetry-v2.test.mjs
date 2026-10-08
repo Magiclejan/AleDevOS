@@ -95,7 +95,7 @@ test('runtime profiles build fixed invocations and do not invent native agent fl
   );
   assert.deepEqual(
     buildInvocation(codex,{agent:'orchestrator',model:'gpt-x',prompt:'PING'}).args,
-    ['exec','--json','--config','model_reasoning_effort=low','--config','features.shell_tool=true','--model','gpt-x','PING']
+    ['exec','--json','--config','model_reasoning_effort=low','--config','features.multi_agent=true','--config','features.shell_tool=true','--model','gpt-x','PING']
   );
   assert.deepEqual(
     buildInvocation(claude,{agent:'orchestrator',model:'sonnet',prompt:'PING'}).args,
@@ -186,11 +186,11 @@ test('Codex repo trust bypass is opt-in and profile-declared',()=>{
   assert.equal(codex.repo_check_bypass_flag,'--skip-git-repo-check');
   assert.deepEqual(
     buildInvocation(codex,{agent:'orchestrator',model:null,prompt:'PING',skipRepoCheck:false}).args,
-    ['exec','--json','--config','model_reasoning_effort=low','--config','features.shell_tool=true','PING']
+    ['exec','--json','--config','model_reasoning_effort=low','--config','features.multi_agent=true','--config','features.shell_tool=true','PING']
   );
   assert.deepEqual(
     buildInvocation(codex,{agent:'orchestrator',model:null,prompt:'PING',skipRepoCheck:true}).args,
-    ['exec','--json','--skip-git-repo-check','--config','model_reasoning_effort=low','--config','features.shell_tool=true','PING']
+    ['exec','--json','--skip-git-repo-check','--config','model_reasoning_effort=low','--config','features.multi_agent=true','--config','features.shell_tool=true','PING']
   );
 });
 
