@@ -145,7 +145,7 @@
     {
       "id": "agent:security-reviewer",
       "path": "adapters/opencode/.opencode/agents/security-reviewer.md",
-      "sha256": "e772d4056f89823be2e1cd67a5c536b5f9274599ac1de3c6e73057ee274ef919"
+      "sha256": "0b0930712c4d5310ace1768c8ad269623e22caa47fbdf37600230f8480769525"
     },
     {
       "id": "agent:v1-release-validator",
@@ -1578,5 +1578,5 @@
       "kind": "capability-proof"
     }
   ],
-  "evidence_sha256": "968b89428033cf03058541c3f271c549e6651cbad99194a5f36361d709bd9b3c"
+  "evidence_sha256": "ad7c936bf51da9160f712021e9732cf50885695e2e31ce854839859d8557b555"
 }

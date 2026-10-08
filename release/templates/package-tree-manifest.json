@@ -866,8 +866,8 @@
     },
     {
       "path": "adapters/opencode/.opencode/agents/security-reviewer.md",
-      "sha256": "e772d4056f89823be2e1cd67a5c536b5f9274599ac1de3c6e73057ee274ef919",
-      "size": 4902
+      "sha256": "0b0930712c4d5310ace1768c8ad269623e22caa47fbdf37600230f8480769525",
+      "size": 5941
     },
     {
       "path": "adapters/opencode/.opencode/agents/v1-release-validator.md",
@@ -1586,8 +1586,8 @@
     },
     {
       "path": "core/agents/security-reviewer.md",
-      "sha256": "f40d61d50abad2394c174f44f4ce4813cbdb6f5e200a584e621cf07687088448",
-      "size": 4906
+      "sha256": "ce88e8b9238c2215c05708f95f8b329d674795beafe23398d922360cc69a1948",
+      "size": 5945
     },
     {
       "path": "core/agents/verifier.md",
@@ -4015,6 +4015,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "e10e71a764b1cfec471af4e3f21b58104742795304f891f3c8833b591a3cb7ab",
-  "manifest_sha256": "808c51d03ed8dcb3f7754ae16f809bcee97111eba9b140b6ee9ff368b7032bbc"
+  "tree_sha256": "1f5713c359cd51cc6f7eb49c0e466a69967f080a4cb12e82bea8367e2729c9bb",
+  "manifest_sha256": "8abe21dd337d77c3296a4bb7cc5481865e044ce834a31c91f8154ee7db2e349b"
 }

@@ -65,25 +65,25 @@
     },
     {
       "path": "release/certifications/advanced-execution-p1.json",
-      "sha256": "8ef9fc6bf8eac914363225d281f635940d7e3b19f6ea5615edbd79737d378d31"
+      "sha256": "0a4a7ae2e3126f3ff6b4929030592117eb995f27a8ed103e82ba5c2c2279379a"
     },
     {
       "path": "release/certifications/advanced-execution-p2.json",
-      "sha256": "3e6d8bbfeb777db21255778183233ca2bae6595bafe66fa84842da386bff258e"
+      "sha256": "239bd5b0b4ac1b94aa7acbe4e78a5449e8b77ac6cb01126d3440ee8c4ff3118b"
     },
     {
       "path": "release/certifications/advanced-execution-p3.json",
-      "sha256": "c3b881371366aabc8bb8ab465d5ccd10212bbf017d73884a6002a69a840a35aa"
+      "sha256": "4517d382be743588189bad734be5e53367d9fa1cfd6df4a6f2ad61b4b526587a"
     },
     {
       "path": "release/certifications/advanced-execution-p4.json",
-      "sha256": "3f3a3a882e88c32f0f5e0fa022113771970c125f99bfcd6ce98cc84749db795b"
+      "sha256": "2c7ad25f15aabc2618657a1453a69ba917c23834bb51b1998cda5c5ebb4f1724"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
       "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T07:15:28.027Z",
-  "evidence_sha256": "b8474f5932aee1676b314c3c74ad0123deb4e2f599136725cf5ab1d7cdf103fb"
+  "created_at": "2026-10-08T07:34:44.305Z",
+  "evidence_sha256": "8290af43e2bc4535d8c9a01547d717ea8be2293543b3827268bf96b7fc2da221"
 }

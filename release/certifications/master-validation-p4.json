@@ -68,7 +68,7 @@
     },
     {
       "path": "release/certifications/master-validation-p3.json",
-      "sha256": "63a6fff6c319c8724b4783f89a59543fb89c804cca13bfd08ef16a78dcf08b85"
+      "sha256": "7b03dbf3983de04e99ccdd0cf4e83a1acd52c8d6a399c26db90137a183c77ef2"
     },
     {
       "path": "visualqa/engine/browser-runner.mjs",
@@ -95,5 +95,5 @@
       "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
     }
   ],
-  "master_p4_certificate_sha256": "59b3edb043877776ca537dbbe1d8a624b703e8ce888fba6d6e8ae98f6909584f"
+  "master_p4_certificate_sha256": "cabd41a3331c9bdd7ab81b176e4ee2bb490b40594c080768e6b085479cc9073b"
 }

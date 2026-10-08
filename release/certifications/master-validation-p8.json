@@ -84,7 +84,7 @@
     },
     {
       "path": "release/certifications/master-validation-p7.json",
-      "sha256": "d34a6bd75c7b1eed0fb6ea8473b97f5ac2d262ec261231414a2696a45cfa9c47"
+      "sha256": "a7e6306eaedd181b2728fd63bc15e7aa1373247f5235f6d9db8490d367617fe4"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
@@ -104,7 +104,7 @@
     },
     {
       "path": "core/agents/security-reviewer.md",
-      "sha256": "f40d61d50abad2394c174f44f4ce4813cbdb6f5e200a584e621cf07687088448"
+      "sha256": "ce88e8b9238c2215c05708f95f8b329d674795beafe23398d922360cc69a1948"
     },
     {
       "path": "core/agents/orchestrator.md",
@@ -124,7 +124,7 @@
     },
     {
       "path": "adapters/opencode/.opencode/agents/security-reviewer.md",
-      "sha256": "e772d4056f89823be2e1cd67a5c536b5f9274599ac1de3c6e73057ee274ef919"
+      "sha256": "0b0930712c4d5310ace1768c8ad269623e22caa47fbdf37600230f8480769525"
     },
     {
       "path": "adapters/codex/.codex/agents/security-reviewer.toml",
@@ -143,5 +143,5 @@
       "sha256": "fbc28e710a32a45ddfdb2a6722b1823330ee565632d3632269afee2bf86e3cc8"
     }
   ],
-  "master_p8_certificate_sha256": "66450fd9cd68ded1f63e8d422c5f844d9d157b0ff41646725f10799126727184"
+  "master_p8_certificate_sha256": "49a41c0a2134ab2940d2a8902e28bf1f02092ce23c720d475294aec711567e63"
 }

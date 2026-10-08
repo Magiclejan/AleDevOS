@@ -96,7 +96,7 @@
     },
     {
       "path": "release/certifications/opencode-portability-p2.json",
-      "sha256": "a1b3c0a609da87c4414bf61595a4349dca46f3fdbb8d249b52c2b67ee34556e9"
+      "sha256": "1d6fc9eb18114b985fe9f58e18144083c231a64b01b7df30f0952dd263ddebe3"
     },
     {
       "path": "skillsystem/bindings/antigravity.json",
@@ -119,5 +119,5 @@
       "sha256": "9aee1ca718c8bb810534816c2edd891d168dab2aafc75c1530595f79d1bf01cd"
     }
   ],
-  "evidence_sha256": "15514880e91456b83327b346476a89fb6a91500960e03856a18ab5083dddecd6"
+  "evidence_sha256": "6588085f112a22873e332c5c4648b3102acb12c502f693d984469145a9277c9e"
 }
