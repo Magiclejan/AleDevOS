@@ -3566,18 +3566,18 @@
     },
     {
       "path": "tests/skill-system-phase1.test.mjs",
-      "sha256": "d8d13ddc348d6de7bd52647c2f4006368fa03d15aeace10346de44f699e4b6c2",
-      "size": 8021
+      "sha256": "5f10a24bf1bcda097908eb80d59514c5851b257da8d17db3b80b82b654b77b4e",
+      "size": 8387
     },
     {
       "path": "tests/skill-system-phase2.test.mjs",
-      "sha256": "358adc9a5adde60f7059ba87ee56f0fc69154f37617a00fd7e2220a6f2dfc58b",
-      "size": 10813
+      "sha256": "abcc54d540f96d51f178ea26c4770d4cbc4c04b9911433bc81c7e4b5ed8961d2",
+      "size": 10995
     },
     {
       "path": "tests/skill-system-phase3.test.mjs",
-      "sha256": "f1f5482e9e3edad553863dcf69be47bc00f13b040239aef4663e77fbe05f554b",
-      "size": 11620
+      "sha256": "71c82e5d6717e06b44e70dae0866d96caa20276e9a2de4d7f50613a43a73d67c",
+      "size": 11713
     },
     {
       "path": "tests/skill-system-phase4.test.mjs",
@@ -4015,6 +4015,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "b61dc0edc9d1b4e0f737149f02fbaed8ce8d947c748ef43832dbefce235ae50e",
-  "manifest_sha256": "210a4d509486c3661475d02b7fb716da92a3491416e606ad07fb848df4cefd1d"
+  "tree_sha256": "e10e71a764b1cfec471af4e3f21b58104742795304f891f3c8833b591a3cb7ab",
+  "manifest_sha256": "808c51d03ed8dcb3f7754ae16f809bcee97111eba9b140b6ee9ff368b7032bbc"
 }
