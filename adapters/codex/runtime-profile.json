@@ -7,16 +7,20 @@
     "exec",
     "--json"
   ],
+  "enable_features": [
+    "multi_agent",
+    "shell_tool"
+  ],
   "config_overrides": [
     "model_reasoning_effort=low"
   ],
   "role_config_overrides": {
-    "orchestrator": ["features.multi_agent=true", "features.shell_tool=true"],
-    "builder": ["features.multi_agent=true", "features.shell_tool=true"],
-    "verifier": ["features.multi_agent=true", "features.shell_tool=true"],
-    "judge-requirements": ["features.multi_agent=true", "features.shell_tool=true"],
-    "judge-regression": ["features.multi_agent=true", "features.shell_tool=true"],
-    "judge-quality": ["features.multi_agent=true", "features.shell_tool=true"]
+    "orchestrator": [],
+    "builder": [],
+    "verifier": [],
+    "judge-requirements": [],
+    "judge-regression": [],
+    "judge-quality": []
   },
   "prompt_mode": "positional",
   "prompt_flag": null,
