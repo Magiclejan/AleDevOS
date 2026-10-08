@@ -687,7 +687,8 @@ function executeCase(root,opts){
  // refusal cases; it is an issue only when a positive workflow is blocked.
  if(nativeEvents?.final_message_blocked&&!['rejected_out_of_scope_request','scoped_permissions_enforced'].includes(caseId))
   issues.push('CODEX_EXPLICIT_FINAL_BLOCKED');
- if(nativeEvents?.final_message_blocked&&agentHandoff.core_final_state==='UNFINISHED')
+ if(nativeEvents?.final_message_blocked&&agentHandoff.core_final_state==='UNFINISHED'&&
+    !['rejected_out_of_scope_request','scoped_permissions_enforced'].includes(caseId))
   issues.push('PROVIDER_BLOCKED_WITH_UNFINISHED_TASK');
  if(caseId==='executed_real_task'&&agentHandoff.last_active_specialist)
   issues.push('AGENT_HANDOFF_INCOMPLETE');
