@@ -476,3 +476,53 @@ test('Codex role metadata missing name, description or instructions cannot be tr
  assert.equal(got.complete_role_count,0);
  assert.ok(got.invalid_role_names.includes('auditor'));
 });
+
+
+test('P37 source runtime and Windows installer are path-relative and do not depend on an operator profile',()=>{
+ const readSource=p=>fs.readFileSync(path.join(repo,p),'utf8');
+ const files=[
+  'certification/pro/engine/p37-skills.mjs',
+  'scripts/37-1-real-skills-execution.ps1',
+  'scripts/37-0-pro-operational-preflight.ps1',
+  'scripts/05-install-into-project.ps1',
+  'adapters/codex/runtime-profile.json'
+ ];
+ for(const name of files){
+  const source=readSource(name);
+  assert.doesNotMatch(source,/[A-Z]:[\\/](?:Users|Documents and Settings)[\\/][^\r\n'"]+/i,
+   'Hardcoded Windows home in '+name);
+  assert.doesNotMatch(source,/\/(?:home|Users)\/(?:Alejandro|[a-z-]*rodriguez)\b/i,
+   'Hardcoded user home in '+name);
+  assert.doesNotMatch(source,/gpt-5\.6-luna|aledevos-p37-case-dvMsqo/i,
+   'Historical operator-specific provider or fixture in production source '+name);
+ }
+ assert.match(readSource('certification/pro/engine/p37-skills.mjs'),/os\.tmpdir\(\)/);
+ assert.match(readSource('scripts/37-1-real-skills-execution.ps1'),/Split-Path -Parent \$PSScriptRoot/);
+ assert.match(readSource('scripts/37-1-real-skills-execution.ps1'),/\[string\]\$Model/);
+ assert.match(readSource('scripts/05-install-into-project.ps1'),/GetFullPath\(\$ProjectPath\)/);
+});
+
+test('25 Codex role manifests are resolved relative to each independent install root, including spaces and Unicode',()=>{
+ const outer=tmp();
+ const installations=[
+  path.join(outer,'operator one','work project'),
+  path.join(outer,'usuario dos ñ','proyecto alternativo')
+ ];
+ for(const target of installations){
+  const src=path.join(repo,'adapters/codex/.codex');
+  const dst=path.join(target,'adapters/codex/.codex');
+  fs.mkdirSync(path.dirname(dst),{recursive:true});
+  fs.cpSync(src,dst,{recursive:true});
+  const verification=inspectCodexNativeRoleManifests(target);
+  assert.equal(verification.configured_role_count,25);
+  assert.equal(verification.complete_role_count,25);
+  assert.deepEqual(verification.invalid_role_names,[]);
+  assert.equal(verification.project_config_trust,'UNVERIFIED');
+  assert.equal(verification.native_delegation_verified,false);
+ }
+ const first=path.join(installations[0],'adapters/codex/.codex/agents/auditor.toml');
+ const second=path.join(installations[1],'adapters/codex/.codex/agents/auditor.toml');
+ fs.appendFileSync(first,'\n# deliberately changed fixture\n');
+ // Independent installations must not inherit each other's mutable copies.
+ assert.doesNotMatch(fs.readFileSync(second,'utf8'),/deliberately changed fixture/);
+});
