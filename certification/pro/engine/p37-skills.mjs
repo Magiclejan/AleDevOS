@@ -100,7 +100,9 @@ export function inspectAdapterProjection(root,project,adapter){
   if(fs.lstatSync(destination).isSymbolicLink()){errors.push('SYMLINK:'+rel);return;}
   if(fs.statSync(source).isDirectory()){
    if(!fs.statSync(destination).isDirectory()){errors.push('TYPE:'+rel);return;}
-   for(const file of fs.readdirSync(source))visit(path.posix.join(rel,file));
+   const expected=fs.readdirSync(source),actual=fs.readdirSync(destination);
+   for(const extra of actual.filter(name=>!expected.includes(name)))errors.push('UNEXPECTED:'+path.posix.join(rel,extra));
+   for(const file of expected)visit(path.posix.join(rel,file));
   }else if(!fs.statSync(destination).isFile()||shaFile(source)!==shaFile(destination))errors.push('DRIFT:'+rel);
  }
  for(const part of parts)visit(part);
@@ -174,6 +176,10 @@ function validateBase(root,project,adapter){
  if(meta.phase!=='P37.1'||meta.kind!=='DISPOSABLE_INSTALLED_FIXTURE'||
   meta.adapter!==adapter||meta.git_sha!==getRevision(root)||abs(meta.source_root)!==abs(root))
   throw Error('P37_1_STALE_OR_UNOWNED_FIXTURE');
+ for(const [rel,body] of Object.entries(requiredFiles)){
+  const file=path.join(project,rel);
+  if(!fs.existsSync(file)||shaFile(file)!==hash(body))throw Error('P37_1_FIXTURE_INPUT_DRIFT:'+rel);
+ }
  const installedAdapter=inspectAdapterProjection(root,project,adapter);
  if(!installedAdapter.ok)throw Error('P37_1_ADAPTER_PROJECTION_DRIFT:'+installedAdapter.errors.join(','));
  for(const skill of skillIds){
