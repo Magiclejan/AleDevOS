@@ -24,11 +24,11 @@
   "inputs": [
     {
       "path": "efficiency/engine/efficiency-governor.mjs",
-      "sha256": "4a661bb79aaed52ba46f72d3157778e39fb62dede29b0afa515d64289c589777"
+      "sha256": "14fdea30e12476d5457d4b3e881f421912dfd1109ec91f545c501be222e05d16"
     },
     {
       "path": "efficiency/policies/efficiency-policy.json",
-      "sha256": "d58cdef45f2084b940b679805e3c7a38d959184c346ec47a0f65cb715c4e42c8"
+      "sha256": "c57f5599152c87d03579872aa0e1fc0c5376a91e585ca8fcdbb8fd1d2ebf3a74"
     },
     {
       "path": "efficiency/contracts/GLOBAL_EFFICIENCY.md",
@@ -88,11 +88,11 @@
     },
     {
       "path": "release/certifications/master-validation-p6.json",
-      "sha256": "9dc9a378179e4764053a2e7d713dc191b2e4d511a4d9b858d332e0d1082d07cf"
+      "sha256": "89608bcadedfc01a1e94db3d20419cb626f5ea9883ea1341cdd7fb1ca3f342fb"
     },
     {
       "path": "tests/global-efficiency-phase7.test.mjs",
-      "sha256": "86b0ab22f7c7c38b665aa1b2b2e08685bf5efab0805538cf5058c380c13d672b"
+      "sha256": "68dbd0ad8833855a8011e7cf66986380026b894276e22f45fd222630919d8611"
     },
     {
       "path": "scripts/62-self-test-global-efficiency-phase7.ps1",
@@ -104,27 +104,27 @@
     },
     {
       "path": "scripts/05-install-into-project.ps1",
-      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+      "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     },
     {
       "path": "core/agents/orchestrator.md",
-      "sha256": "338322ac44648b44ad204cc2b7a8c2c9fcf257d91fe5870446e9d2878ab0b417"
+      "sha256": "7776fa7a2fbfba8d7904da0150f7268efa560bdc2d8a0279e7418bd862471064"
     },
     {
       "path": "adapters/opencode/.opencode/agents/orchestrator.md",
-      "sha256": "79ff3fb59a3dc628537b07e6b918b28d38f7152dd0a7f8c9c67447f62352ca40"
+      "sha256": "f95cbe93e87217a8f78bd0f9bd20257e750819fe034e4eb584595bb6d460c1ce"
     },
     {
       "path": "adapters/codex/.codex/agents/orchestrator.toml",
-      "sha256": "cf63beca6bb84951fc4f2dfb5a1c8fff83f4a9861542840ed4c68a49fdc0d454"
+      "sha256": "a80269cfd8cd2afa153e0562e657f296fbbddf18f4d81778bec78c4e00675506"
     },
     {
       "path": "adapters/claude-code/.claude/agents/orchestrator.md",
-      "sha256": "0c5c72d4667acfb9309147267bcafe613b19307a2995c5ff137da162d842b08a"
+      "sha256": "ce9b6d64215add2a8c9079b39ff707a5d8334e40ba9e970bd77b543a03c57d1f"
     },
     {
       "path": "adapters/antigravity/.agents/agents/orchestrator.md",
-      "sha256": "87dc1db4ba7bb70280c8bb55137f681e0bb67042504311e28a687e6645662266"
+      "sha256": "33ed2ede86a40f9548ca4eea035723e6cae2b26bc77e083548d30ef09ebf1811"
     },
     {
       "path": "adapters/claude-code/hooks/pretool-guard.mjs",
@@ -140,11 +140,11 @@
     },
     {
       "path": "contextos/engine/telemetry.mjs",
-      "sha256": "a900ef647cb4c0e43b7f670d13e4d49a9217d6133c3b486841d99452bcc7c7b1"
+      "sha256": "6416de224f569fc4a5d10554ff400c64a8eebcad7d4ea42eb98b61d4d333712e"
     },
     {
       "path": "skillsystem/engine/skillsystem.mjs",
-      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+      "sha256": "0957804e27c958e0f337b91b3af75a13b7f6b34f252767ef86bb4bfc9b0139ae"
     },
     {
       "path": "multimodel/router/model-router.mjs",
@@ -156,8 +156,8 @@
     },
     {
       "path": "core/engine/aledevos.mjs",
-      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
     }
   ],
-  "master_p7_certificate_sha256": "02f8e2c94c43d7bfe6ca361430e9d41c91150844365b979c43748ea21a1a69e2"
+  "master_p7_certificate_sha256": "d9fbe27f50aafe09d60a1e7004129b4d3817ac336a44fb067974a739791a5670"
 }

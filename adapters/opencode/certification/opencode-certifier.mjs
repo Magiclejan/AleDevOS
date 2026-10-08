@@ -59,6 +59,7 @@ function certify(){
  checks.push(check('dialect.no_bundled_provider',!Object.hasOwn(cfg,'providers'),'AleDevOS adapter does not bundle provider configuration'));
  checks.push(check('dialect.no_bundled_model',!Object.hasOwn(cfg,'model'),'AleDevOS adapter does not choose a default model'));
  checks.push(check('runtime.native_image_external',true,'native-image readiness requires separate target-runtime evidence','visual_qa_judge'));
+ checks.push(check('runtime.truthful_text_only',!Object.hasOwn(cfg,'model')&&!Object.hasOwn(cfg,'providers'),'no runtime model capability is bundled or inferred; text-only runtime cannot satisfy native-image gate','visual_qa_judge'));
  checks.push(check('compaction.auto',cfg.compaction?.auto===true,'automatic compaction configured','compaction'));
  checks.push(check('global.external_directory_deny',isDeny(cfg.permissions,'external_directory','anywhere'),'global external directory deny','external_directory'));
  checks.push(check('global.webfetch_deny',isDeny(cfg.permissions,'webfetch','https://example.invalid'),'global webfetch deny','network'));

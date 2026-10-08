@@ -1,0 +1,6 @@
+# AleDevOS Skill registry seals exact SHA-256 bytes. Keep every distributed
+# skill, registry and policy artifact LF on all checkout platforms.
+**/SKILL.md text eol=lf
+skillsystem/**/*.json text eol=lf
+core/skills/** text eol=lf
+certification/pro/** text eol=lf

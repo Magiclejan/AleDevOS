@@ -1,0 +1,636 @@
+{
+  "schema_version": "1.0",
+  "phase": "P36.1_PRO_SKILL_SOPS",
+  "provenance": "AleDevOS authored source, not official OpenAI certification",
+  "common": {
+    "stateRule": "Return PASS only when independent verification and all acceptance criteria are evidenced; return BLOCKED for missing access, authority, test environment or proof; return FAILED for an observed failed required check. Never manufacture evidence.",
+    "sourceRule": "Treat SKILL.md as reference-only procedural guidance. The protected Task Contract, adapter permissions, repository rules, deterministic checks, and Orchestrator's authorized handoff take precedence. One specialist at a time; no independent spawning.",
+    "evidenceRule": "Reference source revision and paths, exact commands and exit codes (where run), receipts and verification dates. Never include raw secrets, user prompt transcripts, invented metrics or unverified PASS claims."
+  },
+  "skills": [
+    {
+      "id": "backend-change",
+      "title": "Backend change",
+      "description": "Use for scoped API, backend-service or server logic implementation; preserve public contracts, authorization and failure behavior.",
+      "trigger": "Implement or repair a request handler, API contract, service/domain boundary, queue consumer or persistence-facing server behavior.",
+      "exclude": "Pure UI changes, schema-only migrations, read-only security audits or requests with no authorized backend writer.",
+      "inputs": [
+        "Approved Task Contract with endpoint or event behavior and acceptance criteria",
+        "Current route or consumer, service/domain owner, upstream callers, schema and public error contract",
+        "Allowed file scope, identity/authorization policy, test runner and affected environment"
+      ],
+      "outputs": [
+        "Bounded server diff covering the public behavior and error path",
+        "Contract-impact matrix: request/validation/auth/domain/storage/response and affected consumers",
+        "Focused regression results plus explicit risks left open"
+      ],
+      "steps": [
+        "Trace one representative request through routing, parsing, authentication, authorization, domain rules, persistence and response; identify the existing owner.",
+        "Write down input and output schema, status codes, error codes, side effects and compatibility invariants before the first edit.",
+        "Check duplicate requests, concurrency, idempotency keys, retry safety, external calls and transaction boundaries where relevant.",
+        "Implement the smallest authorized change inside the existing service seam; reject ad-hoc parallel routes or unowned shared mutations.",
+        "Guard invalid, unauthorized, absent and conflicting inputs before side effects; use structured errors compatible with existing callers.",
+        "Update schema or API description only if authorized by the Task Contract; coordinate required migration rather than embedding it silently.",
+        "Add public-surface tests for success, validation failure, denied access, downstream fault and repeat invocation; inspect changed callers.",
+        "Run focused checks, review the diff for scope/security and hand off to Verifier; never self-approve release."
+      ],
+      "decisions": [
+        "If the public response contract changes, request explicit contract approval and consumer impact review before implementation.",
+        "If data shape changes, route through database-change and ensure a compatible rollout sequence.",
+        "If an external service is unavailable, use the existing bounded retry/timeout policy; do not fabricate successful data.",
+        "If authorization intent is ambiguous, block the write rather than guess permissive access."
+      ],
+      "permissions": "Only the authorized Builder/Editor may edit task-scoped product files. A reviewer or judge using this Skill stays read-only. Never mutate policies, state receipts, Git history, deployments or secrets.",
+      "failures": [
+        "Unreproducible bug or missing route owner: BLOCKED with missing source and a concrete discovery request.",
+        "Contract or auth check failing after implementation: FAILED; show focused test and affected behavior.",
+        "Irreversible side effect or unapproved migration: stop and escalate to Orchestrator without applying it."
+      ],
+      "verification": [
+        "Assert exact status, shape, error codes, authorization and side-effect count on black-box endpoint tests.",
+        "Exercise duplicate/retry and concurrency scenarios when relevant, with bounded fixtures.",
+        "Confirm no unrelated files changed and focused tests and applicable deterministic gates passed."
+      ],
+      "examples": [
+        "Correct: a POST endpoint gains input validation; a malformed request returns the documented 4xx without writing data, verified in tests.",
+        "Incorrect: catching all database errors and returning 200/empty data to make an API test green."
+      ]
+    },
+    {
+      "id": "database-change",
+      "title": "Database change",
+      "description": "Use when changing schema, migrations, persistence queries or database constraints; plan compatibility and data integrity.",
+      "trigger": "A scoped task changes tables, indexes, RLS policies, migration ordering, persisted representations or query behavior.",
+      "exclude": "No persistence surface changed, ad-hoc production data cleanup or destructive operations without explicit ownership and authorization.",
+      "inputs": [
+        "Database dialect/driver, migration tool, current schema and deployed version assumptions",
+        "Migration scope and rollback/forward-recovery policy from approved Task Contract",
+        "Affected writers/readers, backfill or retention constraints, test database fixture"
+      ],
+      "outputs": [
+        "Migration plan with expand/migrate/contract stages and affected consumers",
+        "Scoped migration/query edit, compatibility notes and independent test evidence",
+        "Explicit rollback limitations and owner approval needed for irreversible steps"
+      ],
+      "steps": [
+        "Locate schema source of truth, migration numbering convention and current database constraints before drafting SQL.",
+        "Enumerate callers, job consumers, validation layers, generated types and RLS/authorization rules touching the fields.",
+        "Classify the change as additive, backfill, constraint tightening, index operation or destructive contraction.",
+        "Prefer an additive compatible stage; for breaking changes document dual-read/write or staggered deploy ordering.",
+        "Define null/default behavior, uniqueness, foreign keys, isolation and transaction semantics, including failure halfway through.",
+        "For a backfill, specify batching, idempotent restart checkpoints and how to detect partial progress without exposing data.",
+        "Implement only authorized migration and query changes; do not edit production data or launch irreversible SQL from a test flow.",
+        "Test forward migration against a disposable database and verify old and new caller behavior, restart behavior and data integrity."
+      ],
+      "decisions": [
+        "If any irreversible drop/rename/data deletion is needed, BLOCKED until explicit approval and verified restoration procedure.",
+        "If old clients remain deployed, stage compatibility before enforcing strict constraints.",
+        "If production locking impact is not measurable, label it UNVERIFIED and require an operational review.",
+        "If RLS or identity authorization changes, route security-check and obtain separate gate evidence."
+      ],
+      "permissions": "Use disposable test databases only unless the Orchestrator explicitly authorizes another target. Never auto-drop live tables, bypass RLS, or disclose stored records.",
+      "failures": [
+        "Missing schema snapshot or migration ownership: BLOCKED and identify the source of truth needed.",
+        "Migration fails mid-run: stop, record applied steps and test reversible continuation; never blindly retry destructive operations.",
+        "Post-migration reader or invariant failure: FAILED with a reproducible fixture and rollback/forward-fix options."
+      ],
+      "verification": [
+        "Schema shape, null/defaults, constraints and index behavior match the approved target.",
+        "Existing readers/writers remain compatible for the documented deployment window.",
+        "Migration runs on disposable fixtures, catches duplicate/restart behavior and preserves row-level authorization."
+      ],
+      "examples": [
+        "Correct: introduce a nullable column, backfill in idempotent batches, switch readers, then separately propose tightening its constraint.",
+        "Incorrect: delete an obsolete production column in the same rollout as the first consumer update."
+      ]
+    },
+    {
+      "id": "diff-review",
+      "title": "Diff review",
+      "description": "Use for evidence-based review of an actual scoped Git diff; find actionable regressions, security and scope risks.",
+      "trigger": "A committed or working-tree diff needs independent review before verifier/judges or merge.",
+      "exclude": "No diff is available, a request to write production changes, or an unrelated whole-repository audit.",
+      "inputs": [
+        "Pinned base and head refs (or named working tree), Task Contract and allowed path scope",
+        "Changed hunks, nearby callers, tests, generated-file ownership and verification logs",
+        "Risk classification and existing required code review or CI policies"
+      ],
+      "outputs": [
+        "Findings ordered by severity with path:line/symbol, evidence, impact and specific next action",
+        "Clean or unresolved review assessment with cited scope/test gaps",
+        "No code modifications, approvals or guessed PASS labels"
+      ],
+      "steps": [
+        "Confirm which base/head and dirty/untracked files are included; do not assume a plain diff shows new untracked files.",
+        "Read the full changed hunks and local context before concluding, paying attention to deletions and moved logic.",
+        "Map changed contracts to callers, schemas, persistence and error handling; identify introduced scope outside approval.",
+        "Review data access, authorization, user input, logging, secrets and dependency changes for concrete exploit paths.",
+        "Compare test changes with product changes; look for skipped tests, weakened assertions, fixture-only happy paths and fake receipts.",
+        "Classify each issue by observed consequence and reproducible evidence; separate risk hypotheses from confirmed faults.",
+        "Return minimal fix suggestions linked to the changed line and acceptance criterion; avoid broad stylistic noise.",
+        "Hand findings to Orchestrator/Repairer with no write permissions and no self-approval."
+      ],
+      "decisions": [
+        "If only a formatting change exists, focus on accidental semantic churn and avoid inventing functional defects.",
+        "If a security boundary is touched, request security-check and mark the finding pending its evidence.",
+        "If a necessary source or test is missing, mark that dimension UNVERIFIED instead of PASS.",
+        "If change scope exceeds authorization, block finalization until the Task Contract is updated."
+      ],
+      "permissions": "Read-only review. May inspect safe Git status/diff/log through adapter policy; never stage, commit, edit or run destructive Git commands.",
+      "failures": [
+        "Unknown base revision or missing complete diff: BLOCKED with exact missing refs/files.",
+        "Observed harmful behavior or prohibited scope: FAILED with repro or deterministic gate.",
+        "Unconfirmed concern: label RISK/UNVERIFIED and identify the precise verification needed."
+      ],
+      "verification": [
+        "Every high-severity finding has an artifact, path/symbol and potential failure route.",
+        "All changed files are accounted for, including new/untracked files or explicit exclusions.",
+        "Review does not claim tests executed unless an actual test receipt is available."
+      ],
+      "examples": [
+        "Correct: report that modified access control now permits a non-owner and point to the policy branch plus a failing denial test.",
+        "Incorrect: produce 30 generic security concerns without checking any changed code."
+      ]
+    },
+    {
+      "id": "frontend-change",
+      "title": "Frontend change",
+      "description": "Use for scoped UI/component implementation requiring state, accessibility, responsive and regression checks.",
+      "trigger": "A component, route, form, design-system integration or user-visible frontend state must be changed.",
+      "exclude": "Pure backend or database work, aesthetic approval without native-image Visual Judge, or unauthorized redesign.",
+      "inputs": [
+        "Approved user journey, target components/routes and design-system tokens",
+        "State contract for default/loading/empty/error/disabled/focus and viewport expectations",
+        "Framework/build scripts, accessibility standard, browser/visual QA capability provenance"
+      ],
+      "outputs": [
+        "Minimal UI diff with behavior contracts preserved",
+        "State/viewport test matrix and checked accessibility behavior",
+        "Links to real browser/DOM evidence and visual-review blockers where applicable"
+      ],
+      "steps": [
+        "Map route/component ownership, state store, data fetching and reusable design primitives; keep existing design vocabulary.",
+        "Write expected default/loading/empty/error states, keyboard flows, validation feedback and responsive breakpoints.",
+        "Implement the smallest change without global CSS overrides or state duplication that creates parallel sources of truth.",
+        "Use semantic controls, accessible names, focus order/indicator, labels, announcements and sufficient contrast.",
+        "Test narrow and wide containers for overflow and clipped focusable elements, not just screenshot width.",
+        "Verify disabled, pending, error and retry behavior, including reduced motion and assistive technology where applicable.",
+        "Run component/integration tests and real Playwright DOM/a11y checks when the environment supports them; preserve receipts.",
+        "Do not declare aesthetic PASS from DOM checks; request native-image Visual Judge when visual-semantic approval is required."
+      ],
+      "decisions": [
+        "If an existing design primitive fits, reuse it rather than create new bespoke styling.",
+        "If responsive policy is missing, request the canonical viewport contract before claiming compliance.",
+        "If screenshot capture is simulated/test-only, label controlled provenance and never claim real browser evidence.",
+        "If change affects server contract, coordinate backend-change; if schema changes, coordinate database-change."
+      ],
+      "permissions": "Only authorized frontend writer edits target product files. Browser/network access follows adapter permissions and approved local fixture; no publishing or external user actions.",
+      "failures": [
+        "Unable to load target in real browser: BLOCKED for real-browser claims; report build and provider state.",
+        "Deterministic focus/contrast/overflow finding: FAILED until reverified.",
+        "Visual semantic model unavailable: BLOCKED for aesthetic judgment, not a fabricated PASS."
+      ],
+      "verification": [
+        "Acceptance tasks work by keyboard and pointer in required states.",
+        "Layout and focus targets remain usable across approved viewports; no horizontal overflow.",
+        "Tests plus real browser receipts and P3/P4 audit results are current and bound to source revision."
+      ],
+      "examples": [
+        "Correct: an async submit button exposes busy/status/error messaging and maintains keyboard focus on retry.",
+        "Incorrect: a desktop screenshot is used as proof that mobile layouts and accessibility conform."
+      ]
+    },
+    {
+      "id": "implementation-plan",
+      "title": "Implementation plan",
+      "description": "Use to plan authorized code work into the smallest reversible edits with ownership, tests, risks and dependencies.",
+      "trigger": "Task Contract is approved but a concrete safe change plan and verification sequence are not yet defined.",
+      "exclude": "No scoped task, pure execution of a preapproved plan or speculative redesign outside the requested outcome.",
+      "inputs": [
+        "Task Contract and explicit acceptance criteria, allowed paths and non-goals",
+        "Repository map, dependent modules, caller edges, existing test and tool contracts",
+        "Risk tier, permissions, rollout/recovery constraints, available provider capabilities"
+      ],
+      "outputs": [
+        "Ordered edit slices: owner/location, behavior, contract, test, risk and rollback",
+        "Verification plan with independent deterministic and judge gates",
+        "Explicit blocked decisions and assumptions, not source changes"
+      ],
+      "steps": [
+        "Restate the measurable outcome, hard invariants, authorization boundary and excluded work.",
+        "Read only relevant repo instructions, change history and ownership seams; locate implementation entry points.",
+        "Trace affected API/DB/UI consumers and classify compatibility, privacy and operational risks.",
+        "For each slice choose one existing module owner; reject gratuitous architecture or duplicate routing.",
+        "Define expected before/after behavior and a test or observation that would fail for an incorrect change.",
+        "Order slices by prerequisite; keep deploy/migration/config transitions separate with safe backout boundaries.",
+        "Include test sequence and exact deterministic gates, resource needs and maximum two repair cycles where applicable.",
+        "Return a concise dependency graph and stop conditions to Orchestrator; no implementation without writer authorization."
+      ],
+      "decisions": [
+        "If multiple owners could hold logic, prefer the canonical existing seam and document tradeoffs.",
+        "If an invariant is unclear, add an explicit BLOCKED decision rather than assuming it may change.",
+        "If the plan requires new outside Skills/tools, audit trusted reuse and secure approval first.",
+        "If scope expands during discovery, return to Task Contract; do not silently add optional features."
+      ],
+      "permissions": "Planner reads scoped source and non-sensitive metadata, but never edits production files, approves own plan or issues deployments.",
+      "failures": [
+        "No viable reversible path: BLOCKED with smallest unanswered architecture decision.",
+        "Unknown regression risk: list probable failure path and required measurement, not an invented test outcome.",
+        "Conflicting acceptance criteria: raise the conflict and stop the affected slice."
+      ],
+      "verification": [
+        "Each planned edit has a module owner, invariant, risk and observable acceptance proof.",
+        "Cross-module ordering avoids breaking callers or data persistence.",
+        "Planned checks are available or honestly marked pending with named dependencies."
+      ],
+      "examples": [
+        "Correct: isolate an API validator change, consumer update and regression tests as distinct slices with preserved error semantics.",
+        "Incorrect: replace authentication architecture as incidental cleanup for a single error-message bug."
+      ]
+    },
+    {
+      "id": "regression-analysis",
+      "title": "Regression analysis",
+      "description": "Use to trace consumer and behavior blast radius after code changes, pairing each plausible risk with concrete verification.",
+      "trigger": "A change touches shared behavior, a public contract, persistence, auth, UI states or a previous regression-sensitive area.",
+      "exclude": "A request merely to summarize an unchanged file or to assert zero regressions without test evidence.",
+      "inputs": [
+        "Pinned diff or change plan, affected API/type/schema/event contracts",
+        "Call sites and consumers, data/state compatibility and prior regression history",
+        "Current focused tests and release-gate expectations"
+      ],
+      "outputs": [
+        "Blast-radius map by boundary/consumer and severity",
+        "Risk-to-test matrix with PASSED/FAILED/UNVERIFIED entries",
+        "Regression recommendations grounded in changed behavior"
+      ],
+      "steps": [
+        "Identify changed semantics rather than only filenames; record before/after contract, side effects and error paths.",
+        "Find direct and transitive callers within bounded scope; distinguish unreferenced code from dynamic entry points.",
+        "Check persisted data, serialized states, migrations and old/new consumer overlap where relevant.",
+        "Evaluate permission, concurrency, caching, retries, loading/error and external-service failure paths.",
+        "Link each plausible failure to a failing-before/failing-after regression test or explicit manual gate.",
+        "Prioritize by customer impact and probability; remove risks with no plausible path, not missing evidence.",
+        "Run authorized focused tests or attach their existing run receipts and report version provenance.",
+        "Deliver unresolved paths to Verifier/Regression Judge without declaring production safety by opinion."
+      ],
+      "decisions": [
+        "If a consumer contract remains byte-compatible, lower risk only with evidence from caller tests.",
+        "If persistence migration changes shape, require old-data fixture and backward-read verification.",
+        "If risk relies on an unsupported provider, leave it UNVERIFIED and report the missing capability.",
+        "If a suspected regression is unrelated to this diff, record it separately without enlarging edit scope."
+      ],
+      "permissions": "Analysis is read-only; source modifications and test approvals belong to authorized writer/Verifier/Judge roles.",
+      "failures": [
+        "Caller inventory incomplete: BLOCKED for global 'no-regression' claims.",
+        "Focused test fails on a changed behavior: FAILED with reproduction path.",
+        "Environment-specific test fails before product execution: BLOCKED environment, not product PASS/FAIL guessing."
+      ],
+      "verification": [
+        "Coverage matrix names every changed public behavior and material consumer path.",
+        "Observed test results include exact command, source revision and exit status.",
+        "No unverified area is silently counted as regression PASS."
+      ],
+      "examples": [
+        "Correct: changing null handling in a shared serializer triggers tests for legacy persisted records and all message consumers.",
+        "Incorrect: mark regression PASS because only one file changed."
+      ]
+    },
+    {
+      "id": "repair-loop",
+      "title": "Repair loop",
+      "description": "Use only after protected verifier or judge FAIL to authorize a bounded repair cycle with fresh re-verification.",
+      "trigger": "An official failed gate is recorded, protected repair-start permits another attempt and Orchestrator assigns a scoped Repairer.",
+      "exclude": "Initial implementation, aesthetic iteration without sanctioned findings, PASS judgment or exhausted retry budget.",
+      "inputs": [
+        "Failed verifier/judge receipt and exact findings with immutable IDs",
+        "Authorized repair plan, permitted files, current state/attempt count and unchanged invariants",
+        "Reproduction command, source revision and tests needed for fresh P2–P5 evidence where applicable"
+      ],
+      "outputs": [
+        "Minimal findings-linked repair diff; one attempt per authorized cycle",
+        "Reproduction and focused verification results, unresolved findings and fresh receipt references",
+        "Clear FAILED/BLOCKED/exhausted state without unauthorized third attempt"
+      ],
+      "steps": [
+        "Read protected current task and repair authorization; verify remaining attempts, approved findings and file scope.",
+        "Reproduce the specific failure using the original command and pinned inputs, keeping evidence intact.",
+        "Find root cause; classify implementation bug, test-environment defect, policy conflict or missing capability.",
+        "Propose the smallest source fix for an authorized finding; do not alter baseline, tests, scores or security policies to hide it.",
+        "Apply the edit only through authorized Repairer tools, one subagent at a time and with no scope expansion.",
+        "Run a focused check and inspect diff to ensure no changes to protected control-plane or judge reports.",
+        "Return control to Verifier and all required independent judges; after visual repair require fresh P2 → P3 → P4 → P5 evidence.",
+        "If the retry budget is exhausted, finalize FAILED; never self-start repair 3 or mutate protected state."
+      ],
+      "decisions": [
+        "If the finding cannot be reproduced, report BLOCKED with missing environment, not a speculative edit.",
+        "If fixing the issue needs an out-of-scope file, request new authorized plan; do not write outside scope.",
+        "If a new defect arises, hand it to the independent verifier for classification.",
+        "If the last allowed attempt fails, preserve evidence and report exhausted without third repair."
+      ],
+      "permissions": "Repairer edits only approved product paths for approved finding IDs. Judges remain read-only; no baseline promotion, score edits, receipt rewriting or destructive Git commands.",
+      "failures": [
+        "Repair-start missing, stale revision or current state PASS: BLOCKED and no mutation.",
+        "Focused test continues to fail: FAILED and attempt consumed per protected runtime.",
+        "Scope/permission conflict: stop before edit and report exact blocked path."
+      ],
+      "verification": [
+        "Repair exactly matches authorized finding IDs and attempt number <=2.",
+        "Changed files are within the approved set; no evidence or control-plane file changed.",
+        "Independent fresh required gates pass after fix, never reused stale before-repair receipts."
+      ],
+      "examples": [
+        "Correct: repair one null-guard referenced by a failed regression finding, then run the focused test and full independent verification.",
+        "Incorrect: delete the failing test or promote a screenshot baseline to force visual PASS."
+      ]
+    },
+    {
+      "id": "repo-map",
+      "title": "Repository map",
+      "description": "Use for bounded source investigation to locate implementation owners, entry points, dependencies and test seams.",
+      "trigger": "Orchestrator needs to know where a requested behavior lives before planning, reviewing or editing.",
+      "exclude": "Unbounded repo summarization, speculative source rewrites or private files outside the approved project scope.",
+      "inputs": [
+        "User behavior/request, Task Contract or discovery scope and repository root",
+        "Root/closest AGENTS.md instructions, allowed read paths and stale-knowledge policy",
+        "Known entry point or keyword, test commands and tooling available under permission"
+      ],
+      "outputs": [
+        "Compact request → entry → module owner → dependencies → tests map with real paths",
+        "Open questions and discovered restrictions, generated/vendor file warnings",
+        "Explicit freshness/source provenance and confidence labels, no invented modules"
+      ],
+      "steps": [
+        "Read root and closest scoped repository rules; do not scan secrets or unrelated projects.",
+        "Locate likely entry using exact symbols, routes, event names and tests before broad keyword search.",
+        "Trace call chain to the actual source-of-truth implementation, including config, schema, persistence and external boundaries.",
+        "Inspect closest tests and any recorded regressions, keeping changed-file context and revision fresh.",
+        "Flag generated, vendored or copied code and identify their canonical source to avoid editing derived artifacts.",
+        "Build an annotated shortest dependency map showing ownership, interfaces and typical failure path.",
+        "Identify which modules and acceptance evidence require further targeted reading; stop exploring when sufficient.",
+        "Report paths and relevant symbols rather than dumping source or making ownership claims from filenames alone."
+      ],
+      "decisions": [
+        "If multiple implementations share a name, confirm callers and runtime routing rather than selecting the first search hit.",
+        "If no owner found, return BLOCKED with search evidence and proposed bounded expansion.",
+        "If a cached map has source drift, refresh it and mark old references stale.",
+        "If crossing an unapproved repository boundary, stop and ask Orchestrator to extend scope."
+      ],
+      "permissions": "Read-only within the approved repository. No network fetch, secret access, writes or subagent spawning without explicit adapter authorization.",
+      "failures": [
+        "Repository context unavailable: BLOCKED with exact missing root/permissions.",
+        "Ambiguous dynamic dispatch: mark suspected edges as UNVERIFIED rather than authoritative.",
+        "Source docs contradict executable code: report both and cite evidence, favor observed execution for behavior."
+      ],
+      "verification": [
+        "Every reported entry/owner/test file exists in pinned revision.",
+        "Each claimed call edge has a symbol, import, route or runtime trace reference.",
+        "Map includes meaningful excluded areas and generated-source warnings."
+      ],
+      "examples": [
+        "Correct: map `/users/:id` route → controller → policy → repository method → contract tests with source citations.",
+        "Incorrect: assert a module owns a feature solely because its filename resembles the user request."
+      ]
+    },
+    {
+      "id": "requirements-check",
+      "title": "Requirements check",
+      "description": "Use to independently verify every acceptance criterion against source and observed test evidence without self-approval.",
+      "trigger": "Verifier or Requirements Judge needs evidence-based criterion-by-criterion final coverage.",
+      "exclude": "Writing acceptance criteria from scratch, changing tests to meet a score, or implementing product fixes as a judge.",
+      "inputs": [
+        "Approved immutable Task Contract and acceptance criteria IDs",
+        "Source revision, code diff, focused test results, functional artifacts and required role receipts",
+        "Security/quality gates, any explicitly permitted waivers with policy references"
+      ],
+      "outputs": [
+        "One status per criterion: VERIFIED, FAILED or UNVERIFIED, with traceable evidence references",
+        "Blocking findings and missing proof, separate from overall acceptance decision",
+        "Unambiguous final handoff to Orchestrator without mutating protected state"
+      ],
+      "steps": [
+        "Load the canonical current Task Contract and ensure criteria and scope have not drifted.",
+        "Map each criterion to observable behavior, affected code and at least one admissible proof type.",
+        "Verify cited artifacts exist and match source revision and policy provenance, not only a reported PASS string.",
+        "Execute permitted independent checks or inspect sealed receipts; distinguish real provider runs from controlled mocks.",
+        "Test negative/permission/edge cases when the criterion demands them; check that assertions prove behavior.",
+        "Mark VERIFIED only when requirements and evidence align; FAILED on contradictory observation, UNVERIFIED on missing or stale proof.",
+        "Aggregate blockers and score without deleting weak or ambiguous criteria from the denominator.",
+        "Report criterion table with immutable IDs and link to Regression and Quality Judges, never approving itself."
+      ],
+      "decisions": [
+        "If an acceptance criterion is ambiguous, request clarification and mark UNVERIFIED.",
+        "If evidence comes from a stale build, reject it until reproduced under current revision.",
+        "If policy permits a waiver, record its authorized ID and scope; don't silently exempt.",
+        "If any critical criterion is UNVERIFIED, block completion even when other tests pass."
+      ],
+      "permissions": "Strictly read-only judge/verification role; cannot edit code, tests, Task Contract, scores, gate policies or sealed evidence.",
+      "failures": [
+        "Missing Task Contract: BLOCKED with no invented acceptance matrix.",
+        "Observed criterion failure: FAILED with exact counterexample and evidence.",
+        "Corrupt receipt/hash: BLOCKED evidence and escalate integrity concerns."
+      ],
+      "verification": [
+        "Every original acceptance criterion appears exactly once in the matrix.",
+        "VERIFIED rows link to actual reproducible proof from the pinned revision.",
+        "Critical UNVERIFIED rows prevent global PASS under existing gate policy."
+      ],
+      "examples": [
+        "Correct: the criterion 'denies non-owner updates' is VERIFIED using an actual 403 test receipt tied to current commit.",
+        "Incorrect: mark a criterion VERIFIED because the developer wrote 'implemented' in a handoff."
+      ]
+    },
+    {
+      "id": "safe-edit",
+      "title": "Safe edit",
+      "description": "Use for authorized minimal code changes with strict scope, data preservation, non-destructive Git and verification.",
+      "trigger": "A scoped Builder or Editor has an approved change plan and must modify source with bounded risk.",
+      "exclude": "Read-only judges, unauthorized refactors, migrations/deployments or scripts that require unapproved destructive operations.",
+      "inputs": [
+        "Approved change plan, current revision/branch, allowed paths and user-owned file boundaries",
+        "Current target files and adjacent callers, protected control-plane rules and failure reproduction",
+        "Focused build/test commands and rollback strategy"
+      ],
+      "outputs": [
+        "Narrow, reviewable diff mapped to approved findings or behaviors",
+        "Focused check receipts and before/after contract notes",
+        "No unrelated filesystem, Git-history, policy or user-data mutations"
+      ],
+      "steps": [
+        "Confirm clean/dirty Git context and preserve existing user changes; never overwrite unrelated work.",
+        "Read the exact implementation seam, adjacent callers and repository/agent instructions before editing.",
+        "Identify smallest coherent edit and its test; explain which existing contract it preserves.",
+        "Stage reasoning as an edit plan, not as unauthorized Git staging or commit; respect writer role permissions.",
+        "Apply one bounded source edit, avoiding unrelated reformatting and generated/vendor files.",
+        "Run the focused deterministic test, lint or compile check and inspect stderr and exit status.",
+        "Inspect diff for scope, secret leakage, test weakening, permission changes and accidental removals.",
+        "Handoff changed paths, actual test commands, failures and residual risks; final PASS belongs to Verifier/Judges."
+      ],
+      "decisions": [
+        "If working tree contains overlapping user changes, pause and request reconciliation instead of resetting.",
+        "If a repair needs new scope, reauthorize before touching another path.",
+        "If tests are unavailable, mark BLOCKED for verification claims and document the missing runtime.",
+        "If a migration or external side effect is required, stop and route specialized planning."
+      ],
+      "permissions": "Authorized writer can edit approved product files only; no force push, hard reset, clean, publish, deploy, delete user data, control-plane mutation or forged evidence.",
+      "failures": [
+        "Patch does not apply cleanly: BLOCKED until source is re-read and conflicts reconciled.",
+        "Focused check fails: preserve diagnostics, report FAILED or route bounded Repairer authorization.",
+        "Protected path detected: abort before write and report attempted boundary crossing."
+      ],
+      "verification": [
+        "Diff contains only authorized paths and explains each changed hunk.",
+        "No secrets, markers, test skips, policy bypasses or generated-file divergence introduced.",
+        "Required focused tests execute with exact exit codes and evidence or remain explicitly BLOCKED."
+      ],
+      "examples": [
+        "Correct: change one parser branch and add a failing-before regression test without disturbing unrelated workspace files.",
+        "Incorrect: run `git reset --hard` to remove messy local edits before patching."
+      ]
+    },
+    {
+      "id": "security-check",
+      "title": "Security check",
+      "description": "Use for scoped threat-path review when code touches permissions, credentials, untrusted input, network, data or supply chain.",
+      "trigger": "A changed trust boundary requires an independent security assessment or deterministic security finding triage.",
+      "exclude": "Generic claim that all code is secure, production penetration tests without approval or self-fixing as a security judge.",
+      "inputs": [
+        "Approved Task Contract, exact changed paths, data/classification and trust boundaries",
+        "Threat model context, auth/session/RLS policies, untrusted input and dependency versions",
+        "Deterministic scanner receipts, relevant runtime evidence and permissions manifest"
+      ],
+      "outputs": [
+        "Concrete exploit-path findings with severity, boundary, reproduction or rationale, mitigation and owner",
+        "PASS/FAILED/UNVERIFIED dimensions with non-claims for untested threats",
+        "Escalations for critical/high findings, never a blanket assurance statement"
+      ],
+      "steps": [
+        "Identify changed entry points, assets, identities, untrusted inputs and crossing trust boundaries.",
+        "Trace authentication versus authorization separately, including record ownership and role limits.",
+        "Check validation, encoding, injection, command invocation, deserialization, traversal, SSRF and egress where applicable.",
+        "Inspect secret handling, logs/telemetry, caching, permissions, dangerous Git/shell paths and supply-chain changes.",
+        "For database or async paths, evaluate RLS bypass, destructive operations, retries, races and fencing.",
+        "Relate each plausible exploit to exact code path, prerequisite and expected impact; prioritize material reachable risks.",
+        "Run approved scanners or safe focused tests, retaining tool versions, result provenance and negative control tests.",
+        "Report findings and require independent verified remediation before upgrading gate, not an ungrounded 'secure' claim."
+      ],
+      "decisions": [
+        "If a suspected exploit requires privileges users do not have, document the precondition before assigning severity.",
+        "If a scanner result is unverifiable, label it a hypothesis and identify a reproducible test.",
+        "If secret material appears, avoid echoing it into findings and route authorized incident handling.",
+        "If source/permissions proof is missing, keep the affected control BLOCKED rather than assuming safety."
+      ],
+      "permissions": "Security Reviewer reads scoped artifacts and may invoke approved non-destructive scanners only. Never edit product/deny policies/receipts or test production systems without approval.",
+      "failures": [
+        "Critical/high reachable path: FAILED and named mitigation requirement.",
+        "Unknown attack surface or outdated dependency evidence: BLOCKED/UNVERIFIED with concrete missing source.",
+        "Scanner false positive: document counterevidence; never simply suppress the rule."
+      ],
+      "verification": [
+        "Finding includes file/entry point, trust boundary, exploit path, impact, severity and minimum mitigation.",
+        "Scan and test results are pinned to current revision and tool/provider identity.",
+        "Report distinguishes deterministic checks from hypothesis, residual risk and untested vectors."
+      ],
+      "examples": [
+        "Correct: demonstrate an IDOR by checking non-owner 200 vs expected 403 and cite authorization branch.",
+        "Incorrect: call a product 'fully secure' after finding zero secrets in a single regex scan."
+      ]
+    },
+    {
+      "id": "task-contract",
+      "title": "Task Contract",
+      "description": "Use at task intake to convert a feature, bugfix, refactor or maintenance request into approved, testable scope and invariants.",
+      "trigger": "A user goal is understood but implementation scope, acceptance and verification boundaries are not yet canonical.",
+      "exclude": "Executing code before approval, adjudicating final implementation PASS or replacing protected Orchestrator state.",
+      "inputs": [
+        "User-stated objective and hard constraints, current project and authorized repository",
+        "Existing related behavior, user-visible definition of done and risk/permission boundaries",
+        "Missing facts and dependencies that could change correctness or cause irreversible action"
+      ],
+      "outputs": [
+        "One outcome statement, in-scope/out-of-scope list and protected invariants",
+        "Criterion IDs with observable results, negative/edge cases and evidence requirements",
+        "Risk classification, owner/handoff map and BLOCKED assumptions"
+      ],
+      "steps": [
+        "Capture the requested outcome verbatim enough to avoid silently changing intent; identify impacted users and surfaces.",
+        "Separate requirements from implementation suggestions and list the behavior explicitly excluded.",
+        "Write acceptance criteria in observable terms: input/setup → action → expected result, including errors and permissions.",
+        "Record invariants such as data preservation, authorization, prior public contract and no out-of-scope edits.",
+        "Classify risks of data loss, schema change, external effects, permissions and uncertain environments.",
+        "Define permitted file areas, tools, approvals and who may edit/verify/judge; keep judges read-only.",
+        "Specify evidence for each criterion, including deterministic tests and real-provider proofs where needed.",
+        "Return assumptions and dependencies to Orchestrator for approval before directing a writer."
+      ],
+      "decisions": [
+        "If one key fact is missing and cannot be safely inferred, mark the affected criterion BLOCKED and request it.",
+        "If scope expands, issue an explicit revised contract; never smuggle optional cleanup into original scope.",
+        "If a user asks for a destructive change, require the applicable permission/backup gate rather than an assumed yes.",
+        "If verification needs external access/model capability, name the dependency and avoid claiming readiness."
+      ],
+      "permissions": "Task Contract preparation is a planning operation. It never grants additional shell, write, network or subagent permissions; protected state updates require authorized Orchestrator commands.",
+      "failures": [
+        "Contradictory requirements: BLOCKED with the competing statements and minimal resolution question.",
+        "Untestable acceptance text: revise to a measurable observation or mark UNVERIFIED.",
+        "Unknown consent for irreversible action: block that action, preserve unaffected work."
+      ],
+      "verification": [
+        "Each criterion can be independently observed without trusting a writer's statement.",
+        "All invariants, exclusions and permission boundaries are explicit and non-contradictory.",
+        "Handoff has a criterion-to-evidence map and no claim of completed implementation."
+      ],
+      "examples": [
+        "Correct: 'Given a non-owner token, PATCH /record/7 must return 403 and leave row unchanged', with corresponding test evidence required.",
+        "Incorrect: acceptance criterion 'make the API better' or plan to rewrite the service because the task sounds broad."
+      ]
+    },
+    {
+      "id": "test-strategy",
+      "title": "Test strategy",
+      "description": "Use to design behavior-first regression and integration verification with honest real/mock provenance and failure controls.",
+      "trigger": "Task Contract or proposed diff needs an executable test matrix with meaningful risk coverage.",
+      "exclude": "Faking green output, lowering coverage to pass CI or promising real-provider behavior with only mocks.",
+      "inputs": [
+        "Approved acceptance criteria, public contract and changed behavior or failure reproduction",
+        "Existing test layers/fixtures, deterministic gates, provider availability and authorization constraints",
+        "Risk classification, external dependencies and regression-sensitive consumer paths"
+      ],
+      "outputs": [
+        "Test matrix from criterion → layer → setup/input → expected proof → provenance",
+        "Required negative, edge, permission and failure-recovery scenarios",
+        "Exact commands, environment dependencies and realistic gate/blocker states"
+      ],
+      "steps": [
+        "Identify observable behavior and a failure that would distinguish a correct change from an incorrect one.",
+        "Choose the lowest stable test layer proving each criterion, then add integration/E2E only for cross-boundary risk.",
+        "For bugs, capture a failing-before reproduction; prevent regression with a test that detects original fault.",
+        "For features, cover happy path plus permission-denied, malformed, absent and material edge/error paths.",
+        "Use deterministic fixtures and isolate external services; label mock or controlled provider provenance.",
+        "Add concurrency, persistence, migrations, network faults and retry tests where the contract crosses those boundaries.",
+        "Define exact test commands, stable assertions, expected exit codes and freshness/correlation to source revision.",
+        "Run authorized checks or hand off execution; interpret failures without weakening tests or suppressing warnings."
+      ],
+      "decisions": [
+        "If unit coverage cannot prove integration, add a higher-level contract or E2E test.",
+        "If real-browser or native-image output is required, isolate that gate and mark it BLOCKED until provider evidence exists.",
+        "If a flaky test times out, investigate environment and nondeterminism rather than merely doubling budget without evidence.",
+        "If a regression test passes on the broken baseline, strengthen it so it distinguishes the fault."
+      ],
+      "permissions": "Planner/test author may edit test files only when explicitly authorized as writer. Verifiers/Judges remain read-only. Never disable CI, tests, coverage, security gates or provider provenance checks.",
+      "failures": [
+        "Missing dependency/environment: BLOCKED with reproduction instructions, not silently SKIPPED.",
+        "Product assertion failure: FAILED with actual/expected values and source revision.",
+        "Non-deterministic outcome: isolate cause, collect repeat measurements and leave gate UNVERIFIED until resolved."
+      ],
+      "verification": [
+        "Every acceptance criterion has at least one behavior-based proof and applicable negative scenario.",
+        "Assertions would detect a meaningful wrong implementation, not merely check that a function ran.",
+        "Test results include commands, runtime/provider identity and source revision; no skips or fabricated receipts."
+      ],
+      "examples": [
+        "Correct: a change to a payment idempotency key gets replay, concurrency and failed-charge tests with stable fake gateway semantics.",
+        "Incorrect: replace detailed assertions with `expect(true).toBe(true)` to make a flaky run green."
+      ]
+    }
+  ]
+}

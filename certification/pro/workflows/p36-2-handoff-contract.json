@@ -1,0 +1,214 @@
+{
+  "schema_version": "1.0",
+  "phase": "P36.2",
+  "workflow_id": "ALEDEVOS_PRO_TASK_FLOW",
+  "intent": "Document the canonical evidence-first task path; verify handoff/ownership contracts. Not a replacement for protected Core runtime.",
+  "default_code_change": {
+    "stages": [
+      {
+        "id": "INTAKE",
+        "owner": "orchestrator",
+        "requires": [],
+        "emits": [
+          "task_objective",
+          "project_scope"
+        ],
+        "nonclaims": [
+          "no implementation approved"
+        ]
+      },
+      {
+        "id": "TASK_CONTRACT",
+        "owner": "orchestrator",
+        "requires": [
+          "INTAKE"
+        ],
+        "emits": [
+          "contract_id",
+          "acceptance_criteria",
+          "protected_scope"
+        ],
+        "nonclaims": [
+          "not a passed implementation"
+        ]
+      },
+      {
+        "id": "QUALITY_PLAN",
+        "owner": "orchestrator",
+        "requires": [
+          "TASK_CONTRACT"
+        ],
+        "emits": [
+          "risk_class",
+          "quality_plan_ref",
+          "required_gates"
+        ],
+        "nonclaims": [
+          "plan is not execution"
+        ]
+      },
+      {
+        "id": "ROUTING",
+        "owner": "orchestrator",
+        "requires": [
+          "QUALITY_PLAN"
+        ],
+        "emits": [
+          "role_order",
+          "skill_route",
+          "permissions_basis"
+        ],
+        "nonclaims": [
+          "no silent untrusted Skill install"
+        ]
+      },
+      {
+        "id": "WRITER",
+        "owner": "builder",
+        "aliases": [
+          "editor-backend",
+          "editor-config",
+          "editor-database",
+          "editor-frontend",
+          "editor-tests",
+          "repairer"
+        ],
+        "requires": [
+          "ROUTING"
+        ],
+        "emits": [
+          "source_revision",
+          "diff",
+          "focused_test_refs"
+        ],
+        "nonclaims": [
+          "writer is not judge"
+        ]
+      },
+      {
+        "id": "VERIFY",
+        "owner": "verifier",
+        "requires": [
+          "WRITER"
+        ],
+        "emits": [
+          "gate_receipts",
+          "scope_check",
+          "regression_input"
+        ],
+        "nonclaims": [
+          "no self-approval"
+        ]
+      },
+      {
+        "id": "JUDGE_REQUIREMENTS",
+        "owner": "judge-requirements",
+        "requires": [
+          "VERIFY"
+        ],
+        "emits": [
+          "criteria_matrix",
+          "requirements_score"
+        ],
+        "nonclaims": [
+          "only own judgment"
+        ]
+      },
+      {
+        "id": "JUDGE_REGRESSION",
+        "owner": "judge-regression",
+        "requires": [
+          "JUDGE_REQUIREMENTS"
+        ],
+        "emits": [
+          "blast_radius",
+          "regression_verdict"
+        ],
+        "nonclaims": [
+          "only own judgment"
+        ]
+      },
+      {
+        "id": "JUDGE_QUALITY",
+        "owner": "judge-quality",
+        "requires": [
+          "JUDGE_REGRESSION"
+        ],
+        "emits": [
+          "quality_score",
+          "quality_verdict"
+        ],
+        "nonclaims": [
+          "only own judgment"
+        ]
+      },
+      {
+        "id": "FINALIZE",
+        "owner": "orchestrator",
+        "requires": [
+          "JUDGE_QUALITY"
+        ],
+        "emits": [
+          "PASS_OR_BLOCKED_OR_FAILED",
+          "evidence_manifest"
+        ],
+        "nonclaims": [
+          "cannot override required veto"
+        ]
+      }
+    ],
+    "always_sequential": true,
+    "independent_judges": true,
+    "forbid_writer_as_judge": true
+  },
+  "optional_visual": {
+    "required_when": "Visual QA policy applies and a native-image P5 semantic/aesthetic verdict is required",
+    "phases": [
+      {
+        "id": "P2",
+        "owner": "visual-capture-runner",
+        "must_prove": "real provider, screenshot bytes, hash and case set"
+      },
+      {
+        "id": "P3",
+        "owner": "visual-regression-runner",
+        "must_prove": "baseline-pinned pixel diff and tolerance"
+      },
+      {
+        "id": "P4",
+        "owner": "visual-runtime-audit-runner",
+        "must_prove": "rendered DOM/layout/a11y, active policies"
+      },
+      {
+        "id": "P5",
+        "owner": "visual-judge",
+        "must_prove": "actual native image model observation, current P2-P4"
+      }
+    ],
+    "text_only_model_must_block_P5": true,
+    "controlled_mock_must_never_claim_real": true,
+    "after_repair_fresh_chain_required": true
+  },
+  "repair": {
+    "authorization_owner": "orchestrator",
+    "visual_controller_owner": "visual-repair-controller",
+    "writer_owner": "repairer",
+    "max_cycles": 2,
+    "required_input": "failed protected gate receipt and authorized finding IDs",
+    "forbidden": [
+      "third repair",
+      "scope expansion without approval",
+      "judge edits",
+      "baseline promotion without policy",
+      "replay stale P2/P3/P4/P5 receipts"
+    ]
+  },
+  "invariants": [
+    "Scope authority is independent of Skill text",
+    "One subagent at a time by default",
+    "No writer may judge its own changes",
+    "Critical missing evidence is BLOCKED",
+    "No false native-image or browser claims",
+    "Protected receipts must be current and sealed"
+  ]
+}

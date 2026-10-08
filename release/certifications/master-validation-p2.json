@@ -18,7 +18,7 @@
   "inputs": [
     {
       "path": "release/templates/master-validator-adapter-runtime.mjs",
-      "sha256": "fa8f6da797a883e575b16162b8c175eef816bc0011546a7af0e086953bf33bd2"
+      "sha256": "6662fc864a943edfd811c3763ded41c1db67e6a841b6c3a89d6c1fda7ed55343"
     },
     {
       "path": "release/templates/master-validation-p2-certifier.mjs",
@@ -42,7 +42,7 @@
     },
     {
       "path": "scripts/53-master-validation-p2-target-adapters.ps1",
-      "sha256": "63ad2371af201978cf577dffe823672ab970f8a0cd7532fcfcb3d3bdb377a7c4"
+      "sha256": "90358f03504a5a276d96eed02e2a8d405e6de85fa2867d2c95f926d7c0322af0"
     },
     {
       "path": "release/engine/v1-release.mjs",
@@ -54,8 +54,8 @@
     },
     {
       "path": "release/certifications/master-validation-p1.json",
-      "sha256": "32c0e62c1e5dbe35344b2eda2b0781b10a24a82e1a3330da2eae9781527a1234"
+      "sha256": "655fe4678f3d39683a5f63844ca8b7acbd2a2095c1aa9cd9db29df5a4fdd9489"
     }
   ],
-  "master_p2_certificate_sha256": "4d195bca8c27b5931bd96bde19007708aeae274b889fd2334f812ab46a5069b4"
+  "master_p2_certificate_sha256": "d22785746043fe61ac58e1f661c0a7d30694f7c171e68a5e0d448ad519bad886"
 }

@@ -1,5 +1,9 @@
 # AleDevOS
 
+**Visual QA Phase 4: Rendered Layout/A11y Runtime Checks COMPLETE / FROZEN** — deterministic checks cover rendered layout, focus, contrast and accessibility measurements; this does not certify aesthetics, native-image judgment or full WCAG compliance.
+
+**Visual QA Phase 5: Semantic/Aesthetic Judge Control Plane COMPLETE / FROZEN (package implementation only).** Runtime aesthetic evaluation remains BLOCKED/UNVERIFIED without an actual native-image-capable model, current P2–P4 receipts and observed image evidence. A completed deterministic P34 smoke does not certify P5, aesthetics, full WCAG conformance or V1 release.
+
 > **A portable AI macro-skill for software engineering.**
 
 AleDevOS is a reusable operating layer for AI-assisted software engineering. It provides orchestration, relevant-context selection, specialized agents, reusable Skills, deterministic gates, bounded repair, security/reliability controls and real efficiency telemetry without coupling its Core to a specific model or provider.

@@ -8,10 +8,10 @@ if(-not $Workspace){$Workspace=Join-Path $env:TEMP 'AleDevOS-v1-target-runtime-s
 $Workspace=[System.IO.Path]::GetFullPath($Workspace)
 $fixture=Join-Path $root 'tests\target-runtime-fixture'
 
-function Run-Node([string]$Script,[string[]]$Args,[switch]$AllowNonZero){
-  & node $Script @Args
+function Run-Node([string]$Script,[string[]]$NodeArgs,[switch]$AllowNonZero){
+  & node $Script @NodeArgs
   $code=$LASTEXITCODE
-  if(-not $AllowNonZero -and $code -ne 0){throw "Node command failed ($code): $Script $($Args -join ' ')"}
+  if(-not $AllowNonZero -and $code -ne 0){throw "Node command failed ($code): $Script $($NodeArgs -join ' ')"}
   return $code
 }
 function Write-JsonFile([string]$Path,$Object){
@@ -80,10 +80,41 @@ try {
   }
 
   $portFile=Join-Path $Workspace '.server-port'
-  $server=Start-Process -FilePath 'node' -ArgumentList @((Join-Path $Workspace 'server.mjs'),'--port','0','--port-file',$portFile) -PassThru -WindowStyle Hidden
-  for($i=0;$i -lt 100 -and -not (Test-Path $portFile);$i++){Start-Sleep -Milliseconds 50}
-  if(-not (Test-Path $portFile)){throw 'Target fixture server did not publish a port'}
+  $serverStdout=Join-Path $Workspace '.server-stdout.log'
+  $serverStderr=Join-Path $Workspace '.server-stderr.log'
+  $nodeExe=(Get-Command node -ErrorAction Stop).Source
+
+  # Start-Process joins ArgumentList on Windows. Keep path-bearing arguments out
+  # of its command line: launch server.mjs from the controlled working directory.
+  $server=Start-Process -FilePath $nodeExe -WorkingDirectory $Workspace `
+    -ArgumentList @('server.mjs','--port','0','--port-file','.server-port') `
+    -PassThru -WindowStyle Hidden `
+    -RedirectStandardOutput $serverStdout -RedirectStandardError $serverStderr
+
+  for($i=0;$i -lt 200 -and -not (Test-Path $portFile);$i++){
+    if($server.HasExited){break}
+    Start-Sleep -Milliseconds 50
+  }
+  if(-not (Test-Path $portFile)){
+    Write-Host 'Fixture server stdout:' -ForegroundColor Yellow
+    if(Test-Path $serverStdout){Get-Content $serverStdout}
+    Write-Host 'Fixture server stderr:' -ForegroundColor Yellow
+    if(Test-Path $serverStderr){Get-Content $serverStderr}
+    $exitLabel=if($server.HasExited){$server.ExitCode}else{'still-running'}
+    throw "Target fixture server did not publish a port (process=$exitLabel)"
+  }
   $port=(Get-Content $portFile -Raw).Trim()
+  if($port -notmatch '^\d{1,5}$' -or [int]$port -lt 1 -or [int]$port -gt 65535){
+    throw "Fixture server published invalid port: $port"
+  }
+  try {
+    $health=Invoke-WebRequest -Uri "http://127.0.0.1:$port/health" -UseBasicParsing -TimeoutSec 5
+    if($health.StatusCode -ne 200 -or $health.Content.Trim() -ne 'ok'){
+      throw 'Fixture server health response was not HTTP 200 / ok'
+    }
+  } catch {
+    throw "Fixture server health check failed on port ${port}: $($_.Exception.Message)"
+  }
   $baseUrl="http://127.0.0.1:$port"
   Write-Host "Fixture server: $baseUrl" -ForegroundColor DarkGray
 

@@ -79,7 +79,7 @@ function newAbstractionCandidates(policy){
   const status=line.slice(0,2);
   if(!(status==='??'||status.includes('A')))continue;
   let rel=line.slice(3).trim();if(rel.includes(' -> '))rel=rel.split(' -> ').pop();rel=norm(rel.replace(/^"|"$/g,''));
-  if(!rel||rel.startsWith('.aledevos/')||rel.startsWith('.codex/')||rel.startsWith('.agents/')||rel.startsWith('.git/'))continue;
+  if(!rel||rel.startsWith('.aledevos/')||rel.split('/')[0].startsWith('.')||rel.startsWith('.agents/')||rel.startsWith('.git/'))continue;
   if(/(^|\/)(tests?|__tests__|specs?)(\/|$)/i.test(rel))continue;
   if(!extensions.has(path.extname(rel).toLowerCase()))continue;
   const dirs=rel.toLowerCase().split('/').slice(0,-1);

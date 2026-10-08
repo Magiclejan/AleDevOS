@@ -60,7 +60,7 @@
     },
     {
       "path": "adapters/opencode/adapter-capabilities.json",
-      "sha256": "90bde892a4d18cc6dcbe782b2eafea627520c8e747978a939db27cd63201d1a5"
+      "sha256": "bc78fe349d60e9b94db77df0af66291cc241ab5d0bcf4fb3ee79129824545419"
     },
     {
       "path": "adapters/opencode/visualqa/playwright-driver.mjs",
@@ -84,40 +84,40 @@
     },
     {
       "path": "release/certifications/antigravity-portability-p5.json",
-      "sha256": "fa0d9b43d7ffbd80c810dd7a39062103cb88b2573cfbee5a66524ff0ef49f5b8"
+      "sha256": "3b68b5fec156a566cfb5a45fd19b0082786d8623b05704afaeed01e9153852a1"
     },
     {
       "path": "release/certifications/claude-code-portability-p4.json",
-      "sha256": "3180297062b96194441fb36e9101fdd63b411b921c247bdd06f925c5e8031045"
+      "sha256": "d1d261219db66391c8fa70c76fdd8708f8287df975139797b36a0327a74cf3a8"
     },
     {
       "path": "release/certifications/codex-portability-p3.json",
-      "sha256": "1491ce83bccdafca95e29ad06be739cd9a0ae0a07af288eab7c7279f5b1ced15"
+      "sha256": "8d11e555b578183629bc86f302248cabdb46a29c317944baa56973aa772a6b37"
     },
     {
       "path": "release/certifications/opencode-portability-p2.json",
-      "sha256": "ad9884ae151f175bed10d869e35e18a9dc2b05dfffda68e89662eb1ac399b4f4"
+      "sha256": "1d6fc9eb18114b985fe9f58e18144083c231a64b01b7df30f0952dd263ddebe3"
     },
     {
       "path": "skillsystem/bindings/antigravity.json",
-      "sha256": "2965a44f1d74867083e7b5123b18fd826c93f08d61442716b73d95ee47b45da6"
+      "sha256": "74ad9de2dc7a85c4baf8e6eb6c01cdca1c5a6c32a9e9b6726bde5dcf5571d776"
     },
     {
       "path": "skillsystem/bindings/claude-code.json",
-      "sha256": "4ae09b1262f0eadc1fd622ebade608b288f2472d5dcfb6a7c6b7bbb9e733a981"
+      "sha256": "3775bf74a840a0fcf0e584c805112b9e89f7e2c9f70ffc9f37422216e3c7cfc9"
     },
     {
       "path": "skillsystem/bindings/codex.json",
-      "sha256": "855f787aa83ba137aa17cdb63b33ebe6e43e6223bf479331456a9c5cd44aca2e"
+      "sha256": "5323d45059047d1b3f5f1c71c7d3bbd8f7f8dd74d3cfdc8543c769fd103a0d4a"
     },
     {
       "path": "skillsystem/bindings/opencode.json",
-      "sha256": "dbc8f38524bed2b7351045049b2368e9066c850b83e91cf61370937849200720"
+      "sha256": "909ed06b3fe1542887be64f77bc8abb2f299a9e4b9f948f3c1963e37c51d7bf6"
     },
     {
       "path": "skillsystem/portable/portable-skill-pack.json",
-      "sha256": "57fe05364102b04343ccc539977d11cc96eb4197df2e076e2bc0749c7f65df77"
+      "sha256": "9aee1ca718c8bb810534816c2edd891d168dab2aafc75c1530595f79d1bf01cd"
     }
   ],
-  "evidence_sha256": "ed338b10e5cb98bb64f930ee4c38fdfa137f251b1e87b5ec660119eb405c770e"
+  "evidence_sha256": "6588085f112a22873e332c5c4648b3102acb12c502f693d984469145a9277c9e"
 }

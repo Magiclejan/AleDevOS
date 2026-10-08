@@ -24,8 +24,16 @@ $initialEntries=@(Get-ChildItem -LiteralPath $target -Force -ErrorAction Silentl
 $gitRepository=$false
 $gitCmd=Get-Command git -ErrorAction SilentlyContinue
 if($gitCmd){
-  $gitProbe=& $gitCmd.Source -C $target rev-parse --is-inside-work-tree 2>$null
-  if($LASTEXITCODE -eq 0 -and (($gitProbe | Out-String).Trim() -eq 'true')){$gitRepository=$true}
+  # Windows PowerShell 5.1 may promote native Git stderr into a terminating
+  # NativeCommandError when probing a legitimate empty, non-Git project.
+  # Git is optional: an absent repository must never abort installation.
+  try {
+    $gitProbe=& $gitCmd.Source -C $target rev-parse --is-inside-work-tree 2>$null
+    if($LASTEXITCODE -eq 0 -and (($gitProbe | Out-String).Trim() -eq 'true')){$gitRepository=$true}
+  }
+  catch {
+    $gitRepository=$false
+  }
 }
 $projectEnvironment=if((-not $projectExisted) -or $initialEntries.Count -eq 0){
   'NEW_EMPTY'
@@ -87,6 +95,7 @@ $ale=Join-Path $target '.aledevos'
 Copy-SafeFile (Join-Path $root 'core\engine\aledevos.mjs') (Join-Path $ale 'runtime\aledevos.mjs')
 Copy-SafeFile (Join-Path $root 'core\engine\telemetry-bridge.mjs') (Join-Path $ale 'runtime\telemetry-bridge.mjs')
 Copy-SafeFile (Join-Path $root 'core\agent-runtime\agent-runtime.mjs') (Join-Path $ale 'agent-runtime\runtime\agent-runtime.mjs')
+Copy-SafeFile (Join-Path $root 'runtime-bridges\agent-runtime.mjs') (Join-Path $ale 'runtime-bridges\agent-runtime.mjs')
 Copy-SafeFile (Join-Path $root 'core\agent-runtime\windows-cli-launcher.ps1') (Join-Path $ale 'agent-runtime\runtime\windows-cli-launcher.ps1')
 Copy-SafeFile (Join-Path $adapterRoot 'runtime-profile.json') (Join-Path $ale "agent-runtime\adapters\$CanonicalAdapter.json")
 Get-ChildItem (Join-Path $root 'core\schemas') -File | ForEach-Object {Copy-SafeFile $_.FullName (Join-Path $ale "schemas\$($_.Name)")}
