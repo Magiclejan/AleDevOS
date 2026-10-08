@@ -7,7 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
- summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectQualityProgress,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
+ summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectQualityProgress,inspectAgentHandoff,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -359,4 +359,88 @@ test('Quality progress reports exact safe Core gate state without leaking plan, 
  assert.equal(result.judge_count,0);
  assert.equal(JSON.stringify(result).includes('NO_LEAK'),false);
  assert.equal(JSON.stringify(result).includes('NEVER_EXPOSE'),false);
+});
+
+
+test('P37.1 identifies the second unclosed Auditor after a verified Builder handoff, without inventing failure cause',async()=>{
+ const dir=tmp(),task=path.join(dir,'.aledevos/state/tasks/pilot-071');
+ fs.mkdirSync(task,{recursive:true});
+ const at=i=>'2026-10-08T11:'+String(i).padStart(2,'0')+':00.000Z';
+ const trace=[
+  ['orchestrator','STARTED'],['researcher','STARTED'],['auditor','STARTED'],
+  ['researcher','COMPLETED'],['auditor','COMPLETED'],['builder','STARTED'],
+  ['builder','COMPLETED'],['auditor','STARTED']
+ ].map(([agent,status],i)=>({agent,status,at:at(i),private_reason:'SECRET_SHOULD_NOT_APPEAR'}));
+ const state={task_id:'pilot-071',final_state:null,blocked_reason:null,
+  acceptance_criteria:[{id:'evidence-grounded',status:'UNVERIFIED'},{id:'requested-result',status:'UNVERIFIED'}],
+  agent_trace:trace,history:trace.map(x=>({type:'AGENT',at:x.at,agent:x.agent,status:x.status,reason:'PRIVATE_DATA'}))
+ };
+ fs.writeFileSync(path.join(task,'state.json'),JSON.stringify(state));
+ const result=inspectAgentHandoff(dir);
+ assert.equal(result.task_count,1);
+ assert.equal(result.core_final_state,'UNFINISHED');
+ assert.equal(result.core_blocked,false);
+ assert.equal(result.builder_completed,true);
+ assert.equal(result.verifier_started,false);
+ assert.equal(result.verifier_completed,false);
+ assert.equal(result.post_builder_auditor_started,true);
+ assert.deepEqual(result.active_specialist_roles,['auditor']);
+ assert.equal(result.last_active_specialist,'auditor');
+ assert.equal(result.last_agent_role,'auditor');
+ assert.equal(result.last_agent_status,'STARTED');
+ assert.equal(result.handoff_stage,'POST_BUILD_AUDIT_UNCLOSED');
+ assert.equal(result.criteria_total,2);
+ assert.equal(result.unverified_criteria,2);
+ assert.equal(result.native_role_delegation_independently_verified,false);
+ assert.equal(result.last_history_type,'AGENT');
+ assert.equal(JSON.stringify(result).includes('PRIVATE_DATA'),false);
+ assert.equal(JSON.stringify(result).includes('SECRET_SHOULD_NOT_APPEAR'),false);
+ const marker={phase:'P37.1',kind:'DISPOSABLE_INSTALLED_FIXTURE',source_root:repo};
+ fs.writeFileSync(path.join(dir,'.p37-owned-disposable.json'),JSON.stringify(marker));
+ const diagnostic=await main(['diagnose','--workspace',dir],repo);
+ assert.equal(diagnostic.status,'READ_ONLY_HISTORICAL_DIAGNOSTIC');
+ assert.equal(diagnostic.agent_handoff.handoff_stage,'POST_BUILD_AUDIT_UNCLOSED');
+ assert.equal(diagnostic.pro_certified,0);
+ assert.equal((await main(['cases'],repo)).pro_certified,0);
+});
+
+test('P37.1 handoff remains unverified if history is absent, spoofed or another user directory is queried',async()=>{
+ const dir=tmp();
+ assert.equal(inspectAgentHandoff(dir).handoff_stage,'NOT_OBSERVED');
+ await assert.rejects(()=>main(['diagnose','--workspace',dir],repo),/P37_1_DIAGNOSE_MARKER_MISSING/);
+ fs.writeFileSync(path.join(dir,'.p37-owned-disposable.json'),JSON.stringify({
+  phase:'P37.1',kind:'DISPOSABLE_INSTALLED_FIXTURE',source_root:'/wrong/project'
+ }));
+ await assert.rejects(()=>main(['diagnose','--workspace',dir],repo),/P37_1_DIAGNOSE_SOURCE_OWNERSHIP_MISMATCH/);
+ const task=path.join(dir,'.aledevos/state/tasks/pilot-091');fs.mkdirSync(task,{recursive:true});
+ fs.writeFileSync(path.join(task,'state.json'),JSON.stringify({
+  task_id:'pilot-091',final_state:'PASS',blocked_reason:null,
+  agent_trace:[{agent:'INJECTED_PRIVATE_TEXT',status:'STARTED'},{agent:'verifier',status:'STARTED'}]
+ }));
+ const out=inspectAgentHandoff(dir);
+ assert.equal(out.last_agent_role,'verifier');
+ assert.equal(out.handoff_stage,'FINALIZED');
+ assert.equal(out.native_role_delegation_independently_verified,false);
+ assert.equal(out.active_specialist_roles[0],'verifier');
+ assert.equal(JSON.stringify(out).includes('INJECTED_PRIVATE_TEXT'),false);
+});
+
+test('P37.1 Codex event metadata reports command failures, not command content or native role proofs',()=>{
+ const raw=[
+  {type:'item.started',item:{type:'command_execution',command:'super private invocation'}},
+  {type:'item.completed',item:{type:'command_execution',command:'super private invocation',exit_code:1}},
+  {type:'item.completed',item:{type:'collab_tool_call',recipient:'secret-target'}},
+  {type:'item.completed',item:{type:'agent_message',text:'BLOCKED: task is incomplete'}}
+ ].map(JSON.stringify).join('\n');
+ const p=summarizeCodexEvents(raw);
+ assert.equal(p.tool_events,3);
+ assert.equal(p.native_tool_kinds.command_execution,2);
+ assert.equal(p.native_tool_kinds.collab,1);
+ assert.equal(p.failed_completed_tool_count,1);
+ assert.equal(p.last_completed_tool_kind,'collab');
+ assert.equal(p.last_completed_tool_exit_code,null);
+ assert.equal(p.native_subagent_execution_independently_verified,false);
+ assert.equal(p.final_message_blocked,true);
+ assert.equal(JSON.stringify(p).includes('super private invocation'),false);
+ assert.equal(JSON.stringify(p).includes('secret-target'),false);
 });
