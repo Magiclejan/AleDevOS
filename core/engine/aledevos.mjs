@@ -142,7 +142,15 @@ if(group==='state'&&cmd==='judge'){
   if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('CODEX_JUDGE_GATES_NOT_PASS',49);
  }
  s.judges[judge]={score,blockers,unverified,at:new Date().toISOString()};
- event(s,'JUDGE',{judge,score,blockers,unverified});persistState(p,s);
+ event(s,'JUDGE',{judge,score,blockers,unverified});
+ if(s.runtime_adapter==='codex'){
+  const role=`judge-${judge}`,trace=s.agent_trace||[];
+  if(!trace.some(x=>x.agent===role&&x.status==='COMPLETED')){
+   const rec={agent:role,status:'COMPLETED',thread_id:null,at:new Date().toISOString()};
+   s.agent_trace.push(rec);event(s,'AGENT',rec);
+  }
+ }
+ persistState(p,s);
  emitJudgeTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,judge,score,blockers,unverified});
  console.log('JUDGE_RECORDED');process.exit(0)
 }
