@@ -688,7 +688,10 @@ function executeCase(root,opts){
   issues.push('PROVIDER_BLOCKED_WITH_UNFINISHED_TASK');
  if(caseId==='executed_real_task'&&agentHandoff.last_active_specialist)
   issues.push('AGENT_HANDOFF_INCOMPLETE');
- const taskIssue=taskFinalizationIssue(routeProgress,caseId);
+ const independentEvidenceOnly=caseId==='independent_verification'&&
+  agentHandoff.verifier_completed&&executionEvidence.task_contracts>0&&
+  routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true;
+ const taskIssue=independentEvidenceOnly?null:taskFinalizationIssue(routeProgress,caseId);
  if(taskIssue)issues.push(taskIssue);
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
   if(!changes.changed_paths.includes('src/utils.mjs'))issues.push('SAFE_EDIT_TARGET_UNCHANGED');
