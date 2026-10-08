@@ -73,7 +73,7 @@ jobs:
           echo "Full suite inventory PASS: $test_count test files"
 
 
-  advanced-cert-chain-diagnostic:
+  advanced-cert-chain-verification:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -81,8 +81,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Reissue package-only P1-P5 evidence into disposable CI checkout
+      - name: Verify frozen P1-P5 package-only certificates against actual source
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/ci/refresh-advanced-certificates.mjs --write --emit-contents
+          node scripts/ci/refresh-advanced-certificates.mjs
