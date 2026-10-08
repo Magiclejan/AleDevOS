@@ -54,8 +54,8 @@
     },
     {
       "path": "release/certifications/master-validation-p1.json",
-      "sha256": "ede8fbe6ebb3f03ed0673826bd4d4511ba11d0d6f5452f4fb4cdfc5103610745"
+      "sha256": "0a351e1699c11265506dce7a0073880d2ce208a22847cf3eb9149c7ebc3d5159"
     }
   ],
-  "master_p2_certificate_sha256": "961fe63c0adfba06c0c5509eece194e2d6511a481b360728d795df0be905fb2d"
+  "master_p2_certificate_sha256": "4886874e7e4c499650db37b5bf25f144c0f3b51153fbebf3f640115d3b53c309"
 }

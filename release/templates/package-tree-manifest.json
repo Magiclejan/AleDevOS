@@ -2386,8 +2386,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "addedc567c09c33881e485e7253592685990e61db72319666931ec957669b5f8",
-      "size": 6918
+      "sha256": "0fc972ac74cd66350c2479473394ba2b08c625bfc04aa43439879bc86284ed5a",
+      "size": 7292
     },
     {
       "path": "release/engine/v1-release.mjs",
@@ -4015,6 +4015,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "1f5713c359cd51cc6f7eb49c0e466a69967f080a4cb12e82bea8367e2729c9bb",
-  "manifest_sha256": "8abe21dd337d77c3296a4bb7cc5481865e044ce834a31c91f8154ee7db2e349b"
+  "tree_sha256": "b5e7760ea6a3ad066d3de32093047fab43d88a7827bf11fffa3b5dedfb6d125f",
+  "manifest_sha256": "2c4e09e3638759538953fba1ae661cd8fa4b3da2dea1844d129dbb0df8825631"
 }
