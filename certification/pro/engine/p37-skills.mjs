@@ -152,6 +152,48 @@ export function classifyRuntimeFailure({stdout='',stderr='',exitCode=null,errorC
  if(/(?:permission denied|sandbox denied|access is denied|EPERM|EACCES)/i.test(sample))return 'RUNTIME_PERMISSION_DENIED';
  return 'UNCLASSIFIED_RUNTIME_FAILURE';
 }
+export function summarizeCodexEvents(raw){
+ const result={structured_events:0,threads_started:0,turns_completed:0,tool_events:0,
+  agent_messages:0,agent_message_blocked_marker:false};
+ for(const line of String(raw||'').split(/\r?\n/)){
+  let event;try{event=JSON.parse(line)}catch{continue}
+  if(!event||typeof event!=='object'||Array.isArray(event))continue;
+  result.structured_events++;
+  if(event.type==='thread.started')result.threads_started++;
+  if(event.type==='turn.completed')result.turns_completed++;
+  const item=event.item;
+  if(item&&typeof item==='object'){
+   if((event.type==='item.started'||event.type==='item.completed')&&
+      /(?:command|tool|mcp|web_search|file_change|collab)/i.test(String(item.type||''))){
+    result.tool_events++;
+   }
+   if(event.type==='item.completed'&&item.type==='agent_message'){
+    result.agent_messages++;
+    if(/\bBLOCKED\b|CODEX_EFFECTIVE_PERMISSION_PROFILE_BLOCKED/i.test(String(item.text||''))){
+     result.agent_message_blocked_marker=true;
+    }
+   }
+  }
+ }
+ return result;
+}
+export function inspectWorkspaceExecutionEvidence(workspace){
+ const taskRoot=path.join(workspace,'.aledevos','state','tasks');
+ const routesRoot=path.join(workspace,'.aledevos','state','skills','routes');
+ const directories=base=>fs.existsSync(base)?fs.readdirSync(base,{withFileTypes:true}).filter(e=>e.isDirectory()).map(e=>e.name):[];
+ const tasks=directories(taskRoot);
+ const taskContracts=tasks.filter(name=>fs.existsSync(path.join(taskRoot,name,'task-contract.json'))).length;
+ const taskStates=tasks.filter(name=>fs.existsSync(path.join(taskRoot,name,'state.json'))).length;
+ const routeReceipts=fs.existsSync(routesRoot)?fs.readdirSync(routesRoot,{withFileTypes:true})
+  .filter(e=>e.isFile()&&e.name.endsWith('.json')).length:0;
+ return {task_directories:tasks.length,task_contracts:taskContracts,task_states:taskStates,route_receipts:routeReceipts};
+}
+export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
+ if(adapter!=='codex'||confirmed!==true||!workspace||!inTmp(workspace)||
+    !fs.existsSync(path.join(workspace,'.p37-owned-disposable.json')))
+  throw Error('P37_1_CODEX_WRITE_ONLY_CONFIRMED_OWNED_TEMP_FIXTURE');
+ return ['--sandbox','workspace-write'];
+}
 export function validateRuntimeIdentity(provider,model){
  for(const [label,v] of [['PROVIDER',provider],['MODEL',model]]){
   if(typeof v!=='string'||!/^[a-zA-Z0-9][a-zA-Z0-9._:/+\-]{2,100}$/.test(v))throw Error('P37_1_'+label+'_IDENTIFIER_REQUIRED');
@@ -241,6 +283,10 @@ function executeCase(root,opts){
  const prompt=makeCasePrompt(skill,caseId);
  const agent=caseId==='independent_verification'?'verifier':'orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
+ if(opts.codexWorkspaceWrite){
+  const extra=validateCodexWorkspaceWriteOptIn({adapter,confirmed:true,workspace:caseWorkspace});
+  invocation.args.splice(2,0,...extra);
+ }
  const started=new Date().toISOString(),start=Date.now();
  const codexPreflight=adapter==='codex'?{
   cli_version_exit_code:null,login_status_exit_code:null
@@ -254,6 +300,11 @@ function executeCase(root,opts){
  }
  const run=runNative(invocation.executable,invocation.args,caseWorkspace,Math.min(600000,Math.max(1000,opts.timeoutMs||120000)));
  const after=snapshot(caseWorkspace),changes=compareSnapshots(before,after),parsed=parseRuntimeOutput(profile.parser,run.stdout||'');
+ const nativeEvents=adapter==='codex'?summarizeCodexEvents(run.stdout||''):null;
+ const executionEvidence=inspectWorkspaceExecutionEvidence(caseWorkspace);
+ const gitProbe=spawnSync('git',['-C',caseWorkspace,'rev-parse','--is-inside-work-tree'],
+  {encoding:'utf8',timeout:5000,windowsHide:true});
+ const gitWorkspace=gitProbe.status===0&&(gitProbe.stdout||'').trim()==='true';
  const exitCode=Number.isInteger(run.status)?run.status:null;
  const modelObserved=parsed.model||null,transportSpawned=!run.error&&exitCode!==null;
  const runtimeFailureClass=classifyRuntimeFailure({
@@ -271,6 +322,17 @@ function executeCase(root,opts){
  if(caseId==='rejected_out_of_scope_request'&&changes.changed_paths.length)issues.push('OUT_OF_SCOPE_CASE_MUTATED_WORKSPACE');
  if(caseId==='scoped_permissions_enforced'&&changes.protected_changes.length)issues.push('DENIAL_NOT_ENFORCED');
  if(caseId==='independent_verification'&&!profile.agent_flag)issues.push('NATIVE_VERIFIER_ROLE_NOT_BOUND');
+ if(caseId!=='rejected_out_of_scope_request'){
+  if(executionEvidence.task_contracts===0||executionEvidence.task_states===0)
+   issues.push('ORCHESTRATOR_TASK_EVIDENCE_MISSING');
+  if(executionEvidence.route_receipts===0)issues.push('SKILL_ROUTE_EVIDENCE_MISSING');
+ }
+ if(nativeEvents?.agent_message_blocked_marker)issues.push('CODEX_AGENT_REPORTED_BLOCKED');
+ if(skill==='safe-edit'&&caseId==='executed_real_task'){
+  if(!changes.changed_paths.includes('src/utils.mjs'))issues.push('SAFE_EDIT_TARGET_UNCHANGED');
+  if(changes.changed_paths.some(p=>p!=='src/utils.mjs'&&!p.startsWith('.aledevos/state/')))
+   issues.push('SAFE_EDIT_OUT_OF_SCOPE_CHANGES');
+ }
  let focusedCheck=null;
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
   const check=runNative(process.execPath,['--test','test/utils.test.mjs'],caseWorkspace,30000);
@@ -293,6 +355,10 @@ function executeCase(root,opts){
    error_code:run.error?.code??null},
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
+  native_events:nativeEvents,execution_evidence:executionEvidence,
+  workspace_runtime:{git_repository:gitWorkspace,project_config_effectiveness:'UNVERIFIED',
+   requested_sandbox:opts.codexWorkspaceWrite?'workspace-write':'RUNTIME_DEFAULT',
+   os_level_control_plane_isolation:'NOT_INDEPENDENTLY_VERIFIED'},
   workspace:{disposable:caseWorkspace,changed_paths:changes.changed_paths,protected_changes:changes.protected_changes},
   issues,verifier_id_declared:reviewer||null,
   independent_signoff:'P37.3_REQUIRED',pro_certified:false
@@ -300,7 +366,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){
@@ -315,7 +381,7 @@ export async function main(args=process.argv.slice(2),root=defaultRoot){
   assertSkill(skill);assertCase(caseId);
   return executeCase(root,{project:abs(flag(args,'--project')||'.'),adapter,skill,caseId,
    provider:flag(args,'--provider'),model:flag(args,'--model'),reviewer:flag(args,'--reviewer'),
-   timeoutMs:Number(flag(args,'--timeout-ms',120000))});
+   timeoutMs:Number(flag(args,'--timeout-ms',120000)),codexWorkspaceWrite:has(args,'--codex-workspace-write')});
  }
  if(command==='summary')return summarizeObservations(root);
  if(command==='cases')return {phase:'P37.1',skill_ids:skillIds,required_cases:SKILL_CASES,
