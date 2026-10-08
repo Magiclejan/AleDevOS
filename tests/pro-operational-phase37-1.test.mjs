@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
- summarizeCodexEvents,inspectWorkspaceExecutionEvidence,inspectRouteProgress,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
+ summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -250,4 +250,51 @@ test('P37.1 reports blocked task status but never persists raw blocked reason',(
  assert.equal(p.task_blocked,true);
  assert.equal(p.task_final_state,'BLOCKED');
  assert.equal(JSON.stringify(p).includes('secret user data'),false);
+});
+
+
+test('P37.1 separates BLOCKED mentioned in narrative from explicit final verdict',()=>{
+ const cases=[
+  ['Repaired code; BLOCKED was a previous case status.', 'NO_EXPLICIT_VERDICT'],
+  ['No issues detected, but other tests previously BLOCKED.', 'NO_EXPLICIT_VERDICT'],
+  ['The task is not BLOCKED and passed its focused check.', 'NO_EXPLICIT_VERDICT'],
+  ['BLOCKED: scope permission mismatch','EXPLICIT_BLOCKED'],
+  ['Status: BLOCKED. No approval was given.','EXPLICIT_BLOCKED'],
+  ['# Estado: FAILED — verification incomplete','EXPLICIT_BLOCKED'],
+  ['## PASS — successful bounded task','EXPLICIT_COMPLETED'],
+  ['Status: COMPLETED','EXPLICIT_COMPLETED'],
+  ['PASS is a policy state; not an outcome of this run','EXPLICIT_COMPLETED'],
+  ['A previous task was BLOCKED, but this case was fixed.','NO_EXPLICIT_VERDICT']
+ ];
+ for(const [body,expected] of cases)assert.equal(classifyCodexFinalVerdict(body),expected);
+});
+
+test('P37.1 only the last Codex agent message carries the final verdict',()=>{
+ const data=[
+  {type:'item.completed',item:{type:'agent_message',id:'one',text:'BLOCKED: initial route gate'}},
+  {type:'item.completed',item:{type:'agent_message',id:'two',text:'Fixed src/utils.mjs; prior BLOCKED issue resolved.'}},
+  {type:'turn.completed',usage:{input_tokens:100,output_tokens:10}}
+ ].map(JSON.stringify).join('\n');
+ const parsed=summarizeCodexEvents(data);
+ assert.equal(parsed.agent_messages,2);
+ assert.equal(parsed.agent_message_blocked_marker,true);
+ assert.equal(parsed.final_message_blocked,false);
+ assert.equal(parsed.final_message_verdict,'NO_EXPLICIT_VERDICT');
+ const reverse=summarizeCodexEvents([
+  {type:'item.completed',item:{type:'agent_message',text:'Changes applied.'}},
+  {type:'item.completed',item:{type:'agent_message',text:'BLOCKED: independent verifier unavailable'}}
+ ].map(JSON.stringify).join('\n'));
+ assert.equal(reverse.final_message_blocked,true);
+ assert.equal(reverse.final_message_verdict,'EXPLICIT_BLOCKED');
+});
+
+test('P37.1 never treats a passing focused test as a finalized Orchestrator task',()=>{
+ const base={task_state_present:true,task_blocked:false,task_final_state:'UNFINISHED'};
+ assert.equal(taskFinalizationIssue(base,'executed_real_task'),'ORCHESTRATOR_TASK_NOT_FINALIZED');
+ assert.equal(taskFinalizationIssue({...base,task_final_state:'BLOCKED'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_BLOCKED');
+ assert.equal(taskFinalizationIssue({...base,task_final_state:'FAILED'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_FAILED');
+ assert.equal(taskFinalizationIssue({...base,task_final_state:'PASS'},'executed_real_task'),null);
+ assert.equal(taskFinalizationIssue({...base,task_blocked:true,task_final_state:'PASS'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_BLOCKED');
+ assert.equal(taskFinalizationIssue({...base,task_state_present:false},'executed_real_task'),null);
+ assert.equal(taskFinalizationIssue(base,'rejected_out_of_scope_request'),null);
 });
