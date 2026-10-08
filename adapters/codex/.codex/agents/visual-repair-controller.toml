@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: visual-repair-controller
+name = "visual-repair-controller"
+description = "AleDevOS Visual QA Phase 5 repair-cycle controller; no product edits, no judging."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false

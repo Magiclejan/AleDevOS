@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: auditor
+name = "auditor"
+description = "Read-only auditor."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false

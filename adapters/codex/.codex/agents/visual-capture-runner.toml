@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: visual-capture-runner
+name = "visual-capture-runner"
+description = "Narrow Visual QA Phase 2 browser-capture executor; no product edits."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false

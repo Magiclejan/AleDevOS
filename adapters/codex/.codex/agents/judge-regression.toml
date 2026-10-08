@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: judge-regression
+name = "judge-regression"
+description = "Read-only judge-regression; evidence-based."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false

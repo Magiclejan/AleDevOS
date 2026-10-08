@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: researcher
+name = "researcher"
+description = "Read-only bounded repository mapper."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false

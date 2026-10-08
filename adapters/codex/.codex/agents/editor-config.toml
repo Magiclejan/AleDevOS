@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: editor-config
+name = "editor-config"
+description = "High-risk project configuration editor; no shell."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
