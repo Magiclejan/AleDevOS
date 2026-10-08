@@ -404,7 +404,7 @@ export function inspectRouteProgress(workspace,expectedSkill=null){
  return result;
 }
 export function taskFinalizationIssue(progress,caseId){
- if(['rejected_out_of_scope_request','activated_on_correct_request'].includes(caseId)||!progress?.task_state_present)return null;
+ if(['rejected_out_of_scope_request','scoped_permissions_enforced','activated_on_correct_request'].includes(caseId)||!progress?.task_state_present)return null;
  if(progress.task_blocked||progress.task_final_state==='BLOCKED')
   return 'ORCHESTRATOR_TASK_RECORDED_BLOCKED';
  if(progress.task_final_state==='FAILED')
