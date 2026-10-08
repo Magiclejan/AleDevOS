@@ -136,3 +136,21 @@ New quality_progress exposes only approved gate statuses, a small allowlist of m
 This is a correction to the P37 **disposable certification harness**, not a change to the installer contract for arbitrary user projects, the frozen Core quality policy or the actual operating-system sandbox. Existing P37 receipts and their non-Git workspaces are historical observations and shall not be retroactively reclassified.
 
 Acceptance for the next real safe-edit case still requires the selected Skill/route to verify, authorized diff only, real canonical gates and Quality Engineering evidence, completed Verifier and required Judges, finalized task, and independent model provenance, followed by P37.3 review. PRO_CERTIFIED remains zero until all separate gates pass.
+
+### P37.1F — fifth real pilot: post-build Auditor handoff (2026-10-08)
+
+The fifth real Windows Codex safe-edit pilot repaired src/utils.mjs, passed the independently run focused test, and verified Skill routing. The provider then explicitly returned BLOCKED (exit 0, 230.5s elapsed), while Core task state remained UNFINISHED, QA OPEN with no evidence and no scope/integrity/canonical or judge results. This was NOT a timeout.
+
+Additional read-only local task inspection established the sequence:
+STATE_INIT → SCOPE_APPROVED → QUALITY_PLAN → Researcher STARTED → Auditor STARTED → Researcher COMPLETED → Auditor COMPLETED → Builder STARTED → Builder COMPLETED → Auditor STARTED.
+The last Core event was the second Auditor STARTED with no matching terminal role event. Approved scope was src/utils.mjs, both acceptance criteria were UNVERIFIED, and recorded blockers numbered zero. This proves an unclosed post-build Auditor handoff; it does NOT prove whether a native subagent failed, delegation was abandoned, or the provider independently refused. Codex profile agent_flag is null: Core role event names are not native-subagent attestation.
+
+The engine now emits agent_handoff using only allowlisted Core role/status, last recorded event type/time, unmatched specialist starts, verifier/builder milestone flags and acceptance counts. POST_BUILD_AUDIT_UNCLOSED denotes the incomplete Core record, never a fabricated cause of failure. Native Codex event metadata adds bounded tool-kind counts and completed tool exit-code summaries, not raw arguments, outputs, thread IDs, private messages or secrets. Counts of Core thread IDs do not prove native agent delegation and explicitly remain UNVERIFIED. For applicable positive cases, PROVIDER_BLOCKED_WITH_UNFINISHED_TASK and AGENT_HANDOFF_INCOMPLETE are extra fail-closed diagnostics, not alternate ways to attain PASS.
+
+Historical read-only inspection, with no model invocation or file mutation:
+
+    node certification/pro/engine/p37-skills.mjs diagnose --workspace "C:\Users\Alejandro Rodriguez\AppData\Local\Temp\aledevos-p37-case-dvMsqo"
+
+The diagnose action checks the owned marker and temp location, reports bounded agent_handoff and quality_progress, and always returns READ_ONLY_HISTORICAL_DIAGNOSTIC with pro_certified=0. Prior certificates and receipts remain immutable.
+
+Next architecture decision: native Codex delegation must be proven from provider-supported runtime events independent of model-written AleDevOS Core labels. Any durable multi-step/resumable adapter design must respect the AleDevOS MASTER and frozen contracts first; this change is **diagnostics only** and cannot certify P37.1 or P37.3.
