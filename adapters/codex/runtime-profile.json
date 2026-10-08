@@ -10,6 +10,11 @@
   "config_overrides": [
     "model_reasoning_effort=low"
   ],
+  "role_config_overrides": {
+    "orchestrator": [
+      "features.shell_tool=true"
+    ]
+  },
   "prompt_mode": "positional",
   "prompt_flag": null,
   "agent_flag": null,
