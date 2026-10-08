@@ -2046,8 +2046,8 @@
     },
     {
       "path": "docs/P37_OPERATIONAL_CERTIFICATION.md",
-      "sha256": "a474692633174bea9072a1480810e5b969770d46211265cf41913f3b82704a3e",
-      "size": 25146
+      "sha256": "32378e452eeb1e6c94472f5d2d242df084137984bcbed128c9e029c16642260d",
+      "size": 27442
     },
     {
       "path": "docs/PORTABILITY_PHASE1_VALIDATION.md",
@@ -3576,8 +3576,8 @@
     },
     {
       "path": "tests/pro-operational-phase37-1.test.mjs",
-      "sha256": "e9b59ba09ca5b5f5e382ebb7f2141c601029ebae24b4ad7c3a1083b93f7344b3",
-      "size": 27563
+      "sha256": "4451da9d703edde6126f72fbb42929d3419073ee4a659917cb3f3eeb05320088",
+      "size": 30103
     },
     {
       "path": "tests/pro-quality-phase36-1.test.mjs",
@@ -4060,6 +4060,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "bf2ae5320ac399111bc53e8f2f4c17555404177efb262f741846d8b0a4807b5c",
-  "manifest_sha256": "bc11eaa819197caf6ef3ba469883b594ad732b7d72560c30ea1c7df911271852"
+  "tree_sha256": "10bf4b4713b8cc29d4b48c157bb6a3f1f809bb66934ac27ce5b3a3c07db3a0e8",
+  "manifest_sha256": "2ae601c239148b3bc1f339d8795e3ab792ba7193ccd5b20f70a1a66d1476afad"
 }
