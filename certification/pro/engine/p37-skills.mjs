@@ -152,9 +152,18 @@ export function classifyRuntimeFailure({stdout='',stderr='',exitCode=null,errorC
  if(/(?:permission denied|sandbox denied|access is denied|EPERM|EACCES)/i.test(sample))return 'RUNTIME_PERMISSION_DENIED';
  return 'UNCLASSIFIED_RUNTIME_FAILURE';
 }
+export function classifyCodexFinalVerdict(text){
+ const s=String(text||'').trim();
+ // A mere use of the word BLOCKED in a narrative is not a final verdict.
+ // Require an explicit terminal line at the beginning of the final agent message.
+ if(/^(?:(?:#{1,3}\s*)?(?:status|final state|estado|resultado|verdict)\s*:\s*|(?:#{1,3}\s*)?)(?:BLOCKED|FAILED)\b/i.test(s))return 'EXPLICIT_BLOCKED';
+ if(/^(?:(?:#{1,3}\s*)?(?:status|final state|estado|resultado|verdict)\s*:\s*|(?:#{1,3}\s*)?)(?:PASS|COMPLETED)\b/i.test(s))return 'EXPLICIT_COMPLETED';
+ return 'NO_EXPLICIT_VERDICT';
+}
 export function summarizeCodexEvents(raw){
  const result={structured_events:0,threads_started:0,turns_completed:0,tool_events:0,
-  agent_messages:0,agent_message_blocked_marker:false};
+  agent_messages:0,agent_message_blocked_marker:false,
+  final_message_verdict:'NO_EXPLICIT_VERDICT',final_message_blocked:false};
  for(const line of String(raw||'').split(/\r?\n/)){
   let event;try{event=JSON.parse(line)}catch{continue}
   if(!event||typeof event!=='object'||Array.isArray(event))continue;
@@ -169,9 +178,12 @@ export function summarizeCodexEvents(raw){
    }
    if(event.type==='item.completed'&&item.type==='agent_message'){
     result.agent_messages++;
-    if(/\bBLOCKED\b|CODEX_EFFECTIVE_PERMISSION_PROFILE_BLOCKED/i.test(String(item.text||''))){
+    const body=String(item.text||'');
+    if(/\bBLOCKED\b|CODEX_EFFECTIVE_PERMISSION_PROFILE_BLOCKED/i.test(body))
      result.agent_message_blocked_marker=true;
-    }
+    // The last completed assistant message is the only candidate for a terminal verdict.
+    result.final_message_verdict=classifyCodexFinalVerdict(body);
+    result.final_message_blocked=result.final_message_verdict==='EXPLICIT_BLOCKED';
    }
   }
  }
@@ -381,7 +393,15 @@ function executeCase(root,opts){
      &&!routeProgress.route_selected_expected)issues.push('REQUESTED_SKILL_NOT_SELECTED');
   }
  }
- if(nativeEvents?.agent_message_blocked_marker)issues.push('CODEX_AGENT_REPORTED_BLOCKED');
+ if(nativeEvents?.final_message_blocked)issues.push('CODEX_EXPLICIT_FINAL_BLOCKED');
+ if(caseId!=='rejected_out_of_scope_request'&&routeProgress.task_state_present){
+  if(routeProgress.task_blocked||routeProgress.task_final_state==='BLOCKED')
+   issues.push('ORCHESTRATOR_TASK_RECORDED_BLOCKED');
+  else if(routeProgress.task_final_state==='FAILED')
+   issues.push('ORCHESTRATOR_TASK_RECORDED_FAILED');
+  else if(routeProgress.task_final_state!=='PASS')
+   issues.push('ORCHESTRATOR_TASK_NOT_FINALIZED');
+ }
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
   if(!changes.changed_paths.includes('src/utils.mjs'))issues.push('SAFE_EDIT_TARGET_UNCHANGED');
   if(changes.changed_paths.some(p=>p!=='src/utils.mjs'&&!p.startsWith('.aledevos/state/')))
@@ -410,6 +430,10 @@ function executeCase(root,opts){
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
   native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,
+  model_provenance:{declared_model:model,
+   structured_runtime_model_observed:Boolean(modelObserved),
+   model_identity_independently_verified:false,
+   observation_limit:adapter==='codex'?'CODEX_EXEC_JSONL_MODEL_NOT_STANDARD':'RUNTIME_MODEL_UNOBSERVED'},
   workspace_runtime:{git_repository:gitWorkspace,project_config_effectiveness:'UNVERIFIED',
    requested_sandbox:opts.codexWorkspaceWrite?'workspace-write':'RUNTIME_DEFAULT',
    timeout_ms:timeoutMs,elapsed_ms:Date.now()-start,
@@ -422,7 +446,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){
