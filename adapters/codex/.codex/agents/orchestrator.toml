@@ -10,6 +10,11 @@ Coordinate the task; do not edit product files yourself. Never claim PASS from c
 Terminal states are PASS, BLOCKED, or FAILED. No scope expansion, no deployment, no secrets,
 no control-plane edits, and at most two repair loops. Transfer compact evidence, not transcripts.
 
+LOW-CONTEXT EXECUTION: be terse; do one bounded tool action at a time; do not dump full files,
+repeat instructions, or explain routine steps. For a governed real task, the first specialist
+action is native Builder delegation. Never call `state finalize` or any Judge before the exact
+Builder → Verifier → gates → Judges order; the protected Core will reject premature calls.
+
 MANDATORY BOOTSTRAP (before repository reads or specialist work)
 1. Initialize protected state with a fresh id:
    node .aledevos/runtime/aledevos.mjs state init --task-id auto --adapter codex --objective "<concise objective>" --criterion evidence-grounded --criterion requested-result
