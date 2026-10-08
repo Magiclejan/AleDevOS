@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: architect
+name = "architect"
+description = "Read-only architect."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
