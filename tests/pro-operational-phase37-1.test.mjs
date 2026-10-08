@@ -7,7 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
- summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectQualityProgress,inspectAgentHandoff,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
+ summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectCodexNativeRoleManifests,inspectQualityProgress,inspectAgentHandoff,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -443,4 +443,36 @@ test('P37.1 Codex event metadata reports command failures, not command content o
  assert.equal(p.final_message_blocked,true);
  assert.equal(JSON.stringify(p).includes('super private invocation'),false);
  assert.equal(JSON.stringify(p).includes('secret-target'),false);
+});
+
+
+test('Codex native role files self-describe the same 25 named roles as project configuration',()=>{
+ const r=inspectCodexNativeRoleManifests(repo);
+ assert.equal(r.configured_role_count,25);
+ assert.equal(r.complete_role_count,25);
+ assert.deepEqual(r.invalid_role_names,[]);
+ assert.equal(r.project_config_trust,'UNVERIFIED');
+ assert.equal(r.native_delegation_verified,false);
+});
+
+test('Codex role metadata missing name, description or instructions cannot be treated as executable native roles',()=>{
+ const root=tmp(),base=path.join(root,'adapters/codex/.codex'),agent=path.join(base,'agents');
+ fs.mkdirSync(agent,{recursive:true});
+ fs.writeFileSync(path.join(base,'config.toml'),
+  '[agents.auditor]\ndescription = "Read-only auditor."\nconfig_file = "agents/auditor.toml"\n');
+ fs.writeFileSync(path.join(agent,'auditor.toml'),
+  "developer_instructions = '''\nOnly read files.\n'''\n");
+ let got=inspectCodexNativeRoleManifests(root);
+ assert.deepEqual(got.invalid_role_names,['auditor','ROLE_CARDINALITY_MISMATCH']);
+ assert.equal(got.complete_role_count,0);
+ fs.writeFileSync(path.join(agent,'auditor.toml'),
+  "name = \"auditor\"\ndescription = \"Read-only auditor.\"\ndeveloper_instructions = '''\nOnly read files.\n'''\n");
+ got=inspectCodexNativeRoleManifests(root);
+ assert.equal(got.complete_role_count,1);
+ assert.deepEqual(got.invalid_role_names,['ROLE_CARDINALITY_MISMATCH']);
+ const broken=fs.readFileSync(path.join(agent,'auditor.toml'),'utf8').replace('name = "auditor"','name = "builder"');
+ fs.writeFileSync(path.join(agent,'auditor.toml'),broken);
+ got=inspectCodexNativeRoleManifests(root);
+ assert.equal(got.complete_role_count,0);
+ assert.ok(got.invalid_role_names.includes('auditor'));
 });
