@@ -14,7 +14,7 @@ AleDevOS targets OpenCode V2 for this adapter. V2 uses ordered `permissions` rul
 
 ## Certification boundary
 
-Target-runtime model capabilities are external to AleDevOS adapter certification. Native-image readiness remains BLOCKED until compatible runtime evidence proves it.
+OpenCode V2 adapter certification does not certify target-runtime readiness. Target-runtime model capabilities are external to AleDevOS adapter certification. Native-image readiness remains BLOCKED until compatible runtime evidence proves it.
 
 Likewise, this phase does not claim that Playwright/Chromium is installed on every target PC. It certifies that the OpenCode adapter owns and installs the required provider and that the frozen Visual QA subsystem can consume it. Real target browser/model evidence belongs to target runtime validation.
 
