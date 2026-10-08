@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: design-system-guardian
+name = "design-system-guardian"
+description = "Read-only Design System Guardian for UX/UI Phase 4."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
