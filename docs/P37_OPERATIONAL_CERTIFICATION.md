@@ -149,7 +149,7 @@ The engine now emits agent_handoff using only allowlisted Core role/status, last
 
 Historical read-only inspection, with no model invocation or file mutation:
 
-    node certification/pro/engine/p37-skills.mjs diagnose --workspace "C:\Users\Alejandro Rodriguez\AppData\Local\Temp\aledevos-p37-case-dvMsqo"
+    node certification/pro/engine/p37-skills.mjs diagnose --workspace "<WORKSPACE_FROM_REAL_CASE_RECEIPT>"
 
 The diagnose action checks the owned marker and temp location, reports bounded agent_handoff and quality_progress, and always returns READ_ONLY_HISTORICAL_DIAGNOSTIC with pro_certified=0. Prior certificates and receipts remain immutable.
 
@@ -164,3 +164,19 @@ The P37 engine now verifies these source manifests and fails closed with CODEX_C
 **Separate unresolved blocker:** Codex documentation states project-level .codex/config.toml is loaded only when the project is trusted. P37's workspace is a fresh temporary synthetic Git repository, and its effective trust state is not independently measured. Do not change global Codex configuration or declare effective project role activation based only on files; gain explicit user authorization before establishing trust or altering global permissions. A previously reported upstream issue also noted inaccessible project-local custom roles on a particular CLI release. Reproduce against the installed local Codex version before attributing this fifth run to that issue.
 
 **No inference required for preflight.** Check codex --version and codex features list from the owned temporary workspace and inspect its projected .codex/agents/*.toml. These checks assess CLI and static manifests, not native-agent spawning. A subsequent minimal provider-native role spawn probe, if explicitly authorized, must capture independent native thread lifecycle evidence before any full skill certification run. P37.3 independent review and model identity provenance remain separate requirements.
+
+### Multiuser / machine-independent deployment boundary (2026-10-08)
+
+AleDevOS is distributed to different operators and machines. Do not turn a historical pilot workspace, a Windows account name, a declared model (`--model`), an auth session, a drive letter, a Git checkout location, or a GPU into an implementation requirement. Historical real-case paths are **per-run evidence**, never examples to copy as universal default paths.
+
+The production Windows installer resolves its own repository root using PowerShell `$PSScriptRoot`, accepts an arbitrary `-ProjectPath`, and does not initialize Git for end-user projects. The P37.1 source test engine creates owned synthetic fixtures under Node's `os.tmpdir()` for the current operator. The corresponding absolute paths belong only in local evidence receipts. Models/providers are operator-provided, not pinned to the example `gpt-5.6-luna` string. Codex authentication, project trust, sandbox capability, native-agent loading and model provenance must be validated **per user, workspace, runtime version and machine**.
+
+A source-only portability regression now checks core P37 scripts for absolute user-profile paths and validates the full set of 25 Codex role manifests independently in two synthetically distinct project roots (including spaces and non-ASCII directory components). This is **not** proof of installation on two actual user accounts or multiple operating systems.
+
+**Validated scope**: the current P37.1 PowerShell entrypoint targets Windows; no claim is made that the same wrapper runs natively on macOS or Linux. Future Unix/macOS P37 operational support requires a documented launcher and native validation, rather than assuming `powershell.exe` is present. Main AleDevOS installer/runtime support should be evaluated separately from the disposable P37 certification harness. No change to global Codex trust, login, credentials or permissions is made by this portability guard.
+
+When investigating an operator's P37.1 case, use the `workspace` returned by *that operator's* run. For example, from their repository directory, run:
+
+    node certification/pro/engine/p37-skills.mjs diagnose --workspace "<WORKSPACE_FROM_THIS_RUN>"
+
+The command is a read-only inspection of an owned temporary fixture, not an instruction to inspect another person's private files.
