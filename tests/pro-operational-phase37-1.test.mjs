@@ -298,6 +298,7 @@ test('P37.1 never treats a passing focused test as a finalized Orchestrator task
  assert.equal(taskFinalizationIssue({...base,task_blocked:true,task_final_state:'PASS'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_BLOCKED');
  assert.equal(taskFinalizationIssue({...base,task_state_present:false},'executed_real_task'),null);
  assert.equal(taskFinalizationIssue(base,'rejected_out_of_scope_request'),null);
+ assert.equal(taskFinalizationIssue(base,'activated_on_correct_request'),null);
 });
 
 
