@@ -99,3 +99,23 @@ test('V1 release validator is read-only to product and Orchestrator can delegate
 test('installer deploys release runtime, policy, schemas, version and state roots',()=>{
   const s=fs.readFileSync(path.resolve('scripts/05-install-into-project.ps1'),'utf8');assert.match(s,/release\\engine\\v1-release\.mjs/);assert.match(s,/release\\policies\\v1-release-policy\.json/);assert.match(s,/state\\release\\v1\\evidence/);assert.match(s,/Join-Path \$rel 'VERSION\.txt'/);
 });
+
+test('V1 RC harness forces a stable TAP reporter for Node 24 and parses its summary',()=>{
+  const script=fs.readFileSync(path.resolve('scripts/35-self-test-v1-release-candidate.ps1'),'utf8');
+  assert.match(script,/--test-reporter=tap/);
+  assert.match(script,/\^# tests/);
+  assert.match(script,/\^# pass/);
+  assert.match(script,/\^# fail/);
+});
+
+test('Windows target smoke launches fixture without space-sensitive absolute arguments',()=>{
+  const script=fs.readFileSync(path.resolve('scripts/34-v1-target-runtime-smoke.ps1'),'utf8');
+  assert.match(script,/\[string\[\]\]\$NodeArgs/);
+  assert.match(script,/@NodeArgs/);
+  assert.doesNotMatch(script,/\[string\[\]\]\$Args\b/);
+  assert.match(script,/-WorkingDirectory \$Workspace/);
+  assert.match(script,/-ArgumentList @\('server\.mjs','--port','0','--port-file','\.server-port'\)/);
+  assert.match(script,/-RedirectStandardError \$serverStderr/);
+  assert.match(script,/Fixture server health check failed/);
+  assert.doesNotMatch(script,/Start-Process[^\n]*-ArgumentList @\(\(Join-Path \$Workspace 'server\.mjs'\)/);
+});
