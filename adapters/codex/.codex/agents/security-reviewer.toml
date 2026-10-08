@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: security-reviewer
+name = "security-reviewer"
+description = "Read-only AleDevOS AppSec reviewer."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
