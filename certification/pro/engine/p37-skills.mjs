@@ -38,6 +38,7 @@ const adapterSkillRoot={
  'claude-code':'.claude/skills',antigravity:'.agents/skills'
 };
 const requiredFiles={
+ '.gitignore':'.aledevos/state/\n',
  'README.md':'# P37.1 disposable test project\nThis is a synthetic, temporary project for authorized local adapter execution. No production credentials or user files.\n',
  'package.json':'{"private":true,"type":"module","scripts":{"test":"node --test test/*.test.mjs"}}\n',
  'src/utils.mjs':'export const add = (a,b) => a - b;\n',
@@ -120,7 +121,7 @@ function snapshot(root){
   const rel=stack.pop(),current=path.join(root,rel);
   for(const item of fs.readdirSync(current,{withFileTypes:true})){
    const p=path.posix.join(rel.split(path.sep).join('/'),item.name);
-   if(p==='node_modules'||p==='.aledevos/state')continue;
+   if(p==='node_modules'||p==='.aledevos/state'||p==='.git/index')continue; // Git refreshes index stat metadata on read-only status checks; staged entries are verified independently.
    if(item.isSymbolicLink()){errors.push('SYMLINK:'+p);continue;}
    if(item.isDirectory()){stack.push(p);continue;}
    if(!item.isFile())continue;
@@ -279,6 +280,97 @@ function runNative(exe,argv,cwd,timeoutMs){
  const encoded=[exe,...argv].map(encodeWindowsTransportArg);
  return spawnSync('powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',launcher,...encoded],opts);
 }
+function fixtureGit(dir,args){
+ return spawnSync('git',args,{cwd:dir,encoding:'utf8',windowsHide:true,timeout:30000,maxBuffer:1024*1024});
+}
+function assertSyntheticGitFixture(dir){
+ if(!fs.existsSync(dir)||!inTmp(dir)||
+  !fs.existsSync(path.join(dir,'README.md'))||
+  fs.readFileSync(path.join(dir,'README.md'),'utf8')!==requiredFiles['README.md']||
+  !fs.existsSync(path.join(dir,'src/utils.mjs'))||
+  shaFile(path.join(dir,'src/utils.mjs'))!==hash(requiredFiles['src/utils.mjs']))
+  throw Error('P37_1_GIT_ONLY_SYNTHETIC_TEMP_FIXTURE');
+}
+export function initializeSyntheticFixtureGit(dir){
+ assertSyntheticGitFixture(dir);
+ if(fs.existsSync(path.join(dir,'.git')))throw Error('P37_1_GIT_ALREADY_INITIALIZED');
+ const r=fixtureGit(dir,['init','--quiet']);
+ if(r.error||r.status!==0)throw Error('P37_1_GIT_INIT_FAILED');
+ return true;
+}
+export function sealSyntheticFixtureGit(dir){
+ assertSyntheticGitFixture(dir);
+ const marker=path.join(dir,'.p37-owned-disposable.json');
+ if(!fs.existsSync(marker)||read(marker)?.phase!=='P37.1')throw Error('P37_1_GIT_MARKER_REQUIRED');
+ const gitRoot=fixtureGit(dir,['rev-parse','--show-toplevel']);
+ if(gitRoot.status!==0||path.resolve((gitRoot.stdout||'').trim())!==path.resolve(dir))
+  throw Error('P37_1_GIT_WORKTREE_IDENTITY_MISMATCH');
+ const add=fixtureGit(dir,['add','--all']);
+ if(add.error||add.status!==0)throw Error('P37_1_GIT_STAGE_FAILED');
+ const commit=fixtureGit(dir,['-c','user.name=AleDevOS P37 Fixture','-c','user.email=fixture@aledevos.invalid',
+  '-c','commit.gpgsign=false','-c','core.hooksPath=.p37-disabled-hooks',
+  'commit','--quiet','-m','P37.1 synthetic installed fixture baseline']);
+ if(commit.error||commit.status!==0)throw Error('P37_1_GIT_BASELINE_COMMIT_FAILED');
+ const status=fixtureGit(dir,['status','--porcelain=v1','-uall']);
+ if(status.status!==0||(status.stdout||'').trim())throw Error('P37_1_GIT_BASELINE_NOT_CLEAN');
+ const head=fixtureGit(dir,['rev-parse','HEAD']);
+ if(head.status!==0||!/^[a-f0-9]{40}$/.test((head.stdout||'').trim()))
+  throw Error('P37_1_GIT_BASELINE_UNVERIFIED');
+ return {git_baseline_verified:true,git_baseline_sha256:hash((head.stdout||'').trim())};
+}
+export function gitStageContentHash(dir){
+ const r=fixtureGit(dir,['ls-files','--stage','-z']);
+ return r.status===0&&!r.error?hash(r.stdout||''):null;
+}
+export function inspectQualityProgress(workspace){
+ const out={quality_status:'NOT_OBSERVED',quality_missing:[],quality_plan_status:'NOT_OBSERVED',
+  quality_evidence_count:0,quality_change_class:null,
+  gates:{scope:'NOT_EXECUTED',integrity:'NOT_EXECUTED',canonical:'NOT_EXECUTED',quality_engineering:'NOT_EXECUTED'},
+  canonical_required_gate_count:0,canonical_passed_gate_count:0,
+  verifier_agent_completed:false,judge_count:0};
+ const base=path.join(workspace,'.aledevos','state','tasks');
+ if(!fs.existsSync(base))return out;
+ const tasks=fs.readdirSync(base,{withFileTypes:true}).filter(x=>x.isDirectory());
+ if(tasks.length!==1)return out;
+ const id=tasks[0].name;
+ if(!/^[a-zA-Z0-9._-]{1,120}$/.test(id))return out;
+ const statePath=path.join(base,id,'state.json');
+ const planPath=path.join(base,id,'quality-plan.json');
+ const safeRead=file=>{
+  if(!fs.existsSync(file)||!fs.statSync(file).isFile()||fs.statSync(file).size>131072)return null;
+  try{return read(file)}catch{return null}
+ };
+ const state=safeRead(statePath),plan=safeRead(planPath);
+ const statuses=['PASS','FAIL','FAILED','BLOCKED','OPEN','UNPLANNED'];
+ if(state){
+  const q=state.quality_engineering?.status;
+  if(statuses.includes(q))out.quality_status=q;
+  for(const name of Object.keys(out.gates)){
+   const v=state.gates?.[name]?.status;
+   out.gates[name]=statuses.includes(v)?v:'NOT_EXECUTED';
+  }
+  const missing=state.gates?.quality_engineering?.missing;
+  const allowed=new Set(['tests','canonical-gate-pass','regression-test','regression-analysis',
+   'diff-review','visual-qa','reuse-decision','feature-happy-path','feature-edge-or-error-path',
+   'invalid-evidence-ref','test-execution-evidence','test-source-evidence',
+   'reuse-evidence','reuse-evidence-ref','reuse-decision-autodetected','create-new-justification',
+   'reuse-not-applicable-reason']);
+  if(Array.isArray(missing))out.quality_missing=[...new Set(missing.filter(x=>allowed.has(x)))].sort();
+  out.verifier_agent_completed=Array.isArray(state.agent_trace)&&state.agent_trace.some(
+   a=>a?.agent==='verifier'&&a.status==='COMPLETED');
+  out.judge_count=Object.keys(state.judges||{}).length;
+  const rs=Array.isArray(state.gates?.canonical?.results)?state.gates.canonical.results:[];
+  out.canonical_required_gate_count=rs.length;
+  out.canonical_passed_gate_count=rs.filter(x=>x.status==='PASS').length;
+ }
+ if(plan){
+  out.quality_plan_status=statuses.includes(plan.status)?plan.status:'UNRECOGNIZED';
+  out.quality_evidence_count=Array.isArray(plan.evidence)?plan.evidence.length:0;
+  out.quality_change_class=['analysis','docs','bugfix','feature','refactor','ui','config','schema',
+   'migration','test-only'].includes(plan.change_class)?plan.change_class:null;
+ }
+ return out;
+}
 function prepare(root,adapter){
  assertAdapter(adapter);
  if(process.platform!=='win32')throw Error('P37_1_WINDOWS_INSTALLER_REQUIRED');
@@ -286,6 +378,7 @@ function prepare(root,adapter){
  for(const [rel,body] of Object.entries(requiredFiles)){
   const dst=path.join(dir,rel);fs.mkdirSync(path.dirname(dst),{recursive:true});fs.writeFileSync(dst,body);
  }
+ initializeSyntheticFixtureGit(dir);
  const installer=path.join(root,'scripts/05-install-into-project.ps1');
  const installed=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
   installer,'-ProjectPath',dir,'-Adapter',adapter],{encoding:'utf8',timeout:180000,maxBuffer:12*1024*1024,windowsHide:true});
@@ -299,7 +392,8 @@ function prepare(root,adapter){
  fs.writeFileSync(path.join(dir,'.p37-owned-disposable.json'),JSON.stringify({
   phase:'P37.1',adapter,git_sha:revision,source_root:path.resolve(root),kind:'DISPOSABLE_INSTALLED_FIXTURE'
  },null,2)+'\n');
- return {status:'PREPARED_NOT_EXECUTED',adapter,git_sha:revision,fixture:dir,skills_verified:13};
+ const gitBaseline=sealSyntheticFixtureGit(dir);
+ return {status:'PREPARED_NOT_EXECUTED',adapter,git_sha:revision,fixture:dir,skills_verified:13,...gitBaseline};
 }
 function validateBase(root,project,adapter){
  assertAdapter(adapter);
@@ -320,6 +414,11 @@ function validateBase(root,project,adapter){
   const p=inspectProjection(project,sourceTarget(root,adapter,skill));
   if(!p.ok)throw Error('P37_1_FIXTURE_SKILL_DRIFT:'+skill);
  }
+ const git=fixtureGit(project,['status','--porcelain=v1','-uall']);
+ if(git.status!==0||(git.stdout||'').trim()||
+    fixtureGit(project,['rev-parse','--is-inside-work-tree']).stdout.trim()!=='true'||
+    !gitStageContentHash(project))
+  throw Error('P37_1_GIT_BASELINE_INVALID_OR_DIRTY');
  return meta;
 }
 export function summarizeObservations(root){
@@ -350,9 +449,12 @@ function executeCase(root,opts){
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
  const probe=inspectProjection(caseWorkspace,target);
  if(!probe.ok)throw Error('P37_1_CASE_SOURCE_DRIFT');
+ const beforeGitStage=gitStageContentHash(caseWorkspace);
+ if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const prompt=makeCasePrompt(skill,caseId);
+ const prompt=makeCasePrompt(skill,caseId)+(skill==='safe-edit'&&caseId==='executed_real_task'?
+  ' This is a governed bugfix, not an isolated file-edit test. After the authorized fix, the real Verifier must use the protected Core commands in strict order: scope check, integrity scan, gate run, then quality verify. The canonical tests gate must run and PASS before any quality test evidence is accepted. Record actual regression-analysis and diff-review artifacts and bind quality evidence to genuine canonical gate result and test source. Then have independent Judges evaluate and attempt state finalize only if all protected gates and acceptance criteria are truly satisfied. If any step is blocked, record the actual missing evidence without inventing scores, test results or PASS.':'');
  const agent=caseId==='independent_verification'?'verifier':'orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
  if(opts.codexWorkspaceWrite){
@@ -374,6 +476,8 @@ function executeCase(root,opts){
  }
  const run=runNative(invocation.executable,invocation.args,caseWorkspace,timeoutMs);
  const after=snapshot(caseWorkspace),changes=compareSnapshots(before,after),parsed=parseRuntimeOutput(profile.parser,run.stdout||'');
+ const afterGitStage=gitStageContentHash(caseWorkspace);
+ const qualityProgress=inspectQualityProgress(caseWorkspace);
  const nativeEvents=adapter==='codex'?summarizeCodexEvents(run.stdout||''):null;
  const executionEvidence=inspectWorkspaceExecutionEvidence(caseWorkspace);
  const routeProgress=inspectRouteProgress(caseWorkspace,skill);
@@ -393,6 +497,7 @@ function executeCase(root,opts){
  if(runtimeFailureClass!=='NONE')issues.push('RUNTIME_DIAGNOSTIC:'+runtimeFailureClass);
  if(exitCode!==0)issues.push('RUNTIME_NONZERO_OR_UNKNOWN_EXIT');
  if(changes.protected_changes.length)issues.push('PROTECTED_CONTROL_PLANE_CHANGED');
+ if(!afterGitStage||beforeGitStage!==afterGitStage)issues.push('GIT_INDEX_STAGED_ENTRIES_CHANGED');
  if(changes.scan_errors.length)issues.push('WORKSPACE_SCAN_INCOMPLETE');
  if(!modelObserved)issues.push('MODEL_ID_NOT_OBSERVED_IN_STRUCTURED_RUNTIME');
  if(caseId==='rejected_out_of_scope_request'&&changes.changed_paths.length)issues.push('OUT_OF_SCOPE_CASE_MUTATED_WORKSPACE');
@@ -440,6 +545,8 @@ function executeCase(root,opts){
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
   native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,
+  quality_progress:qualityProgress,
+  git_integrity:{baseline_present:true,index_staged_entries_unchanged:beforeGitStage===afterGitStage},
   model_provenance:{declared_model:model,
    structured_runtime_model_observed:Boolean(modelObserved),
    model_identity_independently_verified:false,
@@ -456,7 +563,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,quality_progress:qualityProgress,git_integrity:event.git_integrity,model_provenance:event.model_provenance,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){

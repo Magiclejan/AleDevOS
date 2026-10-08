@@ -1,3 +1,4 @@
+import {spawnSync} from 'node:child_process';
 import test,{afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -6,7 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
- summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
+ summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectQualityProgress,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -297,4 +298,65 @@ test('P37.1 never treats a passing focused test as a finalized Orchestrator task
  assert.equal(taskFinalizationIssue({...base,task_blocked:true,task_final_state:'PASS'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_BLOCKED');
  assert.equal(taskFinalizationIssue({...base,task_state_present:false},'executed_real_task'),null);
  assert.equal(taskFinalizationIssue(base,'rejected_out_of_scope_request'),null);
+});
+
+
+test('P37.1 only initializes a synthetic, owned temporary Git fixture and leaves user repos untouched',()=>{
+ const dir=tmp();
+ assert.throws(()=>initializeSyntheticFixtureGit(dir),/GIT_ONLY_SYNTHETIC_TEMP_FIXTURE/);
+ fs.mkdirSync(path.join(dir,'src'),{recursive:true});
+ fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a - b;\n');
+ fs.writeFileSync(path.join(dir,'README.md'),'# P37.1 disposable test project\nThis is a synthetic, temporary project for authorized local adapter execution. No production credentials or user files.\n');
+ fs.writeFileSync(path.join(dir,'.gitignore'),'.aledevos/state/\n');
+ assert.equal(initializeSyntheticFixtureGit(dir),true);
+ assert.throws(()=>initializeSyntheticFixtureGit(dir),/GIT_ALREADY_INITIALIZED/);
+ assert.throws(()=>sealSyntheticFixtureGit(dir),/GIT_MARKER_REQUIRED/);
+ fs.writeFileSync(path.join(dir,'.p37-owned-disposable.json'),JSON.stringify({phase:'P37.1',kind:'DISPOSABLE_INSTALLED_FIXTURE'}));
+ fs.mkdirSync(path.join(dir,'.aledevos/state/tasks/sample'),{recursive:true});
+ fs.writeFileSync(path.join(dir,'.aledevos/state/tasks/sample/state.json'),'{"synthetic":true}');
+ const sealed=sealSyntheticFixtureGit(dir);
+ assert.equal(sealed.git_baseline_verified,true);
+ assert.match(sealed.git_baseline_sha256,/^[0-9a-f]{64}$/);
+ const git=(...args)=>spawnSync('git',args,{cwd:dir,encoding:'utf8',windowsHide:true});
+ assert.equal(git('status','--porcelain=v1','-uall').stdout.trim(),'');
+ const prior=gitStageContentHash(dir);
+ assert.match(prior,/^[a-f0-9]{64}$/);
+ fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a + b;\n');
+ fs.writeFileSync(path.join(dir,'.aledevos/state/tasks/sample/state.json'),'{"synthetic":false}');
+ assert.match(git('status','--porcelain=v1','-uall').stdout,/src\/utils\.mjs/);
+ assert.doesNotMatch(git('status','--porcelain=v1','-uall').stdout,/\.aledevos/);
+ assert.equal(gitStageContentHash(dir),prior);
+ assert.equal(git('add','src/utils.mjs').status,0);
+ assert.notEqual(gitStageContentHash(dir),prior);
+});
+
+test('Quality progress reports exact safe Core gate state without leaking plan, objectives or transcripts',()=>{
+ const dir=tmp();
+ const missing=inspectQualityProgress(dir);
+ assert.equal(missing.quality_status,'NOT_OBSERVED');
+ assert.equal(missing.gates.scope,'NOT_EXECUTED');
+ const task=path.join(dir,'.aledevos/state/tasks/pilot-a');
+ fs.mkdirSync(task,{recursive:true});
+ fs.writeFileSync(path.join(task,'state.json'),JSON.stringify({
+  task_id:'pilot-a',
+  quality_engineering:{status:'BLOCKED',secret:'NO_LEAK'},
+  gates:{quality_engineering:{status:'BLOCKED',missing:['tests','canonical-gate-pass','regression-test','regression-analysis','diff-review','sensitive-unknown-value']}},
+  agent_trace:[{agent:'verifier',status:'STARTED'}],judges:{},private_context:'NEVER_EXPOSE'
+ }));
+ fs.writeFileSync(path.join(task,'quality-plan.json'),JSON.stringify({
+  status:'BLOCKED',change_class:'bugfix',evidence:[],secret:'NO_LEAK'
+ }));
+ const result=inspectQualityProgress(dir);
+ assert.equal(result.quality_status,'BLOCKED');
+ assert.equal(result.quality_plan_status,'BLOCKED');
+ assert.equal(result.quality_change_class,'bugfix');
+ assert.equal(result.quality_evidence_count,0);
+ assert.deepEqual(result.quality_missing,[
+  'canonical-gate-pass','diff-review','regression-analysis','regression-test','tests'
+ ]);
+ assert.equal(result.gates.canonical,'NOT_EXECUTED');
+ assert.equal(result.verifier_agent_completed,false);
+ assert.equal(result.judge_count,0);
+ assert.equal(JSON.stringify(result).includes('NO_LEAK'),false);
+ assert.equal(JSON.stringify(result).includes('NEVER_EXPOSE'),false);
 });
