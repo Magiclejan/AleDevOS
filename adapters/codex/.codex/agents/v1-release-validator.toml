@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: v1-release-validator
+name = "v1-release-validator"
+description = "AleDevOS V1 final release validator; read-only product access, sealed target-runtime evidence and release-gate control only."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
