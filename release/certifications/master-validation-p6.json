@@ -71,7 +71,7 @@
     },
     {
       "path": "release/certifications/master-validation-p5.json",
-      "sha256": "795014a780f6a36c69d6f614a6161530f227b1d396a7173a1bed6667931dbbae"
+      "sha256": "7c7c0034e10c40c74d34ead702c35976be4ccb77aa7d4e089cca347de87fd958"
     },
     {
       "path": "core/engine/aledevos.mjs",
@@ -126,5 +126,5 @@
       "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
     }
   ],
-  "master_p6_certificate_sha256": "7d9056c9aaec6deae1e7c09e546d6da7bffabb6bba6a21a0394fbb6dcc9e7677"
+  "master_p6_certificate_sha256": "412d309ca6cd2ab01280f5691c9245808f15c58adad2ff16feaf7f80abf51f7a"
 }

@@ -12,7 +12,7 @@
     "release/templates/master-validation-package-baseline.json",
     "release/certifications/**"
   ],
-  "file_count": 800,
+  "file_count": 801,
   "entries": [
     {
       "path": ".gitattributes",
@@ -26,8 +26,8 @@
     },
     {
       "path": ".github/workflows/repository-guard.yml",
-      "sha256": "7af05b3ec43c50e7a05d43b88d44cbc67afd93cdd142c8b032247981f30ebd05",
-      "size": 26411
+      "sha256": "42831829fc97d803c1f664cb0a9c1d4b89074bae4a70642245f1c8f4bb72e5f7",
+      "size": 26960
     },
     {
       "path": ".gitignore",
@@ -2830,6 +2830,11 @@
       "size": 6987
     },
     {
+      "path": "scripts/36-3-verify-pro-installation.ps1",
+      "sha256": "a357f3eb18a74ea9dd8de8275725da4e6680e8152d77cbef1334456655da0e24",
+      "size": 5716
+    },
+    {
       "path": "scripts/36-self-test-portability-phase1.ps1",
       "sha256": "5e1d6f40de9c6945421d51114b1bf25a0e3799634c9ed4e3f47cea2fa1e171aa",
       "size": 5951
@@ -4015,6 +4020,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "34a65f071c9f7d2a924e2d3cc51eaf990b6ec974a7ea5864e239e7fc7a2995ba",
-  "manifest_sha256": "9586e76818f8e607970bce61306aee20f0a7671035610d4bb53f9435484ffe9e"
+  "tree_sha256": "fc638e8b98f38b59e0e622bb690867a5058a17661cb765e95264cb0dd04cf861",
+  "manifest_sha256": "b7925d22fb2048fc038a997f9e7f0327fdf18ba77bb7b00b966986dcf88273d2"
 }
