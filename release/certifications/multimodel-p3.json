@@ -38,17 +38,17 @@
     },
     {
       "path": "release/certifications/multimodel-p1.json",
-      "sha256": "a5b34ac6a60b685dc19be0d4797f863b398509eb1728e2fa0940131b385f65ba"
+      "sha256": "1d655be1baeaedb6abd71aec568c52436a1401fe83b17c05d7c4cb366f2dbad7"
     },
     {
       "path": "release/certifications/multimodel-p2.json",
-      "sha256": "1134635592c042e119c5256c38e9db1004188480e3103af15ded9ac645e030dc"
+      "sha256": "cb604123bd398039499f7b1fdbbfebda13f71f73ce4a48175d420366f2ed4e39"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
-      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+      "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-06T16:27:26.086Z",
-  "evidence_sha256": "0d169dd6ea67d9b658e07334f1f7a87f693cb31e4209206db4205bac1c1f5944"
+  "created_at": "2026-10-08T00:46:48.247Z",
+  "evidence_sha256": "490e5cbe5f7e3a80548b34a275fe9822ebf11c8c4a98e3bde3a505f2fb2eb4a0"
 }

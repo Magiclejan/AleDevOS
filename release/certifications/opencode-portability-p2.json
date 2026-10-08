@@ -7,180 +7,180 @@
   "layout": "source",
   "status": "OPENCODE_ADAPTER_CERTIFIED",
   "summary": {
-    "total": 198,
-    "passed": 198,
+    "total": 199,
+    "passed": 199,
     "failed": 0
   },
   "inputs": [
     {
       "id": "config",
       "path": "adapters/opencode/opencode.json",
-      "sha256": "140594a2da829d3934f765dc586721e4559183212172b99d8b087f6859fbe399"
+      "sha256": "5f09fa99099285dd4e8520c01d381a39f8289b39ca5929a290ff4b55e7b3e08f"
     },
     {
       "id": "manifest",
       "path": "adapters/opencode/adapter-capabilities.json",
-      "sha256": "d4d0a8f4936647518944df5d1023b7c56701780de202d0bd7cc802ee36f02410"
+      "sha256": "bc78fe349d60e9b94db77df0af66291cc241ab5d0bcf4fb3ee79129824545419"
     },
     {
       "id": "provider",
       "path": "adapters/opencode/visualqa/playwright-driver.mjs",
-      "sha256": "6f1c250803f55e1823bb0cf794a92dab8d90b45a81cb05257da65818c0f80ae2"
+      "sha256": "007ff88402d60a3c413ccf4140458c4f8df349faa51b63845aae5de9a0b9da4a"
     },
     {
       "id": "engine",
       "path": "core/engine/aledevos.mjs",
-      "sha256": "337393af3dac45463032af415b9d063607fda579f80cbb4f449ec551dbda01e6"
+      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
     },
     {
       "id": "workflow",
       "path": "core/policies/workflow-policy.json",
-      "sha256": "fb169ce40510894318ad8630175d7a556c4713f6247302d6f81c102c391b1393"
+      "sha256": "f923d92c5c8fc4c43bc0f79b0cffc0225cbee7abf491cc3fb494ac994d8cf3ce"
     },
     {
       "id": "ctx",
       "path": "contextos/engine/contextos.mjs",
-      "sha256": "ce00429736c17e743555df6dc68fb9d8b64bae5eec4b44fdeee414b3658cffb6"
+      "sha256": "d2ac0d1c2984bc29d4425cf1af4b34ce144661832323e231a6543d0cdeca6938"
     },
     {
       "id": "skills",
       "path": "skillsystem/engine/skillsystem.mjs",
-      "sha256": "2a7ea849b33eb850f8d2208155cfa7c51edd552df796b00b81efe3110f383893"
+      "sha256": "0957804e27c958e0f337b91b3af75a13b7f6b34f252767ef86bb4bfc9b0139ae"
     },
     {
       "id": "vqa",
       "path": "visualqa/engine/visual-judge.mjs",
-      "sha256": "f046b77c16f00e75439020f7f82dc033d6e6e0a1b2c077c216bba7cee8111fec"
+      "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
     },
     {
       "id": "release",
       "path": "release/engine/v1-release.mjs",
-      "sha256": "4e4e6906cc10ad42386c8c14eb413bf0f0a58b74e00f6d4793724d5009a61f2a"
+      "sha256": "9e27e005c1d0dd3f7fa7f922cf037cc91506d263735a891a002261437245539a"
     },
     {
       "id": "agent:architect",
       "path": "adapters/opencode/.opencode/agents/architect.md",
-      "sha256": "79a5003799e073c85036d126db31dbc5cf7971f294f5ff812b6d0bf541123766"
+      "sha256": "c4af1436e4f63f9edf9cb1c1baf4faaca1e521deae0ce1c0fbb3eac0a1cfff24"
     },
     {
       "id": "agent:auditor",
       "path": "adapters/opencode/.opencode/agents/auditor.md",
-      "sha256": "013916ce10b33c1fb81dfa4ee0f7f8bab1ba1e33f9a124d0f0e63320dd7a19d5"
+      "sha256": "86536068f13b15e626fe6d756ece5f452e62fe8f6053d2fc7663915ea3a55a40"
     },
     {
       "id": "agent:builder",
       "path": "adapters/opencode/.opencode/agents/builder.md",
-      "sha256": "64fa07d3e8da0f80427783edcc400f7d9b8bcac28b5ca79f9b31a86a74aa72d4"
+      "sha256": "dd05f8d851068cafeb3c4ebb330f816baa9c0194e77a60baffce8a787a55a973"
     },
     {
       "id": "agent:design-system-guardian",
       "path": "adapters/opencode/.opencode/agents/design-system-guardian.md",
-      "sha256": "1d50b2a23ad19a15a7f93e3f60915061314641f69a521c232f8aea9d1e786826"
+      "sha256": "5b186774868611f56844f525977c8abc9eb569f6c77eac00b6d2414e8bc4759a"
     },
     {
       "id": "agent:editor-backend",
       "path": "adapters/opencode/.opencode/agents/editor-backend.md",
-      "sha256": "6918bbb4f4a6f3580f8c5bf22e00a30934f512c5d5559c9030d6aacc87aef9a6"
+      "sha256": "55fbf222f22e7386cd5b089d5908f3f4272f40be8a411c15f3b2f0f7c02bd55c"
     },
     {
       "id": "agent:editor-config",
       "path": "adapters/opencode/.opencode/agents/editor-config.md",
-      "sha256": "1799963e975fe25c701d912cee0e3439275dccbe634872bfb30471143c219b89"
+      "sha256": "840e55e0039e384e967bc744d6acfd2abad04304d44bce1b31618aa24b230368"
     },
     {
       "id": "agent:editor-database",
       "path": "adapters/opencode/.opencode/agents/editor-database.md",
-      "sha256": "e2446d3c4f36bbdfbd87e7d839ad83a2333ee1c83d1789161ae26757b91c2a23"
+      "sha256": "2abf6bb039c031f9611caa315aaa2db27307e4fcfd2e7ea1d444b832269360cf"
     },
     {
       "id": "agent:editor-frontend",
       "path": "adapters/opencode/.opencode/agents/editor-frontend.md",
-      "sha256": "7275fbc197f15edbd5c18e48fbcb4cd0c7d720dc724ee4d63e885f6b8a412174"
+      "sha256": "e5acf244bc64f0cb42df4c4f97392423cb3984b57763339f98484379ba0ea1e9"
     },
     {
       "id": "agent:editor-tests",
       "path": "adapters/opencode/.opencode/agents/editor-tests.md",
-      "sha256": "7fc5402a540b407da6549c115c98a8c2affc2842fc4ecb14aab24642497bf6d3"
+      "sha256": "15e9167633948b32faea7517f3b3f0c5d01e948b22c6e8bc4df4ee9cd588024d"
     },
     {
       "id": "agent:judge-quality",
       "path": "adapters/opencode/.opencode/agents/judge-quality.md",
-      "sha256": "0bf8b9132f8d367196a5e3dad093dd658d78f5de61bedae78bc37035cbd5957f"
+      "sha256": "8ba39f16d2bef78425039b7c6aa450ee3bec5ebf3d01ed9a5dc356cb0174cb66"
     },
     {
       "id": "agent:judge-regression",
       "path": "adapters/opencode/.opencode/agents/judge-regression.md",
-      "sha256": "fae9e0d39242752f808ccdb2ac13dc0dfd7e4a06764087a3803963e84246a55c"
+      "sha256": "461c7d41622e77a873d039ea6d558d4bea20e1c8537f9b7ce8204e8c8f4b83aa"
     },
     {
       "id": "agent:judge-requirements",
       "path": "adapters/opencode/.opencode/agents/judge-requirements.md",
-      "sha256": "8b123ec4063cf82fc8d7f9024f2f5156fc7cdfbbf499fc3d390c7c88170818bd"
+      "sha256": "1fa75ef63f0219d0c6aab90f001ad5bb207b58112b8246fec3ea6a7effa42143"
     },
     {
       "id": "agent:judge-uxui",
       "path": "adapters/opencode/.opencode/agents/judge-uxui.md",
-      "sha256": "58b36257b084ce283de93bd6cedc61dcbac3712f99177c3cd4656acd28fd532b"
+      "sha256": "f753e597ab6905af4d49b04043fb9d8b36d9bc452f32ea9f75456a1c9daff849"
     },
     {
       "id": "agent:motion-director",
       "path": "adapters/opencode/.opencode/agents/motion-director.md",
-      "sha256": "6bb6503160a2c2560f286fb1a7f38fe54507f1c28e5e1eaac129feacb5c65abd"
+      "sha256": "575badc32e779861bd8d125cf101d63bda1275114bc8531721d39a52e5bf3d29"
     },
     {
       "id": "agent:orchestrator",
       "path": "adapters/opencode/.opencode/agents/orchestrator.md",
-      "sha256": "3c83ec1fe9a577e20585e998be6799fbbe45c2183e8a08866d4d0f0d4d19542e"
+      "sha256": "f95cbe93e87217a8f78bd0f9bd20257e750819fe034e4eb584595bb6d460c1ce"
     },
     {
       "id": "agent:repairer",
       "path": "adapters/opencode/.opencode/agents/repairer.md",
-      "sha256": "153f61f348ce6374dba5a13324c6a96a5667473e54ce1f1e3d5b3e757207f730"
+      "sha256": "a9ad2c98f3a4ab14ed3da985aa0f0df11a3bc266774da78bf8132e8d58be4704"
     },
     {
       "id": "agent:researcher",
       "path": "adapters/opencode/.opencode/agents/researcher.md",
-      "sha256": "93e7d04e63380a293f209ecb30654c1b0b1cc9da33d744371588b30e11682320"
+      "sha256": "6097ea31fc8e057e1aaea8a0c721772093c794833ef486f344eca5d4fdd13d22"
     },
     {
       "id": "agent:security-reviewer",
       "path": "adapters/opencode/.opencode/agents/security-reviewer.md",
-      "sha256": "32aecd9f807f9115e20c36cbb72c94bcbf78016b0ff8ee0185a567d5c2659b78"
+      "sha256": "e772d4056f89823be2e1cd67a5c536b5f9274599ac1de3c6e73057ee274ef919"
     },
     {
       "id": "agent:v1-release-validator",
       "path": "adapters/opencode/.opencode/agents/v1-release-validator.md",
-      "sha256": "898a24e1be8edff0ecc06e5d2d7d4eb0dcf412d003ac01f5d1384df50f36b327"
+      "sha256": "a048a61513aa665cf0b1e16c0bdb6fff23857fcf505735823ed19969c4f7394a"
     },
     {
       "id": "agent:verifier",
       "path": "adapters/opencode/.opencode/agents/verifier.md",
-      "sha256": "4ceb4f1bc3346c8f394eba2c51bc293915a2f2c1a3189a45e53e93331de466c9"
+      "sha256": "772af7d69bd6bb3c1ca7987b663ba0c84798979fa0e16eba665774af3744b559"
     },
     {
       "id": "agent:visual-capture-runner",
       "path": "adapters/opencode/.opencode/agents/visual-capture-runner.md",
-      "sha256": "b40bae46533aacd467680ad30891619e16be062c767f05949621a7a6c87c2b22"
+      "sha256": "1ea5979a83723f5bdb97103c2b357cd1643230b459310c05d6a47719955e37a6"
     },
     {
       "id": "agent:visual-judge",
       "path": "adapters/opencode/.opencode/agents/visual-judge.md",
-      "sha256": "30a15425f22be341523f48dc1d9d645351794cbfcccff9f077f544efa70c0b8c"
+      "sha256": "8eeeb5e7dff0ee5bb6f26251308d0dd9c401f50455799b6ba7714d9bd0c8fa20"
     },
     {
       "id": "agent:visual-regression-runner",
       "path": "adapters/opencode/.opencode/agents/visual-regression-runner.md",
-      "sha256": "808be6e20bf0761e74867e1660b6d1f5413d9713d58e9d5382944276205f9bb9"
+      "sha256": "9ab0b1fcdadc99a98192228c84ecc7d86689ee9526743195fd27dcc961fafd88"
     },
     {
       "id": "agent:visual-repair-controller",
       "path": "adapters/opencode/.opencode/agents/visual-repair-controller.md",
-      "sha256": "420769405252a709d7a4f78af30b56e2bd9916a3a254df5663728224d156ee64"
+      "sha256": "d09f8717b1e494c2eb4c7c819131091e1d1198ea9a5da7e3f0c50ddf355fc099"
     },
     {
       "id": "agent:visual-runtime-audit-runner",
       "path": "adapters/opencode/.opencode/agents/visual-runtime-audit-runner.md",
-      "sha256": "9f148627e849860d6681ac966977fe5c73f29502e8346af92623f2982ab3d6b8"
+      "sha256": "4ac5694aa4e66e541985d83af466d838b12d3de4e89b969e3d9caa5c9827fc68"
     }
   ],
   "checks": [
@@ -286,6 +286,13 @@
       "id": "runtime.native_image_external",
       "status": "PASS",
       "detail": "native-image readiness requires separate target-runtime evidence",
+      "capability": "visual_qa_judge",
+      "kind": "deterministic"
+    },
+    {
+      "id": "runtime.truthful_text_only",
+      "status": "PASS",
+      "detail": "no runtime model capability is bundled or inferred; text-only runtime cannot satisfy native-image gate",
       "capability": "visual_qa_judge",
       "kind": "deterministic"
     },
@@ -1571,5 +1578,5 @@
       "kind": "capability-proof"
     }
   ],
-  "evidence_sha256": "9d1989b8f830bc531e334af493a170bdf835d3722608bba772ff5a85a67c2642"
+  "evidence_sha256": "968b89428033cf03058541c3f271c549e6651cbad99194a5f36361d709bd9b3c"
 }

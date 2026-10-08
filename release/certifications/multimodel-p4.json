@@ -55,17 +55,17 @@
     },
     {
       "path": "release/certifications/multimodel-p1.json",
-      "sha256": "a5b34ac6a60b685dc19be0d4797f863b398509eb1728e2fa0940131b385f65ba"
+      "sha256": "1d655be1baeaedb6abd71aec568c52436a1401fe83b17c05d7c4cb366f2dbad7"
     },
     {
       "path": "release/certifications/multimodel-p2.json",
-      "sha256": "1134635592c042e119c5256c38e9db1004188480e3103af15ded9ac645e030dc"
+      "sha256": "cb604123bd398039499f7b1fdbbfebda13f71f73ce4a48175d420366f2ed4e39"
     },
     {
       "path": "release/certifications/multimodel-p3.json",
-      "sha256": "71c229d0ed94b57e9a341714e78d1fe95bbaf733d827415a8dfa825b3fa402a2"
+      "sha256": "6014ad072635d171b3ec9532dbee53c3779042f14769a182c73fb6368bfdcdfb"
     }
   ],
-  "created_at": "2026-10-06T16:27:26.118Z",
-  "evidence_sha256": "92372bb9609ba166c9d15c70fb969bd5f4d493ca30a4675eaca88832af9bfe84"
+  "created_at": "2026-10-08T00:46:48.317Z",
+  "evidence_sha256": "8492925ade74fc6d24d972493ca38565cb757a0b46dd747076dfbbcbc012eee7"
 }

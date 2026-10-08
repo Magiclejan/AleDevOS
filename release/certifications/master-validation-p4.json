@@ -68,7 +68,7 @@
     },
     {
       "path": "release/certifications/master-validation-p3.json",
-      "sha256": "de23da7cb053fcfc72a2064adb8e49318a64859eb6ddfbf21375966ea80edff5"
+      "sha256": "8d4711a57369c5ff10ce60394b1628f2371088cc053a12ef130c511bc79d653a"
     },
     {
       "path": "visualqa/engine/browser-runner.mjs",
@@ -92,8 +92,8 @@
     },
     {
       "path": "core/engine/aledevos.mjs",
-      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
     }
   ],
-  "master_p4_certificate_sha256": "dd4123928b5c59f48870cc71d3b9241784357a70dc4d83bf53ae967101fcc1aa"
+  "master_p4_certificate_sha256": "ba0c9e87ec4d9ff982bdeb9dbd785089a3d09d663b5f2c23fd4f90876c8e9bc9"
 }

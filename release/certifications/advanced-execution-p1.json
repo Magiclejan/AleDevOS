@@ -43,9 +43,9 @@
     },
     {
       "path": "scripts/05-install-into-project.ps1",
-      "sha256": "105e0bebfe026b8cccc1cf0dc3e08a3fe466869ddf3c8075db209ab92cbbe65d"
+      "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T00:06:20.530Z",
-  "evidence_sha256": "bc4c5c9eea84976a5fe4fbde41e26669c1212c21ee460596612390e9548d34b5"
+  "created_at": "2026-10-08T00:46:46.789Z",
+  "evidence_sha256": "220e4339641bb2239e07aad42144b8ad0a20272d685499d255b8eddfb87b02e8"
 }

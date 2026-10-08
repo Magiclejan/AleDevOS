@@ -40,7 +40,7 @@
     {
       "id": "project",
       "path": "adapters/antigravity/project-template.json",
-      "sha256": "b8b0e50ab65eaa3b905464ab9fb9df557336b3674797c4fd9e169e5355528d44"
+      "sha256": "43ab6ef24a4c27adf08d33dfb4d70ae46a56af7e8015b0d3c91914844304d1c5"
     },
     {
       "id": "provider",
@@ -50,7 +50,7 @@
     {
       "id": "binding",
       "path": "skillsystem/bindings/antigravity.json",
-      "sha256": "2965a44f1d74867083e7b5123b18fd826c93f08d61442716b73d95ee47b45da6"
+      "sha256": "74ad9de2dc7a85c4baf8e6eb6c01cdca1c5a6c32a9e9b6726bde5dcf5571d776"
     },
     {
       "id": "discovery",
@@ -65,7 +65,7 @@
     {
       "id": "engine",
       "path": "core/engine/aledevos.mjs",
-      "sha256": "51fd2c229d410ef00f377bfcccea0be47bcdb549cc2e51f8a13f6b782d99cf47"
+      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
     },
     {
       "id": "context",
@@ -75,7 +75,7 @@
     {
       "id": "skillsys",
       "path": "skillsystem/engine/skillsystem.mjs",
-      "sha256": "ffc65bc8e5d184403b8b458635153bcd78a37cf232b15064b3b0dc558fdbdd5f"
+      "sha256": "0957804e27c958e0f337b91b3af75a13b7f6b34f252767ef86bb4bfc9b0139ae"
     },
     {
       "id": "vqa",
@@ -95,7 +95,7 @@
     {
       "id": "acquire",
       "path": "adapters/antigravity/scripts/acquire-skill.ps1",
-      "sha256": "7f434262d5f9fdb49fe6384019c5cc35296be642107e17a07ea4742527a505f6"
+      "sha256": "cdd8a5060f3125fffc85a5eaf9e137b5e74d9946d274468397c7acd25caa4cc3"
     },
     {
       "id": "certifier",
@@ -110,7 +110,7 @@
     {
       "id": "role:auditor",
       "path": "adapters/antigravity/.agents/agents/auditor.md",
-      "sha256": "04be9bd6e626261777fee86ab99bd1b0cd4197f584f5adf0cf7f79be76289f51"
+      "sha256": "e4dd61a330095cfcea82c5ee6e68d56c136b29181263426a8ccd25529cc96b23"
     },
     {
       "id": "role:builder",
@@ -150,12 +150,12 @@
     {
       "id": "role:judge-quality",
       "path": "adapters/antigravity/.agents/agents/judge-quality.md",
-      "sha256": "eec976c9cd7dd676c780dfa32723af1d1424049fb326de36039a8eeea8567f51"
+      "sha256": "a2fc67f6d1a5aab9f5cc7a702b39eb19ef1afa334280b2bb00b1221c8f8d8065"
     },
     {
       "id": "role:judge-regression",
       "path": "adapters/antigravity/.agents/agents/judge-regression.md",
-      "sha256": "263211b1bd9ea92039fdf63b9324c34e634ab4edbb607ebee0568918acf1dd71"
+      "sha256": "786f441cb3e927c317142064585de0ebae90a60063e282adeddf6d5970ebedab"
     },
     {
       "id": "role:judge-requirements",
@@ -175,7 +175,7 @@
     {
       "id": "role:orchestrator",
       "path": "adapters/antigravity/.agents/agents/orchestrator.md",
-      "sha256": "87dc1db4ba7bb70280c8bb55137f681e0bb67042504311e28a687e6645662266"
+      "sha256": "33ed2ede86a40f9548ca4eea035723e6cae2b26bc77e083548d30ef09ebf1811"
     },
     {
       "id": "role:repairer",
@@ -185,7 +185,7 @@
     {
       "id": "role:researcher",
       "path": "adapters/antigravity/.agents/agents/researcher.md",
-      "sha256": "514867e94478042afacefd05dfa643a79ec43671fdbb4bc89fb289c0827314c5"
+      "sha256": "458426bfd7be8100adb1e13732eb2df820cafc6c0707eff814c1eb5fed209259"
     },
     {
       "id": "role:security-reviewer",
@@ -200,7 +200,7 @@
     {
       "id": "role:verifier",
       "path": "adapters/antigravity/.agents/agents/verifier.md",
-      "sha256": "74dbbfd7b24052ef49009a0ea2162a8f9562d5bb9d47765afce2c41e36cdb0ae"
+      "sha256": "2fdd7ab1d19d07aa104e14250056859dfe2f9c70992c044242f84e94d3ad36fe"
     },
     {
       "id": "role:visual-capture-runner",
@@ -230,67 +230,67 @@
     {
       "id": "skill:backend-change",
       "path": "adapters/antigravity/.agents/skills/backend-change/SKILL.md",
-      "sha256": "dc741701782d5dae67633a01b25ff6da5446beb44f18881d992aa589878880be"
+      "sha256": "d7e1ad66c4355777a028986f0b07ae64eccf4e132f8676c53d73f5193983bca8"
     },
     {
       "id": "skill:database-change",
       "path": "adapters/antigravity/.agents/skills/database-change/SKILL.md",
-      "sha256": "1189479b5880f9e98869b077a7370244109e40260d7e1cb083abb2493f29823b"
+      "sha256": "88c86a5f16480d3767d588480c749844b6492c1d83b125957894953a8575a4f3"
     },
     {
       "id": "skill:diff-review",
       "path": "adapters/antigravity/.agents/skills/diff-review/SKILL.md",
-      "sha256": "76b6b648fd793a9eeb9e8c1a8f4863fd59dc8082218af5b8569ca150f13030d1"
+      "sha256": "50f6b7f5bd6845a9dfeb2cfdc38a9a91eaefdaefc8609b50ad3ea3937d3844ec"
     },
     {
       "id": "skill:frontend-change",
       "path": "adapters/antigravity/.agents/skills/frontend-change/SKILL.md",
-      "sha256": "4a5a3f5b9ed04671aa09b12af9c3a8fd93243c63b7376cfbc655a2c258b196aa"
+      "sha256": "477fe3ed070f3a732f9e8c5a7336d7b24068f4714fa987bfa77b97c9a2481466"
     },
     {
       "id": "skill:implementation-plan",
       "path": "adapters/antigravity/.agents/skills/implementation-plan/SKILL.md",
-      "sha256": "d5a4700f7f70e449529238fce45f6d6632b3b44a9725157a2838803ef8a8420b"
+      "sha256": "f58994ca99ad8eaff38c4ea6f672bc7fcc458e7a1975b0486fbf9cac5bfbbea3"
     },
     {
       "id": "skill:regression-analysis",
       "path": "adapters/antigravity/.agents/skills/regression-analysis/SKILL.md",
-      "sha256": "3658af4934271edb2b634082566290d3fc40e8e993df16bf699f215856aa25ff"
+      "sha256": "aaeb3c6a06742eb21c75b6ce3f41216c0c3b179b25b0fd260d1e0bf0fd4c99b6"
     },
     {
       "id": "skill:repair-loop",
       "path": "adapters/antigravity/.agents/skills/repair-loop/SKILL.md",
-      "sha256": "a47302848833ff6a6a0539edb8b763ab9fa780882297874ecae747f04042801b"
+      "sha256": "5df8564c2d924e8d9526f5e9b8326af107fd86664c1af27d351bf39b1196647a"
     },
     {
       "id": "skill:repo-map",
       "path": "adapters/antigravity/.agents/skills/repo-map/SKILL.md",
-      "sha256": "ecb1ae63678d77aadd1a9099cab6baaa72f9947fd48cbe565838636ce5fe9979"
+      "sha256": "173841b2ba551c7f4ed97506655e0fc4cb8a141216264eb6cc5771e067c3643b"
     },
     {
       "id": "skill:requirements-check",
       "path": "adapters/antigravity/.agents/skills/requirements-check/SKILL.md",
-      "sha256": "db668f9559029123dba0d01752a9058fefca3a9a238377cacdfef95d1cb61035"
+      "sha256": "6b165a1eb444009e054ed420a3a6b22383d7699aaccc7d8cb667519e87c63806"
     },
     {
       "id": "skill:safe-edit",
       "path": "adapters/antigravity/.agents/skills/safe-edit/SKILL.md",
-      "sha256": "3a83e225a8d27034eb9bf194ca661cc00410ef45122c70f80a748bf85a24ccf8"
+      "sha256": "77743dd543213a631ffcc0aa52678045a2d2783b0ef717cb3d89060789bf698f"
     },
     {
       "id": "skill:security-check",
       "path": "adapters/antigravity/.agents/skills/security-check/SKILL.md",
-      "sha256": "c2623fbdd15a00ed1b6a6fddfc2a0b8ba05a6b324f4c501e6be167c1bea44cd5"
+      "sha256": "38d30a336e05ee3faa891a04a8e7be2939fea06e5806130f56411960d64035bc"
     },
     {
       "id": "skill:task-contract",
       "path": "adapters/antigravity/.agents/skills/task-contract/SKILL.md",
-      "sha256": "47409ce6b2f11873efd3c076356600706dd02a20e8c05468bb6f135fb38c1167"
+      "sha256": "a9af53dfdd7143c6071f6409c5950f15e4fe2418e8d7fb664923016541ae5ba9"
     },
     {
       "id": "skill:test-strategy",
       "path": "adapters/antigravity/.agents/skills/test-strategy/SKILL.md",
-      "sha256": "8776fb7dcfe86be85a729ae3d2b7ae00b8df6a72bce5fd9f45678f1668308034"
+      "sha256": "0c272ea0dc3c45da2cbe7766ec16d03b67f91ac17d1435858fc9e95badd624aa"
     }
   ],
   "checks": [
@@ -2038,5 +2038,5 @@
       "kind": "capability-proof"
     }
   ],
-  "evidence_sha256": "bbf8d7a7926c63dedde4739ab70de98f4de877b9177ffcbfd46dc7230202d1ab"
+  "evidence_sha256": "aaf81c455b3f42499443edfbe8f3c22e21b2e7a6776695afb2b9dd1918d3f6a0"
 }
