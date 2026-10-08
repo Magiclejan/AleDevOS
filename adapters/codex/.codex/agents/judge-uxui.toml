@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: judge-uxui
+name = "judge-uxui"
+description = "Read-only UX/UI Judge for Phase 4."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
