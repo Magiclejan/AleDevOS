@@ -129,7 +129,7 @@ function Find-NearbyProjects {
   return @($found | Sort-Object -Unique)
 }
 
-function function Show-AdvancedMenu {
+function Show-AdvancedMenu {
   while ($true) {
     Clear-Host
     Write-Host '============================================================'
@@ -902,7 +902,7 @@ function Resolve-OrCreateProjectPath([string]$PathValue) {
 function Select-ProjectAdapter {
   Write-Host 'Adapter: 1 Codex | 2 Claude Code | 3 OpenCode | 4 Antigravity | 5 Gemini(alias Antigravity)'
   $a = Read-Host 'Adapter [1-5]'
-  return switch ($a) {
+  switch ($a) {
     '1' {'codex'}
     '2' {'claude-code'}
     '3' {'opencode'}
