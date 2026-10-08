@@ -17,6 +17,7 @@ param(
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 if (-not $ConfirmReal) { throw 'P37_1_EXPLICIT_CONFIRM_REAL_REQUIRED' }
+if ($FullCampaign -and [string]::IsNullOrWhiteSpace($ReviewerId)) { throw 'P37_1_FULL_CAMPAIGN_REQUIRES_SEPARATE_REVIEWER_ID' }
 if ($CodexWorkspaceWrite -and $Adapter -ne 'codex') { throw 'P37_1_CODEX_WRITE_ONLY_CODEX_ADAPTER' }
 if ($CodexWorkspaceWrite -and -not $FullCampaign -and
     $Case -in @('rejected_out_of_scope_request','scoped_permissions_enforced','independent_verification')) {
