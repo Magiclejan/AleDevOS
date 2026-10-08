@@ -1,4 +1,6 @@
 # Generated AleDevOS Codex role: visual-regression-runner
+name = "visual-regression-runner"
+description = "Narrow Visual QA Phase 3 baseline/regression executor; no product edits."
 approval_policy = "never"
 default_permissions = "aledevos_runtime"
 allow_login_shell = false
