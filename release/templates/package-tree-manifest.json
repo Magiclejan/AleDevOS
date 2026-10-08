@@ -2026,8 +2026,8 @@
     },
     {
       "path": "docs/NEXT_VALIDATION.md",
-      "sha256": "3963c0669b6f9402e44657247ac50a6e21e096fd24539ab2dca113e527a9c15b",
-      "size": 873
+      "sha256": "4586358101a3279a3dc7734d464b0db704419f65fbee93d63016e3a6ab4e2086",
+      "size": 2404
     },
     {
       "path": "docs/PORTABILITY_PHASE1_VALIDATION.md",
@@ -4015,6 +4015,6 @@
       "size": 291
     }
   ],
-  "tree_sha256": "b5e7760ea6a3ad066d3de32093047fab43d88a7827bf11fffa3b5dedfb6d125f",
-  "manifest_sha256": "2c4e09e3638759538953fba1ae661cd8fa4b3da2dea1844d129dbb0df8825631"
+  "tree_sha256": "34a65f071c9f7d2a924e2d3cc51eaf990b6ec974a7ea5864e239e7fc7a2995ba",
+  "manifest_sha256": "9586e76818f8e607970bce61306aee20f0a7671035610d4bb53f9435484ffe9e"
 }

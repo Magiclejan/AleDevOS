@@ -41,7 +41,7 @@
     },
     {
       "path": "release/templates/master-validation-package-baseline.json",
-      "sha256": "c3b8318d56f7490af7d1c1bd000e481aa2c23c78c4ae6eba10433d7b99a4ef14"
+      "sha256": "850654a12785fac5a35bffe94fd1dc00e4496305e284403387f757ddabbfcb3c"
     },
     {
       "path": "tests/master-validation-phase1.test.mjs",
@@ -68,5 +68,5 @@
       "sha256": "234a24ab4d9da25ff353a50edd071489985a99e2092b04ab5848487f7dc60497"
     }
   ],
-  "master_certificate_sha256": "c4256475dbcf2f7b10823f196bc418b7ef4ae100cfd985c3c79c872a8493365c"
+  "master_certificate_sha256": "294a04bfa3ccbecfda82cce3779b6aa4385654f727ee516e82e3f7bb9b1ae8ce"
 }
