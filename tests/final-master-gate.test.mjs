@@ -73,8 +73,8 @@ test('Windows campaign scripts carry the descendant-only relative-path compatibi
     assert.ok(src.includes('ALEDEVOS_PATH_OUTSIDE_ROOT'),name);
   }
 });
-test('runtime launcher explicitly uses Windows PowerShell with process-local ExecutionPolicy bypass',()=>{
-  const src=fs.readFileSync(path.join(root,'2_COMPROBAR_RUNTIMES.bat'),'utf8');
+test('canonical START_ALEDEVOS launcher explicitly uses Windows PowerShell with process-local ExecutionPolicy bypass',()=>{
+  const src=fs.readFileSync(path.join(root,'START_ALEDEVOS.bat'),'utf8');
   assert.match(src,/powershell\.exe\s+-NoLogo\s+-NoProfile\s+-ExecutionPolicy\s+Bypass/i);
 });
 
