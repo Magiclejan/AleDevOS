@@ -16,11 +16,28 @@ if(!fs.existsSync(testsDir)){
   console.error('FULL_REGRESSION_TEST_DIR_MISSING');
   process.exit(2);
 }
-const files=fs.readdirSync(testsDir).filter(x=>x.endsWith('.test.mjs')).sort();
-if(files.length===0){
+const inventory=fs.readdirSync(testsDir).filter(x=>x.endsWith('.test.mjs')).sort();
+if(inventory.length===0){
   console.error('FULL_REGRESSION_NO_TESTS');
   process.exit(2);
 }
+const args=process.argv.slice(2);
+function intFlag(name,fallback){
+  const i=args.indexOf(name);
+  return i<0?fallback:Number(args[i+1]);
+}
+const shardCount=intFlag('--shard-count',1),shardIndex=intFlag('--shard-index',0);
+if(!Number.isSafeInteger(shardCount)||shardCount<1||shardCount>32||
+   !Number.isSafeInteger(shardIndex)||shardIndex<0||shardIndex>=shardCount){
+  console.error('FULL_REGRESSION_INVALID_SHARD');
+  process.exit(2);
+}
+const files=inventory.filter((name,i)=>i%shardCount===shardIndex);
+if(!files.length){
+  console.error('FULL_REGRESSION_SHARD_EMPTY');
+  process.exit(2);
+}
+console.log('FULL_REGRESSION_INVENTORY '+JSON.stringify({all_files:inventory.length,shard_index:shardIndex,shard_count:shardCount,assigned_files:files}));
 const results=[];
 function runOne(name){
   return new Promise(resolve=>{
