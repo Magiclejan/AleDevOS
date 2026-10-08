@@ -60,17 +60,17 @@
     },
     {
       "path": "release/certifications/advanced-execution-p1.json",
-      "sha256": "d9fab0d24e805ba99f38ce6a14a09dda41d7fcc81013d1a96a273468c1826aac"
+      "sha256": "07c187785740c6bb1d50f406ef196cfd7fe6a53652b6891320bc9a96b2a1bdd6"
     },
     {
       "path": "release/certifications/advanced-execution-p2.json",
-      "sha256": "85352eb7c3ea9f39b278d6ffc314d8e14de5b19776f5f2f17afebcf74364372f"
+      "sha256": "422d284e368ae3e0107cd84361c26f0c3d5e6ee23ed6edd2ba7c228d0b1e3bf1"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
-      "sha256": "db45846326c5fa7b8e5b1b5ade22cb93ea3afccd549c04ddebebab37f7fe948a"
+      "sha256": "105e0bebfe026b8cccc1cf0dc3e08a3fe466869ddf3c8075db209ab92cbbe65d"
     }
   ],
-  "created_at": "2026-10-06T16:27:26.367Z",
-  "evidence_sha256": "a3f73cfc26bf58a2f82a520c92bcd9e2232bbd3c6e204447abf7f19e87bb9041"
+  "created_at": "2026-10-08T00:06:20.530Z",
+  "evidence_sha256": "761b1e43d5f14daf587a6a22eb3572cd6b66e2a568986868ad40f40ed51e03aa"
 }
