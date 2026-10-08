@@ -94,3 +94,16 @@ For explicitly authorized positive Codex pilot cases only, use -CodexWorkspaceWr
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\37-1-real-skills-execution.ps1 -Adapter codex -Provider openai -Model gpt-5.6-luna -Skill safe-edit -Case executed_real_task -CodexWorkspaceWrite -ConfirmReal
 
 Interpret together: native_events, execution_evidence, workspace_runtime, focused_check, workspace.changed_paths and issues. No raw model answer or secrets should be copied into certification evidence. If task/routing evidence remains missing after Codex receives workspace-write, investigate project trust and actual agent delegation before attempting a full campaign.
+
+
+### P37.1C — real bootstrap reached; bounded timeout and route adjudication
+
+On 2026-10-08 the third real Codex safe-edit pilot emitted 7 JSONL events, 4 tool events, 1 task state, 1 task contract and 1 route receipt, but produced no completed turn and timed out at the prior fixed 120-second limit. The focused addition test continued failing; the target file was unchanged. This proves that a task and a route artifact were created, **not** that the safe-edit Skill was activated or completed.
+
+For diagnosis, the Windows pilot wrapper now supports `-TimeoutSeconds 30..600` (default 120), passed unchanged to the engine, which rejects values outside the same bounds. Do not run the whole 78-case campaign with the extended timeout. Try one case only after checking the previous route and task progress. For example:
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\37-1-real-skills-execution.ps1 -Adapter codex -Provider openai -Model gpt-5.6-luna -Skill safe-edit -Case executed_real_task -CodexWorkspaceWrite -TimeoutSeconds 300 -ConfirmReal
+
+New `route_progress` records only allowlisted task state, roles, route status, selected requested Skill and **independent canonical route-verification exit code**; it never stores task objectives, route request data, task content or assistant replies. Receipt presence alone is not authorization or integrity evidence. `workspace_runtime.timeout_ms` and `workspace_runtime.elapsed_ms` preserve the bound and elapsed duration. If PowerShell/CLI timeout prevents proving termination of its child process tree, `provider_process_termination_after_timeout` remains UNVERIFIED. Do not reuse or certify that temporary workspace without checking for still-running processes.
+
+If the new execution finishes yet routing is not ROUTE_READY, the target Skill was not selected or canonical route verification fails, the target remains BLOCKED. Model identification is still independent: Codex's structured JSONL may omit model even for successful turns. All P37.3 certification remains blocked until separately verified.

@@ -188,6 +188,49 @@ export function inspectWorkspaceExecutionEvidence(workspace){
   .filter(e=>e.isFile()&&e.name.endsWith('.json')).length:0;
  return {task_directories:tasks.length,task_contracts:taskContracts,task_states:taskStates,route_receipts:routeReceipts};
 }
+export function validatePilotTimeoutMs(value){
+ const n=Number(value);
+ if(!Number.isInteger(n)||n<30000||n>600000)throw Error('P37_1_TIMEOUT_OUTSIDE_30_TO_600_SECONDS');
+ return n;
+}
+export function inspectRouteProgress(workspace,expectedSkill=null){
+ const empty={task_count:0,task_state_present:false,task_final_state:'UNOBSERVED',
+  task_blocked:false,agent_roles_observed:[],route_status:'NOT_OBSERVED',
+  route_selected_expected:false,route_integrity_verified:false,route_verify_exit_code:null};
+ const base=path.join(workspace,'.aledevos','state','tasks');
+ if(!fs.existsSync(base))return empty;
+ const tasks=fs.readdirSync(base,{withFileTypes:true})
+  .filter(x=>x.isDirectory()&&/^[a-zA-Z0-9._-]{1,120}$/.test(x.name)).map(x=>x.name).sort();
+ const result={...empty,task_count:tasks.length};
+ if(tasks.length!==1)return result;
+ const id=tasks[0],stateFile=path.join(base,id,'state.json'),
+  routeFile=path.join(workspace,'.aledevos','state','skills','routes',id+'.json');
+ const safeLoad=(file)=>{
+  if(!fs.existsSync(file)||!fs.lstatSync(file).isFile()||fs.statSync(file).size>65536)return null;
+  try{return read(file)}catch{return null}
+ };
+ const state=safeLoad(stateFile);
+ if(state?.task_id===id){
+  result.task_state_present=true;
+  result.task_final_state=['PASS','FAILED','BLOCKED'].includes(state.final_state)?state.final_state:'UNFINISHED';
+  result.task_blocked=Boolean(state.blocked_reason);
+  result.agent_roles_observed=[...new Set((Array.isArray(state.agent_trace)?state.agent_trace:[])
+    .map(x=>String(x?.agent||'')).filter(x=>/^[a-z][a-z0-9-]{0,80}$/.test(x)))].slice(0,30);
+ }
+ const route=safeLoad(routeFile);
+ if(route?.task_id!==id)return result;
+ result.route_status=['ROUTE_READY','ROUTE_BLOCKED','NO_RELEVANT_SKILL'].includes(route.status)
+  ?route.status:'UNRECOGNIZED';
+ result.route_selected_expected=Boolean(expectedSkill&&Array.isArray(route.selected)&&route.selected
+  .some(x=>x?.id===expectedSkill&&x.runtime_status==='AVAILABLE'));
+ const script=path.join(workspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
+ if(!fs.existsSync(script))return result;
+ const verify=runNative(process.execPath,[script,'route','verify','--project-root',workspace,'--task-id',id],
+  workspace,15000);
+ result.route_verify_exit_code=Number.isInteger(verify.status)?verify.status:null;
+ result.route_integrity_verified=verify.status===0&&!verify.error;
+ return result;
+}
 export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
  if(adapter!=='codex'||confirmed!==true||!workspace||!inTmp(workspace)||
     !fs.existsSync(path.join(workspace,'.p37-owned-disposable.json')))
@@ -267,6 +310,7 @@ export function summarizeObservations(root){
 }
 function executeCase(root,opts){
  const {project,adapter,skill,caseId,provider,model,reviewer}=opts;
+ const timeoutMs=validatePilotTimeoutMs(opts.timeoutMs??120000);
  const target=sourceTarget(root,adapter,skill);
  validateBase(root,project,adapter);
  validateRuntimeIdentity(provider,model);
@@ -300,10 +344,11 @@ function executeCase(root,opts){
   codexPreflight.cli_version_exit_code=Number.isInteger(version.status)?version.status:null;
   codexPreflight.login_status_exit_code=Number.isInteger(login.status)?login.status:null;
  }
- const run=runNative(invocation.executable,invocation.args,caseWorkspace,Math.min(600000,Math.max(1000,opts.timeoutMs||120000)));
+ const run=runNative(invocation.executable,invocation.args,caseWorkspace,timeoutMs);
  const after=snapshot(caseWorkspace),changes=compareSnapshots(before,after),parsed=parseRuntimeOutput(profile.parser,run.stdout||'');
  const nativeEvents=adapter==='codex'?summarizeCodexEvents(run.stdout||''):null;
  const executionEvidence=inspectWorkspaceExecutionEvidence(caseWorkspace);
+ const routeProgress=inspectRouteProgress(caseWorkspace,skill);
  const gitProbe=spawnSync('git',['-C',caseWorkspace,'rev-parse','--is-inside-work-tree'],
   {encoding:'utf8',timeout:5000,windowsHide:true});
  const gitWorkspace=gitProbe.status===0&&(gitProbe.stdout||'').trim()==='true';
@@ -313,7 +358,8 @@ function executeCase(root,opts){
   stdout:run.stdout||'',stderr:run.stderr||'',exitCode,errorCode:run.error?.code??null
  });
  const issues=[];
- if(!transportSpawned)issues.push('PROVIDER_CLI_UNAVAILABLE_OR_TIMEOUT');
+ if(!transportSpawned&&runtimeFailureClass==='RUNTIME_TIMEOUT')issues.push('PROVIDER_EXECUTION_TIMED_OUT');
+ else if(!transportSpawned)issues.push('PROVIDER_CLI_UNAVAILABLE');
  if(codexPreflight?.cli_version_exit_code!==0)issues.push('CODEX_CLI_VERSION_UNVERIFIED');
  if(codexPreflight?.login_status_exit_code!==0)issues.push('CODEX_LOGIN_STATUS_UNVERIFIED');
  if(runtimeFailureClass!=='NONE')issues.push('RUNTIME_DIAGNOSTIC:'+runtimeFailureClass);
@@ -328,6 +374,12 @@ function executeCase(root,opts){
   if(executionEvidence.task_contracts===0||executionEvidence.task_states===0)
    issues.push('ORCHESTRATOR_TASK_EVIDENCE_MISSING');
   if(executionEvidence.route_receipts===0)issues.push('SKILL_ROUTE_EVIDENCE_MISSING');
+  if(executionEvidence.route_receipts>0){
+   if(!routeProgress.route_integrity_verified)issues.push('SKILL_ROUTE_INTEGRITY_UNVERIFIED');
+   if(routeProgress.route_status!=='ROUTE_READY')issues.push('SKILL_ROUTE_NOT_READY');
+   if(['executed_real_task','activated_on_correct_request','failure_and_recovery'].includes(caseId)
+     &&!routeProgress.route_selected_expected)issues.push('REQUESTED_SKILL_NOT_SELECTED');
+  }
  }
  if(nativeEvents?.agent_message_blocked_marker)issues.push('CODEX_AGENT_REPORTED_BLOCKED');
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
@@ -357,9 +409,11 @@ function executeCase(root,opts){
    error_code:run.error?.code??null},
   prompt_sha256:hash(prompt),installed_skill_sha256:probe.hash,
   preflight:codexPreflight,focused_check:focusedCheck,
-  native_events:nativeEvents,execution_evidence:executionEvidence,
+  native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,
   workspace_runtime:{git_repository:gitWorkspace,project_config_effectiveness:'UNVERIFIED',
    requested_sandbox:opts.codexWorkspaceWrite?'workspace-write':'RUNTIME_DEFAULT',
+   timeout_ms:timeoutMs,elapsed_ms:Date.now()-start,
+   provider_process_termination_after_timeout:runtimeFailureClass==='RUNTIME_TIMEOUT'?'UNVERIFIED':'NOT_APPLICABLE',
    os_level_control_plane_isolation:'NOT_INDEPENDENTLY_VERIFIED'},
   workspace:{disposable:caseWorkspace,changed_paths:changes.changed_paths,protected_changes:changes.protected_changes},
   issues,verifier_id_declared:reviewer||null,
@@ -368,7 +422,7 @@ function executeCase(root,opts){
  const outDir=path.join(stateDir(root),'skills',adapter,skill);fs.mkdirSync(outDir,{recursive:true});
  const file=path.join(outDir,caseId+'-'+event.runtime.invocation_id+'.json');
  fs.writeFileSync(file,JSON.stringify(event,null,2)+'\n',{flag:'wx'});
- return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
+ return {status:event.status,adapter,skill,case_id:caseId,exit_code:exitCode,diagnostic_class:runtimeFailureClass,preflight:codexPreflight,focused_check:focusedCheck,native_events:nativeEvents,execution_evidence:executionEvidence,route_progress:routeProgress,workspace_runtime:event.workspace_runtime,issues,evidence_file:file,
   workspace:caseWorkspace,pro_certified:0};
 }
 export async function main(args=process.argv.slice(2),root=defaultRoot){
@@ -383,7 +437,7 @@ export async function main(args=process.argv.slice(2),root=defaultRoot){
   assertSkill(skill);assertCase(caseId);
   return executeCase(root,{project:abs(flag(args,'--project')||'.'),adapter,skill,caseId,
    provider:flag(args,'--provider'),model:flag(args,'--model'),reviewer:flag(args,'--reviewer'),
-   timeoutMs:Number(flag(args,'--timeout-ms',120000)),codexWorkspaceWrite:has(args,'--codex-workspace-write')});
+   timeoutMs:validatePilotTimeoutMs(flag(args,'--timeout-ms',120000)),codexWorkspaceWrite:has(args,'--codex-workspace-write')});
  }
  if(command==='summary')return summarizeObservations(root);
  if(command==='cases')return {phase:'P37.1',skill_ids:skillIds,required_cases:SKILL_CASES,
