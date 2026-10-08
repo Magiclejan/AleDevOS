@@ -10,11 +10,16 @@ param(
   [string]$Case='executed_real_task',
   [string]$ReviewerId,
   [switch]$FullCampaign,
+  [switch]$CodexWorkspaceWrite,
   [switch]$ConfirmReal
 )
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 if (-not $ConfirmReal) { throw 'P37_1_EXPLICIT_CONFIRM_REAL_REQUIRED' }
+if ($CodexWorkspaceWrite -and $Adapter -ne 'codex') { throw 'P37_1_CODEX_WRITE_ONLY_CODEX_ADAPTER' }
+if ($CodexWorkspaceWrite -and $Case -eq 'rejected_out_of_scope_request' -and -not $FullCampaign) {
+  throw 'P37_1_NEGATIVE_READONLY_CASE_FORBIDS_WRITE_OPT_IN'
+}
 $root=Split-Path -Parent $PSScriptRoot
 $engine=Join-Path $root 'certification\pro\engine\p37-skills.mjs'
 $node=(Get-Command node -ErrorAction Stop).Source
@@ -46,6 +51,9 @@ foreach($id in $selectedSkills){
   $arguments=@($engine,'run','--adapter',$Adapter,'--project',$prepared.fixture,
                '--skill',$id,'--case',$caseId,'--provider',$Provider,'--model',$Model,'--execute-real')
   if($caseId -eq 'independent_verification') { $arguments+=@('--reviewer',$ReviewerId) }
+  if($CodexWorkspaceWrite -and $caseId -ne 'rejected_out_of_scope_request' -and
+     $caseId -ne 'independent_verification' -and
+     $caseId -ne 'scoped_permissions_enforced') { $arguments+=@('--codex-workspace-write') }
   Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId)
   & $node @arguments
   $status=$LASTEXITCODE
