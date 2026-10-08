@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import {makeCasePrompt,inspectProjection,compareSnapshots,lfSha256,sourceTarget,
+import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
@@ -62,6 +62,29 @@ test('snapshot comparison catches control-plane writes, including new and delete
  const diff=compareSnapshots(before,after);
  assert.deepEqual(diff.protected_changes,['.agents/skills/safe-edit/SKILL.md','.aledevos/project.json']);
  assert.deepEqual(diff.changed_paths,['.agents/skills/safe-edit/SKILL.md','.aledevos/project.json','other.txt','src/utils.mjs']);
+});
+
+test('adapter native projection drift blocks even when a Skill file matches',()=>{
+ const root=tmp(),project=tmp();
+ fs.mkdirSync(path.join(root,'adapters/codex/.codex'),{recursive:true});
+ fs.mkdirSync(path.join(root,'adapters/codex/.agents/skills'),{recursive:true});
+ fs.writeFileSync(path.join(root,'adapters/codex/.codex/config.toml'),'sandbox = true\n');
+ fs.mkdirSync(path.join(project,'.codex'),{recursive:true});
+ fs.mkdirSync(path.join(project,'.agents/skills'),{recursive:true});
+ fs.mkdirSync(path.join(project,'.aledevos'),{recursive:true});
+ fs.writeFileSync(path.join(project,'.aledevos/project.json'),'{"adapters":["codex"]}\n');
+ fs.writeFileSync(path.join(project,'.codex/config.toml'),'sandbox = true\n');
+ assert.equal(inspectAdapterProjection(root,project,'codex').ok,true);
+ fs.writeFileSync(path.join(project,'.codex/config.toml'),'sandbox = false\n');
+ const result=inspectAdapterProjection(root,project,'codex');
+ assert.equal(result.ok,false);
+ assert.ok(result.errors.includes('DRIFT:.codex/config.toml'));
+});
+
+test('git metadata alterations are protected changes, not excluded from snapshots',()=>{
+ const a={files:{},errors:[]};
+ const b={files:{'.git/config':'changed'},errors:[]};
+ assert.deepEqual(compareSnapshots(a,b).protected_changes,['.git/config']);
 });
 
 test('controlled fixture metadata never upgrades observational evidence to real certification',()=>{
