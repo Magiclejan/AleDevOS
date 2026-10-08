@@ -86,13 +86,39 @@ export function inspectProjection(project,target){
  const actual=lfSha256(file);
  return {ok:actual===target.source_sha256,reason:actual===target.source_sha256?null:'INSTALLED_SKILL_HASH_DRIFT',hash:actual};
 }
+// Validate the entire adapter-owned native projection, not only the Skill currently exercised.
+export function inspectAdapterProjection(root,project,adapter){
+ assertAdapter(adapter);
+ const parts={
+  opencode:['.opencode','opencode.json'],codex:['.codex','.agents/skills'],
+  'claude-code':['.claude'],antigravity:['.agents']
+ }[adapter];
+ const errors=[];
+ function visit(rel){
+  const source=path.join(root,'adapters',adapter,rel),destination=path.join(project,rel);
+  if(!fs.existsSync(source)||!fs.existsSync(destination)){errors.push('MISSING:'+rel);return;}
+  if(fs.lstatSync(destination).isSymbolicLink()){errors.push('SYMLINK:'+rel);return;}
+  if(fs.statSync(source).isDirectory()){
+   if(!fs.statSync(destination).isDirectory()){errors.push('TYPE:'+rel);return;}
+   for(const file of fs.readdirSync(source))visit(path.posix.join(rel,file));
+  }else if(!fs.statSync(destination).isFile()||shaFile(source)!==shaFile(destination))errors.push('DRIFT:'+rel);
+ }
+ for(const part of parts)visit(part);
+ const projectConfig=path.join(project,'.aledevos/project.json');
+ if(!fs.existsSync(projectConfig))errors.push('PROJECT_CONFIG_MISSING');
+ else {
+  const cfg=read(projectConfig);
+  if(!Array.isArray(cfg.adapters)||!cfg.adapters.includes(adapter))errors.push('PROJECT_ADAPTER_NOT_REGISTERED');
+ }
+ return {ok:errors.length===0,errors};
+}
 function snapshot(root){
  const result={},errors=[],stack=[''];
  while(stack.length){
   const rel=stack.pop(),current=path.join(root,rel);
   for(const item of fs.readdirSync(current,{withFileTypes:true})){
    const p=path.posix.join(rel.split(path.sep).join('/'),item.name);
-   if(p==='.git'||p==='node_modules'||p==='.aledevos/state')continue;
+   if(p==='node_modules'||p==='.aledevos/state')continue;
    if(item.isSymbolicLink()){errors.push('SYMLINK:'+p);continue;}
    if(item.isDirectory()){stack.push(p);continue;}
    if(!item.isFile())continue;
@@ -107,7 +133,7 @@ function snapshot(root){
 export function compareSnapshots(before,after){
  const all=new Set([...Object.keys(before.files),...Object.keys(after.files)]);
  const changed=[...all].filter(p=>before.files[p]!==after.files[p]).sort();
- const protectedChanges=changed.filter(p=>/^(?:\.aledevos\/|\.codex\/|\.claude\/|\.opencode\/|\.agents\/|AGENTS\.md|CLAUDE\.md|opencode\.json)/.test(p));
+ const protectedChanges=changed.filter(p=>/^(?:\.git\/|\.aledevos\/|\.codex\/|\.claude\/|\.opencode\/|\.agents\/|AGENTS\.md|CLAUDE\.md|opencode\.json)/.test(p));
  return {changed_paths:changed,protected_changes:protectedChanges,scan_errors:[...before.errors,...after.errors]};
 }
 function runNative(exe,argv,cwd,timeoutMs){
@@ -128,6 +154,8 @@ function prepare(root,adapter){
  const installed=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',
   installer,'-ProjectPath',dir,'-Adapter',adapter],{encoding:'utf8',timeout:180000,maxBuffer:12*1024*1024,windowsHide:true});
  if(installed.error||installed.status!==0)throw Error('P37_1_INSTALLER_FAILED exit='+String(installed.status));
+ const installedAdapter=inspectAdapterProjection(root,dir,adapter);
+ if(!installedAdapter.ok)throw Error('P37_1_ADAPTER_PROJECTION_INVALID:'+installedAdapter.errors.join(','));
  for(const skill of skillIds){
   const probe=inspectProjection(dir,sourceTarget(root,adapter,skill));
   if(!probe.ok)throw Error('P37_1_INSTALL_PROJECTION_INVALID:'+skill+':'+probe.reason);
@@ -146,6 +174,8 @@ function validateBase(root,project,adapter){
  if(meta.phase!=='P37.1'||meta.kind!=='DISPOSABLE_INSTALLED_FIXTURE'||
   meta.adapter!==adapter||meta.git_sha!==getRevision(root)||abs(meta.source_root)!==abs(root))
   throw Error('P37_1_STALE_OR_UNOWNED_FIXTURE');
+ const installedAdapter=inspectAdapterProjection(root,project,adapter);
+ if(!installedAdapter.ok)throw Error('P37_1_ADAPTER_PROJECTION_DRIFT:'+installedAdapter.errors.join(','));
  for(const skill of skillIds){
   const p=inspectProjection(project,sourceTarget(root,adapter,skill));
   if(!p.ok)throw Error('P37_1_FIXTURE_SKILL_DRIFT:'+skill);
