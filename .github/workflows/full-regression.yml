@@ -105,3 +105,17 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\ci\p36-3-clean-install.ps1
           if ($LASTEXITCODE -ne 0) { throw "P36_3_CLEAN_INSTALL_FAILED" }
+
+  p36-provenance-reissue-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Reissue and independently verify source-only certification chain in temporary checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/ci/p36-3-reissue-source-provenance.mjs --reissue --emit-payload
