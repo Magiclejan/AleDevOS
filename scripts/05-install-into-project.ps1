@@ -24,8 +24,16 @@ $initialEntries=@(Get-ChildItem -LiteralPath $target -Force -ErrorAction Silentl
 $gitRepository=$false
 $gitCmd=Get-Command git -ErrorAction SilentlyContinue
 if($gitCmd){
-  $gitProbe=& $gitCmd.Source -C $target rev-parse --is-inside-work-tree 2>$null
-  if($LASTEXITCODE -eq 0 -and (($gitProbe | Out-String).Trim() -eq 'true')){$gitRepository=$true}
+  # Windows PowerShell 5.1 may promote native Git stderr into a terminating
+  # NativeCommandError when probing a legitimate empty, non-Git project.
+  # Git is optional: an absent repository must never abort installation.
+  try {
+    $gitProbe=& $gitCmd.Source -C $target rev-parse --is-inside-work-tree 2>$null
+    if($LASTEXITCODE -eq 0 -and (($gitProbe | Out-String).Trim() -eq 'true')){$gitRepository=$true}
+  }
+  catch {
+    $gitRepository=$false
+  }
 }
 $projectEnvironment=if((-not $projectExisted) -or $initialEntries.Count -eq 0){
   'NEW_EMPTY'
