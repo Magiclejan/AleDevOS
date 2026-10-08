@@ -42,6 +42,8 @@ const issue=(code,detail)=>({code,detail});
 
 export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-independent-verifier'}={}){
   const revision=getRevision(root), files=walk(receiptRoot(root)), issues=[], receipts=[];
+  const profilePath=path.join(root,'adapters','codex','runtime-profile.json');
+  const profileSha=fs.existsSync(profilePath)?sha(fs.readFileSync(profilePath)):null;
   const byCase=new Map();
   for(const file of files){
     let receipt;
@@ -50,14 +52,22 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
     const key=expectedKey(receipt.skill,receipt.case_id);
     if(receipt.adapter!=='codex'||!SKILLS.includes(receipt.skill)||!CASES.includes(receipt.case_id))
       issues.push(issue('RECEIPT_MATRIX_ID_INVALID',file));
-    else if(!byCase.has(key))byCase.set(key,{file,receipt});
+    else {
+      // A campaign may retry a scenario. Historical/stale and blocked attempts
+      // remain in the manifest, but only the newest eligible receipt for the
+      // current revision/profile is evidence for P37.3.
+      const eligible=receipt.git_sha===revision&&receipt.profile_sha256===profileSha&&
+        receipt.status==='EVIDENCE_REVIEW_REQUIRED'&&Array.isArray(receipt.issues)&&receipt.issues.length===0;
+      const previous=byCase.get(key);
+      if(eligible&&(!previous||new Date(receipt.observed_at||0)>=new Date(previous.receipt.observed_at||0)))
+        byCase.set(key,{file,receipt});
+    }
   }
   for(const skill of SKILLS)for(const caseId of CASES)
     if(!byCase.has(expectedKey(skill,caseId)))issues.push(issue('MISSING_SCENARIO',expectedKey(skill,caseId)));
 
-  const profilePath=path.join(root,'adapters','codex','runtime-profile.json');
-  const profileSha=fs.existsSync(profilePath)?sha(fs.readFileSync(profilePath)):null;
-  for(const {file,receipt} of receipts){
+  const selected=[...byCase.values()];
+  for(const {file,receipt} of selected){
     const prefix=file;
     const forbidden=hasForbiddenKey(receipt);
     if(forbidden)issues.push(issue('FORBIDDEN_EVIDENCE_FIELD',prefix+':'+forbidden));
@@ -94,6 +104,7 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
   const manifest=receipts.map(({file})=>({path:path.relative(root,file).replaceAll(path.sep,'/'),sha256:sha(fs.readFileSync(file))})).sort((a,b)=>a.path.localeCompare(b.path));
   const report={schema_version:'1.0',phase:'P37.3',reviewer,reviewed_at:new Date().toISOString(),git_sha:revision,
     adapter:'codex',required_scenarios:SKILLS.length*CASES.length,receipt_count:receipts.length,
+    selected_evidence_count:selected.length,
     complete_matrix:byCase.size===SKILLS.length*CASES.length,manifest_sha256:sha(JSON.stringify(manifest)),
     receipt_manifest:manifest,issues,independent_signoff:issues.length===0?'P37_3_SIGNOFF_PASS':'P37_3_SIGNOFF_FAIL',
     pro_certified:false,provider_model_identity_observed:false,
