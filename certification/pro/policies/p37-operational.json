@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "phase": "ALEDEVOS_P37_OPERATIONAL",
+  "purpose": "Evidence-gated runtime certification for AleDevOS Skills, agents and workflow handoffs; no simulated or structural success may count as operational proof.",
+  "component_matrix": {
+    "adapters": [
+      "opencode",
+      "codex",
+      "claude-code",
+      "antigravity"
+    ],
+    "skills_source": "certification/pro/policies/p36-quality.json",
+    "roles_source": "certification/pro/roles/p36-2-role-contracts.json",
+    "expected_skills_per_adapter": 13,
+    "expected_roles_per_adapter": 25,
+    "workflow_ids": [
+      "orchestrator-full-cycle"
+    ],
+    "expected_total": 156
+  },
+  "cases": {
+    "skill": [
+      "activated_on_correct_request",
+      "rejected_out_of_scope_request",
+      "executed_real_task",
+      "scoped_permissions_enforced",
+      "failure_and_recovery",
+      "independent_verification"
+    ],
+    "agent": [
+      "correct_role_routing",
+      "unauthorized_action_denied",
+      "real_task_execution_or_observation",
+      "evidence_handoff",
+      "negative_case_handled",
+      "independent_verification"
+    ],
+    "workflow": [
+      "task_contract_to_writer",
+      "real_deterministic_verifier",
+      "independent_judge_chain",
+      "write_permission_denial",
+      "two_repair_limit",
+      "fresh_evidence_after_repair"
+    ]
+  },
+  "provenance": {
+    "required_real_execution": true,
+    "require_current_git_head": true,
+    "require_source_sha256": true,
+    "require_actual_provider_id": true,
+    "require_runtime_invocation_ref": true,
+    "require_independent_verifier": true,
+    "require_negative_test": true,
+    "max_age_hours": 72,
+    "max_future_skew_minutes": 5,
+    "approved_artifact_extensions": [
+      ".json"
+    ],
+    "strict_case_coverage": true,
+    "never_record": [
+      "raw_prompt",
+      "transcript",
+      "conversation",
+      "api_key",
+      "secret",
+      "password",
+      "authorization_header",
+      "model_thoughts",
+      "private_key"
+    ],
+    "not_accepted": [
+      "mock_only",
+      "text_only_for_native_image",
+      "synthetic_browser_as_real",
+      "unknown_provider",
+      "self_review_only",
+      "unbound_commit",
+      "missing_execution_artifacts",
+      "stale_receipt"
+    ]
+  },
+  "status_model": [
+    "BLOCKED",
+    "FAILED",
+    "EVIDENCE_REVIEW_REQUIRED",
+    "PRO_CERTIFIED"
+  ],
+  "authority": {
+    "automated_verifier_may_emit": [
+      "BLOCKED",
+      "FAILED",
+      "EVIDENCE_REVIEW_REQUIRED"
+    ],
+    "automated_verifier_must_never_emit": "PRO_CERTIFIED",
+    "certification_requires": "A separate P37.3 independent, authorized, cryptographically source-bound review/signoff plus scenario-complete real execution. Package P36 is only a prerequisite.",
+    "no_release_claim": true
+  },
+  "local_evidence_root": ".aledevos/state/certification/p37",
+  "visual_gate": "Native-image semantic P5 remains BLOCKED until actual image pixels are inspected by a native-image-capable provider with fresh P2–P4 receipts; text-only models cannot satisfy it."
+}
