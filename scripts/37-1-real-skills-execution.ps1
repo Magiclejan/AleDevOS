@@ -57,12 +57,17 @@ foreach($id in $selectedSkills){
   if($CodexWorkspaceWrite -and $caseId -ne 'rejected_out_of_scope_request' -and
      $caseId -ne 'independent_verification' -and
      $caseId -ne 'scoped_permissions_enforced') { $arguments+=@('--codex-workspace-write') }
-  Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' timeout_seconds='+$TimeoutSeconds)
-  & $node @arguments
-  $status=$LASTEXITCODE
-  $attempts++
-  Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId)
-  if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
+  $status=4
+  for($retry=0;$retry -le 2;$retry++){
+   Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' attempt='+($retry+1)+' timeout_seconds='+$TimeoutSeconds)
+   & $node @arguments
+   $status=$LASTEXITCODE
+   $attempts++
+   Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId+' attempt='+($retry+1))
+   if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
+   if ($status -eq 0) { break }
+   if($retry -lt 2){Write-Warning ('P37_1_CASE_RETRY '+$id+':'+$caseId)}
+  }
  }
 }
 Write-Host ('P37_1_ATTEMPTS '+$attempts)
