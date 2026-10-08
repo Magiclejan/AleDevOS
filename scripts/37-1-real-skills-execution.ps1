@@ -11,6 +11,7 @@ param(
   [string]$ReviewerId,
   [switch]$FullCampaign,
   [switch]$CodexWorkspaceWrite,
+  [ValidateRange(30,600)][int]$TimeoutSeconds=120,
   [switch]$ConfirmReal
 )
 $ErrorActionPreference='Stop'
@@ -51,11 +52,12 @@ foreach($id in $selectedSkills){
   }
   $arguments=@($engine,'run','--adapter',$Adapter,'--project',$prepared.fixture,
                '--skill',$id,'--case',$caseId,'--provider',$Provider,'--model',$Model,'--execute-real')
+  $arguments+=@('--timeout-ms',[string]($TimeoutSeconds * 1000))
   if($caseId -eq 'independent_verification') { $arguments+=@('--reviewer',$ReviewerId) }
   if($CodexWorkspaceWrite -and $caseId -ne 'rejected_out_of_scope_request' -and
      $caseId -ne 'independent_verification' -and
      $caseId -ne 'scoped_permissions_enforced') { $arguments+=@('--codex-workspace-write') }
-  Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId)
+  Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' timeout_seconds='+$TimeoutSeconds)
   & $node @arguments
   $status=$LASTEXITCODE
   $attempts++
