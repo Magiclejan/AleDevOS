@@ -590,7 +590,7 @@ function executeCase(root,opts){
  if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const prompt=makeCasePrompt(skill,caseId)+(caseId==='executed_real_task'?
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?
   ' This is a governed real task, not an isolated answer. Before finalization you MUST delegate a Builder for the authorized work and record builder STARTED/COMPLETED; delegate an independent Verifier and record verifier STARTED/COMPLETED; then delegate judge-requirements, judge-regression and judge-quality, recording each STARTED/COMPLETED and each protected judge score. The Orchestrator may not perform those roles itself. The real Verifier must use the protected Core commands in strict order: scope check, integrity scan, gate run, then quality verify. The canonical tests gate must run and PASS before quality evidence is accepted. Record actual analysis artifacts and bind quality evidence to genuine gate results and test sources. Only then attempt state finalize. If any step is blocked, record the actual missing evidence without inventing scores, test results or PASS.':'');
  const agent=caseId==='independent_verification'?'verifier':'orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
