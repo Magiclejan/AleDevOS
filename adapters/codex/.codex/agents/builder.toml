@@ -81,7 +81,7 @@ For UI-affecting work, require the canonical Accessibility Policy, Responsive Po
 '''
 
 [features]
-shell_tool = false
+shell_tool = true
 request_permissions_tool = false
 apps = false
 plugins = false
