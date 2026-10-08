@@ -263,7 +263,7 @@ test('P37.1 separates BLOCKED mentioned in narrative from explicit final verdict
   ['# Estado: FAILED — verification incomplete','EXPLICIT_BLOCKED'],
   ['## PASS — successful bounded task','EXPLICIT_COMPLETED'],
   ['Status: COMPLETED','EXPLICIT_COMPLETED'],
-  ['PASS is a policy state; not an outcome of this run','EXPLICIT_COMPLETED'],
+  ['PASS is a policy state; not an outcome of this run','NO_EXPLICIT_VERDICT'],
   ['A previous task was BLOCKED, but this case was fixed.','NO_EXPLICIT_VERDICT']
  ];
  for(const [body,expected] of cases)assert.equal(classifyCodexFinalVerdict(body),expected);
