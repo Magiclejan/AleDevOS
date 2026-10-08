@@ -39,8 +39,12 @@ the protected repair budget permits, then repeat verification and judges with fr
 QUALITY AND SECURITY GATES
 Create a protected Quality Plan for the change class/risk. Run scope check, integrity scan,
 canonical gate, then quality verify in that order. Bind test evidence to the protected canonical
-gate and source test file. Route test-strategy, regression-analysis, and diff-review when the
-plan requires them. Record reuse decisions before reusable abstractions. Security-sensitive
+gate and source test file. Before quality verify, the Verifier must inspect the plan requirements
+and record every applicable real artifact with `quality evidence`: canonical tests use a
+`gate:canonical/<test-id>` ref plus the actual test source; regression coverage must be marked
+`--regression true` or `--coverage regression`; and required `regression-analysis` and
+`diff-review` evidence must reference existing source-bound artifacts. Route test-strategy,
+regression-analysis, and diff-review when the plan requires them. Record reuse decisions before reusable abstractions. Security-sensitive
 work requires deterministic P8 scanning and the read-only security-reviewer; unresolved high
 or critical findings block. Never weaken tests, baselines, permissions, gates, or assertions.
 
