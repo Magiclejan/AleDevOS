@@ -63,6 +63,13 @@ const multimodel=[
  'multimodel/extensions/fallback/model-fallback.mjs'
 ];
 for(let i=0;i<multimodel.length;i++)certify(multimodel[i],'multimodel-p'+(i+1),['certify','run'],['certify','verify']);
+// Explain the exact P6 matrix blocker before trying to reissue its certificate.
+const p6Matrix=spawnSync(process.execPath,[path.join(root,'portability/conformance/conformance.mjs'),'matrix','run','--root',root],{cwd:root,encoding:'utf8',timeout:120000,maxBuffer:16*1024*1024});
+if(p6Matrix.status!==0){
+ let matrix;try{matrix=JSON.parse(p6Matrix.stdout)}catch{matrix=null}
+ console.error('P36_3_P6_MATRIX_BLOCKED '+JSON.stringify({status:matrix?.status,failed:(matrix?.checks||[]).filter(x=>x.status==='FAIL'),adapters:matrix?.adapters,error:(p6Matrix.stderr||'').slice(-1000)}));
+ process.exit(p6Matrix.status||4);
+}
 certify('portability/conformance/conformance.mjs','cross-adapter-portability-p6',['certify','run','--root',root],['certify','verify','--root',root]);
 const manifest='release/templates/package-tree-manifest.json',baseline='release/templates/master-validation-package-baseline.json';
 invoke('release/templates/package-tree-manifest.mjs',['generate','--root',root,'--out',path.join(root,manifest)],'package-tree/generate');
