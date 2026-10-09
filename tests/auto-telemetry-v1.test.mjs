@@ -38,6 +38,14 @@ test('gate judge repair and final state are auto-emitted and summary verifies',(
   r=run(cwd,'integrity','scan');
   assert.equal(r.status,0,r.stderr+r.stdout);
 
+  // Supply the canonical gate and native-role prerequisites in this telemetry-only fixture.
+  // The test exercises emitted telemetry; role ordering/gate enforcement has separate negative tests.
+  const currentPath=path.join(cwd,'.aledevos','state','current.json');
+  const ready=read(currentPath);
+  for(const gate of ['scope','canonical','quality_engineering'])ready.gates[gate]={status:'PASS'};
+  ready.agent_trace.push({agent:'judge-requirements',status:'STARTED'});
+  fs.writeFileSync(currentPath,JSON.stringify(ready,null,2));
+
   r=run(cwd,'state','judge','--judge','requirements','--score','95','--blockers','0','--unverified','0');
   assert.equal(r.status,0,r.stderr+r.stdout);
 
