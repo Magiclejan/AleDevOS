@@ -49,13 +49,13 @@
     },
     {
       "path": "release/certifications/multimodel-p1.json",
-      "sha256": "2288ae634507dc244f30c38cd25c69932d7af19cfedc000ce643809b96986ec0"
+      "sha256": "6a6a486e8bd13bef0ce8a4c20ff8d6a132fd951404e1134ffe6d0cb3f49e7f79"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
       "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T08:34:04.442Z",
-  "evidence_sha256": "26b5312ff4d2fc2ea9a6132abde56e1024217760e7a2a3f777bf5b79ca174034"
+  "created_at": "2026-10-09T08:37:47.748Z",
+  "evidence_sha256": "5a5975346a57cc44f0281e20cb4c5073d3c235dcdef5446be702207727c6f654"
 }

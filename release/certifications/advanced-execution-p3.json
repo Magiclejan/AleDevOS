@@ -60,17 +60,17 @@
     },
     {
       "path": "release/certifications/advanced-execution-p1.json",
-      "sha256": "03da14a8ab8d3f3d1e5012e059aa4d5d952134dc44e11e4a307a3f55117d5a53"
+      "sha256": "03006e4a336866ec1b04f9a156cc9b05502a6feae4b8debe21542243c08f0e30"
     },
     {
       "path": "release/certifications/advanced-execution-p2.json",
-      "sha256": "35f1cc34d53996f2f88244ddddb88c850f769aa0b2e0ed45e0bbe730701e0953"
+      "sha256": "ef280aa634d569a67afedfb16f7aca8ceb6d109d99c316c26472706333de1c1d"
     },
     {
       "path": "scripts/05-install-into-project.ps1",
       "sha256": "c92f624224d2dbf68de6f6c44c209546b590cdb7e294c92eb9336ad198bbc362"
     }
   ],
-  "created_at": "2026-10-08T08:34:03.395Z",
-  "evidence_sha256": "5d4816d663064cb457f63fb85b3a5de0c088d642bdc4109e7e4e42b442917dff"
+  "created_at": "2026-10-09T08:37:46.692Z",
+  "evidence_sha256": "c6cbc80693e90961f148b301cda0cd6fa2acfe51504aad20800ec67135befee2"
 }
