@@ -7,6 +7,21 @@
     "exec",
     "--json"
   ],
+  "enable_features": [
+    "multi_agent",
+    "shell_tool"
+  ],
+  "config_overrides": [
+    "model_reasoning_effort=low"
+  ],
+  "role_config_overrides": {
+    "orchestrator": [],
+    "builder": [],
+    "verifier": [],
+    "judge-requirements": [],
+    "judge-regression": [],
+    "judge-quality": []
+  },
   "prompt_mode": "positional",
   "prompt_flag": null,
   "agent_flag": null,

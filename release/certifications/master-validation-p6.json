@@ -71,11 +71,11 @@
     },
     {
       "path": "release/certifications/master-validation-p5.json",
-      "sha256": "5c66a0d0a5476ae6578a48f0f915bb70506ea86562123d7dd1e363f17d1be978"
+      "sha256": "a9b06f65a870f5b2edad000f0f0d243b79b0d21fa5b45eb6a754c94f38a50ae5"
     },
     {
       "path": "core/engine/aledevos.mjs",
-      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
+      "sha256": "e3b74cafb5a7fb1b1991f7b1cf92c114aad458d0e9139534f6133b7a1ed8f3b6"
     },
     {
       "path": "contextos/engine/contextos.mjs",
@@ -83,7 +83,7 @@
     },
     {
       "path": "skillsystem/engine/skillsystem.mjs",
-      "sha256": "0957804e27c958e0f337b91b3af75a13b7f6b34f252767ef86bb4bfc9b0139ae"
+      "sha256": "82ddfba8accd1b22e72866b65783d48f5b861fa578c27a3a23bd45c8442a4b47"
     },
     {
       "path": "multimodel/engine/multimodel.mjs",
@@ -126,5 +126,5 @@
       "sha256": "30e66908ca961d034aa122b2ba0c7c7de8f013f1ab7d619f2befbef084f43884"
     }
   ],
-  "master_p6_certificate_sha256": "8fbf97e7f487e687cbb010c3c698e9c15f2408947bfbdcf34b801c10131659d7"
+  "master_p6_certificate_sha256": "22f8d53b2ca8e051b4f0c67a3eb6c68fe2ad2b8cf84814f2d7f9e3634caee0ba"
 }

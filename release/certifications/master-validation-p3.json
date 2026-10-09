@@ -69,7 +69,7 @@
     },
     {
       "path": "release/certifications/master-validation-p2.json",
-      "sha256": "663177de5a4739480d64b2d9bc2cc65debeba169b0940f316a1915a475fed7d7"
+      "sha256": "3ca28483e2fdb97302232f13db55f7423b5876047afce64004a83f1b2f7275e0"
     },
     {
       "path": "multimodel/engine/multimodel.mjs",
@@ -100,5 +100,5 @@
       "sha256": "8c3855eb9d19493f13b43ebdb93b8094d91203d6a9915131ec6c401c0c9bcf8d"
     }
   ],
-  "master_p3_certificate_sha256": "bf02963d7a913a23602e81d9de049ccf0f6df24703e07efcf70e03ba5fb6ab1d"
+  "master_p3_certificate_sha256": "0dab627deb6ffcf615beb0ed7c73fec7f54260d37ce19eb1c44cbaa353073e80"
 }

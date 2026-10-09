@@ -84,19 +84,19 @@
     },
     {
       "path": "release/certifications/antigravity-portability-p5.json",
-      "sha256": "3b68b5fec156a566cfb5a45fd19b0082786d8623b05704afaeed01e9153852a1"
+      "sha256": "155a742b474f2cbe950dc4fdc8e92d12d9ed9d88378ca0ca7ada80224b01034d"
     },
     {
       "path": "release/certifications/claude-code-portability-p4.json",
-      "sha256": "d1d261219db66391c8fa70c76fdd8708f8287df975139797b36a0327a74cf3a8"
+      "sha256": "32eb374870f9f1408e1270a7af1e5ab9e2c39875e7ba78814eb53512ddb3fa48"
     },
     {
       "path": "release/certifications/codex-portability-p3.json",
-      "sha256": "2544216ec9310290f407aa034b90c8804e720c7f0d9ede019e8df4cdeb3e10ef"
+      "sha256": "437a58a7b7e25b5064d78a23459ab612e73c2239956be63e9d01c6b457f83275"
     },
     {
       "path": "release/certifications/opencode-portability-p2.json",
-      "sha256": "1d6fc9eb18114b985fe9f58e18144083c231a64b01b7df30f0952dd263ddebe3"
+      "sha256": "b18e98a00f88d8f3d881ea12047ac27bddb2ab8a2cfcd7007ac17fd1d1da99c4"
     },
     {
       "path": "skillsystem/bindings/antigravity.json",
@@ -119,5 +119,5 @@
       "sha256": "9aee1ca718c8bb810534816c2edd891d168dab2aafc75c1530595f79d1bf01cd"
     }
   ],
-  "evidence_sha256": "3c16c6d0c00a3ed6a6c907cf6940834b85961f7374dda00ee2dba855c035dea5"
+  "evidence_sha256": "b09f51b427079101095aafd0b2680dc3456147001758e1772ba49b2995359be6"
 }

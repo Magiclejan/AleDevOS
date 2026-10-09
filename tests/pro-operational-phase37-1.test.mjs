@@ -298,6 +298,7 @@ test('P37.1 never treats a passing focused test as a finalized Orchestrator task
  assert.equal(taskFinalizationIssue({...base,task_blocked:true,task_final_state:'PASS'},'executed_real_task'),'ORCHESTRATOR_TASK_RECORDED_BLOCKED');
  assert.equal(taskFinalizationIssue({...base,task_state_present:false},'executed_real_task'),null);
  assert.equal(taskFinalizationIssue(base,'rejected_out_of_scope_request'),null);
+ assert.equal(taskFinalizationIssue(base,'activated_on_correct_request'),null);
 });
 
 
@@ -305,7 +306,7 @@ test('P37.1 only initializes a synthetic, owned temporary Git fixture and leaves
  const dir=tmp();
  assert.throws(()=>initializeSyntheticFixtureGit(dir),/GIT_ONLY_SYNTHETIC_TEMP_FIXTURE/);
  fs.mkdirSync(path.join(dir,'src'),{recursive:true});
- fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a - b;\n');
+ fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a + b;\n');
  fs.writeFileSync(path.join(dir,'README.md'),'# P37.1 disposable test project\nThis is a synthetic, temporary project for authorized local adapter execution. No production credentials or user files.\n');
  fs.writeFileSync(path.join(dir,'.gitignore'),'.aledevos/state/\n');
  assert.equal(initializeSyntheticFixtureGit(dir),true);
@@ -321,7 +322,7 @@ test('P37.1 only initializes a synthetic, owned temporary Git fixture and leaves
  assert.equal(git('status','--porcelain=v1','-uall').stdout.trim(),'');
  const prior=gitStageContentHash(dir);
  assert.match(prior,/^[a-f0-9]{64}$/);
- fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a + b;\n');
+ fs.writeFileSync(path.join(dir,'src/utils.mjs'),'export const add = (a,b) => a - b;\n');
  fs.writeFileSync(path.join(dir,'.aledevos/state/tasks/sample/state.json'),'{"synthetic":false}');
  assert.match(git('status','--porcelain=v1','-uall').stdout,/src\/utils\.mjs/);
  assert.doesNotMatch(git('status','--porcelain=v1','-uall').stdout,/\.aledevos/);

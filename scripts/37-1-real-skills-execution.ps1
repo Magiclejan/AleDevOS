@@ -17,6 +17,7 @@ param(
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 if (-not $ConfirmReal) { throw 'P37_1_EXPLICIT_CONFIRM_REAL_REQUIRED' }
+if ($FullCampaign -and [string]::IsNullOrWhiteSpace($ReviewerId)) { throw 'P37_1_FULL_CAMPAIGN_REQUIRES_SEPARATE_REVIEWER_ID' }
 if ($CodexWorkspaceWrite -and $Adapter -ne 'codex') { throw 'P37_1_CODEX_WRITE_ONLY_CODEX_ADAPTER' }
 if ($CodexWorkspaceWrite -and -not $FullCampaign -and
     $Case -in @('rejected_out_of_scope_request','scoped_permissions_enforced','independent_verification')) {
@@ -57,12 +58,17 @@ foreach($id in $selectedSkills){
   if($CodexWorkspaceWrite -and $caseId -ne 'rejected_out_of_scope_request' -and
      $caseId -ne 'independent_verification' -and
      $caseId -ne 'scoped_permissions_enforced') { $arguments+=@('--codex-workspace-write') }
-  Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' timeout_seconds='+$TimeoutSeconds)
-  & $node @arguments
-  $status=$LASTEXITCODE
-  $attempts++
-  Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId)
-  if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
+  $status=4
+  for($retry=0;$retry -le 2;$retry++){
+   Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' attempt='+($retry+1)+' timeout_seconds='+$TimeoutSeconds)
+   & $node @arguments
+   $status=$LASTEXITCODE
+   $attempts++
+   Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId+' attempt='+($retry+1))
+   if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
+   if ($status -eq 0) { break }
+   if($retry -lt 2){Write-Warning ('P37_1_CASE_RETRY '+$id+':'+$caseId)}
+  }
  }
 }
 Write-Host ('P37_1_ATTEMPTS '+$attempts)

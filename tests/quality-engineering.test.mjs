@@ -123,10 +123,20 @@ test('new tasks cannot finalize PASS before Quality Engineering gate passes',()=
 
   let q=run(cwd,'state','finalize');
   assert.equal(q.status,5);
-  assert.match(q.stdout,/NOT_FINAL/);
+  assert.match(q.stdout+q.stderr,/NOT_FINAL/);
+  assert.match(q.stderr,/NOT_FINAL_REQUIRED_AGENT_EVIDENCE/);
 
   run(cwd,'quality','plan','--change-class','analysis','--risk','low');
   assert.equal(run(cwd,'quality','verify').status,0);
+  q=run(cwd,'state','finalize');
+  assert.equal(q.status,5,'Codex must refuse PASS until native agent evidence completes');
+  assert.match(q.stderr,/NOT_FINAL_REQUIRED_AGENT_EVIDENCE/);
+  const completed=state(cwd);
+  for(const agent of ['builder','verifier','judge-requirements','judge-regression','judge-quality']){
+    completed.agent_trace.push({agent,status:'STARTED'});
+    completed.agent_trace.push({agent,status:'COMPLETED'});
+  }
+  writeState(cwd,completed);
   q=run(cwd,'state','finalize');
   assert.equal(q.status,0,q.stdout+q.stderr);
   assert.match(q.stdout,/PASS/);

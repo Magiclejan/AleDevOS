@@ -88,7 +88,7 @@
     },
     {
       "path": "release/certifications/master-validation-p6.json",
-      "sha256": "c60fc65b30e1ee0c28d81fa5a8ba14ee877db12d6ea44c649a329367f293e4b9"
+      "sha256": "31c5e4be2c6871dcd011a06303bb7e6843024031f07dc20af53b914f9b58535e"
     },
     {
       "path": "tests/global-efficiency-phase7.test.mjs",
@@ -116,7 +116,7 @@
     },
     {
       "path": "adapters/codex/.codex/agents/orchestrator.toml",
-      "sha256": "a80269cfd8cd2afa153e0562e657f296fbbddf18f4d81778bec78c4e00675506"
+      "sha256": "17ee06c8c0513d8fea66f3394da6d152c99c366f071b369a2877b72202cbf9a2"
     },
     {
       "path": "adapters/claude-code/.claude/agents/orchestrator.md",
@@ -144,7 +144,7 @@
     },
     {
       "path": "skillsystem/engine/skillsystem.mjs",
-      "sha256": "0957804e27c958e0f337b91b3af75a13b7f6b34f252767ef86bb4bfc9b0139ae"
+      "sha256": "82ddfba8accd1b22e72866b65783d48f5b861fa578c27a3a23bd45c8442a4b47"
     },
     {
       "path": "multimodel/router/model-router.mjs",
@@ -156,8 +156,8 @@
     },
     {
       "path": "core/engine/aledevos.mjs",
-      "sha256": "551b9777be576594bb7576fa4f34c11c8512a52a39bff3491c4f087b7f4a3dad"
+      "sha256": "e3b74cafb5a7fb1b1991f7b1cf92c114aad458d0e9139534f6133b7a1ed8f3b6"
     }
   ],
-  "master_p7_certificate_sha256": "661aee037d02b47236a7195eada08b7276e0076b951c211048668a3fc466e416"
+  "master_p7_certificate_sha256": "713299f2a63002371a405b53334e6ff783df033822773a2614dbe407d564d060"
 }
