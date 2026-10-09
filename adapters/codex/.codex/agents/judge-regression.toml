@@ -12,3 +12,9 @@ shell_tool = true
 request_permissions_tool = false
 apps = false
 plugins = false
+
+[features.code_mode]
+enabled = false
+
+[features.code_mode_host]
+enabled = true
