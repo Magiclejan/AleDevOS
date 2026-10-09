@@ -88,7 +88,7 @@
     },
     {
       "path": "release/certifications/master-validation-p6.json",
-      "sha256": "3631054bf772c3b8dba7b4a96e0e6ca774526d28696a470814b003e895c886d0"
+      "sha256": "31c5e4be2c6871dcd011a06303bb7e6843024031f07dc20af53b914f9b58535e"
     },
     {
       "path": "tests/global-efficiency-phase7.test.mjs",
@@ -159,5 +159,5 @@
       "sha256": "e3b74cafb5a7fb1b1991f7b1cf92c114aad458d0e9139534f6133b7a1ed8f3b6"
     }
   ],
-  "master_p7_certificate_sha256": "d17102e30c489d5918a20940e36f70e549feb43d020bfc11e8b8be2699e0806c"
+  "master_p7_certificate_sha256": "713299f2a63002371a405b53334e6ff783df033822773a2614dbe407d564d060"
 }

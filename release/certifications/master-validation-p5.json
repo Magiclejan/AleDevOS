@@ -82,7 +82,7 @@
     },
     {
       "path": "release/certifications/master-validation-p4.json",
-      "sha256": "9a11b04c0d632b154a08cefeb4b9cf7a4a1eb3060b9475cf7e293a7881e3daa1"
+      "sha256": "963bd09793ff720bf7db6d9ee2d500f2363dc7cd40ed24f96db7355f1f92b20e"
     },
     {
       "path": "advanced-execution/worktrees/worktree-manager.mjs",
@@ -129,5 +129,5 @@
       "sha256": "8895b8a32332ad333ad767ced53d9fc4bade3ab1ccf7e526f6e7d2cb2590cfcc"
     }
   ],
-  "master_p5_certificate_sha256": "ff6bce18948b655c65cd05f46ded84c8f04f6ff20aabf401dbd1900f676a977e"
+  "master_p5_certificate_sha256": "59a6003a01cf723e19c1aee061d41860a3d2aec9bc35c1bd92e0a13a0d84f627"
 }
