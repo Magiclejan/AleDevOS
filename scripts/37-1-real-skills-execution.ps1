@@ -45,11 +45,35 @@ Write-Host ('P37_1_FIXTURE '+$prepared.fixture)
 $selectedSkills=if($FullCampaign){$skills}else{@($Skill)}
 $selectedCases=if($FullCampaign){$cases}else{@($Case)}
 $attempts=0
+
+function Get-LatestReceipt([string]$SkillId,[string]$CaseId,[string]$Revision) {
+  $dir=Join-Path $root (Join-Path '.aledevos\state\certification\p37\skills\codex' $SkillId)
+  if(-not (Test-Path -LiteralPath $dir)){ return $null }
+  $items=@()
+  foreach($file in Get-ChildItem -LiteralPath $dir -Filter ($CaseId+'-*.json') -File -ErrorAction SilentlyContinue){
+    try {
+      $receipt=Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json
+      if($receipt.phase -eq 'P37.1' -and $receipt.git_sha -eq $Revision -and
+         $receipt.status -eq 'EVIDENCE_REVIEW_REQUIRED' -and @($receipt.issues).Count -eq 0){
+        $items += [pscustomobject]@{ File=$file.FullName; Observed=$receipt.observed_at }
+      }
+    } catch {}
+  }
+  return @($items | Sort-Object Observed | Select-Object -Last 1)
+}
+
 foreach($id in $selectedSkills){
  foreach($caseId in $selectedCases){
   if ($caseId -eq 'independent_verification' -and [string]::IsNullOrWhiteSpace($ReviewerId)) {
    Write-Warning ('P37_1_INDEPENDENT_REVIEW_BLOCKED '+$id+': separate -ReviewerId required')
    continue
+  }
+  if($FullCampaign){
+   $existing=Get-LatestReceipt -SkillId $id -CaseId $caseId -Revision $prepared.git_sha
+   if($null -ne $existing -and @($existing).Count -gt 0){
+    Write-Host ('P37_1_CASE_SKIP '+$Adapter+':'+$id+':'+$caseId+' existing_valid_receipt')
+    continue
+   }
   }
   $arguments=@($engine,'run','--adapter',$Adapter,'--project',$prepared.fixture,
                '--skill',$id,'--case',$caseId,'--provider',$Provider,'--model',$Model,'--execute-real')
@@ -58,16 +82,14 @@ foreach($id in $selectedSkills){
   if($CodexWorkspaceWrite -and $caseId -ne 'rejected_out_of_scope_request' -and
      $caseId -ne 'independent_verification' -and
      $caseId -ne 'scoped_permissions_enforced') { $arguments+=@('--codex-workspace-write') }
-  $status=4
-  for($retry=0;$retry -le 2;$retry++){
-   Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' attempt='+($retry+1)+' timeout_seconds='+$TimeoutSeconds)
-   & $node @arguments
-   $status=$LASTEXITCODE
-   $attempts++
-   Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId+' attempt='+($retry+1))
-   if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
-   if ($status -eq 0) { break }
-   if($retry -lt 2){Write-Warning ('P37_1_CASE_RETRY '+$id+':'+$caseId)}
+  Write-Host ('P37_1_REAL_CASE_BEGIN '+$Adapter+':'+$id+':'+$caseId+' attempt=1 timeout_seconds='+$TimeoutSeconds)
+  & $node @arguments
+  $status=$LASTEXITCODE
+  $attempts++
+  Write-Host ('P37_1_CASE_EXIT code='+$status+' skill='+$id+' case='+$caseId+' attempt=1')
+  if ($status -eq 7) { throw 'P37_1_RUNNER_BLOCKED_EARLY_STOP' }
+  if ($status -ne 0) {
+   throw ('P37_1_CASE_BLOCKED '+$id+':'+$caseId+'; inspect the receipt, repair only this case, then rerun -FullCampaign to resume')
   }
  }
 }

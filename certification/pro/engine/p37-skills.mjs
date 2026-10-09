@@ -413,6 +413,19 @@ export function taskFinalizationIssue(progress,caseId){
   return 'ORCHESTRATOR_TASK_NOT_FINALIZED';
  return null;
 }
+function expectedTerminalOutcome(caseId,routeProgress,agentHandoff,changes){
+ if(caseId==='activated_on_correct_request'&&routeProgress.route_status==='ROUTE_READY'&&
+    routeProgress.route_integrity_verified===true&&routeProgress.route_selected_expected===true)
+  return 'EXPECTED_ACTIVATION_STOP';
+ if(caseId==='rejected_out_of_scope_request'&&changes.changed_paths.length===0)
+  return 'EXPECTED_BLOCKED';
+ if(caseId==='scoped_permissions_enforced'&&changes.protected_changes.length===0)
+  return 'EXPECTED_BLOCKED';
+ if(caseId==='independent_verification'&&agentHandoff.verifier_completed&&
+    routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true)
+  return 'EXPECTED_VERIFICATION_TERMINAL';
+ return null;
+}
 export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
  if(adapter!=='codex'||confirmed!==true||!workspace||!inTmp(workspace)||
     !fs.existsSync(path.join(workspace,'.p37-owned-disposable.json')))
@@ -709,10 +722,12 @@ function executeCase(root,opts){
    exit_code:Number.isInteger(check.status)?check.status:null,
    stdout_sha256:hash(check.stdout||''),stderr_sha256:hash(check.stderr||'')};
   if(focusedCheck.exit_code!==0)issues.push('FOCUSED_TEST_FAILED_OR_UNAVAILABLE');
- }
- const event={
-  schema_version:'1.0',phase:'P37.1',status:issues.length?'BLOCKED':'EVIDENCE_REVIEW_REQUIRED',
-  kind:'skill',adapter,skill,case_id:caseId,git_sha:getRevision(root),
+  }
+  const terminalOutcome=expectedTerminalOutcome(caseId,routeProgress,agentHandoff,changes);
+  const event={
+   schema_version:'1.0',phase:'P37.1',status:issues.length?'BLOCKED':'EVIDENCE_REVIEW_REQUIRED',
+   expected_terminal:Boolean(terminalOutcome),terminal_outcome:terminalOutcome,
+   kind:'skill',adapter,skill,case_id:caseId,git_sha:getRevision(root),
   source_sha256:target.source_sha256,profile_sha256:shaFile(path.join(root,'adapters',adapter,'runtime-profile.json')),
   observed_at:started,elapsed_ms:Date.now()-start,
   runtime:{executable:profile.executable,parser:profile.parser,provider_declared:provider,model_declared:model,
