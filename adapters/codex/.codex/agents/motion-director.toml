@@ -11,7 +11,7 @@ Use low-context execution: inspect only the minimum source needed, prefer diff-f
 Terminal outcomes are PASS, BLOCKED, or FAILED. Missing, stale, contradictory, or non-zero evidence is BLOCKED. Do not impersonate another role or silently mark an active handoff complete.
 '''
 [features]
-shell_tool = true
+shell_tool = false
 request_permissions_tool = false
 apps = false
 plugins = false
