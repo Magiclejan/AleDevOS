@@ -134,7 +134,8 @@ export function makeCasePrompt(skill,caseId,observations=''){
  return header+byCase[caseId]+implementationEvidenceClarifier;
 }
 export function promptSha256(skill,caseId){
- const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'');
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'')+
+  (skill==='implementation-plan'&&caseId==='executed_real_task'?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':'');
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
@@ -506,6 +507,25 @@ function runNative(exe,argv,cwd,timeoutMs){
 function fixtureGit(dir,args){
  return spawnSync('git',args,{cwd:dir,encoding:'utf8',windowsHide:true,timeout:30000,maxBuffer:1024*1024});
 }
+function prepareImplementationPlanRoute(caseWorkspace){
+ const runtime=path.join(caseWorkspace,'.aledevos','runtime','aledevos.mjs');
+ const skillsystem=path.join(caseWorkspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
+ const taskId=`task-p37-${crypto.randomUUID().replaceAll('-','').slice(0,16)}`;
+ const init=runNative(process.execPath,[runtime,'state','init','--task-id',taskId,'--adapter','codex',
+  '--objective','Prepare evidence for an implementation plan without editing product files.',
+  '--scope','route-request.json','--criterion','route-evidence','--criterion','evidence-review'],caseWorkspace,30000);
+ if(init.status!==0)throw Error(`P37_1_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
+ const requestRel=norm(path.join('.aledevos','state','tasks',taskId,'route-request.json'));
+ const requestAbs=path.join(caseWorkspace,...requestRel.split('/'));
+ fs.writeFileSync(requestAbs,JSON.stringify({schema_version:'1.0',task_id:taskId,
+  required_capabilities:['planning.implementation','scope.decomposition','risk.planning'],
+  intents:['feature','bugfix','refactor','maintenance'],domains:['development']},null,2)+'\n');
+ const plan=runNative(process.execPath,[skillsystem,'route','plan','--project-root','.', '--request',requestRel],caseWorkspace,30000);
+ if(plan.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_PLAN_FAILED:${plan.status}`);
+ const verify=runNative(process.execPath,[skillsystem,'route','verify','--project-root','.', '--task-id',taskId],caseWorkspace,30000);
+ if(verify.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_VERIFY_FAILED:${verify.status}`);
+ return taskId;
+}
 function assertSyntheticGitFixture(dir){
  if(!fs.existsSync(dir)||!inTmp(dir)||
   !fs.existsSync(path.join(dir,'README.md'))||
@@ -675,6 +695,9 @@ function executeCase(root,opts){
    "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\\\"Show report\\\"/);});\n",
    'utf8');
  }
+ const preflightTaskId=skill==='implementation-plan'&&caseId==='executed_real_task'
+  ? prepareImplementationPlanRoute(caseWorkspace)
+  : null;
  // Read-only evidence Skills must not inherit an implementation failure
  // fixture; their recovery case validates governed evidence handling.
  const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill);
@@ -687,7 +710,10 @@ function executeCase(root,opts){
  if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'');
+ const preflightNote=preflightTaskId
+  ? ' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.'
+  : '';
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'')+preflightNote;
  const agent='orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
  if(opts.codexWorkspaceWrite){
