@@ -662,7 +662,9 @@ function executeCase(root,opts){
  if(profile.adapter!==adapter)throw Error('P37_1_RUNTIME_PROFILE_MISMATCH');
  const caseWorkspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-case-'));
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
- const needsBrokenUtils=caseId==='failure_and_recovery';
+ // Read-only evidence Skills must not inherit an implementation failure
+ // fixture; their recovery case validates governed evidence handling.
+ const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill);
  if(needsBrokenUtils){
   fs.writeFileSync(path.join(caseWorkspace,'src','utils.mjs'),'export const add = (a,b) => a - b;\n','utf8');
  }
