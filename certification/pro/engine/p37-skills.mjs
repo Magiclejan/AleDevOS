@@ -649,7 +649,7 @@ function executeCase(root,opts){
  if(profile.adapter!==adapter)throw Error('P37_1_RUNTIME_PROFILE_MISMATCH');
  const caseWorkspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-case-'));
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
- const needsBrokenUtils=['safe-edit','repair-loop'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId);
+ const needsBrokenUtils=caseId==='failure_and_recovery';
  if(needsBrokenUtils){
   fs.writeFileSync(path.join(caseWorkspace,'src','utils.mjs'),'export const add = (a,b) => a - b;\n','utf8');
  }
