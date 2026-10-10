@@ -144,7 +144,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 export function promptSha256(skill,caseId){
- const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
   (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':skill==='frontend-change'&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':'');
  return hash(prompt);
 }
