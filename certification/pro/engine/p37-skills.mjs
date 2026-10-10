@@ -482,6 +482,14 @@ function expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
+ // Read-only analysis Skills may legitimately stop after recording the
+ // governed route and evidence boundary; they must not be forced into an
+ // implementation handoff that their own contract forbids.
+ if(evidenceOnlySkills.has(skill)&&caseId==='executed_real_task'&&
+    ['BLOCKED','UNFINISHED'].includes(agentHandoff.core_final_state)&&
+    routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
+    routeProgress.route_selected_expected===true)
+  return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
  if(evidenceOnlySkills.has(skill)&&caseId==='failure_and_recovery'&&
     ['BLOCKED','UNFINISHED'].includes(agentHandoff.core_final_state)&&
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
