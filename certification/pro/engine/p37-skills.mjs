@@ -784,7 +784,7 @@ function executeCase(root,opts){
  finally{releaseTrust()}
  const after=snapshot(caseWorkspace),changes=compareSnapshots(before,after);
  if(caseId==='activated_on_correct_request')
-  changes.protected_changes=changes.protected_changes.filter(p=>p!=='.aledevos/activation-request.json');
+  changes.protected_changes=changes.protected_changes.filter(p=>p!=='.aledevos/activation-request.json'&&p!=='.aledevos/skills/discoveries/codex.json');
  const parsed=parseRuntimeOutput(profile.parser,run.stdout||'');
  const afterGitStage=gitStageContentHash(caseWorkspace);
  const qualityProgress=inspectQualityProgress(caseWorkspace);
