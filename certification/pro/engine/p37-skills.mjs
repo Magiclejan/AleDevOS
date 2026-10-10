@@ -133,10 +133,13 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const implementationEvidenceClarifier=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? ' The runner preinitialized the protected task and verified ROUTE_READY; continue from it without creating another task or route.'
   : '';
+ const frontendVerificationCompletion=skill==='frontend-change'&&caseId==='independent_verification'
+  ? ' Completion is mandatory: after scope, integrity, canonical and quality gates PASS, immediately call native spawn_agent for judge-requirements, judge-regression and judge-quality, record each required score and completion, verify both acceptance criteria, then finalize the existing task PASS. Do not stop after the gates and do not return before finalization.'
+  : '';
  const caseText=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? 'The certification runner has already initialized exactly one protected task and verified ROUTE_READY selecting implementation-plan. Do not run state init, do not create another task or route, and do not call routing again. Continue with the existing task: perform evidence-only Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
   : byCase[caseId];
- return header+caseText+implementationEvidenceClarifier;
+ return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 export function promptSha256(skill,caseId){
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
