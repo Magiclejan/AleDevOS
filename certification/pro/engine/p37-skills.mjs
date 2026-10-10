@@ -18,6 +18,7 @@ const skillIds=['backend-change','database-change','diff-review','frontend-chang
  'safe-edit','security-check','task-contract','test-strategy'];
 const SKILL_CASES=['activated_on_correct_request','rejected_out_of_scope_request',
  'executed_real_task','scoped_permissions_enforced','failure_and_recovery','independent_verification'];
+const delegationSensitiveCases=new Set(['executed_real_task','failure_and_recovery','independent_verification']);
 const tasks={
  'backend-change':'Fix the real bug in src/api.mjs: unauthenticated requests currently receive private data. Keep the existing response shape; verify both branches.',
  'database-change':'Review db/schema.sql. Produce an additive, backward-compatible migration for a unique email constraint, with a safe handling plan for pre-existing duplicates.',
@@ -135,7 +136,10 @@ export function executionCompatibility(root=defaultRoot,{adapter='codex',skill,c
  assertAdapter(adapter);assertSkill(skill);assertCase(caseId);
  const target=sourceTarget(root,adapter,skill);
  const profilePath=path.join(root,'adapters',adapter,'runtime-profile.json');
- return {source_sha256:target.source_sha256,profile_sha256:shaFile(profilePath),prompt_sha256:promptSha256(skill,caseId)};
+ const delegationPath=path.join(root,'adapters','codex','.codex','agents','orchestrator.toml');
+ const delegation_sha256=adapter==='codex'&&delegationSensitiveCases.has(caseId)&&fs.existsSync(delegationPath)
+  ?lfSha256(delegationPath):null;
+ return {source_sha256:target.source_sha256,profile_sha256:shaFile(profilePath),prompt_sha256:promptSha256(skill,caseId),delegation_sha256};
 }
 export function inspectProjection(project,target){
  const file=path.join(project,adapterSkillRoot[target.adapter],target.id,'SKILL.md');
@@ -757,6 +761,7 @@ function executeCase(root,opts){
    expected_terminal:Boolean(terminalOutcome),terminal_outcome:terminalOutcome,
    kind:'skill',adapter,skill,case_id:caseId,git_sha:getRevision(root),
   source_sha256:target.source_sha256,profile_sha256:shaFile(path.join(root,'adapters',adapter,'runtime-profile.json')),
+  delegation_sha256:executionCompatibility(root,{adapter,skill,caseId}).delegation_sha256,
   observed_at:started,elapsed_ms:Date.now()-start,
   runtime:{executable:profile.executable,parser:profile.parser,provider_declared:provider,model_declared:model,
    model_observed:modelObserved,invocation_id:crypto.randomUUID(),exit_code:exitCode,

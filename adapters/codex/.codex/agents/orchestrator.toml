@@ -14,6 +14,7 @@ For real implementation/repair use exactly: Task Contract -> route ROUTE_READY -
 Do not edit .codex/, .agents/, .aledevos control-plane, AGENTS.md, gates, permissions or receipts. External P37.3 signoff remains required.
 '''
 [features]
+multi_agent = true
 shell_tool = true
 request_permissions_tool = false
 apps = false

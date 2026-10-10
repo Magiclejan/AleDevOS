@@ -72,7 +72,8 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
       // current revision/profile is evidence for P37.3.
       const compatibility=compatibilityFor(receipt.skill,receipt.case_id);
       const inputsMatch=Boolean(compatibility&&receipt.source_sha256===compatibility.source_sha256&&
-        receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256);
+        receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256&&
+        (compatibility.delegation_sha256===null||receipt.delegation_sha256===compatibility.delegation_sha256));
       const revisionCompatible=receipt.git_sha===revision||(ancestorShas.includes(receipt.git_sha)&&inputsMatch);
       const eligible=revisionCompatible&&receipt.profile_sha256===profileSha&&
         receipt.status==='EVIDENCE_REVIEW_REQUIRED'&&Array.isArray(receipt.issues)&&receipt.issues.length===0;
@@ -91,7 +92,8 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
     if(forbidden)issues.push(issue('FORBIDDEN_EVIDENCE_FIELD',prefix+':'+forbidden));
     const compatibility=compatibilityFor(receipt.skill,receipt.case_id);
     const inputsMatch=Boolean(compatibility&&receipt.source_sha256===compatibility.source_sha256&&
-      receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256);
+      receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256&&
+      (compatibility.delegation_sha256===null||receipt.delegation_sha256===compatibility.delegation_sha256));
     const revisionCompatible=receipt.git_sha===revision||(ancestorShas.includes(receipt.git_sha)&&inputsMatch);
     if(!revisionCompatible)issues.push(issue('STALE_GIT_SHA',prefix));
     if(receipt.phase!=='P37.1'||receipt.schema_version!=='1.0')issues.push(issue('RECEIPT_SCHEMA_INVALID',prefix));

@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 import {makeCasePrompt,inspectProjection,inspectAdapterProjection,compareSnapshots,lfSha256,sourceTarget,
  classifyRuntimeFailure,validateRuntimeIdentity,
  summarizeCodexEvents,classifyCodexFinalVerdict,taskFinalizationIssue,inspectWorkspaceExecutionEvidence,inspectRouteProgress,inspectCodexNativeRoleManifests,inspectQualityProgress,inspectAgentHandoff,initializeSyntheticFixtureGit,sealSyntheticFixtureGit,gitStageContentHash,validatePilotTimeoutMs,validateCodexWorkspaceWriteOptIn,
- summarizeObservations,main} from '../certification/pro/engine/p37-skills.mjs';
+ summarizeObservations,executionCompatibility,main} from '../certification/pro/engine/p37-skills.mjs';
 
 const repo=path.resolve('.');
 const folders=[];
@@ -44,6 +44,13 @@ test('case prompts are explicit, distinguish positive/negative scenarios and are
  assert.match(prompts[5],/P37.3 signoff/);
  assert.throws(()=>makeCasePrompt('forged-skill',ids[0]),/UNKNOWN_SKILL/);
  assert.throws(()=>makeCasePrompt('safe-edit','anything'),/UNKNOWN_CASE/);
+});
+
+test('delegation-sensitive compatibility invalidates only positive handoff cases',()=>{
+ const positive=executionCompatibility(repo,{adapter:'codex',skill:'safe-edit',caseId:'executed_real_task'});
+ const negative=executionCompatibility(repo,{adapter:'codex',skill:'safe-edit',caseId:'activated_on_correct_request'});
+ assert.match(positive.delegation_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(negative.delegation_sha256,null);
 });
 
 test('projected source has to match LF-normalized Skill source; drift fails closed',()=>{

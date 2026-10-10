@@ -68,6 +68,7 @@ function certify(){
   checks.push(check(`role.${name}.permissions`,hasKV(t,'default_permissions','"aledevos_runtime"'),'inherits the single effective AleDevOS runtime profile',writers.has(name)?'product_write':stateRoles.has(name)?'canonical_gate':'repository_read'));
   checks.push(check(`role.${name}.approval`,hasKV(t,'approval_policy','"never"'),'approval_policy=never','arbitrary_shell_deny'));
   checks.push(check(`role.${name}.permission_request_off`,/request_permissions_tool\s*=\s*false/.test(section(t,'features')),'permission request tool disabled','external_directory'));
+  if(name==='orchestrator')checks.push(check('role.orchestrator.multi_agent',/multi_agent\s*=\s*true/.test(section(t,'features')),'Orchestrator can delegate native Builder/Verifier roles','structured_handoff'));
   checks.push(check(`role.${name}.code_mode_off`,/enabled\s*=\s*false/.test(section(t,'features.code_mode'))&&/enabled\s*=\s*true/.test(section(t,'features.code_mode_host')),'Code Mode disabled; stable tool host enabled','code_mode'));
   const shellExpected=stateRoles.has(name);checks.push(check(`role.${name}.shell_boundary`,new RegExp(`shell_tool\\s*=\\s*${shellExpected?'true':'false'}`).test(section(t,'features')),shellExpected?'shell enabled only for declared state/execution roles':'shell disabled','arbitrary_shell_deny'));
   checks.push(check(`role.${name}.instructions`,/developer_instructions\s*=\s*'''/.test(t)&&/AleDevOS/.test(t),'role instructions present'));

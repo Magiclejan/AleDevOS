@@ -64,7 +64,9 @@ function Get-LatestReceipt([string]$SkillId,[string]$CaseId,[string[]]$AllowedRe
       $inputMatch=$null -ne $Compatibility -and
         $receipt.source_sha256 -eq $Compatibility.source_sha256 -and
         $receipt.profile_sha256 -eq $Compatibility.profile_sha256 -and
-        $receipt.prompt_sha256 -eq $Compatibility.prompt_sha256
+        $receipt.prompt_sha256 -eq $Compatibility.prompt_sha256 -and
+        ($null -eq $Compatibility.delegation_sha256 -or
+         $receipt.delegation_sha256 -eq $Compatibility.delegation_sha256)
       if($receipt.phase -eq 'P37.1' -and $revisionMatch -and $inputMatch -and
          $receipt.status -eq 'EVIDENCE_REVIEW_REQUIRED' -and @($receipt.issues).Count -eq 0){
         $items += [pscustomobject]@{ File=$file.FullName; Observed=$receipt.observed_at; GitSha=$receipt.git_sha }
