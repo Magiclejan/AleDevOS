@@ -81,6 +81,9 @@ export function governedTaskInstructions(skill){
  const scope=governedScopeInstructions[skill]??'Approve only the files and evidence directly required by this Skill; never infer scope from another Skill.';
  return ' Governed task. Initialize exactly one protected task and never call state init a second time. Be terse and execute this exact order: bootstrap/init, registry+route, approve source plus associated test scope and quality plan, native Builder STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical gate→quality verify, then native judge-requirements→judge-regression→judge-quality with STARTED/score/COMPLETED, then finalize. Use protected Core commands and real evidence only. For canonical test evidence, use exactly `gate:canonical/tests` with source `test/utils.test.mjs`. If any protected command rejects or a gate is blocked, repair the current task in place; do not create a second task or a second route. Never skip a role, invent evidence, impersonate a role, or claim delegation unavailable without an actual native-tool failure. '+scope;
 }
+function runtimeTaskInstructions(skill){
+ return ' Governed task. Be terse and execute this exact order: bootstrap/init, registry+route, approve source plus associated test scope and quality plan, native Builder STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical gate→quality verify, then native judge-requirements→judge-regression→judge-quality with STARTED/score/COMPLETED, then finalize. Use protected Core commands and real evidence only. Never skip a role, invent evidence, impersonate a role, or claim delegation unavailable without an actual native-tool failure; if a protected command rejects an out-of-order action, correct the order and continue. For this fixture, backend changes use `src/api.mjs` plus `test/utils.test.mjs`; safe-edit uses only `src/utils.mjs`; other tasks must approve their actual changed files and tests.';
+}
 function assertAdapter(adapter){if(!Object.hasOwn(adapterSkillRoot,adapter))throw Error('P37_1_UNKNOWN_ADAPTER');}
 function assertSkill(skill){if(!skillIds.includes(skill))throw Error('P37_1_UNKNOWN_SKILL');}
 function assertCase(caseId){if(!SKILL_CASES.includes(caseId))throw Error('P37_1_UNKNOWN_CASE');}
@@ -123,7 +126,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  return header+byCase[caseId];
 }
 export function promptSha256(skill,caseId){
- const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?governedTaskInstructions(skill):'');
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'');
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
@@ -655,8 +658,7 @@ function executeCase(root,opts){
  if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?
-  ' Governed task. Be terse and execute this exact order: bootstrap/init, registry+route, approve source plus associated test scope and quality plan, native Builder STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical gate→quality verify, then native judge-requirements→judge-regression→judge-quality with STARTED/score/COMPLETED, then finalize. Use protected Core commands and real evidence only. Never skip a role, invent evidence, impersonate a role, or claim delegation unavailable without an actual native-tool failure; if a protected command rejects an out-of-order action, correct the order and continue. For this fixture, backend changes use `src/api.mjs` plus `test/utils.test.mjs`; safe-edit uses only `src/utils.mjs`; other tasks must approve their actual changed files and tests.':'');
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill):'');
  const agent='orchestrator';
  const invocation=buildInvocation(profile,{agent,model,prompt,skipRepoCheck:adapter==='codex'});
  if(opts.codexWorkspaceWrite){
