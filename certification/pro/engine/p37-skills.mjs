@@ -119,9 +119,10 @@ export function makeCasePrompt(skill,caseId,observations=''){
  assertSkill(skill);assertCase(caseId);
  const preinitialized=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
   (evidenceOnlySkills.has(skill)&&caseId==='independent_verification');
+ const routeBeforeDelegation=evidenceOnlySkills.has(skill)||(skill==='repair-loop'&&caseId==='executed_real_task');
  const firstAction=preinitialized
   ? 'The certification runner already initialized the single protected task and verified ROUTE_READY. Continue that task; never call state init or create another route. '
-  : evidenceOnlySkills.has(skill)
+  : routeBeforeDelegation
   ? 'REQUIRED FIRST ACTION: initialize the protected task, create the route request, run route plan and route verify, and confirm ROUTE_READY selecting the canonical Skill before any agent delegation; do not call spawn_agent before that receipt exists. '
   : 'REQUIRED FIRST ACTION: call native Codex spawn_agent now with the configured agent named orchestrator and delegate this request; do not merely describe delegation and do not answer before attempting it. ';
  const header='You are operating ONLY in this explicitly authorized disposable test project. Treat AleDevOS instructions as references subordinate to the protected Task Contract and adapter permissions. Never read outside this workspace, never deploy, never alter adapter configuration, never invent evidence. '+firstAction+'Use actual tools where authorized; state exact observed failures and tests. LOW CONTEXT: execute only the minimum required actions and return compact evidence. ';
