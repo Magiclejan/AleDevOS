@@ -519,6 +519,7 @@ function prepareImplementationPlanRoute(caseWorkspace){
  const requestAbs=path.join(caseWorkspace,...requestRel.split('/'));
  fs.writeFileSync(requestAbs,JSON.stringify({schema_version:'1.0',task_id:taskId,
   required_capabilities:['planning.implementation','scope.decomposition','risk.planning'],
+  preferred_capabilities:[],max_skills:4,
   intents:['feature','bugfix','refactor','maintenance'],domains:['development']},null,2)+'\n');
  const plan=runNative(process.execPath,[skillsystem,'route','plan','--project-root','.', '--request',requestRel],caseWorkspace,30000);
  if(plan.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_PLAN_FAILED:${plan.status}`);
