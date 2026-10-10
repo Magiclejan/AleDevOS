@@ -126,6 +126,15 @@ if(group==='state'&&cmd==='init'){
   if(active?.final_state===null||active?.final_state===undefined)
    fail(`ACTIVE_TASK_EXISTS:${active.task_id}`,52);
  }
+ const taskRoot=path.join(cwd,'.aledevos','state','tasks');
+ if(fs.existsSync(taskRoot))for(const entry of fs.readdirSync(taskRoot,{withFileTypes:true}))if(entry.isDirectory()){
+  const existing=path.join(taskRoot,entry.name,'state.json');
+  if(fs.existsSync(existing)){
+   const active=readJson(existing);
+   if(active?.final_state===null||active?.final_state===undefined)
+    fail(`ACTIVE_TASK_EXISTS:${active.task_id||entry.name}`,52);
+  }
+ }
  const task=requested==='auto'?(`task-${new Date().toISOString().replace(/\D/g,'').slice(0,14)}-${crypto.randomBytes(3).toString('hex')}`):requested;
  const scope=takes('--scope').map(norm),criteria=takes('--criterion'),adapter=take('--adapter',null),objective=take('--objective',''),benchmarkKey=take('--benchmark-key',null),createdAt=new Date().toISOString();
  const acceptance=criteria.map(id=>({id,status:'UNVERIFIED'}));
