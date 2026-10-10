@@ -138,12 +138,14 @@ export function makeCasePrompt(skill,caseId,observations=''){
   : '';
  const caseText=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? 'The certification runner has already initialized exactly one protected task and verified ROUTE_READY selecting implementation-plan. Do not run state init, do not create another task or route, and do not call routing again. Continue with the existing task: perform evidence-only Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
+  : skill==='frontend-change'&&caseId==='independent_verification'
+   ? 'The certification runner has already initialized one protected frontend verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
   : byCase[caseId];
  return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 export function promptSha256(skill,caseId){
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
-  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':'');
+  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':skill==='frontend-change'&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':'');
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
@@ -544,6 +546,28 @@ function prepareImplementationPlanRoute(caseWorkspace){
  if(verify.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_VERIFY_FAILED:${verify.status}`);
  return taskId;
 }
+function prepareFrontendVerificationTask(caseWorkspace){
+ const runtime=path.join(caseWorkspace,'.aledevos','runtime','aledevos.mjs');
+ const skillsystem=path.join(caseWorkspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
+ const taskId=`task-p37-${crypto.randomUUID().replaceAll('-','').slice(0,16)}`;
+ const init=runNative(process.execPath,[runtime,'state','init','--task-id',taskId,'--adapter','codex',
+  '--objective','Verify frontend evidence without editing product files.','--scope','route-request.json',
+  '--scope','web/index.html','--criterion','evidence-grounded','--criterion','requested-result'],caseWorkspace,30000);
+ if(init.status!==0)throw Error(`P37_1_FRONTEND_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
+ const requestRel=path.join('.aledevos','state','tasks',taskId,'route-request.json').replaceAll('\\','/');
+ fs.writeFileSync(path.join(caseWorkspace,...requestRel.split('/')),JSON.stringify({schema_version:'1.0',task_id:taskId,
+  required_capabilities:routeHints['frontend-change'][0],preferred_capabilities:[],max_skills:4,
+  intents:routeHints['frontend-change'][1],domains:['frontend']},null,2)+'\n');
+ const plan=runNative(process.execPath,[skillsystem,'route','plan','--project-root','.','--request',requestRel],caseWorkspace,30000);
+ const verify=runNative(process.execPath,[skillsystem,'route','verify','--project-root','.','--task-id',taskId],caseWorkspace,30000);
+ if(plan.status!==0||verify.status!==0)throw Error('P37_1_FRONTEND_PREFLIGHT_ROUTE_FAILED');
+ const quality=runNative(process.execPath,[runtime,'quality','plan','--change-class','analysis','--risk','low'],caseWorkspace,30000);
+ const evidence=runNative(process.execPath,[runtime,'quality','evidence','--type','other','--ref',`.aledevos/state/skills/routes/${taskId}.json`],caseWorkspace,30000);
+ const reuse=runNative(process.execPath,[runtime,'quality','reuse','--decision','NOT_APPLICABLE','--reason','Read-only verification creates no product artifact.'],caseWorkspace,30000);
+ const qualityVerify=runNative(process.execPath,[runtime,'quality','verify'],caseWorkspace,30000);
+ if([quality,evidence,reuse,qualityVerify].some(x=>x.status!==0))throw Error('P37_1_FRONTEND_PREFLIGHT_QUALITY_FAILED');
+ return taskId;
+}
 function assertSyntheticGitFixture(dir){
  if(!fs.existsSync(dir)||!inTmp(dir)||
   !fs.existsSync(path.join(dir,'README.md'))||
@@ -715,7 +739,9 @@ function executeCase(root,opts){
  }
  const preflightTaskId=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? prepareImplementationPlanRoute(caseWorkspace)
-  : null;
+  : skill==='frontend-change'&&caseId==='independent_verification'
+   ? prepareFrontendVerificationTask(caseWorkspace)
+   : null;
  // Read-only evidence Skills must not inherit an implementation failure
  // fixture; their recovery case validates governed evidence handling.
  const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill);
@@ -728,7 +754,9 @@ function executeCase(root,opts){
  if(!beforeGitStage)throw Error('P37_1_GIT_INDEX_UNREADABLE_BEFORE');
  const before=snapshot(caseWorkspace);
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
- const preflightNote=preflightTaskId
+ const preflightNote=skill==='frontend-change'&&caseId==='independent_verification'
+  ? ' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.'
+  : preflightTaskId
   ? ' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.'
   : '';
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+preflightNote;
