@@ -4,9 +4,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {defaultRoot, getRevision} from './p37-operational.mjs';
-import {sourceTarget, lfSha256} from './p37-skills.mjs';
+import {sourceTarget, lfSha256, executionCompatibility} from './p37-skills.mjs';
 
 const SKILLS=['backend-change','database-change','diff-review','frontend-change',
   'implementation-plan','regression-analysis','repair-loop','repo-map','requirements-check',
@@ -17,6 +18,10 @@ const FORBIDDEN=new Set(['raw_prompt','transcript','conversation','api_key','sec
   'authorization_header','model_thoughts','private_key']);
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,''));
+const ancestors=root=>{
+ const r=spawnSync('git',['-C',root,'rev-list','HEAD'],{encoding:'utf8',windowsHide:true,timeout:5000});
+ return r.status===0?(r.stdout||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean):[];
+};
 const stateDir=root=>path.join(root,'.aledevos','state','certification','p37');
 const receiptRoot=root=>path.join(stateDir(root),'skills','codex');
 const walk=(dir,out=[])=>{
@@ -41,10 +46,19 @@ const expectedKey=(skill,caseId)=>skill+'::'+caseId;
 const issue=(code,detail)=>({code,detail});
 
 export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-independent-verifier'}={}){
-  const revision=getRevision(root), files=walk(receiptRoot(root)), issues=[], receipts=[];
+  const revision=getRevision(root),ancestorShas=ancestors(root), files=walk(receiptRoot(root)), issues=[], receipts=[];
   const profilePath=path.join(root,'adapters','codex','runtime-profile.json');
   const profileSha=fs.existsSync(profilePath)?sha(fs.readFileSync(profilePath)):null;
   const byCase=new Map();
+  const compatibilityCache=new Map();
+  const compatibilityFor=(skill,caseId)=>{
+    const key=expectedKey(skill,caseId);
+    if(!compatibilityCache.has(key)){
+      try{compatibilityCache.set(key,executionCompatibility(root,{adapter:'codex',skill,caseId}));}
+      catch{compatibilityCache.set(key,null);}
+    }
+    return compatibilityCache.get(key);
+  };
   for(const file of files){
     let receipt;
     try{receipt=read(file);}catch{issues.push(issue('RECEIPT_JSON_INVALID',file));continue;}
@@ -56,7 +70,11 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
       // A campaign may retry a scenario. Historical/stale and blocked attempts
       // remain in the manifest, but only the newest eligible receipt for the
       // current revision/profile is evidence for P37.3.
-      const eligible=receipt.git_sha===revision&&receipt.profile_sha256===profileSha&&
+      const compatibility=compatibilityFor(receipt.skill,receipt.case_id);
+      const inputsMatch=Boolean(compatibility&&receipt.source_sha256===compatibility.source_sha256&&
+        receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256);
+      const revisionCompatible=receipt.git_sha===revision||(ancestorShas.includes(receipt.git_sha)&&inputsMatch);
+      const eligible=revisionCompatible&&receipt.profile_sha256===profileSha&&
         receipt.status==='EVIDENCE_REVIEW_REQUIRED'&&Array.isArray(receipt.issues)&&receipt.issues.length===0;
       const previous=byCase.get(key);
       if(eligible&&(!previous||new Date(receipt.observed_at||0)>=new Date(previous.receipt.observed_at||0)))
@@ -71,7 +89,11 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
     const prefix=file;
     const forbidden=hasForbiddenKey(receipt);
     if(forbidden)issues.push(issue('FORBIDDEN_EVIDENCE_FIELD',prefix+':'+forbidden));
-    if(receipt.git_sha!==revision)issues.push(issue('STALE_GIT_SHA',prefix));
+    const compatibility=compatibilityFor(receipt.skill,receipt.case_id);
+    const inputsMatch=Boolean(compatibility&&receipt.source_sha256===compatibility.source_sha256&&
+      receipt.profile_sha256===compatibility.profile_sha256&&receipt.prompt_sha256===compatibility.prompt_sha256);
+    const revisionCompatible=receipt.git_sha===revision||(ancestorShas.includes(receipt.git_sha)&&inputsMatch);
+    if(!revisionCompatible)issues.push(issue('STALE_GIT_SHA',prefix));
     if(receipt.phase!=='P37.1'||receipt.schema_version!=='1.0')issues.push(issue('RECEIPT_SCHEMA_INVALID',prefix));
     if(receipt.profile_sha256!==profileSha)issues.push(issue('RUNTIME_PROFILE_HASH_MISMATCH',prefix));
     if(!receipt.source_sha256||!SKILLS.includes(receipt.skill))issues.push(issue('SOURCE_PROVENANCE_MISSING',prefix));
@@ -103,6 +125,7 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
   }
   const manifest=receipts.map(({file})=>({path:path.relative(root,file).replaceAll(path.sep,'/'),sha256:sha(fs.readFileSync(file))})).sort((a,b)=>a.path.localeCompare(b.path));
   const report={schema_version:'1.0',phase:'P37.3',reviewer,reviewed_at:new Date().toISOString(),git_sha:revision,
+    compatible_ancestor_shas:ancestorShas,
     adapter:'codex',required_scenarios:SKILLS.length*CASES.length,receipt_count:receipts.length,
     selected_evidence_count:selected.length,
     complete_matrix:byCase.size===SKILLS.length*CASES.length,manifest_sha256:sha(JSON.stringify(manifest)),

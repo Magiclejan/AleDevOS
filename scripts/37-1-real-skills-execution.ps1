@@ -45,17 +45,29 @@ Write-Host ('P37_1_FIXTURE '+$prepared.fixture)
 $selectedSkills=if($FullCampaign){$skills}else{@($Skill)}
 $selectedCases=if($FullCampaign){$cases}else{@($Case)}
 $attempts=0
+$ancestorRevisions=@(git -C $root rev-list HEAD 2>$null | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 
-function Get-LatestReceipt([string]$SkillId,[string]$CaseId,[string]$Revision) {
+function Get-ExecutionCompatibility([string]$SkillId,[string]$CaseId) {
+  $raw=& $node $engine compatibility --adapter $Adapter --skill $SkillId --case $CaseId
+  if($LASTEXITCODE -ne 0){ return $null }
+  try { return ($raw -join [Environment]::NewLine | ConvertFrom-Json) } catch { return $null }
+}
+
+function Get-LatestReceipt([string]$SkillId,[string]$CaseId,[string[]]$AllowedRevisions,$Compatibility) {
   $dir=Join-Path $root (Join-Path '.aledevos\state\certification\p37\skills\codex' $SkillId)
   if(-not (Test-Path -LiteralPath $dir)){ return $null }
   $items=@()
   foreach($file in Get-ChildItem -LiteralPath $dir -Filter ($CaseId+'-*.json') -File -ErrorAction SilentlyContinue){
     try {
       $receipt=Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json
-      if($receipt.phase -eq 'P37.1' -and $receipt.git_sha -eq $Revision -and
+      $revisionMatch=$AllowedRevisions -contains $receipt.git_sha
+      $inputMatch=$null -ne $Compatibility -and
+        $receipt.source_sha256 -eq $Compatibility.source_sha256 -and
+        $receipt.profile_sha256 -eq $Compatibility.profile_sha256 -and
+        $receipt.prompt_sha256 -eq $Compatibility.prompt_sha256
+      if($receipt.phase -eq 'P37.1' -and $revisionMatch -and $inputMatch -and
          $receipt.status -eq 'EVIDENCE_REVIEW_REQUIRED' -and @($receipt.issues).Count -eq 0){
-        $items += [pscustomobject]@{ File=$file.FullName; Observed=$receipt.observed_at }
+        $items += [pscustomobject]@{ File=$file.FullName; Observed=$receipt.observed_at; GitSha=$receipt.git_sha }
       }
     } catch {}
   }
@@ -69,9 +81,10 @@ foreach($id in $selectedSkills){
    continue
   }
   if($FullCampaign){
-   $existing=Get-LatestReceipt -SkillId $id -CaseId $caseId -Revision $prepared.git_sha
+   $compatibility=Get-ExecutionCompatibility -SkillId $id -CaseId $caseId
+   $existing=Get-LatestReceipt -SkillId $id -CaseId $caseId -AllowedRevisions $ancestorRevisions -Compatibility $compatibility
    if($null -ne $existing -and @($existing).Count -gt 0){
-    Write-Host ('P37_1_CASE_SKIP '+$Adapter+':'+$id+':'+$caseId+' existing_valid_receipt')
+    Write-Host ('P37_1_CASE_SKIP '+$Adapter+':'+$id+':'+$caseId+' compatible_receipt_sha='+$existing.GitSha)
     continue
    }
   }

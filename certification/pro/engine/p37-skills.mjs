@@ -105,11 +105,21 @@ export function makeCasePrompt(skill,caseId,observations=''){
  };
  return header+byCase[caseId];
 }
+export function promptSha256(skill,caseId){
+ const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?governedTaskInstructions(skill):'');
+ return hash(prompt);
+}
 export function sourceTarget(root,adapter,skill){
  assertAdapter(adapter);assertSkill(skill);
  const t=buildOperationalPlan(root).targets.find(t=>t.kind==='skill'&&t.adapter===adapter&&t.id===skill);
  if(!t)throw Error('P37_1_TARGET_NOT_IN_PINNED_MATRIX');
  return t;
+}
+export function executionCompatibility(root=defaultRoot,{adapter='codex',skill,caseId}={}){
+ assertAdapter(adapter);assertSkill(skill);assertCase(caseId);
+ const target=sourceTarget(root,adapter,skill);
+ const profilePath=path.join(root,'adapters',adapter,'runtime-profile.json');
+ return {source_sha256:target.source_sha256,profile_sha256:shaFile(profilePath),prompt_sha256:promptSha256(skill,caseId)};
 }
 export function inspectProjection(project,target){
  const file=path.join(project,adapterSkillRoot[target.adapter],target.id,'SKILL.md');
@@ -795,7 +805,8 @@ export async function main(args=process.argv.slice(2),root=defaultRoot){
  }
  if(command==='summary')return summarizeObservations(root);
  if(command==='cases')return {phase:'P37.1',skill_ids:skillIds,required_cases:SKILL_CASES,
-  canonical_adapters:Object.keys(adapterSkillRoot),pro_certified:0};
+   canonical_adapters:Object.keys(adapterSkillRoot),pro_certified:0};
+  if(command==='compatibility')return executionCompatibility(root,{adapter,skill:flag(args,'--skill'),caseId:flag(args,'--case')});
  throw Error('P37_1_USAGE: prepare --adapter <id> --confirm-disposable-install | run --adapter <id> --project <fixture> --skill <id> --case <id> --provider <id> --model <id> --execute-real [--reviewer <independent>] | diagnose --workspace <owned-temporary-fixture> | summary | cases');
 }
 if(process.argv[1]&&abs(process.argv[1])===fileURLToPath(import.meta.url)){
