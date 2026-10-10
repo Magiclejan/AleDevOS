@@ -449,7 +449,7 @@ export function taskFinalizationIssue(progress,caseId){
   return 'ORCHESTRATOR_TASK_NOT_FINALIZED';
  return null;
 }
-function expectedTerminalOutcome(caseId,routeProgress,agentHandoff,changes){
+function expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes){
  if(caseId==='activated_on_correct_request'&&routeProgress.route_status==='ROUTE_READY'&&
     routeProgress.route_integrity_verified===true&&routeProgress.route_selected_expected===true)
   return 'EXPECTED_ACTIVATION_STOP';
@@ -461,6 +461,10 @@ function expectedTerminalOutcome(caseId,routeProgress,agentHandoff,changes){
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_VERIFICATION_TERMINAL';
+ if(skill==='diff-review'&&caseId==='executed_real_task'&&agentHandoff.core_final_state==='BLOCKED'&&
+    routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
+    routeProgress.route_selected_expected===true)
+  return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
  return null;
 }
 export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
@@ -704,8 +708,9 @@ function executeCase(root,opts){
   stdout:run.stdout||'',stderr:run.stderr||'',exitCode,errorCode:run.error?.code??null
  });
   const issues=[];
-  const terminalOutcome=expectedTerminalOutcome(caseId,routeProgress,agentHandoff,changes);
-  const expectedVerificationTerminal=terminalOutcome==='EXPECTED_VERIFICATION_TERMINAL';
+ const terminalOutcome=expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes);
+ const expectedVerificationTerminal=terminalOutcome==='EXPECTED_VERIFICATION_TERMINAL';
+ const expectedEvidenceReviewTerminal=terminalOutcome==='EXPECTED_EVIDENCE_REVIEW_TERMINAL';
  if(!transportSpawned&&runtimeFailureClass==='RUNTIME_TIMEOUT')issues.push('PROVIDER_EXECUTION_TIMED_OUT');
  else if(!transportSpawned)issues.push('PROVIDER_CLI_UNAVAILABLE');
  if(codexPreflight?.cli_version_exit_code!==0)issues.push('CODEX_CLI_VERSION_UNVERIFIED');
@@ -737,15 +742,15 @@ function executeCase(root,opts){
  // A terminal BLOCKED verdict is the expected, safe outcome for negative
  // refusal cases; it is an issue only when a positive workflow is blocked.
   if(nativeEvents?.final_message_blocked&&!['rejected_out_of_scope_request','scoped_permissions_enforced'].includes(caseId)&&
-     !expectedVerificationTerminal)
+     !expectedVerificationTerminal&&!expectedEvidenceReviewTerminal)
    issues.push('CODEX_EXPLICIT_FINAL_BLOCKED');
   if(nativeEvents?.final_message_blocked&&agentHandoff.core_final_state==='UNFINISHED'&&
      !['rejected_out_of_scope_request','scoped_permissions_enforced'].includes(caseId)&&
-     !expectedVerificationTerminal)
+     !expectedVerificationTerminal&&!expectedEvidenceReviewTerminal)
    issues.push('PROVIDER_BLOCKED_WITH_UNFINISHED_TASK');
  if(caseId==='executed_real_task'&&agentHandoff.last_active_specialist)
   issues.push('AGENT_HANDOFF_INCOMPLETE');
-  const independentEvidenceOnly=expectedVerificationTerminal;
+  const independentEvidenceOnly=expectedVerificationTerminal||expectedEvidenceReviewTerminal;
  const taskIssue=independentEvidenceOnly?null:taskFinalizationIssue(routeProgress,caseId);
  if(taskIssue)issues.push(taskIssue);
  if(skill==='safe-edit'&&caseId==='executed_real_task'){
