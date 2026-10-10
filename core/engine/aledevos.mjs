@@ -28,6 +28,13 @@ function statePath(){return take('--state',defaultState)}
 function safeTaskId(v){return String(v).replace(/[^a-zA-Z0-9._-]/g,'_')}
 function taskStateDir(taskId){return path.join(cwd,'.aledevos','state','tasks',safeTaskId(taskId))}
 function taskContractPath(taskId){return path.join(taskStateDir(taskId),'task-contract.json')}
+function runtimeRouteReady(taskId){
+ const runtime=path.join(cwd,'.aledevos','skillsystem','runtime','skillsystem.mjs');
+ if(!fs.existsSync(runtime))return true;
+ const route=path.join(cwd,'.aledevos','state','skills','routes',safeTaskId(taskId)+'.json');
+ if(!fs.existsSync(route))return false;
+ try{const r=readJson(route);return r.task_id===taskId&&r.status==='ROUTE_READY'&&Boolean(r.integrity?.payload_sha256)}catch{return false}
+}
 function loadState(){const p=statePath();if(!fs.existsSync(p))fail(`STATE_NOT_FOUND: ${p}`,2);return[p,readJson(p)]}
 function event(s,type,data={}){s.history??=[];s.history.push({at:new Date().toISOString(),type,...data})}
 function persistState(p,s){writeJson(p,s);if(s?.task_id)writeJson(path.join(taskStateDir(s.task_id),'state.json'),s)}
@@ -171,6 +178,7 @@ if(group==='state'&&cmd==='agent'){
   if(status==='STARTED'){
    if(has(name,'COMPLETED'))fail(`RUNTIME_AGENT_ALREADY_COMPLETED: ${name}`,50);
    if(name==='builder'&&!s.approved_scope?.length)fail('RUNTIME_BUILDER_SCOPE_REQUIRED',43);
+   if(name==='builder'&&!runtimeRouteReady(s.task_id))fail('RUNTIME_BUILDER_REQUIRES_ROUTE_READY',51);
    if(name==='verifier'&&!has('builder','COMPLETED'))fail('RUNTIME_VERIFIER_REQUIRES_BUILDER',44);
    if(judgeNames.has(name)){
     if(!has('verifier','COMPLETED'))fail('RUNTIME_JUDGES_REQUIRE_VERIFIER',45);
