@@ -64,6 +64,22 @@ const requiredFiles={
  'docs/requirements.md':'# Requirements\n- Private data must require a token.\n- Reject missing tokens before side effects.\n- A utility called add must perform addition.\n',
  'docs/proposed.diff':'--- a/src/api.mjs\n+++ b/src/api.mjs\n@@ -1 +1 @@\n-export function getPrivateData(token){return {status:200,data:"private-demo"};}\n+export function getPrivateData(token){return {status:200,data:"private-demo",secret:process.env.API_KEY};}\n'
 };
+const evidenceOnlySkills=new Set([
+ 'diff-review','implementation-plan','regression-analysis','repo-map',
+ 'requirements-check','security-check','task-contract','test-strategy'
+]);
+const governedScopeInstructions={
+ 'backend-change':'For backend-change, approve only `src/api.mjs` plus the associated test evidence in `test/utils.test.mjs`.',
+ 'database-change':'For database-change, approve only the database source and its directly associated test evidence.',
+ 'frontend-change':'For frontend-change, approve only `web/index.html` plus its directly associated test evidence.',
+ 'repair-loop':'For repair-loop, approve only the failing source and directly associated test evidence.',
+ 'safe-edit':'For safe-edit, approve only `src/utils.mjs` and its directly associated test evidence.'
+};
+export function governedTaskInstructions(skill){
+ if(evidenceOnlySkills.has(skill))return ' This is a read-only governed task. Even though no product file may be edited, complete the protected lifecycle: approve a read-only source/evidence scope, create the Quality Plan with change-class analysis and low risk, call native Builder as evidence-only and record Builder STARTED then COMPLETED without edits, then native Verifier STARTED then COMPLETED, scope/integrity/canonical/quality gates, the three Judges with STARTED/score/COMPLETED, and finalize PASS. Do not skip Builder merely because the task is read-only; Builder evidence-only is the required handoff.';
+ const scope=governedScopeInstructions[skill]??'Approve only the files and evidence directly required by this Skill; never infer scope from another Skill.';
+ return ' Governed task. Initialize exactly one protected task and never call state init a second time. Be terse and execute this exact order: bootstrap/init, registry+route, approve source plus associated test scope and quality plan, native Builder STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical gate→quality verify, then native judge-requirements→judge-regression→judge-quality with STARTED/score/COMPLETED, then finalize. Use protected Core commands and real evidence only. For canonical test evidence, use exactly `gate:canonical/tests` with source `test/utils.test.mjs`. If any protected command rejects or a gate is blocked, repair the current task in place; do not create a second task or a second route. Never skip a role, invent evidence, impersonate a role, or claim delegation unavailable without an actual native-tool failure. '+scope;
+}
 function assertAdapter(adapter){if(!Object.hasOwn(adapterSkillRoot,adapter))throw Error('P37_1_UNKNOWN_ADAPTER');}
 function assertSkill(skill){if(!skillIds.includes(skill))throw Error('P37_1_UNKNOWN_SKILL');}
 function assertCase(caseId){if(!SKILL_CASES.includes(caseId))throw Error('P37_1_UNKNOWN_CASE');}
