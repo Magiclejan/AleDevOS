@@ -121,6 +121,11 @@ const [group,cmd]=args;
 
 if(group==='state'&&cmd==='init'){
  const requested=take('--task-id');if(!requested)fail('Missing --task-id');
+ if(fs.existsSync(statePath())){
+  const active=readJson(statePath());
+  if(active?.final_state===null||active?.final_state===undefined)
+   fail(`ACTIVE_TASK_EXISTS:${active.task_id}`,52);
+ }
  const task=requested==='auto'?(`task-${new Date().toISOString().replace(/\D/g,'').slice(0,14)}-${crypto.randomBytes(3).toString('hex')}`):requested;
  const scope=takes('--scope').map(norm),criteria=takes('--criterion'),adapter=take('--adapter',null),objective=take('--objective',''),benchmarkKey=take('--benchmark-key',null),createdAt=new Date().toISOString();
  const acceptance=criteria.map(id=>({id,status:'UNVERIFIED'}));
