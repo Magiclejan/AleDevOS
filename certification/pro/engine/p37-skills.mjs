@@ -118,6 +118,7 @@ export function lfSha256(file){return hash(fs.readFileSync(file,'utf8').replace(
 export function makeCasePrompt(skill,caseId,observations=''){
  assertSkill(skill);assertCase(caseId);
  const preinitialized=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
+  (skill==='repair-loop'&&caseId==='executed_real_task')||
   (evidenceOnlySkills.has(skill)&&caseId==='independent_verification');
  const routeBeforeDelegation=evidenceOnlySkills.has(skill)||(skill==='repair-loop'&&caseId==='executed_real_task');
  const firstAction=preinitialized
@@ -146,11 +147,14 @@ export function makeCasePrompt(skill,caseId,observations=''){
   : evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
    ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
   : byCase[caseId];
- return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
+ const repairPreinitialized=skill==='repair-loop'&&caseId==='executed_real_task'
+  ? ' The runner already initialized the only protected task and verified ROUTE_READY. Do not initialize or route again; continue with approved repair, Builder, Verifier, gates, Judges, criteria verification and PASS finalization.'
+  : '';
+ return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion+repairPreinitialized;
 }
 export function promptSha256(skill,caseId){
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
-  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':evidenceOnlySkills.has(skill)&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':'');
+  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':evidenceOnlySkills.has(skill)&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':skill==='repair-loop'&&caseId==='executed_real_task'?' The runner already initialized the only protected task and verified ROUTE_READY. Do not initialize or route again; continue with approved repair, Builder, Verifier, gates, Judges, criteria verification and PASS finalization.':'');
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
@@ -526,20 +530,20 @@ function runNative(exe,argv,cwd,timeoutMs){
 function fixtureGit(dir,args){
  return spawnSync('git',args,{cwd:dir,encoding:'utf8',windowsHide:true,timeout:30000,maxBuffer:1024*1024});
 }
-function prepareImplementationPlanRoute(caseWorkspace){
+function prepareImplementationPlanRoute(caseWorkspace,skill='implementation-plan'){
  const runtime=path.join(caseWorkspace,'.aledevos','runtime','aledevos.mjs');
  const skillsystem=path.join(caseWorkspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
  const taskId=`task-p37-${crypto.randomUUID().replaceAll('-','').slice(0,16)}`;
  const init=runNative(process.execPath,[runtime,'state','init','--task-id',taskId,'--adapter','codex',
-  '--objective','Prepare evidence for an implementation plan without editing product files.',
+  '--objective',`Execute the protected ${skill} task.`,
   '--scope','route-request.json','--criterion','route-evidence','--criterion','evidence-review'],caseWorkspace,30000);
  if(init.status!==0)throw Error(`P37_1_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
  const requestRel=path.join('.aledevos','state','tasks',taskId,'route-request.json').replaceAll('\\','/');
  const requestAbs=path.join(caseWorkspace,...requestRel.split('/'));
  fs.writeFileSync(requestAbs,JSON.stringify({schema_version:'1.0',task_id:taskId,
-  required_capabilities:['planning.implementation','scope.decomposition','risk.planning'],
+  required_capabilities:routeHints[skill][0],
   preferred_capabilities:[],max_skills:4,
-  intents:['feature','bugfix','refactor','maintenance'],domains:['development']},null,2)+'\n');
+  intents:routeHints[skill][1],domains:['development']},null,2)+'\n');
  const plan=runNative(process.execPath,[skillsystem,'route','plan','--project-root','.', '--request',requestRel],caseWorkspace,30000);
  if(plan.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_PLAN_FAILED:${plan.status}`);
  const verify=runNative(process.execPath,[skillsystem,'route','verify','--project-root','.', '--task-id',taskId],caseWorkspace,30000);
@@ -737,8 +741,8 @@ function executeCase(root,opts){
    "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\\\"Show report\\\"/);});\n",
    'utf8');
  }
- const preflightTaskId=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
-  ? prepareImplementationPlanRoute(caseWorkspace)
+ const preflightTaskId=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(skill==='repair-loop'&&caseId==='executed_real_task')
+  ? prepareImplementationPlanRoute(caseWorkspace,skill)
   : evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
    ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
    : null;
