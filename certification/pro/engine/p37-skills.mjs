@@ -59,7 +59,6 @@ const requiredFiles={
  'package.json':'{"private":true,"type":"module","scripts":{"test":"node --test test/*.test.mjs"}}\n',
  'src/utils.mjs':'export const add = (a,b) => a + b;\n',
  'test/utils.test.mjs':"import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {add} from '../src/utils.mjs';\ntest('addition',()=>assert.equal(add(2,3),5));\n",
- 'test/frontend.test.mjs':"import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\"Show report\"/);});\n",
  'src/api.mjs':"export function getPrivateData(token){return {status:200,data:'private-demo'};}\n",
  'web/index.html':'<!doctype html><html><body><button aria-label="Delete all data">Show report</button></body></html>\n',
  'db/schema.sql':'CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT NOT NULL);\n',
@@ -668,6 +667,11 @@ function executeCase(root,opts){
  if(profile.adapter!==adapter)throw Error('P37_1_RUNTIME_PROFILE_MISMATCH');
  const caseWorkspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-case-'));
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
+ if(skill==='frontend-change'){
+  fs.writeFileSync(path.join(caseWorkspace,'test','frontend.test.mjs'),
+   "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\\\"Show report\\\"/);});\n",
+   'utf8');
+ }
  // Read-only evidence Skills must not inherit an implementation failure
  // fixture; their recovery case validates governed evidence handling.
  const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill);
