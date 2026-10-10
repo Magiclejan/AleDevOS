@@ -136,9 +136,10 @@ export function executionCompatibility(root=defaultRoot,{adapter='codex',skill,c
  assertAdapter(adapter);assertSkill(skill);assertCase(caseId);
  const target=sourceTarget(root,adapter,skill);
  const profilePath=path.join(root,'adapters',adapter,'runtime-profile.json');
- const delegationPath=path.join(root,'adapters','codex','.codex','agents','orchestrator.toml');
- const delegation_sha256=adapter==='codex'&&delegationSensitiveCases.has(caseId)&&fs.existsSync(delegationPath)
-  ?lfSha256(delegationPath):null;
+ const delegationPaths=[path.join(root,'adapters','codex','.codex','config.toml'),
+  path.join(root,'adapters','codex','.codex','agents','orchestrator.toml')];
+ const delegation_sha256=adapter==='codex'&&delegationSensitiveCases.has(caseId)&&delegationPaths.every(fs.existsSync)
+  ?hash(delegationPaths.map(p=>fs.readFileSync(p,'utf8').replace(/\r\n?/g,'\n')).join('\n---\n')):null;
  return {source_sha256:target.source_sha256,profile_sha256:shaFile(profilePath),prompt_sha256:promptSha256(skill,caseId),delegation_sha256};
 }
 export function inspectProjection(project,target){

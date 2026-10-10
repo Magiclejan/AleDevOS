@@ -43,7 +43,7 @@ function certify(){
  checks.push(check('config.multi_agent',/multi_agent\s*=\s*true/.test(feat),'Codex multi-agent enabled','structured_handoff'));
  checks.push(check('config.root_shell_disabled',/shell_tool\s*=\s*false/.test(feat),'root shell disabled; execution belongs to AleDevOS roles','arbitrary_shell_deny'));
  const agentsCfg=section(cfg,'agents');
- checks.push(check('config.agent_depth',/max_depth\s*=\s*([2-9]|[1-9][0-9]+)/.test(agentsCfg),'root -> orchestrator -> specialist depth enabled','structured_handoff'));
+ checks.push(check('config.agent_depth',/max_depth\s*=\s*([3-9]|[1-9][0-9]+)/.test(agentsCfg),'root -> orchestrator -> specialist depth enabled','structured_handoff'));
  checks.push(check('config.request_permissions_disabled',/request_permissions_tool\s*=\s*false/.test(feat),'no model-driven permission expansion','external_directory'));
  checks.push(check('config.code_mode_disabled',/enabled\s*=\s*false/.test(section(cfg,'features.code_mode'))&&/enabled\s*=\s*true/.test(section(cfg,'features.code_mode_host')),'Code Mode disabled; stable tool host enabled','code_mode'));
  checks.push(check('permissions.aledevos_runtime.exists',hasTable(cfg,'permissions.aledevos_runtime'),'single effective AleDevOS runtime profile declared'));
