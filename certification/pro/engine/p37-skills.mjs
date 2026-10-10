@@ -142,19 +142,18 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const frontendVerificationCompletion=evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
   ? ' Completion is mandatory: after scope, integrity, canonical and quality gates PASS, immediately call native spawn_agent for judge-requirements, judge-regression and judge-quality, record each required score and completion, verify both acceptance criteria, then finalize the existing task PASS. Do not stop after the gates and do not return before finalization.'
   : '';
- const caseText=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
+ const caseText=skill==='repair-loop'&&caseId==='executed_real_task'
+  ? 'The runner already initialized exactly one protected repair task, verified ROUTE_READY, approved only `src/utils.mjs` and `test/utils.test.mjs`, and created a bugfix Quality Plan. Do not initialize, route, or alter scope/quality planning. Run `node --test test/utils.test.mjs`, then use native Builder STARTED→COMPLETED to apply the bounded repair. Record native Verifier STARTED→COMPLETED, run scope, integrity, canonical and quality gates, record the three Judges with scores, verify both criteria and finalize PASS.'
+  : skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? 'The certification runner has already initialized exactly one protected task and verified ROUTE_READY selecting implementation-plan. Do not run state init, do not create another task or route, do not call routing again, and do not claim the route is invalid. Continue with the existing task: perform evidence-only Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.'
   : evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
    ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
   : byCase[caseId];
- const repairPreinitialized=skill==='repair-loop'&&caseId==='executed_real_task'
-  ? ' The runner already initialized the only protected task and verified ROUTE_READY. Do not initialize or route again; continue with approved repair, Builder, Verifier, gates, Judges, criteria verification and PASS finalization.'
-  : '';
- return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion+repairPreinitialized;
+ return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 export function promptSha256(skill,caseId){
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
-  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':evidenceOnlySkills.has(skill)&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':skill==='repair-loop'&&caseId==='executed_real_task'?' The runner already initialized the only protected task and verified ROUTE_READY. Do not initialize or route again; continue with approved repair, Builder, Verifier, gates, Judges, criteria verification and PASS finalization.':'');
+  (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)?' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.':evidenceOnlySkills.has(skill)&&caseId==='independent_verification'?' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.':skill==='repair-loop'&&caseId==='executed_real_task'?' The certification runner preinitialized the protected repair task, verified ROUTE_READY, approved `src/utils.mjs` and `test/utils.test.mjs`, and created the bugfix Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan; perform the bounded repair, Builder, Verifier, gates, Judges, criteria verification and finalization.':'');
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
@@ -534,9 +533,12 @@ function prepareImplementationPlanRoute(caseWorkspace,skill='implementation-plan
  const runtime=path.join(caseWorkspace,'.aledevos','runtime','aledevos.mjs');
  const skillsystem=path.join(caseWorkspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
  const taskId=`task-p37-${crypto.randomUUID().replaceAll('-','').slice(0,16)}`;
+ const repairTask=skill==='repair-loop';
  const init=runNative(process.execPath,[runtime,'state','init','--task-id',taskId,'--adapter','codex',
   '--objective',`Execute the protected ${skill} task.`,
-  '--scope','route-request.json','--criterion','route-evidence','--criterion','evidence-review'],caseWorkspace,30000);
+  '--scope','route-request.json',...(repairTask?['--scope','src/utils.mjs','--scope','test/utils.test.mjs']:[]),
+  '--criterion',repairTask?'evidence-grounded':'route-evidence',
+  '--criterion',repairTask?'requested-result':'evidence-review'],caseWorkspace,30000);
  if(init.status!==0)throw Error(`P37_1_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
  const requestRel=path.join('.aledevos','state','tasks',taskId,'route-request.json').replaceAll('\\','/');
  const requestAbs=path.join(caseWorkspace,...requestRel.split('/'));
@@ -548,6 +550,10 @@ function prepareImplementationPlanRoute(caseWorkspace,skill='implementation-plan
  if(plan.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_PLAN_FAILED:${plan.status}`);
  const verify=runNative(process.execPath,[skillsystem,'route','verify','--project-root','.', '--task-id',taskId],caseWorkspace,30000);
  if(verify.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_VERIFY_FAILED:${verify.status}`);
+ if(repairTask){
+  const quality=runNative(process.execPath,[runtime,'quality','plan','--change-class','bugfix','--risk','low'],caseWorkspace,30000);
+  if(quality.status!==0)throw Error(`P37_1_PREFLIGHT_REPAIR_QUALITY_FAILED:${quality.status}`);
+ }
  return taskId;
 }
 function prepareReadOnlyVerificationTask(caseWorkspace,skill){
@@ -760,6 +766,8 @@ function executeCase(root,opts){
  if(before.errors.length)throw Error('P37_1_WORKSPACE_UNSAFE');
  const preflightNote=evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
   ? ' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.'
+  : skill==='repair-loop'&&caseId==='executed_real_task'
+  ? ' The certification runner preinitialized the protected repair task, verified ROUTE_READY, approved `src/utils.mjs` and `test/utils.test.mjs`, and created the bugfix Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan; perform the bounded repair, Builder, Verifier, gates, Judges, criteria verification and finalization.'
   : preflightTaskId
   ? ' The certification runner preinitialized the protected task and verified ROUTE_READY. Do not call state init again; continue from that task and perform the required evidence-only Builder, Verifier, gates, Judges and finalization.'
   : '';
