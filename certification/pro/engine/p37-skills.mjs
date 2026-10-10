@@ -473,6 +473,11 @@ function expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
+ if(evidenceOnlySkills.has(skill)&&caseId==='failure_and_recovery'&&
+    ['BLOCKED','UNFINISHED'].includes(agentHandoff.core_final_state)&&
+    routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
+    routeProgress.route_selected_expected===true)
+  return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
  return null;
 }
 export function validateCodexWorkspaceWriteOptIn({adapter,confirmed,workspace}){
