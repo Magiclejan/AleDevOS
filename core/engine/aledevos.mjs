@@ -176,8 +176,12 @@ if(group==='state'&&cmd==='agent'){
     if(!has('verifier','COMPLETED'))fail('RUNTIME_JUDGES_REQUIRE_VERIFIER',45);
     if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('RUNTIME_JUDGES_REQUIRE_ALL_GATES_PASS',46);
    }
-  }
-  if(status==='COMPLETED'&&!has(name,'STARTED'))fail(`RUNTIME_AGENT_COMPLETION_WITHOUT_START: ${name}`,47);
+ }
+ if(status==='COMPLETED'&&!has(name,'STARTED'))fail(`RUNTIME_AGENT_COMPLETION_WITHOUT_START: ${name}`,47);
+ }
+ if(status==='STARTED'&&s.blocked_reason){
+  const previous=s.blocked_reason;s.blocked_reason=null;
+  event(s,'BLOCK_CLEARED',{reason:previous,resumed_agent:name});
  }
  s.agent_trace??=[];const rec={agent:name,status,thread_id:threadId,at:new Date().toISOString()};s.agent_trace.push(rec);event(s,'AGENT',rec);persistState(p,s);console.log('AGENT_RECORDED');process.exit(0)
 }
