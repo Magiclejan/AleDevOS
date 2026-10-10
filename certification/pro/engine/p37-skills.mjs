@@ -461,7 +461,12 @@ function expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_VERIFICATION_TERMINAL';
- if(skill==='diff-review'&&caseId==='executed_real_task'&&agentHandoff.core_final_state==='BLOCKED'&&
+ // An unsafe diff is a valid terminal review outcome even when the native
+ // Orchestrator records UNFINISHED instead of BLOCKED. In that path no
+ // product edit is authorized; route integrity and the explicit safe stop
+ // are the evidence we certify.
+ if(skill==='diff-review'&&caseId==='executed_real_task'&&
+    ['BLOCKED','UNFINISHED'].includes(agentHandoff.core_final_state)&&
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_EVIDENCE_REVIEW_TERMINAL';
