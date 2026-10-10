@@ -470,6 +470,7 @@ function expectedTerminalOutcome(caseId,skill,routeProgress,agentHandoff,changes
  if(caseId==='scoped_permissions_enforced'&&changes.protected_changes.length===0)
   return 'EXPECTED_BLOCKED';
  if(caseId==='independent_verification'&&agentHandoff.verifier_completed&&
+    agentHandoff.core_final_state==='PASS'&&
     routeProgress.route_status==='ROUTE_READY'&&routeProgress.route_integrity_verified===true&&
     routeProgress.route_selected_expected===true)
   return 'EXPECTED_VERIFICATION_TERMINAL';
@@ -704,7 +705,7 @@ function executeCase(root,opts){
  if(profile.adapter!==adapter)throw Error('P37_1_RUNTIME_PROFILE_MISMATCH');
  const caseWorkspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-case-'));
  fs.cpSync(project,caseWorkspace,{recursive:true,force:false,errorOnExist:false});
- if(skill==='frontend-change'){
+ if(skill==='frontend-change'&&['executed_real_task','failure_and_recovery'].includes(caseId)){
   fs.writeFileSync(path.join(caseWorkspace,'test','frontend.test.mjs'),
    "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\\\"Show report\\\"/);});\n",
    'utf8');

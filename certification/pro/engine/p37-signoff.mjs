@@ -44,6 +44,11 @@ const hasForbiddenKey=(value,trail='')=>{
 };
 const expectedKey=(skill,caseId)=>skill+'::'+caseId;
 const issue=(code,detail)=>({code,detail});
+const independentVerificationComplete=receipt=>receipt.case_id!=='independent_verification'||(
+  receipt.agent_handoff?.core_final_state==='PASS'&&
+  receipt.agent_handoff?.verifier_completed===true&&
+  receipt.quality_progress?.judge_count>=3
+);
 
 export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-independent-verifier'}={}){
   const revision=getRevision(root),ancestorShas=ancestors(root), files=walk(receiptRoot(root)), issues=[], receipts=[];
@@ -77,8 +82,9 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
       const revisionCompatible=receipt.git_sha===revision||(ancestorShas.includes(receipt.git_sha)&&inputsMatch);
       const eligible=revisionCompatible&&receipt.profile_sha256===profileSha&&
         receipt.status==='EVIDENCE_REVIEW_REQUIRED'&&Array.isArray(receipt.issues)&&receipt.issues.length===0;
+      const eligibleFinalized=eligible&&independentVerificationComplete(receipt);
       const previous=byCase.get(key);
-      if(eligible&&(!previous||new Date(receipt.observed_at||0)>=new Date(previous.receipt.observed_at||0)))
+      if(eligibleFinalized&&(!previous||new Date(receipt.observed_at||0)>=new Date(previous.receipt.observed_at||0)))
         byCase.set(key,{file,receipt});
     }
   }
@@ -115,6 +121,7 @@ export function reviewP37_3(root=defaultRoot,{write=false,reviewer='p37.3-indepe
       issues.push(issue('MODEL_OR_REASONING_NOT_PINNED',prefix));
     if(receipt.status!=='EVIDENCE_REVIEW_REQUIRED')issues.push(issue('OBSERVATION_NOT_ELIGIBLE',prefix+':'+String(receipt.status)));
     if(!Array.isArray(receipt.issues)||receipt.issues.length)issues.push(issue('RECEIPT_HAS_RUNTIME_ISSUES',prefix));
+    if(!independentVerificationComplete(receipt))issues.push(issue('INDEPENDENT_VERIFICATION_NOT_FINALIZED',prefix));
     const c=receipt.case_id;
     if(!['activated_on_correct_request','rejected_out_of_scope_request','scoped_permissions_enforced'].includes(c)){
       const e=receipt.execution_evidence||{}, route=receipt.route_progress||{};
