@@ -515,7 +515,7 @@ function prepareImplementationPlanRoute(caseWorkspace){
   '--objective','Prepare evidence for an implementation plan without editing product files.',
   '--scope','route-request.json','--criterion','route-evidence','--criterion','evidence-review'],caseWorkspace,30000);
  if(init.status!==0)throw Error(`P37_1_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
- const requestRel=norm(path.join('.aledevos','state','tasks',taskId,'route-request.json'));
+ const requestRel=path.join('.aledevos','state','tasks',taskId,'route-request.json').replaceAll('\\','/');
  const requestAbs=path.join(caseWorkspace,...requestRel.split('/'));
  fs.writeFileSync(requestAbs,JSON.stringify({schema_version:'1.0',task_id:taskId,
   required_capabilities:['planning.implementation','scope.decomposition','risk.planning'],
