@@ -79,7 +79,18 @@ function initState(workspace,role){
  const runtime=path.join(workspace,'.aledevos','runtime','aledevos.mjs');
  const id='p37-2-'+crypto.randomUUID().replaceAll('-','').slice(0,16);
  const r=run(process.execPath,[runtime,'state','init','--task-id',id,'--adapter','codex','--objective','Observe native role '+role+'.','--scope','src/utils.mjs','--criterion','evidence-grounded','--criterion','requested-result'],workspace,30000);
- if(r.status!==0)throw Error('P37_2_STATE_INIT_FAILED');return id;
+ if(r.status!==0)throw Error('P37_2_STATE_INIT_FAILED');
+ const requestRel=safePath(path.join('.aledevos','state','tasks',id,'route-request.json'));
+ write(path.join(workspace,...requestRel.split('/')),{schema_version:'1.0',task_id:id,
+  required_capabilities:['safe.edit','scope.control','minimal.change'],preferred_capabilities:[],max_skills:4,
+  intents:['implementation','repair'],domains:['development']});
+ const skillsystem=path.join(workspace,'.aledevos','skillsystem','runtime','skillsystem.mjs');
+ const plan=run(process.execPath,[skillsystem,'route','plan','--project-root','.','--request',requestRel],workspace,30000);
+ const verify=run(process.execPath,[skillsystem,'route','verify','--project-root','.','--task-id',id],workspace,30000);
+ if(plan.status!==0||verify.status!==0)throw Error('P37_2_ROUTE_PREFLIGHT_FAILED');
+ const approve=run(process.execPath,[runtime,'state','scope-approve','--add','src/utils.mjs'],workspace,30000);
+ if(approve.status!==0)throw Error('P37_2_SCOPE_PREFLIGHT_FAILED');
+ return id;
 }
 function observedRoles(workspace){
  const base=path.join(workspace,'.aledevos','state','tasks');
