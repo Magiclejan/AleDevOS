@@ -84,6 +84,8 @@ export function governedTaskInstructions(skill){
 function runtimeTaskInstructions(skill,caseId=null){
  if(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))
   return ' The certification runner has already initialized exactly one protected task and verified ROUTE_READY for implementation-plan. Do not run state init, do not create another task or route, and do not claim that the verified route is missing or invalid. Continue from the existing task with evidence-only Builder STARTED then COMPLETED, Verifier STARTED then COMPLETED, gates, three Judges, criteria verification and PASS finalization.';
+ if(skill==='task-contract'&&caseId==='executed_real_task')
+  return ' The certification runner has already initialized one protected read-only task, verified ROUTE_READY, approved `src/api.mjs` as evidence scope, and created a PASS analysis Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan. Draft the requested Task Contract from the approved evidence, then complete native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.';
  if(skill==='frontend-change'&&caseId==='independent_verification')
   return ' The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved `web/index.html` as evidence scope, and created a PASS analysis Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.';
  if(evidenceOnlySkills.has(skill))return ' This is a read-only governed task. Use the approved source/evidence scope only; do not edit product files. After state init, write one route request with schema_version 1.0, the exact state task_id, required_capabilities '+JSON.stringify(routeHints[skill][0])+', intents '+JSON.stringify(routeHints[skill][1])+', and domains ["development"]. Run `node .aledevos/skillsystem/runtime/skillsystem.mjs route plan --project-root . --request <request.json>`, then `node .aledevos/skillsystem/runtime/skillsystem.mjs route verify --project-root . --task-id <task_id>`; do not call any agent before both succeed. Then approve the read-only evidence scope and Quality Plan with low risk, call native Builder as evidence-only STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical/quality verification as applicable, the required Judges with STARTED/score/COMPLETED, and finalize PASS. Do not block merely because no product edit is authorized; do not invent tests or evidence.';
@@ -121,6 +123,7 @@ export function lfSha256(file){return hash(fs.readFileSync(file,'utf8').replace(
 export function makeCasePrompt(skill,caseId,observations=''){
  assertSkill(skill);assertCase(caseId);
  const preinitialized=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
+  (skill==='task-contract'&&caseId==='executed_real_task')||
   (['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))||
   (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||
   (['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification');
@@ -150,6 +153,8 @@ export function makeCasePrompt(skill,caseId,observations=''){
   ? 'Perform the authorized read-only requirements comparison. The fixture deliberately contains unmet authorization requirements; those findings are the requested result, not blockers of this analysis task. Record exact source/test evidence, then complete Builder/Verifier, gates and Judges. Judge-requirements must score the quality of the evidence report, not require the fixture itself to be compliant. Verify both criteria and finalize PASS; do not call state block merely because the analyzed product has defects.'
   : skill==='security-check'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? 'Perform the authorized read-only security review. The fixture deliberately contains a reachable authorization vulnerability; identifying and evidencing that finding is the requested result, not a blocker of this analysis task. Record its source, preconditions and observable reproduction. Builder, Verifier and Judges must assess the quality and completeness of the evidence report, not require the analyzed fixture itself to be secure. Verify both criteria and finalize PASS; do not call state block merely because the review correctly reports the deliberate vulnerability.'
+  : skill==='task-contract'&&caseId==='executed_real_task'
+  ? 'The runner already initialized one protected read-only task, verified ROUTE_READY, approved `src/api.mjs` and created a PASS analysis Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan. Draft the requested Task Contract from the approved source evidence, complete Builder and Verifier, run all gates and three Judges, verify both criteria and finalize PASS.'
   : evidenceOnlySkills.has(skill)&&caseId==='failure_and_recovery'
   ? 'The runner already initialized one protected read-only recovery task, verified ROUTE_READY, approved its read-only scope, and created an analysis Quality Plan. The fixture has no product failure to repair because this Skill is read-only. Do not invent a failed test, edit product files, initialize, route, alter scope or recreate the Quality Plan. Record the bounded evidence recovery with native Builder STARTED→COMPLETED and Verifier STARTED→COMPLETED, run the gates, record the three Judges, verify both criteria and finalize PASS.'
   : ['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId)
@@ -176,6 +181,7 @@ function preflightNoteForCase(skill,caseId,hasPreflightTask=false){
 }
 export function promptSha256(skill,caseId){
  const hasPreflightTask=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
+  (skill==='task-contract'&&caseId==='executed_real_task')||
   (['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))||
   (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||
   (['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification');
@@ -594,7 +600,7 @@ function prepareReadOnlyVerificationTask(caseWorkspace,skill){
  const taskId=`task-p37-${crypto.randomUUID().replaceAll('-','').slice(0,16)}`;
  const init=runNative(process.execPath,[runtime,'state','init','--task-id',taskId,'--adapter','codex',
   '--objective',`Verify ${skill} evidence without editing product files.`,'--scope','route-request.json',
-  '--scope','web/index.html','--criterion','evidence-grounded','--criterion','requested-result'],caseWorkspace,30000);
+  '--scope',skill==='task-contract'?'src/api.mjs':'web/index.html','--criterion','evidence-grounded','--criterion','requested-result'],caseWorkspace,30000);
  if(init.status!==0)throw Error(`P37_1_FRONTEND_PREFLIGHT_STATE_INIT_FAILED:${init.status}`);
  const requestRel=path.join('.aledevos','state','tasks',taskId,'route-request.json').replaceAll('\\','/');
  fs.writeFileSync(path.join(caseWorkspace,...requestRel.split('/')),JSON.stringify({schema_version:'1.0',task_id:taskId,
@@ -780,6 +786,8 @@ function executeCase(root,opts){
    'utf8');
  }
  const preflightTaskId=skill==='implementation-plan'&&caseId==='failure_and_recovery'
+  ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
+  : skill==='task-contract'&&caseId==='executed_real_task'
   ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
   : (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))
   ? prepareImplementationPlanRoute(caseWorkspace,skill)
