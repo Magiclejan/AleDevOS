@@ -568,6 +568,11 @@ function prepareImplementationPlanRoute(caseWorkspace,skill='implementation-plan
  const verify=runNative(process.execPath,[skillsystem,'route','verify','--project-root','.', '--task-id',taskId],caseWorkspace,30000);
  if(verify.status!==0)throw Error(`P37_1_PREFLIGHT_ROUTE_VERIFY_FAILED:${verify.status}`);
  if(repairTask){
+  // State init records the initial scope in the contract, but the native Builder
+  // also requires the explicit approval receipt before it can begin a repair.
+  const scopeApproval=runNative(process.execPath,[runtime,'state','scope-approve',
+   '--add','src/utils.mjs','--add','test/utils.test.mjs'],caseWorkspace,30000);
+  if(scopeApproval.status!==0)throw Error(`P37_1_PREFLIGHT_REPAIR_SCOPE_FAILED:${scopeApproval.status}`);
   const quality=runNative(process.execPath,[runtime,'quality','plan','--change-class','bugfix','--risk','low'],caseWorkspace,30000);
   if(quality.status!==0)throw Error(`P37_1_PREFLIGHT_REPAIR_QUALITY_FAILED:${quality.status}`);
  }
