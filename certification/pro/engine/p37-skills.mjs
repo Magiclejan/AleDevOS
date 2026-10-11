@@ -120,7 +120,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  assertSkill(skill);assertCase(caseId);
  const preinitialized=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
   (['repair-loop','safe-edit'].includes(skill)&&caseId==='executed_real_task')||
-  (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId));
+  ((evidenceOnlySkills.has(skill)||skill==='safe-edit')&&['failure_and_recovery','independent_verification'].includes(caseId));
  const routeBeforeDelegation=evidenceOnlySkills.has(skill)||(['repair-loop','safe-edit'].includes(skill)&&caseId==='executed_real_task');
  const firstAction=preinitialized
   ? 'The certification runner already initialized the single protected task and verified ROUTE_READY. Continue that task; never call state init or create another route. '
@@ -140,7 +140,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const implementationEvidenceClarifier=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? ' The runner preinitialized the protected task and verified ROUTE_READY; continue from it without creating another task or route.'
   : '';
- const frontendVerificationCompletion=evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
+ const frontendVerificationCompletion=(evidenceOnlySkills.has(skill)||skill==='safe-edit')&&caseId==='independent_verification'
   ? ' Completion is mandatory: after scope, integrity, canonical and quality gates PASS, immediately call native spawn_agent for judge-requirements, judge-regression and judge-quality, record each required score and completion, verify both acceptance criteria, then finalize the existing task PASS. Do not stop after the gates and do not return before finalization.'
   : '';
  const caseText=skill==='requirements-check'&&caseId==='executed_real_task'
@@ -151,13 +151,13 @@ export function makeCasePrompt(skill,caseId,observations=''){
   ? 'The runner already initialized exactly one protected repair task, verified ROUTE_READY, approved only `src/utils.mjs` and `test/utils.test.mjs`, and created a bugfix Quality Plan. Do not initialize, route, or alter scope/quality planning. Run `node --test test/utils.test.mjs`, then use native Builder STARTED→COMPLETED to apply the bounded repair. Record native Verifier STARTED→COMPLETED, run scope, integrity, canonical and quality gates, record the three Judges with scores, verify both criteria and finalize PASS.'
   : skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? 'The certification runner has already initialized exactly one protected task and verified ROUTE_READY selecting implementation-plan. Do not run state init, do not create another task or route, do not call routing again, and do not claim the route is invalid. Continue with the existing task: perform evidence-only Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.'
-  : evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
-   ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
+  : (evidenceOnlySkills.has(skill)||skill==='safe-edit')&&caseId==='independent_verification'
+   ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization. Independent external P37.3 signoff is still required.'
   : byCase[caseId];
  return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 function preflightNoteForCase(skill,caseId,hasPreflightTask=false){
- if(evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))
+ if((evidenceOnlySkills.has(skill)||skill==='safe-edit')&&['failure_and_recovery','independent_verification'].includes(caseId))
   return ' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.';
  if(['repair-loop','safe-edit'].includes(skill)&&caseId==='executed_real_task')
   return ' The certification runner preinitialized the protected repair task, verified ROUTE_READY, approved `src/utils.mjs` and `test/utils.test.mjs`, and created the bugfix Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan; perform the bounded repair, Builder, Verifier, gates, Judges, criteria verification and finalization.';
@@ -765,7 +765,7 @@ function executeCase(root,opts){
   ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
   : (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(['repair-loop','safe-edit'].includes(skill)&&caseId==='executed_real_task')
   ? prepareImplementationPlanRoute(caseWorkspace,skill)
-  : evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId)
+  : (evidenceOnlySkills.has(skill)||skill==='safe-edit')&&['failure_and_recovery','independent_verification'].includes(caseId)
    ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
    : null;
  // Read-only evidence Skills must not inherit an implementation failure
