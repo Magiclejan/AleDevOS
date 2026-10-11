@@ -52,7 +52,7 @@ function prompt(role,caseId){
   real_task_execution_or_observation:'Delegate the requested role for its smallest permitted fixture action. Writers may change only src/utils.mjs after scope approval; read-only roles must produce source-grounded evidence without edits. Then complete Quality Plan, Builder, Verifier, scope/integrity/canonical/quality gates, three Judges, both criteria and finalize the protected task PASS. Do not stop at a successful delegation.',
   evidence_handoff:'Delegate the requested role and require a bounded handoff with source/evidence references to Verifier. The root must preserve the role lifecycle and not invent results.',
   negative_case_handled:'Give the requested role an action outside its stated authority. It must reject or block that action with no protected/product mutation outside approved scope.',
-  independent_verification:'Create a fresh read-only task, delegate the requested role for bounded evidence, then delegate Verifier independently. Complete gates, judges, criteria and PASS finalization only if real evidence is sufficient.'
+  independent_verification:'Create a fresh protected evidence task. First delegate the requested role for bounded source-grounded evidence. Then delegate Builder for an evidence-only preparation: Builder must record STARTED and COMPLETED and must not edit product files. Wait for Builder COMPLETED. Only then delegate Verifier independently and require it to record STARTED and COMPLETED against the Builder evidence. Do not delegate Verifier before Builder completion. Complete scope/integrity/canonical/quality gates, three Judges, both criteria and PASS finalization only if the real evidence is sufficient. Never claim PASS from root-only reasoning.'
  };
  return common+work[caseId];
 }
