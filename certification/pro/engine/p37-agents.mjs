@@ -81,6 +81,14 @@ function initState(workspace,role){
  const r=run(process.execPath,[runtime,'state','init','--task-id',id,'--adapter','codex','--objective','Observe native role '+role+'.','--scope','src/utils.mjs','--criterion','evidence-grounded','--criterion','requested-result'],workspace,30000);
  if(r.status!==0)throw Error('P37_2_STATE_INIT_FAILED');return id;
 }
+function observedRoles(workspace){
+ const base=path.join(workspace,'.aledevos','state','tasks');
+ if(!fs.existsSync(base))return [];
+ const dirs=fs.readdirSync(base,{withFileTypes:true}).filter(x=>x.isDirectory()).map(x=>x.name);
+ if(dirs.length!==1)return [];
+ try{return [...new Set((read(path.join(base,dirs[0],'state.json')).agent_trace||[]).map(x=>String(x?.agent||''))
+  .filter(x=>/^[a-z][a-z0-9-]{0,80}$/.test(x)))];}catch{return []}
+}
 function execute(root,{role,caseId,model,timeoutMs}){
  const target=roleTarget(role),profile=read(path.join(root,'adapters','codex','runtime-profile.json'));
  const base=fixture(root),workspace=fs.mkdtempSync(path.join(os.tmpdir(),'aledevos-p37-2-'));
@@ -91,14 +99,14 @@ function execute(root,{role,caseId,model,timeoutMs}){
  const elapsed=Date.now()-started;
  const parsed=parseRuntimeOutput(profile.parser,result.stdout||''),handoff=inspectAgentHandoff(workspace),events=summarizeCodexEvents(result.stdout||'');
  const issues=[];if(result.status!==0)issues.push('RUNTIME_NONZERO_OR_UNKNOWN_EXIT');
- const trace=handoff.agent_roles_observed||[];if(!trace.includes(role))issues.push('REQUESTED_ROLE_NOT_OBSERVED');
+ const trace=observedRoles(workspace);if(!trace.includes(role))issues.push('REQUESTED_ROLE_NOT_OBSERVED');
  if(role!=='orchestrator'&&!handoff.builder_completed&&role==='builder')issues.push('REQUESTED_ROLE_NOT_COMPLETED');
  if(handoff.core_final_state==='BLOCKED'||handoff.core_final_state==='FAILED')issues.push('ORCHESTRATOR_TASK_NOT_ACCEPTED');
  const receipt={schema_version:'1.0',phase:'P37.2',kind:'agent',adapter:'codex',role,case_id:caseId,git_sha:getRevision(root),
   source_sha256:target.source_sha256,profile_sha256:hash(fs.readFileSync(path.join(root,'adapters','codex','runtime-profile.json'))),prompt_sha256:hash(input),
   observed_at:new Date().toISOString(),status:issues.length?'BLOCKED':'EVIDENCE_REVIEW_REQUIRED',issues,pro_certified:false,
   runtime:{provider_declared:'codex',model_declared:model,exit_code:Number.isInteger(result.status)?result.status:null,elapsed_ms:elapsed,stdout_sha256:hash(result.stdout||''),stderr_sha256:hash(result.stderr||''),model_observed:parsed.model||null},
-  native_events:events,agent_handoff:handoff,workspace:{disposable:workspace,task_id:taskId}};
+  native_events:events,agent_handoff:{...handoff,agent_roles_observed:trace},workspace:{disposable:workspace,task_id:taskId}};
  const dir=receiptDir(root,role);fs.mkdirSync(dir,{recursive:true});write(path.join(dir,caseId+'-'+crypto.randomUUID()+'.json'),receipt);
  return receipt;
 }
