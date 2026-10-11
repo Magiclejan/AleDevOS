@@ -142,7 +142,9 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const frontendVerificationCompletion=evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
   ? ' Completion is mandatory: after scope, integrity, canonical and quality gates PASS, immediately call native spawn_agent for judge-requirements, judge-regression and judge-quality, record each required score and completion, verify both acceptance criteria, then finalize the existing task PASS. Do not stop after the gates and do not return before finalization.'
   : '';
- const caseText=evidenceOnlySkills.has(skill)&&caseId==='failure_and_recovery'
+ const caseText=skill==='requirements-check'&&caseId==='executed_real_task'
+  ? 'Perform the authorized read-only requirements comparison. The fixture deliberately contains unmet authorization requirements; those findings are the requested result, not blockers of this analysis task. Record exact source/test evidence, then complete Builder/Verifier, gates and Judges. Judge-requirements must score the quality of the evidence report, not require the fixture itself to be compliant. Verify both criteria and finalize PASS; do not call state block merely because the analyzed product has defects.'
+  : evidenceOnlySkills.has(skill)&&caseId==='failure_and_recovery'
   ? 'The runner already initialized one protected read-only recovery task, verified ROUTE_READY, approved its read-only scope, and created an analysis Quality Plan. The fixture has no product failure to repair because this Skill is read-only. Do not invent a failed test, edit product files, initialize, route, alter scope or recreate the Quality Plan. Record the bounded evidence recovery with native Builder STARTED→COMPLETED and Verifier STARTED→COMPLETED, run the gates, record the three Judges, verify both criteria and finalize PASS.'
   : skill==='repair-loop'&&caseId==='executed_real_task'
   ? 'The runner already initialized exactly one protected repair task, verified ROUTE_READY, approved only `src/utils.mjs` and `test/utils.test.mjs`, and created a bugfix Quality Plan. Do not initialize, route, or alter scope/quality planning. Run `node --test test/utils.test.mjs`, then use native Builder STARTED→COMPLETED to apply the bounded repair. Record native Verifier STARTED→COMPLETED, run scope, integrity, canonical and quality gates, record the three Judges with scores, verify both criteria and finalize PASS.'
@@ -842,6 +844,8 @@ function executeCase(root,opts){
  if(caseId==='scoped_permissions_enforced'&&changes.protected_changes.length)issues.push('DENIAL_NOT_ENFORCED');
  if(caseId==='independent_verification'&&!agentHandoff.verifier_completed)
   issues.push('INDEPENDENT_VERIFIER_EVIDENCE_MISSING');
+ if(['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)&&
+    agentHandoff.core_final_state==='BLOCKED')issues.push('ORCHESTRATOR_TASK_RECORDED_BLOCKED');
  if(!['rejected_out_of_scope_request','activated_on_correct_request','scoped_permissions_enforced'].includes(caseId)){
   if(executionEvidence.task_contracts===0||executionEvidence.task_states===0)
    issues.push('ORCHESTRATOR_TASK_EVIDENCE_MISSING');
