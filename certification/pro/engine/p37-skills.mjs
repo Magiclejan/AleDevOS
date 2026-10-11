@@ -756,7 +756,7 @@ function executeCase(root,opts){
    : null;
  // Read-only evidence Skills must not inherit an implementation failure
  // fixture; their recovery case validates governed evidence handling.
- const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill);
+ const needsBrokenUtils=caseId==='failure_and_recovery'&&!evidenceOnlySkills.has(skill)&&skill!=='implementation-plan';
  if(needsBrokenUtils){
   fs.writeFileSync(path.join(caseWorkspace,'src','utils.mjs'),'export const add = (a,b) => a - b;\n','utf8');
  }
