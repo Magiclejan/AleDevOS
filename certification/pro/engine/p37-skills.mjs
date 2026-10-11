@@ -749,7 +749,9 @@ function executeCase(root,opts){
    "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\ntest('report button has an accurate accessible label',()=>{const html=fs.readFileSync('web/index.html','utf8');assert.match(html,/aria-label=\\\"Show report\\\"/);});\n",
    'utf8');
  }
- const preflightTaskId=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(skill==='repair-loop'&&caseId==='executed_real_task')
+ const preflightTaskId=skill==='implementation-plan'&&caseId==='failure_and_recovery'
+  ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
+  : (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(skill==='repair-loop'&&caseId==='executed_real_task')
   ? prepareImplementationPlanRoute(caseWorkspace,skill)
   : evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId)
    ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
