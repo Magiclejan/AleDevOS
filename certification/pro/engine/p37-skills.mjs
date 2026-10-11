@@ -169,8 +169,12 @@ function preflightNoteForCase(skill,caseId,hasPreflightTask=false){
  return '';
 }
 export function promptSha256(skill,caseId){
+ const hasPreflightTask=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
+  (['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))||
+  (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||
+  (skill==='safe-edit'&&caseId==='independent_verification');
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
-  preflightNoteForCase(skill,caseId,skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId));
+  preflightNoteForCase(skill,caseId,hasPreflightTask);
  return hash(prompt);
 }
 export function sourceTarget(root,adapter,skill){
