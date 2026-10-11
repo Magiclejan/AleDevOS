@@ -84,6 +84,8 @@ export function governedTaskInstructions(skill){
 function runtimeTaskInstructions(skill,caseId=null){
  if(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))
   return ' The certification runner has already initialized exactly one protected task and verified ROUTE_READY for implementation-plan. Do not run state init, do not create another task or route, and do not claim that the verified route is missing or invalid. Continue from the existing task with evidence-only Builder STARTED then COMPLETED, Verifier STARTED then COMPLETED, gates, three Judges, criteria verification and PASS finalization.';
+ if(skill==='frontend-change'&&caseId==='independent_verification')
+  return ' The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved `web/index.html` as evidence scope, and created a PASS analysis Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.';
  if(evidenceOnlySkills.has(skill))return ' This is a read-only governed task. Use the approved source/evidence scope only; do not edit product files. After state init, write one route request with schema_version 1.0, the exact state task_id, required_capabilities '+JSON.stringify(routeHints[skill][0])+', intents '+JSON.stringify(routeHints[skill][1])+', and domains ["development"]. Run `node .aledevos/skillsystem/runtime/skillsystem.mjs route plan --project-root . --request <request.json>`, then `node .aledevos/skillsystem/runtime/skillsystem.mjs route verify --project-root . --task-id <task_id>`; do not call any agent before both succeed. Then approve the read-only evidence scope and Quality Plan with low risk, call native Builder as evidence-only STARTED→COMPLETED, native Verifier STARTED→COMPLETED, scope→integrity→canonical/quality verification as applicable, the required Judges with STARTED/score/COMPLETED, and finalize PASS. Do not block merely because no product edit is authorized; do not invent tests or evidence.';
  if(['repair-loop','safe-edit'].includes(skill))return ' Governed repair task. After the repair and canonical gate PASS, record quality evidence with these exact valid references: test `gate:canonical/tests` with source `test/utils.test.mjs`, layer `unit`, coverage `regression`, regression true; regression-analysis ref `src/utils.mjs`; diff-review ref `src/utils.mjs`. Do not substitute prose for evidence refs. Then quality verify, all Judges, criteria verification and PASS finalization.';
  const databaseNote=skill==='database-change'?' For this disposable database fixture, treat `db/schema.sql`, the migration analysis and recorded handoff evidence as the complete evidence set. There is no database runtime or migration convention to execute; do not invent one or block solely because it is absent. Use native Builder and Verifier for evidence preparation, then complete the protected lifecycle.':'';
@@ -121,7 +123,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const preinitialized=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
   (['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))||
   (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||
-  (skill==='safe-edit'&&caseId==='independent_verification');
+  (['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification');
  const routeBeforeDelegation=evidenceOnlySkills.has(skill)||(['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId));
  const firstAction=preinitialized
   ? 'The certification runner already initialized the single protected task and verified ROUTE_READY. Continue that task; never call state init or create another route. '
@@ -141,7 +143,7 @@ export function makeCasePrompt(skill,caseId,observations=''){
  const implementationEvidenceClarifier=skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId)
   ? ' The runner preinitialized the protected task and verified ROUTE_READY; continue from it without creating another task or route.'
   : '';
- const frontendVerificationCompletion=(evidenceOnlySkills.has(skill)||skill==='safe-edit')&&caseId==='independent_verification'
+ const frontendVerificationCompletion=(evidenceOnlySkills.has(skill)||['safe-edit','frontend-change'].includes(skill))&&caseId==='independent_verification'
   ? ' Completion is mandatory: after scope, integrity, canonical and quality gates PASS, immediately call native spawn_agent for judge-requirements, judge-regression and judge-quality, record each required score and completion, verify both acceptance criteria, then finalize the existing task PASS. Do not stop after the gates and do not return before finalization.'
   : '';
  const caseText=skill==='requirements-check'&&caseId==='executed_real_task'
@@ -156,13 +158,15 @@ export function makeCasePrompt(skill,caseId,observations=''){
   ? 'The certification runner has already initialized exactly one protected task and verified ROUTE_READY selecting implementation-plan. Do not run state init, do not create another task or route, do not call routing again, and do not claim the route is invalid. Continue with the existing task: perform evidence-only Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization.'
   : skill==='safe-edit'&&caseId==='independent_verification'
    ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization. Independent external P37.3 signoff is still required.'
+  : skill==='frontend-change'&&caseId==='independent_verification'
+   ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved `web/index.html` as evidence scope, and created a PASS analysis Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges, criteria verification and PASS finalization. Independent external P37.3 signoff is still required.'
   : evidenceOnlySkills.has(skill)&&caseId==='independent_verification'
    ? 'The certification runner has already initialized one protected read-only verification task, verified ROUTE_READY, approved its read-only scope, and created a PASS Quality Plan with change-class analysis and low risk. Do not initialize, route, alter scope or recreate the Quality Plan. Continue with native Builder STARTED→COMPLETED, Verifier STARTED→COMPLETED, gates, three Judges and finalization.'
   : byCase[caseId];
  return header+caseText+implementationEvidenceClarifier+frontendVerificationCompletion;
 }
 function preflightNoteForCase(skill,caseId,hasPreflightTask=false){
- if(evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId)||skill==='safe-edit'&&caseId==='independent_verification')
+ if(evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId)||['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification')
   return ' The certification runner preinitialized the protected task, verified ROUTE_READY, approved read-only scope and completed the analysis Quality Plan. Do not call state init, route, scope approval or quality planning again; execute the remaining Builder, Verifier, gates, Judges, criteria verification and finalization on this task.';
  if(['repair-loop','safe-edit'].includes(skill)&&caseId==='executed_real_task')
   return ' The certification runner preinitialized the protected repair task, verified ROUTE_READY, approved `src/utils.mjs` and `test/utils.test.mjs`, and created the bugfix Quality Plan. Do not initialize, route, alter scope or recreate the Quality Plan; perform the bounded repair, Builder, Verifier, gates, Judges, criteria verification and finalization.';
@@ -174,7 +178,7 @@ export function promptSha256(skill,caseId){
  const hasPreflightTask=(skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||
   (['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))||
   (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||
-  (skill==='safe-edit'&&caseId==='independent_verification');
+  (['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification');
  const prompt=makeCasePrompt(skill,caseId)+(['executed_real_task','failure_and_recovery'].includes(caseId)?runtimeTaskInstructions(skill,caseId):'')+
   preflightNoteForCase(skill,caseId,hasPreflightTask);
  return hash(prompt);
@@ -779,7 +783,7 @@ function executeCase(root,opts){
   ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
   : (skill==='implementation-plan'&&['executed_real_task','failure_and_recovery','independent_verification'].includes(caseId))||(['repair-loop','safe-edit'].includes(skill)&&['executed_real_task','failure_and_recovery'].includes(caseId))
   ? prepareImplementationPlanRoute(caseWorkspace,skill)
-  : (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||(skill==='safe-edit'&&caseId==='independent_verification')
+  : (evidenceOnlySkills.has(skill)&&['failure_and_recovery','independent_verification'].includes(caseId))||(['safe-edit','frontend-change'].includes(skill)&&caseId==='independent_verification')
    ? prepareReadOnlyVerificationTask(caseWorkspace,skill)
    : null;
  // Read-only evidence Skills must not inherit an implementation failure
