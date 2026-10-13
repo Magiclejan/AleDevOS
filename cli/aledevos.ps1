@@ -21,6 +21,12 @@ $allAdapters = @('codex','claude-code','opencode','antigravity')
 
 function Get-Config {
   if (-not (Test-Path $configPath)) {
+    # START_ALEDEVOS.bat also invokes this CLI without a global CLI install.
+    # Only trust the canonical checkout adjacent to this script in that case.
+    $localRoot=Split-Path -Parent $PSScriptRoot
+    if (Test-Path -LiteralPath (Join-Path $localRoot 'scripts\05-install-into-project.ps1')) {
+      return [pscustomobject]@{canonical_root=$localRoot}
+    }
     throw "ALEDEVOS_CLI_NOT_CONFIGURED: run repo-tools\INSTALL_CLI.ps1 from the canonical AleDevOS checkout."
   }
   return Get-Content $configPath -Raw | ConvertFrom-Json
