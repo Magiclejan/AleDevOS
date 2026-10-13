@@ -328,8 +328,8 @@ switch ($Command) {
     Write-Host "Iniciar (instala en primer uso y abre el runtime):"
     Write-Host "  aledevos start"
     Write-Host "  aledevos start C:\ruta\Proyecto -Adapter codex"
-    Write-Host "  aledevos task -Adapter codex -Prompt \"objetivo\""
-    Write-Host "  aledevos start -Adapter codex -Prompt \"objetivo\""
+    Write-Host '  aledevos task -Adapter codex -Prompt "objetivo"'
+    Write-Host '  aledevos start -Adapter codex -Prompt "objetivo"'
     Write-Host ""
     Write-Host "Solo instalar/incorporar (sin abrir runtime):"
     Write-Host "  aledevos init"
