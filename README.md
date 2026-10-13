@@ -70,7 +70,18 @@ Or point to another path:
 aledevos start "C:\Projects\MyProject" -Adapter codex
 ```
 
-`aledevos start` is **install-on-first-use**: if the selected adapter projection is not installed in that project, AleDevOS installs it first and then launches the external runtime.
+\`aledevos start\` is **install-on-first-use**. Codex now enters a controlled, one-task-at-a-time AleDevOS CLI loop rather than opening its unrestricted root chat. Other adapters still launch their external runtime.
+
+### Codex strict CLI
+
+\`\`\`powershell
+aledevos start -Adapter codex
+aledevos task -Adapter codex -Prompt "Inspect the feature and verify the results"
+\`\`\`
+
+In strict mode, AleDevOS initializes the task before calling \`codex exec\`; checks the installed Skill registry; and accepts PASS only when task state, a verified route, specialist traces, quality gates and completed Codex turn agree. Missing evidence returns BLOCKED. Existing project adapters need \`aledevos update -Adapter codex\` before using strict mode.
+
+**Limits:** This gates requests sent *through AleDevOS CLI*; it does not remove the native Codex root agent or control direct Codex CLI/App invocations. Each prompt creates its own task; conversation resume is not included. Global Codex model/provider/auth settings are unchanged. Native Windows E2E certification remains pending.
 
 If you only want to install without launching the runtime:
 
