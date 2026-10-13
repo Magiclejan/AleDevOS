@@ -72,7 +72,11 @@ const engine=path.join(base,'runtime','aledevos.mjs');
 const skills=path.join(base,'skillsystem','runtime','skillsystem.mjs');
 const currentState=path.join(base,'state','current.json');
 const codexConfig=path.join(project,'.codex','config.toml');
-for(const p of [engine,skills,codexConfig,path.join(project,'.codex','agents','orchestrator.toml'),path.join(base,'project.json'),path.join(base,'skills','registries','codex.json')])requireFile(p);
+const orchestratorManifest=path.join(project,'.codex','agents','orchestrator.toml');
+for(const p of [engine,skills,codexConfig,orchestratorManifest,path.join(base,'project.json'),path.join(base,'skills','registries','codex.json')])requireFile(p);
+if(!fs.readFileSync(orchestratorManifest,'utf8').includes('DO NOT initialize another task')){
+  fail('CODEX_ADAPTER_OUTDATED: run aledevos update -Adapter codex');
+}
 const version=run('codex',['--version'],project);
 if(version.error||version.status!==0)fail('CODEX_CLI_UNAVAILABLE_OR_UNHEALTHY');
 const registry=run(process.execPath,[skills,'registry','verify','--project-root',project,'--adapter','codex'],project);
