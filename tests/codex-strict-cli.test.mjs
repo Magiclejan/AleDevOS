@@ -20,7 +20,7 @@ function fixture({registryOk=true,complete=false}={}){
   fs.writeFileSync(path.join(a,'project.json'),'{}');
   fs.writeFileSync(path.join(a,'skills','registries','codex.json'),'{}');
   fs.writeFileSync(path.join(project,'.codex','config.toml'),"developer_instructions = '''\nDelegate to the orchestrator.\n'''\n");
-  fs.writeFileSync(path.join(project,'.codex','agents','orchestrator.toml'),'name = "orchestrator"\n');
+  fs.writeFileSync(path.join(project,'.codex','agents','orchestrator.toml'),'name = "orchestrator"\n# DO NOT initialize another task\n');
   fs.writeFileSync(path.join(a,'skillsystem','runtime','skillsystem.mjs'),registryOk?'process.exit(0);':'process.exit(9);');
   fs.writeFileSync(path.join(a,'runtime','aledevos.mjs'),`
 import fs from 'node:fs';
