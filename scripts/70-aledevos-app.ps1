@@ -964,7 +964,7 @@ function Start-AleDevOSProject {
   $saved = Register-Project $p -TouchLastUsed
   $script:SessionProject = $saved
 
-  Write-Host "[START] Abriendo $canonicalAdapter..." -ForegroundColor Cyan
+  Write-Host "[START] AleDevOS $canonicalAdapter..." -ForegroundColor Cyan
   & $launcher -ProjectPath $p -Adapter $canonicalAdapter
 }
 
@@ -990,7 +990,7 @@ while ($true) {
   }
   Write-Host ''
   Write-Host '  1. INICIAR ALEDEVOS'
-  Write-Host '     Instala en primer uso y abre el runtime elegido.'
+  Write-Host '     Instala en primer uso; Codex usa el CLI estricto.'
   Write-Host '  2. Estado del proyecto'
   Write-Host '  3. Elegir / cambiar proyecto'
   Write-Host '  4. Avanzado'
