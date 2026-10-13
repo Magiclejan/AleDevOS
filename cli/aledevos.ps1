@@ -1,12 +1,14 @@
 param(
   [Parameter(Position=0)]
-  [ValidateSet('start','init','update','where','help')]
+  [ValidateSet('start','task','init','update','where','help')]
   [string]$Command = 'help',
 
   [Parameter(Position=1)]
   [string]$ProjectPath,
 
   [string]$Adapter,
+
+  [string]$Prompt,
 
   [switch]$Force
 )
@@ -121,6 +123,15 @@ function Select-Adapters([string]$Requested,[string[]]$Installed) {
   return @($out)
 }
 
+function Invoke-StrictCodexTask([string]$Target,[string]$TaskText) {
+  if ([string]::IsNullOrWhiteSpace($TaskText)) { throw 'ALEDEVOS_TASK_OBJECTIVE_REQUIRED: supply -Prompt' }
+  $cfg=Get-Config
+  $entry=Join-Path ([string]$cfg.canonical_root) 'cli\codex-strict.mjs'
+  if (-not (Test-Path -LiteralPath $entry)) { throw "ALEDEVOS_STRICT_ENTRY_NOT_FOUND: $entry" }
+  & node $entry --project $Target --prompt $TaskText
+  return $LASTEXITCODE
+}
+
 function Invoke-Adapter([string]$Target,[string]$SelectedAdapter) {
   $exe = @{
     'opencode' = 'opencode'
@@ -201,6 +212,17 @@ function Show-ProjectKind([string]$Target,[string[]]$Installed) {
 }
 
 switch ($Command) {
+  'task' {
+    $target=Resolve-Project $ProjectPath
+    $selected=if($Adapter){Normalize-AdapterName $Adapter}else{'codex'}
+    if($selected -ne 'codex'){throw 'ALEDEVOS_STRICT_TASK_CURRENTLY_CODEX_ONLY'}
+    $installed=@(Get-InstalledAdapters $target)
+    if($installed -notcontains 'codex'){
+      Invoke-Install -Target $target -SelectedAdapter 'codex' -UseForce:$false
+    }
+    $rc=Invoke-StrictCodexTask -Target $target -TaskText $Prompt
+    exit $rc
+  }
   'start' {
     $target = Resolve-Project $ProjectPath
     $installed = @(Get-InstalledAdapters $target)
@@ -225,6 +247,22 @@ switch ($Command) {
       Write-Host "[OK] AleDevOS ya esta instalado para '$chosen'." -ForegroundColor Green
     }
 
+    if ($chosen -eq 'codex') {
+      if (-not [string]::IsNullOrWhiteSpace($Prompt)) {
+        $rc=Invoke-StrictCodexTask -Target $target -TaskText $Prompt
+        exit $rc
+      }
+      Write-Host "AleDevOS Codex STRICT: cada solicitud se valida antes de aceptar PASS." -ForegroundColor Cyan
+      Write-Host "Introduce una solicitud por turno. Escribe salir para terminar." -ForegroundColor DarkGray
+      while ($true) {
+        $objective=Read-Host "AleDevOS"
+        if ($null -eq $objective -or $objective.Trim().ToLowerInvariant() -in @('salir','exit','quit')) { break }
+        if ([string]::IsNullOrWhiteSpace($objective)) { continue }
+        $rc=Invoke-StrictCodexTask -Target $target -TaskText $objective
+        if ($rc -ne 0) { Write-Host "BLOCKED/FAILED: tarea no certificada (exit=$rc)." -ForegroundColor Yellow }
+      }
+      exit 0
+    }
     $rc = Invoke-Adapter -Target $target -SelectedAdapter $chosen
     exit $rc
   }
@@ -290,6 +328,8 @@ switch ($Command) {
     Write-Host "Iniciar (instala en primer uso y abre el runtime):"
     Write-Host "  aledevos start"
     Write-Host "  aledevos start C:\ruta\Proyecto -Adapter codex"
+    Write-Host "  aledevos task -Adapter codex -Prompt \"objetivo\""
+    Write-Host "  aledevos start -Adapter codex -Prompt \"objetivo\""
     Write-Host ""
     Write-Host "Solo instalar/incorporar (sin abrir runtime):"
     Write-Host "  aledevos init"
