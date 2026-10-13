@@ -7,7 +7,7 @@
 3. Choose **1. INICIAR ALEDEVOS**.
 4. Select or enter the project path.
 5. Choose the adapter.
-6. AleDevOS installs itself on first use and then opens the selected external runtime.
+6. AleDevOS installs itself on first use. Codex opens a controlled AleDevOS task loop; other adapters open their external runtime.
 
 The project may be:
 - a new/empty folder;
@@ -35,6 +35,14 @@ Or:
 ```powershell
 aledevos start "C:\Projects\MyProject" -Adapter codex
 ```
+
+For a single strict Codex task:
+
+\`\`\`powershell
+aledevos task -Adapter codex -Prompt "Review the project and verify the outcome"
+\`\`\`
+
+Update existing Codex adapter projections with \`aledevos update -Adapter codex\` before strict execution. Direct \`codex\` launches and the official Codex App are not covered by this gate.
 
 To install without launching:
 
