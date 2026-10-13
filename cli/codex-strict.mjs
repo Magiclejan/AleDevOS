@@ -14,7 +14,17 @@ const args=process.argv.slice(2);
 function option(name){const i=args.indexOf(name);return i<0?null:args[i+1]??null;}
 function fail(message,code=2){console.error('ALEDEVOS_STRICT_BLOCKED: '+message);process.exit(code);}
 function run(exe,argv,cwd,timeout=0){
-  const r=spawnSync(exe,argv,{cwd,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout});
+  // Windows npm CLI shims are often .cmd files. Use the existing safe
+  // PowerShell Base64 argv bridge rather than shell interpolation.
+  let command=exe,params=argv;
+  if(process.platform==='win32'&&exe==='codex'){
+    const launcher=path.resolve(import.meta.dirname,'../core/agent-runtime/windows-cli-launcher.ps1');
+    if(!fs.existsSync(launcher))return {status:null,error:new Error('WINDOWS_CODEX_LAUNCHER_MISSING'),stdout:'',stderr:''};
+    command='powershell.exe';
+    params=['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',launcher,
+      ...[exe,...argv].map(a=>Buffer.from(String(a),'utf8').toString('base64'))];
+  }
+  const r=spawnSync(command,params,{cwd,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,timeout});
   return {status:r.status,error:r.error,stdout:r.stdout||'',stderr:r.stderr||''};
 }
 function fileJson(filename){try{return JSON.parse(fs.readFileSync(filename,'utf8').replace(/^\uFEFF/,''));}catch{return null;}}
