@@ -95,7 +95,10 @@ const objective='AleDevOS strict task '+taskId+'. Delegate to the orchestrator f
 console.log('[AleDevOS] Controlled task '+taskId+' | adapter=codex');
 const codex=run('codex',['exec','--json','--enable','multi_agent','-c','developer_instructions='+JSON.stringify(ingressInstructions),objective],project);
 const answer=extractCodexAnswer(codex.stdout);
-const valid=codex.status===0&&!codex.error&&answer.turnCompleted&&verifiedState(taskId);
+// Verify the route's SHA-256 integrity using the canonical Skill System,
+// not merely the existence of a model-written receipt.
+const routeCheck=run(process.execPath,[skills,'route','verify','--project-root',project,'--task-id',taskId],project);
+const valid=codex.status===0&&!codex.error&&answer.turnCompleted&&routeCheck.status===0&&verifiedState(taskId);
 if(!valid){
   recordBlock('STRICT_ORCHESTRATION_INCOMPLETE');
   const state=fileJson(currentState);
