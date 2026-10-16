@@ -23,8 +23,13 @@ const governed=[
 ];
 let out;
 if(tool==='run_command'){
- const cmd=String(args.CommandLine||'').trim().replaceAll('\\','/');
- out=governed.some(r=>r.test(cmd))?allow('AleDevOS governed runtime command',[`command(${cmd})`]):deny('AleDevOS denies arbitrary shell; only governed .aledevos runtime commands are allowed.');
+ const cmd=String(args.CommandLine||'').trim();
+ // A prefix match is not a command boundary: reject shell syntax and non-ASCII encodings
+ // before considering the governed runtime allowlist. Literal quotes/backslashes support
+ // ordinary Windows paths and quoted values; expansion/escape operators remain denied.
+ const plain=/^[A-Za-z0-9 ./_:=+\\'"-]+$/.test(cmd);
+ const normalized=cmd.replaceAll('\\','/');
+ out=plain&&governed.some(r=>r.test(normalized))?allow('AleDevOS governed runtime command',[`command(${normalized})`]):deny('AleDevOS denies arbitrary shell; only governed .aledevos runtime commands are allowed.');
 }else if(['write_to_file','replace_file_content','multi_replace_file_content'].includes(tool)){
  const target=args.TargetFile||args.AbsolutePath||'';
  out=!target?deny('Missing target path.'):external(target)?deny('AleDevOS denies writes outside active workspace.'):protectedPath(target)?deny('AleDevOS control plane is immutable to product writers.'):allow('Product write inside workspace.');
