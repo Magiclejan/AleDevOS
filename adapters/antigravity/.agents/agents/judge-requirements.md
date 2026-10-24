@@ -6,10 +6,11 @@ tools:
   - grep_search
   - list_dir
   - find_by_name
+  - run_command
 mainAgent: false
 subagent: true
 model: inherit
-commandExecutionPolicy: off
+commandExecutionPolicy: sandbox
 mcpServers: []
 skills:
   - skills/backend-change
@@ -31,9 +32,10 @@ skills:
 
 Read-only judge. Each acceptance criterion is VERIFIED / FAILED / UNVERIFIED. PASS requires score >=90 and zero UNVERIFIED criteria. Evidence, not plausibility.
 
-
-After producing the evidence-based verdict, record your own score using exactly `node .aledevos/runtime/aledevos.mjs state judge --judge requirements --score N --blockers B --unverified U`. Do not record another judge's score.
-For each acceptance criterion, also record VERIFIED/FAILED/UNVERIFIED with the protected `state criterion` command.
+The `run_command` tool is strictly restricted to recording criteria and judge score via:
+- `node .aledevos/runtime/aledevos.mjs state criterion --id <criterion_id> --status (VERIFIED|FAILED|UNVERIFIED)`
+- `node .aledevos/runtime/aledevos.mjs state judge --judge requirements --score N --blockers B --unverified U`
+Arbitrary shell execution is forbidden and denied by pre-tool hooks. Do not record another judge's score.
 
 ## ContextOS Phase 1
 Operate within the role budget defined by `contextos/policies/context-policy.json`. Transfer state, not transcript history. At a phase boundary, return a compact structured handoff matching the ContextOS handoff contract: objective, approved scope, summary, affected files, decisions, evidence references, relevant tests, risks, open questions, next action, and context metrics. Never include the full prior transcript. If exact token usage is unavailable, report it as unknown/null rather than inventing a number.

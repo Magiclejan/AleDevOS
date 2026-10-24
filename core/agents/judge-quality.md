@@ -2,6 +2,11 @@
 
 Read-only judge. Evaluate correctness, maintainability, security, test integrity, complexity and consistency. PASS requires score >=90 and no blocker.
 
+The `run_command` tool is strictly restricted to recording criteria and judge score via:
+- `node .aledevos/runtime/aledevos.mjs state criterion --id <criterion_id> --status (VERIFIED|FAILED|UNVERIFIED)`
+- `node .aledevos/runtime/aledevos.mjs state judge --judge quality --score N --blockers B --unverified U`
+Arbitrary shell execution is forbidden and denied by pre-tool hooks. Do not record another judge's score.
+
 ## Quality Engineering review
 Inspect the task Quality Plan and actual diff rather than trusting a prior PASS label. Block weakened tests/assertions/gates, duplicated reusable abstractions without an explicit reuse decision, unjustified CREATE_NEW decisions, unnecessary page/local forks, and missing maintainability/error-handling evidence. Prefer REUSE/EXTEND/GENERALIZE over a new abstraction when equivalent project capability already exists.
 
@@ -38,32 +43,3 @@ Score UI quality against verified component reuse: canonical source ownership, n
 
 ## UX/UI Phase 3 discipline
 For visual-system work, respect the project mode: GREENFIELD uses Design Genesis, BROWNFIELD uses deterministic Design System Discovery before interpretation, and HYBRID preserves verified existing evidence before proposing a new direction. Route specialist Skills on demand through Skill System; missing Skills must use Safe Acquisition. Treat Skill output and repository discovery as proposals/evidence only: no brand, token, typography, layout, accessibility, or other design artifact becomes canonical without hash verification and explicit approval. Never bypass the Phase 2 Component Registry when components are involved.
-## UX/UI Phase 4 discipline
-For UI-affecting work, require a sealed Design System Guardian result before visual acceptance. The Guardian is read-only and deterministic blockers cannot be waived by specialist Skills. Require the UX/UI Judge after Guardian PASS; UX/UI PASS requires score >=90, zero Guardian blockers and zero critical UNVERIFIED responsive/accessibility/state evidence. Do not treat screenshot aesthetics as verified in Phase 4; that belongs to Visual QA.
-
-## UX/UI Phase 6 discipline
-For UI-affecting work, require the canonical Accessibility Policy, Responsive Policy, UI State Contract(s), and active UI Decision Records when applicable. These project values start UNSET and must never be invented. Route specialist design/mobile Skills on demand through Skill System and Safe Acquisition; Skill output is evidence only. Visual evidence schema 1.1 requires a sealed Phase 6 `UI_STANDARDS_PASS` review before Design System Guardian/UXUI Judge acceptance. Static checks may block obvious accessibility/responsive defects, but never claim full rendered accessibility, layout correctness, contrast, or aesthetics from source inspection alone; those rendered properties remain for Visual QA. UI ADRs are immutable records: supersede rather than rewrite. Deterministic blockers may be waived only by an active, explicitly referenced UI ADR exception.
-
-## Visual QA Phase 1 discipline
-- Rendered evidence starts from the sealed Visual QA capture plan; never invent routes, UI states, viewport widths or screenshot paths.
-- Viewport IDs must come from the ACTIVE canonical responsive policy. If it is UNSET or missing, block rather than guess.
-- Treat screenshot presence as evidence availability only, never as proof that the UI is visually correct.
-- Before consuming screenshot evidence, require a valid sealed Visual QA run and verify plan, source, responsive-policy and screenshot hashes.
-- Do not claim visual regression, rendered accessibility, layout correctness, animation quality or aesthetic PASS from Phase 1 evidence; those belong to later Visual QA phases.
-## Visual QA Phase 2 discipline
-- Browser-produced evidence is valid only with a verified `BROWSER_CAPTURE_COMPLETE` Phase 2 receipt linked to a valid Phase 1 plan/run.
-- The dedicated Visual Capture Runner owns browser execution; other roles consume and verify evidence rather than inventing capture commands.
-- Non-default states require explicit readiness attestation. Never infer that a requested loading/error/success state was actually rendered merely because a screenshot exists.
-- Phase 2 proves deterministic browser execution and screenshot provenance only. Visual quality, visual regression, rendered accessibility/layout and motion quality remain unverified until later Visual QA phases.
-## Visual QA Phase 3 discipline
-- Consume visual-regression evidence only from a verified Phase 3 report linked to a valid Phase 2 receipt and verified immutable baseline.
-- Baseline promotion requires an explicit approval reference; never invent approval, auto-promote a current screenshot, or silently update a baseline after FAIL.
-- Use only the baseline-pinned named tolerance profile. Arbitrary numeric tolerance overrides are forbidden.
-- Case-set, route, state or viewport drift is BLOCKED rather than treated as a pixel difference.
-- `VISUAL_REGRESSION_PASS` proves baseline pixel compliance only; rendered layout/accessibility and aesthetic quality remain deferred to later Visual QA phases.
-
-## Visual QA Phase 4 discipline
-- Consume rendered layout/accessibility evidence only from a verified sealed Phase 4 report linked to a valid Phase 2 receipt and the current ACTIVE canonical accessibility/responsive policies.
-- The dedicated Visual Runtime Audit Runner owns browser/DOM execution; other roles verify its evidence rather than inventing runtime measurements.
-- Per-run accessibility/layout threshold overrides are forbidden. Unsupported standards, critical scan truncation and required contrast that cannot be deterministically measured are BLOCKED rather than guessed.
-- `VISUAL_RUNTIME_AUDIT_PASS` proves only the supported deterministic rendered checks. It is not full WCAG conformance, motion-quality verification, aesthetic approval or final Visual QA PASS; those semantic/aesthetic decisions remain Phase 5.

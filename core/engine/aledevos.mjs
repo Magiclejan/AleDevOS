@@ -10,6 +10,7 @@ import {
   emitRepairTelemetry,
   finishTaskTelemetry
 } from './telemetry-bridge.mjs';
+import { handlePublisherCli } from './git-publisher.mjs';
 
 const args=process.argv.slice(2);
 const cwd=process.cwd();
@@ -144,8 +145,18 @@ if(group==='state'&&cmd==='init'){
  const telemetry=startTaskTelemetry({cwd,taskId:task,adapter,benchmarkKey});
  const telemetryStatus=telemetry.disabled?'DISABLED':telemetry.ok?'ACTIVE':'DEGRADED';
  const s={version:1,task_id:task,runtime_adapter:adapter,telemetry_run_id:telemetry.run_id??null,telemetry_status:telemetryStatus,telemetry_benchmark_key:benchmarkKey,task_contract_path:norm(path.relative(cwd,contractPath)),approved_scope:scope,scope_version:1,acceptance_criteria:acceptance,gates:{},judges:{},blockers:[],repair_count:0,max_repairs:2,blocked_reason:null,final_state:null,quality_engineering:{required:true,status:'UNPLANNED',plan_path:null},agent_trace:[{agent:'orchestrator',status:'STARTED',at:createdAt}],history:[]};
+ const rawOrchestratorToken=crypto.randomBytes(16).toString('hex');
+ s.orchestrator_token_hash=crypto.createHash('sha256').update(rawOrchestratorToken).digest('hex');
+ const privDir=path.join(path.dirname(statePath()),'.private');
+ fs.mkdirSync(privDir,{recursive:true});
+ fs.writeFileSync(path.join(privDir,'orchestrator.token'),rawOrchestratorToken,'utf8');
+ const defPrivDir=path.join(cwd,'.aledevos','state','.private');
+ if(path.resolve(privDir)!==path.resolve(defPrivDir)){
+  fs.mkdirSync(defPrivDir,{recursive:true});
+  fs.writeFileSync(path.join(defPrivDir,'orchestrator.token'),rawOrchestratorToken,'utf8');
+ }
  event(s,'STATE_INIT',{adapter,task_contract_path:s.task_contract_path});persistState(statePath(),s);
- console.log('STATE_INITIALIZED');console.log(JSON.stringify({task_id:task,task_contract:s.task_contract_path,state:norm(path.relative(cwd,statePath())),telemetry_run_id:s.telemetry_run_id,telemetry_status:s.telemetry_status},null,2));process.exit(0)
+ console.log('STATE_INITIALIZED');console.log(JSON.stringify({task_id:task,task_contract:s.task_contract_path,state:norm(path.relative(cwd,statePath())),telemetry_run_id:s.telemetry_run_id,telemetry_status:s.telemetry_status,orchestrator_token_hash:s.orchestrator_token_hash},null,2));process.exit(0)
 }
 if(group==='state'&&cmd==='show'){const[,s]=loadState();console.log(JSON.stringify(s,null,2));process.exit(0)}
 if(group==='state'&&cmd==='scope-approve'){
@@ -163,20 +174,34 @@ if(group==='state'&&cmd==='criterion'){
 if(group==='state'&&cmd==='judge'){
  const[p,s]=loadState(),judge=take('--judge'),score=Number(take('--score')),blockers=Number(take('--blockers','0')),unverified=Number(take('--unverified','0'));
  if(!['requirements','regression','quality'].includes(judge))fail('Invalid judge');if(!Number.isFinite(score)||score<0||score>100)fail('Invalid score');if(!Number.isInteger(blockers)||blockers<0||!Number.isInteger(unverified)||unverified<0)fail('Invalid blocker/unverified count');
+ const callerRole=take('--caller-role');
+ if(!callerRole)fail('JUDGE_CALLER_ROLE_REQUIRED: --caller-role must be provided',53);
+ const callerJudge=callerRole.replace(/^judge-/,'');
+ if(callerJudge!==judge){
+  fail(`JUDGE_IDENTITY_SPOOFING_DENIED: caller '${callerRole}' cannot record score for judge '${judge}'`,53);
+ }
+ const sessionToken=take('--session-token');
+ if(!sessionToken)fail('JUDGE_SESSION_TOKEN_REQUIRED: --session-token must be provided',53);
+ const inputHash=crypto.createHash('sha256').update(sessionToken).digest('hex');
+ const role=`judge-${judge}`;
+ const trace=s.agent_trace||[];
+ const startedTrace=[...trace].reverse().find(x=>x.agent===role&&x.status==='STARTED');
+ if(!startedTrace){
+  fail('JUDGE_SESSION_TOKEN_INVALID: session token mismatch',53);
+ }
+ if(startedTrace.consumed){
+  fail('SESSION_TOKEN_ALREADY_CONSUMED: session token was already used',53);
+ }
+ const tokenValid=(startedTrace.session_token_hash&&startedTrace.session_token_hash===inputHash)||(startedTrace.session_token&&startedTrace.session_token===sessionToken);
+ if(!tokenValid){
+  fail('JUDGE_SESSION_TOKEN_INVALID: session token mismatch',53);
+ }
+ startedTrace.consumed=true;
  if(Boolean(s.runtime_adapter)){
-  const role=`judge-${judge}`,trace=s.agent_trace||[];
-  if(!trace.some(x=>x.agent===role&&x.status==='STARTED'))fail(`RUNTIME_JUDGE_ROLE_NOT_STARTED: ${role}`,48);
   if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('RUNTIME_JUDGE_GATES_NOT_PASS',49);
  }
- s.judges[judge]={score,blockers,unverified,at:new Date().toISOString()};
- event(s,'JUDGE',{judge,score,blockers,unverified});
- if(Boolean(s.runtime_adapter)){
-  const role=`judge-${judge}`,trace=s.agent_trace||[];
-  if(!trace.some(x=>x.agent===role&&x.status==='COMPLETED')){
-   const rec={agent:role,status:'COMPLETED',thread_id:null,at:new Date().toISOString()};
-   s.agent_trace.push(rec);event(s,'AGENT',rec);
-  }
- }
+ s.judges[judge]={score,blockers,unverified,session_token_hash:inputHash,at:new Date().toISOString()};
+ event(s,'JUDGE',{judge,score,blockers,unverified,session_token_hash:inputHash});
  persistState(p,s);
  emitJudgeTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,judge,score,blockers,unverified});
  console.log('JUDGE_RECORDED');process.exit(0)
@@ -184,13 +209,17 @@ if(group==='state'&&cmd==='judge'){
 if(group==='state'&&cmd==='agent'){
  const[p,s]=loadState(),name=take('--name'),status=take('--status'),threadId=take('--thread-id',null);
  if(!name)fail('Missing --name');if(!['STARTED','COMPLETED','BLOCKED','FAILED'].includes(status))fail('Invalid --status');
+ const judgeNames=new Set(['judge-requirements','judge-regression','judge-quality']);
+ let tokenHash=null;
+ let completedHash=null;
  if(Boolean(s.runtime_adapter)){
   const governed=new Set(['orchestrator','architect','auditor','builder','design-system-guardian','editor-backend','editor-config','editor-database','editor-frontend','editor-tests','judge-quality','judge-regression','judge-requirements','judge-uxui','motion-director','repairer','researcher','security-reviewer','v1-release-validator','verifier','visual-capture-runner','visual-judge','visual-regression-runner','visual-repair-controller','visual-runtime-audit-runner']);
   if(!governed.has(name))fail(`RUNTIME_AGENT_UNKNOWN: ${name}`,42);
   const trace=s.agent_trace||[],has=(agent,st)=>trace.some(x=>x.agent===agent&&x.status===st);
-  const judgeNames=new Set(['judge-requirements','judge-regression','judge-quality']);
   if(status==='STARTED'){
-   if(has(name,'COMPLETED'))fail(`RUNTIME_AGENT_ALREADY_COMPLETED: ${name}`,50);
+   const count=(agent,st)=>trace.filter(x=>x.agent===agent&&x.status===st).length;
+   const maxRuns = (name==='repairer') ? (s.repair_count||0) : (name==='verifier'||judgeNames.has(name)) ? (1 + (s.repair_count||0)) : 1;
+   if(count(name,'COMPLETED') >= maxRuns)fail(`RUNTIME_AGENT_ALREADY_COMPLETED: ${name}`,50);
    if(name==='builder'&&!s.approved_scope?.length)fail('RUNTIME_BUILDER_SCOPE_REQUIRED',43);
    if(name==='builder'&&!runtimeRouteReady(s.task_id))fail('RUNTIME_BUILDER_REQUIRES_ROUTE_READY',51);
    if(name==='verifier'&&!has('builder','COMPLETED'))fail('RUNTIME_VERIFIER_REQUIRES_BUILDER',44);
@@ -198,14 +227,50 @@ if(group==='state'&&cmd==='agent'){
     if(!has('verifier','COMPLETED'))fail('RUNTIME_JUDGES_REQUIRE_VERIFIER',45);
     if(['scope','integrity','canonical','quality_engineering'].some(id=>s.gates?.[id]?.status!=='PASS'))fail('RUNTIME_JUDGES_REQUIRE_ALL_GATES_PASS',46);
    }
+  }
+  if(status==='COMPLETED'&&!has(name,'STARTED'))fail(`RUNTIME_AGENT_COMPLETION_WITHOUT_START: ${name}`,47);
  }
- if(status==='COMPLETED'&&!has(name,'STARTED'))fail(`RUNTIME_AGENT_COMPLETION_WITHOUT_START: ${name}`,47);
+ if(status==='STARTED'){
+  if(judgeNames.has(name)){
+   const rawSessionToken=take('--session-token') || crypto.randomBytes(16).toString('hex');
+   tokenHash=crypto.createHash('sha256').update(rawSessionToken).digest('hex');
+   const privDir=path.join(path.dirname(p),'.private');
+   fs.mkdirSync(privDir,{recursive:true});
+   fs.writeFileSync(path.join(privDir,`${name}.token`),rawSessionToken,'utf8');
+   const defPrivDir=path.join(cwd,'.aledevos','state','.private');
+   if(path.resolve(privDir)!==path.resolve(defPrivDir)){
+    fs.mkdirSync(defPrivDir,{recursive:true});
+    fs.writeFileSync(path.join(defPrivDir,`${name}.token`),rawSessionToken,'utf8');
+   }
+  }
+  if(s.blocked_reason){
+   const previous=s.blocked_reason;s.blocked_reason=null;
+   event(s,'BLOCK_CLEARED',{reason:previous,resumed_agent:name});
+  }
  }
- if(status==='STARTED'&&s.blocked_reason){
-  const previous=s.blocked_reason;s.blocked_reason=null;
-  event(s,'BLOCK_CLEARED',{reason:previous,resumed_agent:name});
+ if(status==='COMPLETED'&&judgeNames.has(name)){
+  const token=take('--session-token');
+  if(!token)fail('JUDGE_SESSION_TOKEN_REQUIRED: --session-token must be provided',53);
+  const inputHash=crypto.createHash('sha256').update(token).digest('hex');
+  const startedTrace=[...(s.agent_trace||[])].reverse().find(x=>x.agent===name&&x.status==='STARTED');
+  if(!startedTrace){
+   fail('JUDGE_SESSION_TOKEN_INVALID: session token mismatch',53);
+  }
+  const tokenValid=(startedTrace.session_token_hash&&startedTrace.session_token_hash===inputHash)||(startedTrace.session_token&&startedTrace.session_token===token);
+  if(!tokenValid){
+   fail('JUDGE_SESSION_TOKEN_INVALID: session token mismatch',53);
+  }
+  completedHash=inputHash;
  }
- s.agent_trace??=[];const rec={agent:name,status,thread_id:threadId,at:new Date().toISOString()};s.agent_trace.push(rec);event(s,'AGENT',rec);persistState(p,s);console.log('AGENT_RECORDED');process.exit(0)
+ s.agent_trace??=[];
+ const rec={agent:name,status,thread_id:threadId,...(tokenHash?{session_token_hash:tokenHash,consumed:false}:{}),...(completedHash?{session_token_hash:completedHash}:{}),at:new Date().toISOString()};
+ s.agent_trace.push(rec);event(s,'AGENT',rec);persistState(p,s);
+ if(tokenHash&&status==='STARTED'){
+  console.log(`AGENT_RECORDED token_hash=${tokenHash}`);
+ }else{
+  console.log('AGENT_RECORDED');
+ }
+ process.exit(0);
 }
 if(group==='state'&&cmd==='block'){
  const[p,s]=loadState(),reason=take('--reason');if(!reason)fail('Missing --reason');s.blocked_reason=reason;event(s,'BLOCKED',{reason});persistState(p,s);console.log('BLOCK_RECORDED');process.exit(0)
@@ -223,18 +288,46 @@ if(group==='state'&&cmd==='finalize'){
   if(s.quality_engineering?.required)requiredGates.push('quality_engineering');
   const gatePass=requiredGates.every(k=>s.gates[k]?.status==='PASS');
   const req=['requirements','regression','quality'];
-  const judgesReady=req.every(k=>s.judges[k]&&s.judges[k].score>=90&&s.judges[k].blockers===0&&s.judges[k].unverified===0);
+  const judgesReady=req.every(k=>s.judges?.[k]&&s.judges[k].score>=90&&s.judges[k].blockers===0&&s.judges[k].unverified===0);
   const requiredRuntimeAgents=['builder','verifier','judge-requirements','judge-regression','judge-quality'];
   const completedAgents=new Set((s.agent_trace||[]).filter(x=>x.status==='COMPLETED').map(x=>x.agent));
   const missingRuntimeAgents=Boolean(s.runtime_adapter)?requiredRuntimeAgents.filter(x=>!completedAgents.has(x)):[];
   const criteriaUnverified=s.acceptance_criteria.filter(c=>c.status!=='VERIFIED').length;
-  const blockers=req.reduce((n,k)=>n+(s.judges[k]?.blockers||0),0)+(s.blockers||[]).length;
-  if(gatePass&&judgesReady&&criteriaUnverified===0&&blockers===0&&missingRuntimeAgents.length===0)s.final_state='PASS';
+  const blockers=req.reduce((n,k)=>n+(s.judges?.[k]?.blockers||0),0)+(s.blockers||[]).length;
+
+  const plan=s.quality_engineering?.plan_path&&fs.existsSync(path.join(cwd,s.quality_engineering.plan_path))
+    ?readJson(path.join(cwd,s.quality_engineering.plan_path))
+    :null;
+  const isHighRisk=plan&&['high','critical'].includes(plan.risk);
+  const touchesSecurity=(s.approved_scope||[]).some(f=>/auth|secret|permission|token|password|schema\.sql/i.test(f));
+  if((isHighRisk||touchesSecurity)&&!completedAgents.has('security-reviewer')){
+    console.error('NOT_FINAL_SECURITY_REVIEWER_REQUIRED');
+    process.exit(54);
+  }
+  if(isHighRisk&&!completedAgents.has('auditor')){
+    console.error('NOT_FINAL_ADVERSARIAL_AUDITOR_REQUIRED');
+    process.exit(55);
+  }
+
+  const hasJudgeTrace=req.some(k=>(s.agent_trace||[]).some(x=>x.agent===`judge-${k}`));
+  const judgesSessionVerified=(!Boolean(s.runtime_adapter)&&!hasJudgeTrace)||req.every(k=>{
+   const role=`judge-${k}`;
+   const started=[...(s.agent_trace||[])].reverse().find(x=>x.agent===role&&x.status==='STARTED');
+   const completed=[...(s.agent_trace||[])].reverse().find(x=>x.agent===role&&x.status==='COMPLETED');
+   const hashMatch=Boolean(started?.session_token_hash)&&Boolean(completed?.session_token_hash)&&started.session_token_hash===completed.session_token_hash;
+   const legacyMatch=Boolean(started?.session_token)&&Boolean(completed?.session_token)&&started.session_token===completed.session_token;
+   return hashMatch||legacyMatch;
+  });
+
+  if(gatePass&&judgesReady&&judgesSessionVerified&&criteriaUnverified===0&&blockers===0&&missingRuntimeAgents.length===0){
+   s.final_state='PASS';
+   s.judge_identity_enforcement='CAPABILITY_NONCE_TOKEN_HASH_VERIFIED';
+  }
   else if(s.repair_count>=s.max_repairs)s.final_state='FAILED';
   else{if(missingRuntimeAgents.length)console.error(`NOT_FINAL_REQUIRED_AGENT_EVIDENCE:${missingRuntimeAgents.join(',')}`);else console.log('NOT_FINAL');process.exit(5)}
  }
- event(s,'FINAL',{state:s.final_state});persistState(p,s);
- const telemetry=finishTaskTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,finalState:s.final_state});
+ event(s,'FINAL',{state:s.final_state,judge_identity_enforcement:s.judge_identity_enforcement||null});persistState(p,s);
+ const telemetry=finishTaskTelemetry({cwd,runId:s.telemetry_run_id??null,taskId:s.task_id,adapter:s.runtime_adapter??null,finalState:s.final_state,judgeIdentityEnforcement:s.judge_identity_enforcement||null});
  s.telemetry_status=telemetry.disabled?'DISABLED':telemetry.ok?'VERIFIED':'DEGRADED';
  s.telemetry_summary_path=telemetry.summary_path??null;
  persistState(p,s);
@@ -308,7 +401,7 @@ if(group==='quality'&&cmd==='verify'){
 
 if(group==='scope'&&cmd==='check'){
  const[,s]=loadState(),project=fs.existsSync(defaultProject)?readJson(defaultProject):{protected_paths:[]},changed=changedPaths(),forbidden=[],outside=[];
- for(const f of changed){if(matches(f,project.protected_paths||[]))forbidden.push(f);else if(!matches(f,s.approved_scope||[]))outside.push(f)}
+ for(const f of changed){if(matches(f,s.approved_scope||[]))continue;if(matches(f,project.protected_paths||[]))forbidden.push(f);else outside.push(f)}
  if(forbidden.length){saveGate('scope','FAIL',{reason:'PROTECTED_PATH',paths:forbidden});console.log(JSON.stringify({status:'PROTECTED_PATH',paths:forbidden},null,2));process.exit(8)}
  if(outside.length){saveGate('scope','FAIL',{reason:'SCOPE_ESCALATION',paths:outside});console.log(JSON.stringify({status:'SCOPE_ESCALATION',paths:outside},null,2));process.exit(9)}
  saveGate('scope','PASS',{paths:changed});console.log(JSON.stringify({status:'IN_SCOPE',paths:changed},null,2));process.exit(0)
@@ -339,4 +432,8 @@ if(group==='gate'&&cmd==='run'){
  saveGate('canonical','PASS',{results});console.log(JSON.stringify({status:'GATE_PASS',results},null,2));process.exit(0)
 }
 
-console.log('AleDevOS control runtime\nCommands: state init/show/scope-approve/criterion/judge/agent/block/repair-start/finalize | quality plan/evidence/reuse/verify | scope check | integrity scan | gate run');
+if(group==='publish'){
+ handlePublisherCli(args.slice(1),cwd);
+}
+
+console.log('AleDevOS control runtime\nCommands: state init/show/scope-approve/criterion/judge/agent/block/repair-start/finalize | quality plan/evidence/reuse/verify | scope check | integrity scan | gate run | publish status/preflight/stage/commit/push/pr-comment/issue-comment/pr-create-draft');

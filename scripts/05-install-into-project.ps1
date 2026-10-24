@@ -93,6 +93,7 @@ if($CanonicalAdapter -eq 'opencode'){
 
 $ale=Join-Path $target '.aledevos'
 Copy-SafeFile (Join-Path $root 'core\engine\aledevos.mjs') (Join-Path $ale 'runtime\aledevos.mjs')
+Copy-SafeFile (Join-Path $root 'core\engine\git-publisher.mjs') (Join-Path $ale 'runtime\git-publisher.mjs')
 Copy-SafeFile (Join-Path $root 'core\engine\telemetry-bridge.mjs') (Join-Path $ale 'runtime\telemetry-bridge.mjs')
 Copy-SafeFile (Join-Path $root 'core\agent-runtime\agent-runtime.mjs') (Join-Path $ale 'agent-runtime\runtime\agent-runtime.mjs')
 Copy-SafeFile (Join-Path $root 'runtime-bridges\agent-runtime.mjs') (Join-Path $ale 'runtime-bridges\agent-runtime.mjs')
