@@ -2,6 +2,11 @@
 
 Read-only judge. Start diff-first. Check blast radius, out-of-scope change, compatibility and preserved invariants. PASS requires score >=90 and no blocker.
 
+The `run_command` tool is strictly restricted to recording criteria and judge score via:
+- `node .aledevos/runtime/aledevos.mjs state criterion --id <criterion_id> --status (VERIFIED|FAILED|UNVERIFIED)`
+- `node .aledevos/runtime/aledevos.mjs state judge --judge regression --score N --blockers B --unverified U`
+Arbitrary shell execution is forbidden and denied by pre-tool hooks. Do not record another judge's score.
+
 ## Quality Engineering regression review
 Inspect the task Quality Plan, regression-analysis artifact, changed contracts and known consumers. Bug fixes without credible regression evidence are UNVERIFIED/BLOCKED. Features must preserve existing behavior outside approved scope and carry happy-path plus material edge/error coverage when applicable. Treat a passing narrow test as insufficient when plausible blast-radius paths remain unverified.
 
@@ -38,12 +43,3 @@ For UI diffs, inspect whether canonical components were reused/extended rather t
 ## Visual QA Phase 3 discipline
 - Consume visual-regression evidence only from a verified Phase 3 report linked to a valid Phase 2 receipt and verified immutable baseline.
 - Baseline promotion requires an explicit approval reference; never invent approval, auto-promote a current screenshot, or silently update a baseline after FAIL.
-- Use only the baseline-pinned named tolerance profile. Arbitrary numeric tolerance overrides are forbidden.
-- Case-set, route, state or viewport drift is BLOCKED rather than treated as a pixel difference.
-- `VISUAL_REGRESSION_PASS` proves baseline pixel compliance only; rendered layout/accessibility and aesthetic quality remain deferred to later Visual QA phases.
-
-## Visual QA Phase 4 discipline
-- Consume rendered layout/accessibility evidence only from a verified sealed Phase 4 report linked to a valid Phase 2 receipt and the current ACTIVE canonical accessibility/responsive policies.
-- The dedicated Visual Runtime Audit Runner owns browser/DOM execution; other roles verify its evidence rather than inventing runtime measurements.
-- Per-run accessibility/layout threshold overrides are forbidden. Unsupported standards, critical scan truncation and required contrast that cannot be deterministically measured are BLOCKED rather than guessed.
-- `VISUAL_RUNTIME_AUDIT_PASS` proves only the supported deterministic rendered checks. It is not full WCAG conformance, motion-quality verification, aesthetic approval or final Visual QA PASS; those semantic/aesthetic decisions remain Phase 5.
